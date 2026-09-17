@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TraitData" format=3]
+
+[ext_resource type="Script" path="res://data/traits/trait_data.gd" id="1_td"]
+
+[resource]
+script = ExtResource("1_td")
+id = &"marked_by_dusk"
+display_name = "Marked by Dusk"
+category = 3
+duration_shifts = -1
+stat_modifiers = {}
+cure_cost = 0
+hooks = ["marked_by_dusk"]
+description = "Cult ambushes prioritize this officer. Gained by being seen by cult leader and escaping. Lasts until cult dismantled (story)."

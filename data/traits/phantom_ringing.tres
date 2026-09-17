@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TraitData" format=3]
+
+[ext_resource type="Script" path="res://data/traits/trait_data.gd" id="1_td"]
+
+[resource]
+script = ExtResource("1_td")
+id = &"phantom_ringing"
+display_name = "Phantom Ringing"
+category = 1
+duration_shifts = -1
+stat_modifiers = {}
+cure_cost = 0
+hooks = ["phantom_ringing"]
+description = "Hears nonexistent phones in field. Triggered by Guilt ≥ 50. Ends when Guilt < 30 or related case resolved."

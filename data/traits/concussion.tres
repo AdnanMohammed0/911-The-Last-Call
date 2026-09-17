@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TraitData" format=3]
+
+[ext_resource type="Script" path="res://data/traits/trait_data.gd" id="1_td"]
+
+[resource]
+script = ExtResource("1_td")
+id = &"concussion"
+display_name = "Concussion"
+category = 0
+duration_shifts = 1
+stat_modifiers = {}
+cure_cost = 0
+hooks = ["periodic_blur", "ui_flicker"]
+description = "Periodic blur, UI flicker. Caused by explosion within 5m. Cured by rest (1 shift)."

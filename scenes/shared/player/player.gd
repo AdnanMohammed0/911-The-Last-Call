@@ -304,6 +304,10 @@ func apply_class(data: ClassData) -> void:
 	stamina = sprint_duration
 	(get_node(^"Health") as HealthComponent).setup(data.max_health, data.damage_resistance)
 	# TODO(P3-03): max_sanity, sanity drain.
+	
+	# Reapply trait modifiers after class application
+	if multiplayer.is_server() and TraitSystem != null:
+		TraitSystem.reapply_all_modifiers(peer_id)
 
 
 ## Owner: block gameplay input (pause menu, chat, cutscenes).
@@ -321,9 +325,114 @@ func _update_name_label() -> void:
 func apply_sanity_damage(amount: float, source: StringName) -> void:
 	if not multiplayer.is_server() or amount <= 0.0:
 		return
+	
+	# Apply sanity drain multiplier from traits (e.g., PTSD, Nyctophobia)
+	var drain_mult: float = 1.0
+	if TraitSystem != null and multiplayer.is_server():
+		if TraitSystem.has_trait(peer_id, &"ptsd"):
+			drain_mult *= 2.0
+		if TraitSystem.has_trait(peer_id, &"nyctophobia"):
+			# Darkness drain handled separately in SanitySystem
+			pass
+	
+	amount *= drain_mult
+	
 	sanity = clampf(sanity - amount, 0.0, 100.0)
 	EventBus.sanity_damaged.emit(peer_id, amount, source)
 	EventBus.sanity_changed.emit(peer_id, sanity)
+
+
+## Checks if player has a specific trait (host only).
+func has_trait(trait_id: StringName) -> bool:
+	if not multiplayer.is_server() or TraitSystem == null:
+		return false
+	return TraitSystem.has_trait(peer_id, trait_id)
+
+
+## Applies a trait to this player (host only).
+func apply_trait(trait_id: StringName, source_event: StringName = &"") -> bool:
+	if not multiplayer.is_server() or TraitSystem == null:
+		return false
+	return TraitSystem.apply(peer_id, trait_id, source_event)
+
+
+## Removes a trait from this player (host only).
+func remove_trait(trait_id: StringName) -> bool:
+	if not multiplayer.is_server() or TraitSystem == null:
+		return false
+	return TraitSystem.remove(peer_id, trait_id)
+
+
+## Gets all active traits for this player.
+func get_active_traits() -> Dictionary:
+	if not multiplayer.is_server() or TraitSystem == null:
+		return {}
+	return TraitSystem.get_player_traits(peer_id)
+
+
+## Handles trait hooks (called by various systems).
+## Returns true if the hook was handled.
+func handle_trait_hook(hook_name: StringName) -> bool:
+	if not multiplayer.is_server() or TraitSystem == null:
+		return false
+	
+	match hook_name:
+		&"phantom_ringing":
+			if has_trait(&"phantom_ringing"):
+				# Trigger phantom ringing hallucination
+				EventBus.hallucination.emit(&"phantom_ring", global_position)
+				return true
+		&"flashback_audio":
+			if has_trait(&"ptsd"):
+				# Trigger PTSD flashback hallucination
+				EventBus.hallucination.emit(&"flashback", global_position)
+				return true
+		&"gunfire_sanity_drain":
+			if has_trait(&"ptsd"):
+				# Gunfire drains sanity 2x - handled in apply_sanity_damage
+				return true
+		&"darkness_drain":
+			if has_trait(&"nyctophobia"):
+				# Darkness drains sanity 2x
+				return true
+		&"community_hero_intel":
+			if has_trait(&"community_hero"):
+				# Callers give +1 free intel line
+				return true
+		&"marked_by_dusk":
+			if has_trait(&"marked_by_dusk"):
+				# Cult ambushes prioritize this officer
+				return true
+		&"flashback":
+			if has_trait(&"concussion"):
+				# Periodic blur/UI flicker
+				return true
+		&"periodic_blur":
+			if has_trait(&"concussion"):
+				return true
+		&"ui_flicker":
+			if has_trait(&"concussion"):
+				return true
+		&"flashback_visual":
+			if has_trait(&"ptsd"):
+				return true
+		&"scope_sway":
+			if has_trait(&"fractured_hand"):
+				return true
+		&"reload_speed":
+			if has_trait(&"fractured_hand"):
+				return true
+		&"move_speed":
+			if has_trait(&"limping"):
+				return true
+		&"noise":
+			if has_trait(&"limping"):
+				return true
+		&"max_health":
+			if has_trait(&"scarred"):
+				return true
+	
+	return false
 
 
 ## Host: make the owner switch their flashlight off (Drowned Woman kills lights).

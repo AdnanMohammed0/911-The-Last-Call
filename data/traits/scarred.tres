@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TraitData" format=3]
+
+[ext_resource type="Script" path="res://data/traits/trait_data.gd" id="1_td"]
+
+[resource]
+script = ExtResource("1_td")
+id = &"scarred"
+display_name = "Scarred"
+category = 0
+duration_shifts = -1
+stat_modifiers = {
+  "&max_health": -10
+}
+cure_cost = 0
+hooks = []
+description = "Max HP −10 (permanent). Caused by being revived 3× in one shift. Cannot be cured."

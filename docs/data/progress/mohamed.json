@@ -56,6 +56,11 @@
       "status": "done",
       "updated_at": "2026-09-18",
       "note": "EMF Reader, banish ritual, remains-burial objective: EMFReader (EMF detection 0-5, Medic primary, 50% accuracy others), SaltCanister (30s barrier, anomaly retreat), SpectralToneEmitter (8s channel, banishes anomalies), RemainsInteraction (4s dig, sets lake_house_cleared flag), ShovelTool (4s dig, triggers on_bones_buried), GearItems for all (EMF Reader, Salt Canister, Spectral Tone Emitter, Trauma Kit, Sedatives, Ballistic Shield, Battering Ram, Recon Drone, Tear Gas, Service Pistol, Pump Shotgun, Patrol Rifle, Shovel). Drowned Woman anomaly integration with on_reverse_tone_complete, on_salt_line, on_salt_thrown, on_bones_buried. GUT tests written (14 tests)."
+    },
+    "P4-03": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Trait system: TraitData resource + TraitSystem autoload with 10 traits (Limping, Fractured Hand, Concussion, Scarred, PTSD, Phantom Ringing, Nyctophobia, Hardened, Community Hero, Marked by Dusk). Stat modifiers (move_speed, noise, sanity_drain_mult, max_health), hooks (phantom_ringing, flashback_audio, etc.), duration in shifts, cure costs. Player integration with apply/remove/has_trait, hook handling (phantom_ringing, flashback_audio, gunfire_sanity_drain, etc.). GUT tests written (15 tests)."
     }
   },
   "log": [
@@ -339,6 +344,31 @@
         "data/loadout/gear/patrol_rifle.tres",
         "data/loadout/gear/shovel.tres",
         "tests/test_anomaly_tools.gd",
+        "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P4-03"
+      ],
+      "summary": "P4-03 Trait system: TraitData resource + TraitSystem autoload with 10 traits (Limping, Fractured Hand, Concussion, Scarred, PTSD, Phantom Ringing, Nyctophobia, Hardened, Community Hero, Marked by Dusk). Stat modifiers (move_speed, noise, sanity_drain_mult, max_health), hooks (phantom_ringing, flashback_audio, etc.), duration in shifts, cure costs. Player integration with apply/remove/has_trait, hook handling (phantom_ringing, flashback_audio, gunfire_sanity_drain, etc.). GUT tests written (15 tests).",
+      "files": [
+        "data/traits/trait_data.gd",
+        "autoload/trait_system.gd",
+        "data/traits/limping.tres",
+        "data/traits/fractured_hand.tres",
+        "data/traits/concussion.tres",
+        "data/traits/scarred.tres",
+        "data/traits/ptsd.tres",
+        "data/traits/phantom_ringing.tres",
+        "data/traits/nyctophobia.tres",
+        "data/traits/hardened.tres",
+        "data/traits/community_hero.tres",
+        "data/traits/marked_by_dusk.tres",
+        "scenes/shared/player/player.gd",
+        "project.godot",
+        "tests/test_trait_system.gd",
         "docs/data/progress/mohamed.json"
       ]
     }

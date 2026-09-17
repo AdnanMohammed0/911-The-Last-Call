@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TraitData" format=3]
+
+[ext_resource type="Script" path="res://data/traits/trait_data.gd" id="1_td"]
+
+[resource]
+script = ExtResource("1_td")
+id = &"ptsd"
+display_name = "PTSD"
+category = 1
+duration_shifts = 3
+stat_modifiers = {
+  "&sanity_drain_mult": 2.0
+}
+cure_cost = 800
+hooks = ["flashback_audio", "gunfire_sanity_drain"]
+description = "Gunfire drains sanity 2×, flashbacks on trigger audio. Caused by sanity hit 0. Cured by counseling ($800, 3 shifts)."

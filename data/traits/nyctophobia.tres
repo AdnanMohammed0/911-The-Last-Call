@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TraitData" format=3]
+
+[ext_resource type="Script" path="res://data/traits/trait_data.gd" id="1_td"]
+
+[resource]
+script = ExtResource("1_td")
+id = &"nyctophobia"
+display_name = "Nyctophobia"
+category = 1
+duration_shifts = 2
+stat_modifiers = {
+  "&darkness_drain_mult": 2.0
+}
+cure_cost = 800
+hooks = ["darkness_drain"]
+description = "Darkness sanity drain 2×. Triggered by ≥ 60s in total darkness while Panicked. Cured by counseling ($800, 2 shifts)."

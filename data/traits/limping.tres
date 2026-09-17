@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TraitData" format=3]
+
+[ext_resource type="Script" path="res://data/traits/trait_data.gd" id="1_td"]
+
+[resource]
+script = ExtResource("1_td")
+id = &"limping"
+display_name = "Limping"
+category = 0
+duration_shifts = 2
+stat_modifiers = {
+  "&move_speed": -0.3,
+  "&noise": 0.4
+}
+cure_cost = 0
+hooks = []
+description = "Speed −30%, loud drag footstep (+40% noise). Caused by leg hit ≥ 30 dmg. Cured by medical leave (sit out 1 mission)."

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TraitData" format=3]
+
+[ext_resource type="Script" path="res://data/traits/trait_data.gd" id="1_td"]
+
+[resource]
+script = ExtResource("1_td")
+id = &"community_hero"
+display_name = "Community Hero"
+category = 2
+duration_shifts = -1
+stat_modifiers = {}
+cure_cost = 0
+hooks = ["community_hero_intel"]
+description = "Callers give +1 free intel line. Gained by saving 5 civilians. Active while Public Trust ≥ 60."

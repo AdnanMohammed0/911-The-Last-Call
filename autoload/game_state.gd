@@ -26,7 +26,8 @@ func is_phase(p: StringName) -> bool:
 
 
 func phase_name(p: Phase) -> StringName:
-	return StringName(String(Phase.keys()[p]).to_lower())
+	var keys: PackedStringArray = Phase.keys()
+	return StringName(keys[p].to_lower())
 
 
 ## Host calls `change_phase.rpc(...)`; every peer applies it locally.

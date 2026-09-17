@@ -97,7 +97,7 @@ func _test_locked_door_blocks_open() -> void:
 	door.is_locked = true
 	var player_pos := Vector3(0, 0, -1.5)
 
-	var signal_received := [false]
+	var signal_received: Array[bool] = [false]
 	door.locked_interacted.connect(func(_peer: int) -> void: signal_received[0] = true)
 
 	door.interact(Door.DoorAction.TOGGLE_OPEN, player_pos)
@@ -114,7 +114,7 @@ func _test_unlock_door() -> void:
 	print("Test: Unlocking allows door to open")
 	var door := _create_door()
 	door.is_locked = true
-	var signal_received := [false]
+	var signal_received: Array[bool] = [false]
 	door.door_unlocked.connect(func(_peer: int) -> void: signal_received[0] = true)
 
 	door.interact(Door.DoorAction.UNLOCK, Vector3.ZERO)
@@ -131,7 +131,7 @@ func _test_kick_breaches_locked_door() -> void:
 	print("Test: Kick breaches door and breaks lock")
 	var door := _create_door()
 	door.is_locked = true
-	var signal_received := [false]
+	var signal_received: Array[bool] = [false]
 	door.door_kicked.connect(func(_peer: int, was_locked: bool) -> void:
 		if was_locked:
 			signal_received[0] = true

@@ -56,7 +56,9 @@ func get_local_peer_id() -> int:
 
 
 func get_player_name(peer_id: int) -> String:
-	return String(roster.get(peer_id, {}).get("name", "Player %d" % peer_id))
+	var entry: Dictionary = roster.get(peer_id, {})
+	var raw: Variant = entry.get("name", "Player %d" % peer_id)
+	return str(raw)
 
 
 # --- Host / join / leave ----------------------------------------------------
@@ -166,7 +168,9 @@ func _sync_roster(new_roster: Dictionary) -> void:
 	var previous: Dictionary[int, Dictionary] = roster.duplicate()
 	roster.clear()
 	for key: Variant in new_roster:
-		roster[int(key)] = new_roster[key] as Dictionary
+		var pid: int = key
+		var entry: Dictionary = new_roster[key]
+		roster[pid] = entry
 	for peer_id: int in roster:
 		if not previous.has(peer_id) and peer_id != multiplayer.get_unique_id():
 			peer_joined.emit(peer_id, get_player_name(peer_id))

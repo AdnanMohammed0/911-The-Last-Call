@@ -60,10 +60,14 @@ func _find_target() -> Interactable:
 	var hit: Dictionary = _player.get_world_3d().direct_space_state.intersect_ray(query)
 	if hit.is_empty():
 		return null
-	var candidate: Interactable = hit["collider"] as Interactable
+	var candidate_v: Variant = hit["collider"]
+	if not (candidate_v is Interactable):
+		return null
+	var candidate: Interactable = candidate_v
 	if candidate == null or not candidate.is_available_to(multiplayer.get_unique_id()):
 		return null
-	if origin.distance_to(hit["position"] as Vector3) > candidate.max_distance:
+	var hit_pos: Vector3 = hit["position"]
+	if origin.distance_to(hit_pos) > candidate.max_distance:
 		return null
 	return candidate
 

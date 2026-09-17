@@ -248,7 +248,8 @@ func _lean_clearance(side: float) -> float:
 	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
 	if hit.is_empty():
 		return 1.0
-	var free_distance: float = origin.distance_to(hit["position"] as Vector3) - lean_wall_margin
+	var hit_pos: Vector3 = hit["position"]
+	var free_distance: float = origin.distance_to(hit_pos) - lean_wall_margin
 	return clampf(free_distance / lean_distance, 0.0, 1.0)
 
 

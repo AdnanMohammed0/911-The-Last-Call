@@ -86,3 +86,8 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 text = "Offline sandbox (movement + interaction)"
+
+[node name="DoorSandboxButton" type="Button" parent="Center/Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Door test sandbox (P1-14)"

@@ -4,6 +4,7 @@
 extends Control
 
 const SANDBOX_SCENE: String = "res://scenes/shared/player/player_sandbox.tscn"
+const DOOR_SANDBOX_SCENE: String = "res://scenes/shared/door/door_sandbox.tscn"
 
 @onready var _name_edit: LineEdit = %NameEdit
 @onready var _address_edit: LineEdit = %AddressEdit
@@ -11,6 +12,7 @@ const SANDBOX_SCENE: String = "res://scenes/shared/player/player_sandbox.tscn"
 @onready var _join_button: Button = %JoinButton
 @onready var _leave_button: Button = %LeaveButton
 @onready var _sandbox_button: Button = %SandboxButton
+@onready var _door_sandbox_button: Button = %DoorSandboxButton
 @onready var _status_label: Label = %StatusLabel
 @onready var _roster_list: ItemList = %RosterList
 
@@ -21,6 +23,7 @@ func _ready() -> void:
 	_join_button.pressed.connect(_on_join_pressed)
 	_leave_button.pressed.connect(NetManager.leave_game)
 	_sandbox_button.pressed.connect(_on_sandbox_pressed)
+	_door_sandbox_button.pressed.connect(_on_door_sandbox_pressed)
 	NetManager.state_changed.connect(_on_state_changed)
 	NetManager.connection_failed.connect(_on_connection_failed)
 	NetManager.session_ended.connect(_on_session_ended)
@@ -54,6 +57,10 @@ func _on_join_pressed() -> void:
 
 func _on_sandbox_pressed() -> void:
 	get_tree().change_scene_to_file(SANDBOX_SCENE)
+
+
+func _on_door_sandbox_pressed() -> void:
+	get_tree().change_scene_to_file(DOOR_SANDBOX_SCENE)
 
 
 func _on_state_changed(new_state: NetManager.State) -> void:

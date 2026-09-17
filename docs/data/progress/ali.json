@@ -173,6 +173,16 @@
     "scenes/shared/player/player.gd",
     "scenes/shared/player/player.tscn"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-14"
+   ],
+   "summary": "fix(audio): continuous looping footstep audio with smooth fade-in and fade-out on stop",
+   "files": [
+    "scenes/shared/player/player.gd"
+   ]
   }
  ]
 }

@@ -59,13 +59,14 @@ signal interaction_prompt_changed(prompt: String)
 @export var interaction_reach: float = 2.6
 
 @export_group("Audio / Footsteps")
-## Single footstep audio stream (drag & drop here in Inspector).
+## Walking / footstep audio stream (drag & drop here in Inspector).
 @export var footstep_sound: AudioStream
 ## Optional array of footstep variations; if non-empty, one is chosen at random.
 @export var footstep_sounds: Array[AudioStream] = []
-@export var step_interval_walk: float = 0.44
-@export var step_interval_sprint: float = 0.28
-@export var step_interval_crouch: float = 0.62
+## Base playback volume in dB.
+@export var footstep_volume_db: float = 0.0
+## How fast footstep sound fades in and out when starting and stopping (higher = faster).
+@export var footstep_fade_speed: float = 8.0
 
 @export var peer_id: int = 1:
 	set(value):
@@ -128,8 +129,6 @@ var _current_door_target: Door = null
 @onready var _audio_listener: AudioListener3D = $Head/Camera3D/AudioListener3D
 @onready var _footstep_player: AudioStreamPlayer3D = $FootstepPlayer
 
-var _step_timer: float = 0.0
-
 
 func _ready() -> void:
 	add_to_group(GROUP)
@@ -141,6 +140,8 @@ func _ready() -> void:
 	_update_name_label()
 	_publish_sync_state()
 	_apply_authority()
+	if _footstep_player != null:
+		_footstep_player.finished.connect(_on_footstep_finished)
 
 
 func _apply_authority() -> void:
@@ -275,12 +276,8 @@ func _update_remote(delta: float) -> void:
 
 	# Remote player footstep sounds
 	var moved: float = Vector2(global_position.x - prev_pos.x, global_position.z - prev_pos.z).length()
-	if moved > 0.01:
-		_step_timer -= delta
-		if _step_timer <= 0.0:
-			var interval: float = step_interval_sprint if is_sprinting else (step_interval_crouch if stance == Stance.CROUCH else step_interval_walk)
-			_step_timer = interval
-			_play_footstep()
+	var remote_moving: bool = (moved > 0.015)
+	_update_footsteps_internal(delta, remote_moving)
 
 
 # --- Flashlight -------------------------------------------------------------
@@ -438,30 +435,42 @@ func _update_interaction() -> void:
 # --- Footstep Audio ---------------------------------------------------------
 
 func _update_footsteps(delta: float) -> void:
-	if not is_on_floor():
-		return
-	var h_speed: float = get_horizontal_speed()
-	if h_speed < 0.4:
-		_step_timer = 0.12
-		return
-
-	_step_timer -= delta
-	if _step_timer <= 0.0:
-		var interval: float = step_interval_sprint if is_sprinting else (step_interval_crouch if stance == Stance.CROUCH else step_interval_walk)
-		_step_timer = interval
-		_play_footstep()
+	var is_moving: bool = is_on_floor() and get_horizontal_speed() > 0.4
+	_update_footsteps_internal(delta, is_moving)
 
 
-func _play_footstep() -> void:
+func _update_footsteps_internal(delta: float, is_moving: bool) -> void:
 	if _footstep_player == null:
 		return
-	var stream: AudioStream = null
-	if not footstep_sounds.is_empty():
-		stream = footstep_sounds.pick_random()
-	elif footstep_sound != null:
-		stream = footstep_sound
 
-	if stream != null:
+	var stream: AudioStream = footstep_sound
+	if stream == null and not footstep_sounds.is_empty():
+		stream = footstep_sounds[0]
+
+	if stream == null:
+		return
+
+	if _footstep_player.stream != stream:
 		_footstep_player.stream = stream
-		_footstep_player.pitch_scale = randf_range(0.93, 1.07)
+
+	if is_moving:
+		if not _footstep_player.playing:
+			_footstep_player.volume_db = -45.0
+			_footstep_player.play()
+
+		var target_pitch: float = 1.3 if is_sprinting else (0.85 if stance == Stance.CROUCH else 1.0)
+		var target_vol: float = (footstep_volume_db - 6.0) if stance == Stance.CROUCH else footstep_volume_db
+
+		_footstep_player.pitch_scale = move_toward(_footstep_player.pitch_scale, target_pitch, 5.0 * delta)
+		_footstep_player.volume_db = move_toward(_footstep_player.volume_db, target_vol, footstep_fade_speed * 30.0 * delta)
+	else:
+		if _footstep_player.playing:
+			_footstep_player.volume_db = move_toward(_footstep_player.volume_db, -60.0, footstep_fade_speed * 35.0 * delta)
+			if _footstep_player.volume_db <= -40.0:
+				_footstep_player.stop()
+
+
+func _on_footstep_finished() -> void:
+	var is_moving: bool = (is_on_floor() and get_horizontal_speed() > 0.4) if is_multiplayer_authority() else true
+	if is_moving and _footstep_player != null and _footstep_player.stream != null:
 		_footstep_player.play()

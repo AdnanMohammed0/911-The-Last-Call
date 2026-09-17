@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://c6fdoor842p1"]
+[gd_scene format=3 uid="uid://c6fdoor842p1"]
 
-[ext_resource type="Script" path="res://scenes/shared/door/door.gd" id="1_door"]
-[ext_resource type="AudioStream" uid="uid://nqhrgh24exu5" path="res://audio/Open_Door.mp3" id="2_open_sound"]
+[ext_resource type="Script" uid="uid://nxpx7h616tfv" path="res://scenes/shared/door/door.gd" id="1_door"]
+[ext_resource type="AudioStream" uid="uid://b17gxrqpj6xmn" path="res://audio/Open_Door.mp3" id="2_open_sound"]
+[ext_resource type="AudioStream" uid="uid://cdw5ollg6fb4m" path="res://audio/Close_Door.mp3" id="3_6sd4n"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_door"]
 properties/0/path = NodePath(".:current_state")
@@ -17,21 +18,12 @@ properties/3/path = NodePath(".:target_angle_deg")
 properties/3/spawn = true
 properties/3/replication_mode = 1
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_post_l"]
+size = Vector3(0.08, 2.1, 0.12)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_frame"]
 albedo_color = Color(0.18, 0.2, 0.24, 1)
 roughness = 0.6
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leaf"]
-albedo_color = Color(0.35, 0.22, 0.14, 1)
-roughness = 0.5
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_handle"]
-albedo_color = Color(0.85, 0.68, 0.28, 1)
-metallic = 0.8
-roughness = 0.25
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_post_l"]
-size = Vector3(0.08, 2.1, 0.12)
 
 [sub_resource type="BoxMesh" id="BoxMesh_post_l"]
 material = SubResource("StandardMaterial3D_frame")
@@ -47,9 +39,18 @@ size = Vector3(1.06, 0.08, 0.12)
 [sub_resource type="BoxShape3D" id="BoxShape3D_leaf"]
 size = Vector3(0.86, 2.06, 0.05)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leaf"]
+albedo_color = Color(0.35, 0.22, 0.14, 1)
+roughness = 0.5
+
 [sub_resource type="BoxMesh" id="BoxMesh_leaf"]
 material = SubResource("StandardMaterial3D_leaf")
 size = Vector3(0.86, 2.06, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_handle"]
+albedo_color = Color(0.85, 0.68, 0.28, 1)
+metallic = 0.8
+roughness = 0.25
 
 [sub_resource type="BoxMesh" id="BoxMesh_handle"]
 material = SubResource("StandardMaterial3D_handle")
@@ -58,64 +59,65 @@ size = Vector3(0.04, 0.12, 0.1)
 [sub_resource type="SphereShape3D" id="SphereShape3D_stun"]
 radius = 2.5
 
-[node name="Door" type="Node3D"]
+[node name="Door" type="Node3D" unique_id=1954091496]
 script = ExtResource("1_door")
 sound_open = ExtResource("2_open_sound")
+sound_close = ExtResource("3_6sd4n")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=2019638041]
 replication_config = SubResource("SceneReplicationConfig_door")
 
-[node name="Frame" type="StaticBody3D" parent="."]
+[node name="Frame" type="StaticBody3D" parent="." unique_id=1191767062]
 
-[node name="PostL_Col" type="CollisionShape3D" parent="Frame"]
+[node name="PostL_Col" type="CollisionShape3D" parent="Frame" unique_id=170347525]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.49, 1.05, 0)
 shape = SubResource("BoxShape3D_post_l")
 
-[node name="PostL_Mesh" type="MeshInstance3D" parent="Frame"]
+[node name="PostL_Mesh" type="MeshInstance3D" parent="Frame" unique_id=1995489549]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.49, 1.05, 0)
 mesh = SubResource("BoxMesh_post_l")
 
-[node name="PostR_Col" type="CollisionShape3D" parent="Frame"]
+[node name="PostR_Col" type="CollisionShape3D" parent="Frame" unique_id=1167040121]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.49, 1.05, 0)
 shape = SubResource("BoxShape3D_post_l")
 
-[node name="PostR_Mesh" type="MeshInstance3D" parent="Frame"]
+[node name="PostR_Mesh" type="MeshInstance3D" parent="Frame" unique_id=2044414480]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.49, 1.05, 0)
 mesh = SubResource("BoxMesh_post_l")
 
-[node name="Lintel_Col" type="CollisionShape3D" parent="Frame"]
+[node name="Lintel_Col" type="CollisionShape3D" parent="Frame" unique_id=1144053808]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.14, 0)
 shape = SubResource("BoxShape3D_lintel")
 
-[node name="Lintel_Mesh" type="MeshInstance3D" parent="Frame"]
+[node name="Lintel_Mesh" type="MeshInstance3D" parent="Frame" unique_id=723731559]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.14, 0)
 mesh = SubResource("BoxMesh_lintel")
 
-[node name="Hinge" type="Node3D" parent="."]
+[node name="Hinge" type="Node3D" parent="." unique_id=1931544442]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.44, 1.05, 0)
 
-[node name="DoorLeaf" type="AnimatableBody3D" parent="Hinge"]
+[node name="DoorLeaf" type="AnimatableBody3D" parent="Hinge" unique_id=1833658524]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0)
 sync_to_physics = false
 
-[node name="LeafCollision" type="CollisionShape3D" parent="Hinge/DoorLeaf"]
+[node name="LeafCollision" type="CollisionShape3D" parent="Hinge/DoorLeaf" unique_id=589227075]
 shape = SubResource("BoxShape3D_leaf")
 
-[node name="LeafMesh" type="MeshInstance3D" parent="Hinge/DoorLeaf"]
+[node name="LeafMesh" type="MeshInstance3D" parent="Hinge/DoorLeaf" unique_id=538118837]
 mesh = SubResource("BoxMesh_leaf")
 
-[node name="HandleMesh" type="MeshInstance3D" parent="Hinge/DoorLeaf"]
+[node name="HandleMesh" type="MeshInstance3D" parent="Hinge/DoorLeaf" unique_id=1113843988]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.36, -0.05, 0)
 mesh = SubResource("BoxMesh_handle")
 
-[node name="StunArea3D" type="Area3D" parent="."]
+[node name="StunArea3D" type="Area3D" parent="." unique_id=1736413331]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0)
 collision_layer = 0
 collision_mask = 3
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StunArea3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StunArea3D" unique_id=1054849907]
 shape = SubResource("SphereShape3D_stun")
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=1016416418]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0)
 max_distance = 15.0

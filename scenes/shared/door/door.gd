@@ -32,9 +32,13 @@ signal door_unlocked(by_peer: int)
 @export_group("Angles & Motion")
 @export var open_angle_deg: float = 90.0
 @export var peek_angle_deg: float = 15.0
-@export var swing_speed: float = 4.0
-@export var kick_speed: float = 16.0
+@export var swing_speed: float = 5.0
+@export var kick_speed: float = 18.0
 @export var stun_radius: float = 2.5
+## If true, the door opens to one fixed side only (realistic architectural stop).
+@export var one_way_swing: bool = true
+## Direction when one_way_swing is true: 1.0 (inwards / clockwise) or -1.0 (outwards).
+@export var fixed_swing_direction: float = 1.0
 
 @export_group("Audio (Optional)")
 @export var sound_open: AudioStream
@@ -79,15 +83,19 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not hinge:
 		return
-	var speed := kick_speed if current_state == DoorState.KICKED else swing_speed
-	var step := deg_to_rad(speed * 45.0 * delta)
-	var current_rad := deg_to_rad(current_angle_deg)
-	var target_rad := deg_to_rad(target_angle_deg)
-
-	if not is_equal_approx(current_rad, target_rad):
-		current_rad = move_toward(current_rad, target_rad, step)
-		current_angle_deg = rad_to_deg(current_rad)
+	if is_equal_approx(current_angle_deg, target_angle_deg):
+		current_angle_deg = target_angle_deg
 		hinge.rotation_degrees.y = current_angle_deg
+		return
+
+	var smooth_rate: float = kick_speed if current_state == DoorState.KICKED else swing_speed
+	var weight: float = 1.0 - exp(-smooth_rate * delta)
+	current_angle_deg = lerpf(current_angle_deg, target_angle_deg, weight)
+
+	if absf(current_angle_deg - target_angle_deg) < 0.05:
+		current_angle_deg = target_angle_deg
+
+	hinge.rotation_degrees.y = current_angle_deg
 
 
 # --- Interaction API --------------------------------------------------------
@@ -189,16 +197,16 @@ func _handle_unlock(peer_id: int) -> void:
 
 # --- Utilities & Motion -----------------------------------------------------
 
-## Calculates swing direction (+1 or -1) so the door swings away from the interacting player.
+## Calculates swing direction (+1 or -1). If one_way_swing is true, always returns fixed_swing_direction.
 func _calculate_swing_direction(player_global_pos: Vector3) -> float:
-	# Local z points backwards in Godot. -basis.z points towards front of the door.
+	if one_way_swing:
+		return fixed_swing_direction
+	# Dynamic two-way swing: away from player's approach vector
 	var door_pos: Vector3 = global_position if is_inside_tree() else position
 	var door_basis: Basis = global_transform.basis if is_inside_tree() else transform.basis
 	var to_player := (player_global_pos - door_pos).normalized()
 	var forward := -door_basis.z
 	var dot := forward.dot(to_player)
-	# If player is in front (dot > 0), swing into back (+1.0)
-	# If player is in back (dot <= 0), swing towards front (-1.0)
 	return 1.0 if dot >= 0.0 else -1.0
 
 

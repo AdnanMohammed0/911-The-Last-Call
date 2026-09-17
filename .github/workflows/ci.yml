@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   test:
-    name: GUT tests (Godot ${{ env.GODOT_VERSION }})
+    name: GUT tests (Godot 4.7.2)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,7 +34,7 @@ jobs:
         run: godot --headless -s res://addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
 
   export:
-    name: Export ${{ matrix.preset }} (Godot ${{ env.GODOT_VERSION }})
+    name: Export ${{ matrix.preset }} (Godot 4.7.2)
     needs: test
     runs-on: ubuntu-latest
     strategy:

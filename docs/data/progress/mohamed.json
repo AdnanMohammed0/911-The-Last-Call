@@ -1,13 +1,18 @@
 {
  "member": "mohamed",
  "updated_at": "2026-09-17",
- "tasks": {
-  "P1-02": {
-   "status": "done",
-   "note": "Git LFS: .gitattributes لـ png/glb/wav/ogg (+jpg/webp/gif/tga/gltf/mp3/mp4/fbx/blend) و git-lfs 3.8.0 مثبت كمستخدم. GUT v9.6.1 كـ addon و plugin مفعّل و .gutconfig.json. static-typing warnings => errors (untyped_declaration + unsafe_*=2). التحقق: headless import نظيف، GUT 4/4، door harness 23/23. صلّحت 11 سطراً بأسلوب typed (as-casts على Variant).",
-   "updated_at": "2026-09-17"
-  }
- },
+"tasks": {
+   "P1-02": {
+    "status": "done",
+    "note": "Git LFS: .gitattributes لـ png/glb/wav/ogg (+jpg/webp/gif/tga/gltf/mp3/mp4/fbx/blend) و git-lfs 3.8.0 مثبت كمستخدم. GUT v9.6.1 كـ addon و plugin مفعّل و .gutconfig.json. static-typing warnings => errors (untyped_declaration + unsafe_*=2). التحقق: headless import نظيف، GUT 4/4، door harness 23/23. صلّحت 11 سطراً بأسلوب typed (as-casts على Variant).",
+    "updated_at": "2026-09-17"
+   },
+   "P1-03": {
+    "status": "progress",
+    "note": "بدأت CI build pipeline: GitHub Action workflow headless export Windows/Linux + GUT tests.",
+    "updated_at": "2026-09-17"
+   }
+  },
  "log": [
   {
    "date": "2026-09-17",
@@ -27,6 +32,16 @@
     "scenes/shared/player/player.gd",
     "scenes/shared/player/player_interactor.gd",
     "tests/test_door.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-03"
+   ],
+   "summary": "بدأت CI build pipeline (GitHub Actions): headless export Windows/Linux + GUT tests.",
+   "files": [
+    ".github/workflows/"
    ]
   },
   {

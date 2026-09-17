@@ -1,6 +1,6 @@
 ## Dispatch CAD terminal (the "computer" in the operations room): live view of the CallDirector for the
 ## local player: call status, caller ID, patience, transcript, reply choices (handset holder), police
-## records, and the verdict / team vote after the call. Built in code so designers only drop it in a level.
+## records, trace mini-game (Tech Operator), and the verdict / team vote after the call.
 ## Opened by DispatchComputer / DispatchPhone interactables; Esc closes it.
 ## Authority: LOCAL (UI) — every action is a request the host validates in CallDirector / VoteManager.
 class_name DispatchTerminal
@@ -12,6 +12,7 @@ const GREEN: Color = Color(0.45, 1.0, 0.6)
 const AMBER: Color = Color(1.0, 0.72, 0.25)
 const RED: Color = Color(1.0, 0.35, 0.3)
 const DIM: Color = Color(0.55, 0.62, 0.6)
+const TECH_BLUE: Color = Color(0.4, 0.7, 1.0)
 const STATE_NAMES: Array[String] = ["IDLE", "RINGING", "CONNECTED", "ASSESSMENT", "COMPLETED", "MISSED"]
 
 ## Emitted when a player asks for a test call from this terminal (DispatchSetup forwards it to the host).
@@ -33,11 +34,13 @@ var _answer_button: Button
 var _hangup_button: Button
 var _handset_button: Button
 var _test_button: Button
+var _trace_button: Button
 
 var _call_id: StringName = &""
 var _last_node_id: StringName = &""
 var _choice_data: Array = []
 var _closed_player_input: Player = null
+var _trace_minigame: TraceMiniGame = null
 
 
 func _ready() -> void:
@@ -138,6 +141,44 @@ func _call_host(method: StringName, args: Array) -> void:
 		CallDirector.callv(method, args)
 	else:
 		CallDirector.callv(&"rpc_id", [1, method] + args)
+
+
+## Opens the trace mini-game for Tech Operator.
+func _open_trace() -> void:
+	if _trace_minigame == null:
+		_trace_minigame = TraceMiniGame.new()
+		_trace_minigame.trace_completed.connect(_on_trace_completed)
+		_trace_minigame.trace_cancelled.connect(_on_trace_cancelled)
+		add_child(_trace_minigame)
+	
+	var call: CallData = CallDirector.active_call
+	if call == null:
+		return
+	
+	# Create trace console with call data
+	var trace_console: TraceConsole = TraceConsole.new()
+	trace_console.true_location = call.true_location
+	trace_console.is_dead_frequency = (call.truth == CallData.Truth.PARANORMAL)
+	
+	_trace_minigame.open(trace_console)
+
+
+func _on_trace_completed(location: Vector2, radius: float, is_dead_freq: bool) -> void:
+	_append("[color=#%s]TRACE COMPLETE — Location: %.0f, %.0f  Radius: %.0fm%s[/color]" % [
+		"ff6b5e" if is_dead_freq else "7dff9a",
+		location.x, location.y, radius,
+		"  [DEAD FREQUENCY — IMPOSSIBLE LOCATION]" if is_dead_freq else ""
+	])
+	
+	# Send trace result to host for assessment phase
+	if multiplayer.is_server():
+		CallDirector.set_trace_result(location, radius, is_dead_freq)
+	else:
+		CallDirector.rpc_id(1, &"set_trace_result", location, radius, is_dead_freq)
+
+
+func _on_trace_cancelled() -> void:
+	_append("[color=#ffb347]Trace cancelled.[/color]")
 
 
 # --- EventBus handlers ----------------------------------------------------------------
@@ -250,6 +291,12 @@ func _refresh() -> void:
 	for child: Node in _verdict_buttons.get_children():
 		(child as Button).disabled = state != CallDirector.CallState.ASSESSMENT
 	_test_button.disabled = state != CallDirector.CallState.IDLE and state != CallDirector.CallState.COMPLETED and state != CallDirector.CallState.MISSED
+	
+	# Trace button for Tech Operator
+	var my_class: StringName = NetManager.get_class_id(me)
+	var is_tech: bool = my_class == &"tech"
+	_trace_button.visible = is_tech and state == CallDirector.CallState.CONNECTED and CallDirector.has_handset(me)
+	
 	_rebuild_choices(state == CallDirector.CallState.CONNECTED and CallDirector.has_handset(me))
 
 
@@ -376,6 +423,18 @@ func _build() -> void:
 	left.add_child(_handset_button)
 	_hangup_button = _button("Hang up", hang_up)
 	left.add_child(_hangup_button)
+	
+	# Trace button (Tech Operator only)
+	_trace_button = _button("TRACE CALL", _open_trace)
+	_trace_button.add_theme_color_override("font_color", TECH_BLUE)
+	var trace_style: StyleBoxFlat = StyleBoxFlat.new()
+	trace_style.bg_color = Color(0.1, 0.15, 0.25)
+	trace_style.border_color = TECH_BLUE
+	trace_style.set_border_width_all(2)
+	_trace_button.add_theme_stylebox_override("normal", trace_style)
+	_trace_button.visible = false
+	left.add_child(_trace_button)
+	
 	left.add_child(HSeparator.new())
 	left.add_child(_label("RECORDS LOOKUP", 14, DIM))
 	_records = RichTextLabel.new()

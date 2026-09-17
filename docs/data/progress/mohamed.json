@@ -23,12 +23,17 @@
    "updated_at": "2026-09-17"
   },
 "P2-06": {
-    "status": "done",
-    "updated_at": "2026-09-18",
-    "note": "Caller patience timer & timer-pressure modifiers implemented: StressProfile, CallData, RecordEntry, MissionData resources + CallDirector autoload with patience timer (180s base), Rapport (+30s once), Wrong Challenge (-60s stacks), Low Trust <40 (-25%), choice patience_delta, low/last_chance warnings, call timeout handling. GUT tests written (18 tests total including 7 new for modifiers). CI runs tests."
-  }
- },
- "log": [
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Caller patience timer & timer-pressure modifiers implemented: StressProfile, CallData, RecordEntry, MissionData resources + CallDirector autoload with patience timer (180s base), Rapport (+30s once), Wrong Challenge (-60s stacks), Low Trust <40 (-25%), choice patience_delta, low/last_chance warnings, call timeout handling. GUT tests written (18 tests total including 7 new for modifiers). CI runs tests."
+    },
+    "P2-10": {
+      "status": "progress",
+      "updated_at": "2026-09-18",
+      "note": "Trace mini-game (3-tower triangulation) for Tech Operator: TraceConsole resource with dial alignment logic (frequency/phase/gain), noise drift, 6-10s per tower lock, radius calculation (1=2km, 2=400m, 3=50m), Dead Frequency impossible locations. TraceMiniGame UI with three interactive dials. Integrated into DispatchTerminal for Tech Operator class. GUT tests written (10 tests)."
+    }
+  },
+  "log": [
   {
    "date": "2026-09-17",
    "tasks": [
@@ -148,6 +153,21 @@
       ],
       "commit": "430256e",
       "auto": true
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P2-10"
+      ],
+      "summary": "P2-10 Trace mini-game (3-tower triangulation) for Tech Operator: TraceConsole resource with dial alignment logic (frequency/phase/gain), noise drift, 6-10s per tower lock, radius calculation (1=2km, 2=400m, 3=50m), Dead Frequency impossible locations. TraceMiniGame UI with three interactive dials. Integrated into DispatchTerminal for Tech Operator class. GUT tests written (10 tests).",
+      "files": [
+        "data/dispatch/tools/trace_console.gd",
+        "ui/dispatch/tools/trace_minigame.gd",
+        "ui/dispatch/dispatch_terminal.gd",
+        "autoload/call_director.gd",
+        "tests/test_trace_minigame.gd",
+        "docs/data/progress/mohamed.json"
+      ]
     }
- ]
+  ]
 }

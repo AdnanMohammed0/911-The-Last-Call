@@ -45,6 +45,11 @@ const LOW_TRUST_PENALTY_MULT: float = 0.75 # -25% patience when Trust < 40
 var _rapport_applied: bool = false
 var _challenge_penalties: int = 0
 
+# --- Trace Mini-game Result (GAMEPLAY_MECHANICS §5.4) ---
+var _trace_result_location: Vector2 = Vector2.ZERO
+var _trace_result_radius: float = 0.0
+var _trace_result_is_dead_freq: bool = false
+
 
 func _ready() -> void:
 	phone_audio_player = AudioStreamPlayer.new()
@@ -403,9 +408,17 @@ func submit_verdict(sender_peer_id: int, call_id: StringName, verdict: StringNam
 		"verdict": verdict,
 		"truth": truth,
 		"submitted_by": sender_peer_id,
+		"trace_location": _trace_result_location,
+		"trace_radius": _trace_result_radius,
+		"trace_dead_freq": _trace_result_is_dead_freq,
 	}
 	
 	_sync_call_classified.rpc(call_id, verdict)
+	
+	# Reset trace result for next call
+	_trace_result_location = Vector2.ZERO
+	_trace_result_radius = 0.0
+	_trace_result_is_dead_freq = false
 	
 	active_call = null
 	active_call_id = &""
@@ -418,6 +431,17 @@ func _sync_call_classified(call_id: StringName, verdict: StringName) -> void:
 	if EventBus != null:
 		EventBus.call_classified.emit(call_id, verdict)
 		EventBus.call_ended.emit(call_id, verdict)
+
+
+## Sets the trace result from the Tech Operator's mini-game.
+## Called from DispatchTerminal on any peer, forwarded to host.
+@rpc("any_peer", "call_remote", "reliable")
+func set_trace_result(location: Vector2, radius: float, is_dead_freq: bool) -> void:
+	if not _is_server():
+		return
+	_trace_result_location = location
+	_trace_result_radius = radius
+	_trace_result_is_dead_freq = is_dead_freq
 
 
 # ==============================================================================
@@ -717,6 +741,9 @@ func get_snapshot() -> Dictionary:
 		"revealed_evidence": dialogue_runner.revealed_evidence,
 		"rapport_applied": _rapport_applied,
 		"challenge_penalties": _challenge_penalties,
+		"trace_result_location": _trace_result_location,
+		"trace_result_radius": _trace_result_radius,
+		"trace_result_is_dead_freq": _trace_result_is_dead_freq,
 	}
 
 
@@ -736,6 +763,12 @@ func apply_snapshot(data: Dictionary) -> void:
 	_rapport_applied = bool(data.get("rapport_applied", false))
 	@warning_ignore("unsafe_call_argument")
 	_challenge_penalties = int(data.get("challenge_penalties", 0))
+	@warning_ignore("unsafe_cast")
+	_trace_result_location = data.get("trace_result_location", Vector2.ZERO)
+	@warning_ignore("unsafe_cast")
+	_trace_result_radius = float(data.get("trace_result_radius", 0.0))
+	@warning_ignore("unsafe_cast")
+	_trace_result_is_dead_freq = bool(data.get("trace_result_is_dead_freq", false))
 	
 	if EventBus != null:
 		EventBus.shift_clock_updated.emit(shift_clock_minutes)
@@ -771,6 +804,9 @@ func reset() -> void:
 	handset_owner_peer_id = 0
 	_rapport_applied = false
 	_challenge_penalties = 0
+	_trace_result_location = Vector2.ZERO
+	_trace_result_radius = 0.0
+	_trace_result_is_dead_freq = false
 	call_queue.clear()
 	call_history.clear()
 	if phone_audio_player != null and phone_audio_player.playing:

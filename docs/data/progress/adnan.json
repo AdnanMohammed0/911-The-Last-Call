@@ -3,8 +3,8 @@
  "updated_at": "2026-09-17",
  "tasks": {
   "P1-01": {
-   "status": "progress",
-   "note": "مشروع Godot 4.7 انشأ بجذر المستودع (project.godot, icon, .gitattributes). باقي هيكل المجلدات و autoload skeletons.",
+   "status": "testing",
+   "note": "هيكل المجلدات حسب ARCHITECTURE §2 + autoloads (EventBus, GameState, NetManager) بـ static typing + مشهد boot مؤقت. يشتغل headless على Godot 4.7.2. ينتظر الدمج على main.",
    "updated_at": "2026-09-17"
   }
  },
@@ -65,6 +65,18 @@
     ".gitattributes",
     ".editorconfig",
     ".gitignore"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-01"
+   ],
+   "summary": "هيكل مجلدات المشروع، autoload skeletons (EventBus, GameState, NetManager) مسجلة بـ project.godot، ومشهد main_menu مؤقت كـ main scene.",
+   "files": [
+    "autoload/",
+    "scenes/boot/",
+    "project.godot"
    ]
   }
  ]

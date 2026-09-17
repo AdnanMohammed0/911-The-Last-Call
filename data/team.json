@@ -1,0 +1,41 @@
+{
+  "repo": "AdnanMohammed0/911-The-Last-Call",
+  "members": [
+    {
+      "id": "adnan",
+      "name": "Adnan",
+      "github": "AdnanMohammed0",
+      "git_emails": ["70779885+AdnanMohammed0@users.noreply.github.com"],
+      "git_names": ["Adnan M.", "Adnan"],
+      "role": "المبرمج الرئيسي — الشبكات والأنظمة الأساسية والنشر",
+      "role_en": "Lead Programmer · Networking, Core Systems & Release",
+      "color": "#f59e0b",
+      "focus": ["NET", "GAME"],
+      "prompt_file": "prompts/adnan.md"
+    },
+    {
+      "id": "ali",
+      "name": "Ali Imad",
+      "github": "Ali-Imad-Dev",
+      "git_emails": ["aliemadnajm.iq@gmail.com"],
+      "git_names": ["Ali Imad"],
+      "role": "مبرمج اللعب والذكاء الاصطناعي — القتال، الأعداء، الكيانات، العواقب",
+      "role_en": "Gameplay & AI Programmer · Combat, Hostiles, Anomalies, Consequences",
+      "color": "#06b6d4",
+      "focus": ["GAME", "AI"],
+      "prompt_file": "prompts/ali.md"
+    },
+    {
+      "id": "mohamed",
+      "name": "Mohamed",
+      "github": "MohamedFSD",
+      "git_emails": [],
+      "git_names": ["MohamedFSD", "Mohamed"],
+      "role": "الواجهات والصوت والفن — تجربة غرفة العمليات والخرائط",
+      "role_en": "UI/UX, Audio & Art · Dispatch Experience & Maps",
+      "color": "#a78bfa",
+      "focus": ["UI", "AUDIO", "ART"],
+      "prompt_file": "prompts/mohamed.md"
+    }
+  ]
+}

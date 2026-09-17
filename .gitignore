@@ -16,4 +16,9 @@ exports/
 Thumbs.db
 .vscode/
 .idea/
-.claude/
+.claude/*
+!.claude/settings.json
+
+# Python
+__pycache__/
+*.pyc

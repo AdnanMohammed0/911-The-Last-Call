@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "PY=python; python3 -c '' 2>/dev/null && PY=python3; $PY \"$CLAUDE_PROJECT_DIR/scripts/hooks/stop_check.py\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

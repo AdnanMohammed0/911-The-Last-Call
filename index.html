@@ -1,845 +1,460 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>911: The Last Call — Dev Dispatch</title>
-<meta name="description" content="Development progress dashboard for 911: The Last Call (Godot 4 co-op dispatch / tactical horror).">
+<title>911: The Last Call — غرفة العمليات</title>
+<meta name="description" content="911: The Last Call: لعبة رعب تكتيكي تعاونية (2-4 لاعبين) على Godot 4. القصة، الأفكار، وتقدم الفريق مباشرة.">
+<meta name="theme-color" content="#0d1117">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚨</text></svg>">
-<style>
-:root {
-  --bg: #0d1117;
-  --bg-2: #111722;
-  --panel: #161b22;
-  --panel-2: #1c2330;
-  --line: #2a3342;
-  --line-soft: #202836;
-  --text: #e6edf3;
-  --muted: #8b98a9;
-  --faint: #5d6878;
-  --amber: #f59e0b;
-  --amber-dim: rgba(245, 158, 11, .14);
-  --cyan: #06b6d4;
-  --cyan-dim: rgba(6, 182, 212, .14);
-  --red: #ef4444;
-  --green: #22c55e;
-  --violet: #a78bfa;
-
-  --cat-NET: #06b6d4;
-  --cat-GAME: #f59e0b;
-  --cat-AUDIO: #a78bfa;
-  --cat-AI: #ef4444;
-  --cat-UI: #22c55e;
-  --cat-ART: #f472b6;
-
-  --radius: 10px;
-  --mono: ui-monospace, "Cascadia Mono", "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
-  --sans: "Inter", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
-}
-
-*, *::before, *::after { box-sizing: border-box; }
-html { color-scheme: dark; }
-body {
-  margin: 0;
-  background:
-    radial-gradient(1200px 600px at 85% -10%, rgba(6,182,212,.08), transparent 60%),
-    radial-gradient(900px 500px at -10% 110%, rgba(245,158,11,.06), transparent 60%),
-    var(--bg);
-  color: var(--text);
-  font: 14px/1.5 var(--sans);
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* CRT scanlines + vignette */
-body::before, body::after {
-  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100;
-}
-body::before {
-  background: repeating-linear-gradient(to bottom, rgba(255,255,255,.022) 0 1px, transparent 1px 3px);
-  mix-blend-mode: overlay;
-}
-body::after {
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.45) 100%);
-}
-@media (prefers-reduced-motion: no-preference) {
-  body::before { animation: flicker 6s infinite steps(1); }
-  @keyframes flicker { 0%, 100% { opacity: 1; } 47% { opacity: .75; } 48% { opacity: 1; } }
-}
-
-button, input, select { font: inherit; color: inherit; }
-button { cursor: pointer; }
-:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-
-.wrap { max-width: 1440px; margin: 0 auto; padding: 20px 24px 64px; }
-
-/* ---------- Header ---------- */
-.topbar {
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--radius);
-  background: linear-gradient(180deg, var(--panel), var(--bg-2));
-}
-.brand { display: flex; align-items: center; gap: 12px; margin-right: auto; min-width: 0; }
-.siren {
-  width: 12px; height: 12px; border-radius: 50%; background: var(--red); flex: none;
-  box-shadow: 0 0 10px var(--red);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .siren { animation: siren 1.6s infinite; }
-  @keyframes siren {
-    0%, 45% { background: var(--red); box-shadow: 0 0 12px var(--red); }
-    50%, 95% { background: #3b82f6; box-shadow: 0 0 12px #3b82f6; }
-  }
-}
-.brand h1 { margin: 0; font: 700 18px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
-.brand h1 span { color: var(--amber); }
-.brand small { display: block; color: var(--muted); font: 12px/1.3 var(--mono); letter-spacing: .04em; }
-.clock { font: 600 13px var(--mono); color: var(--cyan); letter-spacing: .08em; white-space: nowrap; }
-.clock b { color: var(--green); font-weight: 600; }
-
-.btn {
-  border: 1px solid var(--line); background: var(--panel-2); border-radius: 8px;
-  padding: 7px 12px; font-size: 13px; transition: border-color .15s, background .15s;
-}
-.btn:hover { border-color: var(--cyan); background: #1f2937; }
-.btn.amber { border-color: rgba(245,158,11,.5); color: var(--amber); }
-.btn.amber:hover { background: var(--amber-dim); }
-.btn.danger:hover { border-color: var(--red); color: var(--red); }
-.actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
-/* ---------- Section chrome ---------- */
-section { margin-top: 20px; }
-.section-head { display: flex; align-items: baseline; gap: 12px; margin: 0 0 10px; flex-wrap: wrap; }
-.section-head h2 {
-  margin: 0; font: 600 12px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--amber);
-}
-.section-head h2::before { content: "▍"; color: var(--cyan); margin-right: 4px; }
-.section-head p { margin: 0; color: var(--muted); font-size: 12px; }
-
-.panel { border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius); }
-
-/* ---------- Overview ---------- */
-.overview { display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); gap: 12px; }
-.stat { padding: 16px 18px; }
-.stat .label { color: var(--muted); font: 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
-.stat .value { font: 700 30px/1.15 var(--mono); margin-top: 6px; font-variant-numeric: tabular-nums; }
-.stat .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
-.stat.hero .value { color: var(--amber); text-shadow: 0 0 18px rgba(245,158,11,.35); }
-.bar { height: 10px; background: #0b0f15; border: 1px solid var(--line-soft); border-radius: 99px; overflow: hidden; margin-top: 12px; }
-.bar > i {
-  display: block; height: 100%; width: 0; border-radius: 99px;
-  background: linear-gradient(90deg, var(--cyan), var(--amber));
-  box-shadow: 0 0 12px rgba(6,182,212,.5);
-  transition: width .5s cubic-bezier(.2,.8,.2,1);
-}
-.bar.thin { height: 6px; margin-top: 8px; }
-.status-split { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; font: 12px var(--mono); color: var(--muted); }
-.status-split span b { color: var(--text); font-weight: 600; }
-.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
-
-.cat-bars { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
-.cat-bar { padding: 10px 12px; }
-.cat-bar .row { display: flex; justify-content: space-between; font: 12px var(--mono); }
-.cat-bar .row span:last-child { color: var(--muted); }
-.cat-bar .bar > i { background: var(--c); box-shadow: 0 0 10px var(--c); }
-
-/* ---------- Filters ---------- */
-.filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding: 10px 12px; }
-.chip {
-  border: 1px solid var(--line); background: transparent; border-radius: 99px; padding: 5px 12px;
-  font: 12px var(--mono); letter-spacing: .04em; color: var(--muted);
-}
-.chip[aria-pressed="true"] { color: var(--bg); background: var(--c, var(--cyan)); border-color: var(--c, var(--cyan)); font-weight: 700; }
-.chip:not([aria-pressed="true"]):hover { border-color: var(--c, var(--cyan)); color: var(--text); }
-.search {
-  margin-left: auto; min-width: 220px; flex: 0 1 280px;
-  background: #0b0f15; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 13px;
-}
-.search::placeholder { color: var(--faint); }
-select.phase-select {
-  background: #0b0f15; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; font-size: 13px;
-}
-
-/* ---------- Kanban ---------- */
-.board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.col { display: flex; flex-direction: column; min-height: 260px; max-height: 70vh; }
-.col-head {
-  display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line);
-  font: 600 12px var(--mono); letter-spacing: .12em; text-transform: uppercase;
-}
-.col-head .count { margin-left: auto; color: var(--muted); font-weight: 500; }
-.col-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex: 1; transition: background .15s; border-radius: 0 0 var(--radius) var(--radius); }
-.col-body.drop { background: var(--cyan-dim); outline: 1px dashed var(--cyan); outline-offset: -6px; }
-.col-body::-webkit-scrollbar { width: 8px; }
-.col-body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
-.empty { color: var(--faint); font: 12px var(--mono); text-align: center; padding: 20px 6px; }
-
-.card {
-  position: relative; background: var(--panel-2); border: 1px solid var(--line-soft); border-left: 3px solid var(--c);
-  border-radius: 8px; padding: 9px 10px 8px 11px; cursor: grab; user-select: none;
-  transition: transform .12s, border-color .12s, box-shadow .12s;
-}
-.card:hover { border-color: var(--line); box-shadow: 0 4px 18px rgba(0,0,0,.35); }
-.card.dragging { opacity: .45; transform: scale(.98); cursor: grabbing; }
-.card .meta { display: flex; align-items: center; gap: 6px; font: 11px var(--mono); color: var(--muted); }
-.card .tag { color: var(--c); font-weight: 700; letter-spacing: .06em; }
-.card .title { margin: 4px 0 6px; font-size: 13px; line-height: 1.4; }
-.card .move { display: flex; gap: 4px; justify-content: flex-end; }
-.card .move button {
-  border: 1px solid var(--line); background: transparent; border-radius: 6px; width: 26px; height: 22px;
-  font-size: 12px; line-height: 1; color: var(--muted); padding: 0;
-}
-.card .move button:hover:not(:disabled) { color: var(--cyan); border-color: var(--cyan); }
-.card .move button:disabled { opacity: .3; cursor: default; }
-.card .del { margin-right: auto; }
-.card .del:hover:not(:disabled) { color: var(--red) !important; border-color: var(--red) !important; }
-.card.done .title { color: var(--muted); text-decoration: line-through; text-decoration-color: rgba(139,152,169,.5); }
-
-/* ---------- Milestones ---------- */
-.phases { display: grid; gap: 10px; }
-.phase { overflow: hidden; }
-.phase > summary {
-  list-style: none; cursor: pointer; display: grid; grid-template-columns: auto minmax(0,1fr) 220px auto; gap: 14px;
-  align-items: center; padding: 14px 16px;
-}
-.phase > summary::-webkit-details-marker { display: none; }
-.phase > summary:hover { background: var(--panel-2); }
-.phase .chev { font: 12px var(--mono); color: var(--cyan); transition: transform .2s; }
-.phase[open] .chev { transform: rotate(90deg); }
-.phase .ptitle { font-weight: 600; }
-.phase .ptitle small { display: block; color: var(--muted); font: 12px var(--mono); font-weight: 400; }
-.phase .pct { font: 700 16px var(--mono); color: var(--amber); min-width: 52px; text-align: right; font-variant-numeric: tabular-nums; }
-.phase .bar { margin: 0; }
-.badge { font: 10px var(--mono); letter-spacing: .1em; padding: 2px 6px; border-radius: 4px; border: 1px solid; margin-left: 8px; vertical-align: 2px; }
-.badge.active { color: var(--cyan); border-color: var(--cyan); background: var(--cyan-dim); }
-.badge.done { color: var(--green); border-color: var(--green); }
-.phase-body { border-top: 1px solid var(--line); padding: 6px 16px 14px; }
-.group h3 { margin: 12px 0 6px; font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-.check {
-  display: grid; grid-template-columns: 18px 58px 52px minmax(0,1fr) auto; gap: 10px; align-items: center;
-  padding: 5px 6px; border-radius: 6px; cursor: pointer;
-}
-.check:hover { background: var(--panel-2); }
-.check input { width: 16px; height: 16px; accent-color: var(--amber); margin: 0; cursor: pointer; }
-.check .id { font: 11px var(--mono); color: var(--muted); }
-.check .tag { font: 700 11px var(--mono); color: var(--c); }
-.check .txt { font-size: 13px; }
-.check.is-done .txt { color: var(--muted); text-decoration: line-through; }
-.check .st { font: 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
-.check .st[data-s="progress"] { color: var(--amber); }
-.check .st[data-s="testing"] { color: var(--violet); }
-.check .st[data-s="done"] { color: var(--green); }
-
-/* ---------- Add task ---------- */
-.add-form { display: none; gap: 8px; flex-wrap: wrap; padding: 12px; margin-top: 10px; }
-.add-form.open { display: flex; }
-.add-form input, .add-form select { background: #0b0f15; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font-size: 13px; }
-.add-form input { flex: 1 1 280px; }
-
-.toast {
-  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px); opacity: 0;
-  background: var(--panel-2); border: 1px solid var(--amber); color: var(--amber); padding: 8px 14px; border-radius: 8px;
-  font: 12px var(--mono); transition: .25s; z-index: 200; pointer-events: none;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-footer { margin-top: 28px; color: var(--faint); font: 11px var(--mono); text-align: center; letter-spacing: .06em; }
-
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-
-/* ---------- Responsive ---------- */
-@media (max-width: 1100px) {
-  .overview { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .overview .hero { grid-column: 1 / -1; }
-  .cat-bars { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 680px) {
-  .wrap { padding: 12px 16px 48px; }
-  .overview { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .overview .stat:last-child { grid-column: 1 / -1; }
-  .cat-bars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .board { grid-template-columns: minmax(0, 1fr); }
-  .col { max-height: none; min-height: 0; }
-  .search { margin-left: 0; flex: 1 1 100%; min-width: 0; }
-  .phase > summary { grid-template-columns: auto minmax(0,1fr) auto; }
-  .phase > summary .bar { grid-column: 1 / -1; }
-  .check { grid-template-columns: 18px 50px minmax(0,1fr); }
-  .check .tag, .check .st { display: none; }
-  .clock { order: 3; width: 100%; }
-}
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<div class="wrap">
+<a class="skip" href="#main">تخطَّ إلى المحتوى</a>
 
-  <header class="topbar">
-    <div class="brand">
-      <div class="siren" aria-hidden="true"></div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#home" aria-label="الرئيسية">
+      <span class="siren" aria-hidden="true"></span>
+      <span class="brand-text">
+        <b>911<span>:</span> THE LAST CALL</b>
+        <small>STATION 4 · BLACKVALE COUNTY</small>
+      </span>
+    </a>
+    <nav class="tabs" aria-label="الأقسام">
+      <a href="#home" data-view="home">الرئيسية</a>
+      <a href="#team" data-view="team">الفريق</a>
+      <a href="#board" data-view="board">المهام</a>
+      <a href="#roadmap" data-view="roadmap">خارطة الطريق</a>
+      <a href="#story" data-view="story">القصة</a>
+      <a href="#game" data-view="game">اللعبة</a>
+      <a href="#ideas" data-view="ideas">الأفكار</a>
+      <a href="#prompts" data-view="prompts">البرومبتات</a>
+    </nav>
+    <div class="live" id="liveStatus" title="مصدر البيانات"><i></i><span>جارِ الاتصال…</span></div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ===================== HOME ===================== -->
+  <section class="view" id="view-home" data-title="الرئيسية">
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow mono">INCOMING CALL · 00:00 → 06:00</p>
+        <h1>المكالمة الأخيرة<br><span>قد تكون فخّاً.</span></h1>
+        <p class="lead">لعبة رعب نفسي وتكتيك تعاونية لـ 2 إلى 4 لاعبين. تستلمون بلاغات الطوارئ في مقاطعة معزولة، تكشفون المقالب من الاستغاثات الحقيقية ومن الكمائن، وبعدها تنزلون للميدان. <b>كل قرار يترك أثر على النوبات الجاية.</b></p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#story">اقرأ القصة</a>
+          <a class="btn" href="#team">تقدم الفريق</a>
+          <a class="btn ghost" href="#ideas">+ أضف فكرة</a>
+        </div>
+        <ul class="facts">
+          <li><span>النوع</span>Co-op Tactical Horror</li>
+          <li><span>اللاعبين</span>2 – 4 أونلاين</li>
+          <li><span>المحرك</span>Godot 4 · GDScript</li>
+          <li><span>المنظور</span>First-Person</li>
+        </ul>
+      </div>
+      <div class="panel hero-stats">
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r="52" class="ring-bg"/>
+            <circle cx="60" cy="60" r="52" class="ring-fg" id="ringFg"/>
+          </svg>
+          <div class="ring-label"><b id="ovPct">0%</b><small>إنجاز المشروع</small></div>
+        </div>
+        <div class="mini-stats">
+          <div><b id="ovDone">0</b><small>مكتملة</small></div>
+          <div><b id="ovActive">0</b><small>قيد العمل</small></div>
+          <div><b id="ovTotal">0</b><small>كل المهام</small></div>
+        </div>
+        <div class="phase-now" id="ovPhase"></div>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>الفريق</h2><a class="more" href="#team">التفاصيل ←</a></div>
+    <div class="team-strip" id="teamStrip"></div>
+
+    <div class="grid-2">
       <div>
-        <h1>911: <span>The Last Call</span></h1>
-        <small>STATION 4 · BLACKVALE COUNTY · DEV DISPATCH TERMINAL</small>
+        <div class="section-head"><h2>آخر النشاطات</h2></div>
+        <ol class="panel feed" id="homeFeed"></ol>
       </div>
-    </div>
-    <div class="clock" id="clock" aria-live="off">--:--:--</div>
-    <div class="actions">
-      <button class="btn amber" id="btnAdd" aria-expanded="false" aria-controls="addForm">+ New Task</button>
-      <button class="btn" id="btnExport">Export</button>
-      <button class="btn" id="btnImport">Import</button>
-      <button class="btn danger" id="btnReset">Reset</button>
-      <input type="file" id="importFile" accept="application/json" hidden>
-    </div>
-  </header>
-
-  <form class="panel add-form" id="addForm" autocomplete="off">
-    <label class="sr-only" for="newTitle">Task title</label>
-    <input id="newTitle" placeholder="Task title… e.g. Prototype radio squelch SFX" required maxlength="160">
-    <label class="sr-only" for="newCat">Category</label>
-    <select id="newCat"></select>
-    <label class="sr-only" for="newPhase">Phase</label>
-    <select id="newPhase"></select>
-    <button class="btn amber" type="submit">Add to Backlog</button>
-  </form>
-
-  <!-- Executive overview -->
-  <section aria-labelledby="h-overview">
-    <div class="section-head"><h2 id="h-overview">Executive Overview</h2><p>Live from task statuses · saved in this browser</p></div>
-    <div class="overview">
-      <div class="panel stat hero">
-        <div class="label">Overall Completion</div>
-        <div class="value" id="ovPct">0%</div>
-        <div class="bar" role="progressbar" aria-labelledby="ovPct" aria-valuemin="0" aria-valuemax="100" id="ovBarWrap"><i id="ovBar"></i></div>
-        <div class="status-split" id="ovSplit"></div>
+      <div>
+        <div class="section-head"><h2>المراحل</h2><a class="more" href="#roadmap">خارطة الطريق ←</a></div>
+        <div class="panel phase-mini" id="homePhases"></div>
       </div>
-      <div class="panel stat">
-        <div class="label">Total Tasks</div>
-        <div class="value" id="ovTotal">0</div>
-        <div class="sub" id="ovTotalSub"></div>
-      </div>
-      <div class="panel stat">
-        <div class="label">Active Milestone</div>
-        <div class="value" id="ovMilestone">P1</div>
-        <div class="sub" id="ovMilestoneSub"></div>
-      </div>
-      <div class="panel stat">
-        <div class="label">Milestones Cleared</div>
-        <div class="value" id="ovCleared">0 / 5</div>
-        <div class="sub" id="ovClearedSub">Target: Steam Early Access</div>
-      </div>
-    </div>
-    <div class="cat-bars" id="catBars"></div>
-  </section>
-
-  <!-- Filters -->
-  <section aria-labelledby="h-filters">
-    <div class="section-head"><h2 id="h-filters">Module Filters</h2><p>Applies to the board and milestone tracker</p></div>
-    <div class="panel filters" id="filters" role="toolbar" aria-label="Category filters">
-      <label class="sr-only" for="phaseFilter">Phase filter</label>
-      <select class="phase-select" id="phaseFilter"></select>
-      <label class="sr-only" for="search">Search tasks</label>
-      <input class="search" id="search" type="search" placeholder="Search ID or title…">
     </div>
   </section>
 
-  <!-- Kanban -->
-  <section aria-labelledby="h-board">
-    <div class="section-head"><h2 id="h-board">Operations Board</h2><p>Drag cards between columns, or use ◀ ▶</p></div>
+  <!-- ===================== TEAM ===================== -->
+  <section class="view" id="view-team" data-title="الفريق" hidden>
+    <div class="page-head">
+      <h1>الفريق</h1>
+      <p>كل عضو يملك مجموعة مهام. التقدم يتحدث تلقائياً من <code>data/progress/&lt;id&gt;.json</code> لما الذكاء الاصطناعي يسجل شغل العضو.</p>
+    </div>
+    <div class="members" id="members"></div>
+    <div class="section-head"><h2>المساهمة حسب المرحلة</h2></div>
+    <div class="panel contrib" id="contrib"></div>
+  </section>
+
+  <!-- ===================== BOARD ===================== -->
+  <section class="view" id="view-board" data-title="المهام" hidden>
+    <div class="page-head">
+      <h1>لوحة المهام</h1>
+      <p>اضغط على أي بطاقة حتى تشوف تفاصيلها وتنسخ برومبت جاهز للذكاء الاصطناعي.</p>
+    </div>
+    <div class="panel filters">
+      <div class="chips" id="memberChips" role="group" aria-label="العضو"></div>
+      <div class="chips" id="catChips" role="group" aria-label="القسم"></div>
+      <div class="filter-row">
+        <label class="sr-only" for="phaseSel">المرحلة</label>
+        <select id="phaseSel"></select>
+        <label class="sr-only" for="searchBox">بحث</label>
+        <input id="searchBox" type="search" placeholder="ابحث بالرقم أو العنوان…">
+      </div>
+    </div>
     <div class="board" id="board"></div>
   </section>
 
-  <!-- Milestones -->
-  <section aria-labelledby="h-phases">
-    <div class="section-head"><h2 id="h-phases">Milestone Tracker</h2><p>Checking a task marks it Completed · unchecking returns it to Backlog</p></div>
+  <!-- ===================== ROADMAP ===================== -->
+  <section class="view" id="view-roadmap" data-title="خارطة الطريق" hidden>
+    <div class="page-head">
+      <h1>خارطة الطريق</h1>
+      <p>5 مراحل من النموذج الأولي إلى إطلاق Steam. التفاصيل الكاملة موجودة بـ <a href="docs/PROJECT_ROADMAP.md" data-gh>PROJECT_ROADMAP.md</a>.</p>
+    </div>
     <div class="phases" id="phases"></div>
   </section>
 
-  <footer>911: THE LAST CALL · GODOT 4 · CO-OP DISPATCH / TACTICAL HORROR · SOURCE: docs/PROJECT_ROADMAP.md</footer>
-</div>
+  <!-- ===================== STORY ===================== -->
+  <section class="view prose" id="view-story" data-title="القصة" hidden>
+    <div class="page-head">
+      <h1>القصة والعالم</h1>
+      <p>من وثيقة التصميم (GDD).</p>
+    </div>
+
+    <article class="panel story-block">
+      <p class="eyebrow mono">SETTING</p>
+      <h2>مقاطعة بلاكفيل (Blackvale County)</h2>
+      <p>منطقة ريفية صناعية معزولة، مشهورة بغاباتها الكثيفة ومبانيها القديمة اللي انهجرت بعد ما أفلست شركة التعدين الكبرى بالتسعينات.</p>
+      <p>مؤخراً انضرب مركز الطوارئ الرئيسي بالمقاطعة <b>(Station 4)</b> بفضيحة كبيرة: ثلاث دوريات شرطة اختفت بظروف غامضة بعد ما استجابت لبلاغات ليلية متفرقة، وبعدها انتحر رئيس غرفة العمليات داخل مكتبه بدون ما يترك أي رسالة.</p>
+    </article>
+
+    <div class="acts">
+      <article class="panel act">
+        <p class="eyebrow mono">ACT I</p>
+        <h3>نوبة منتصف الليل</h3>
+        <p>ينطلب فريقكم (2-4 ضباط ومحللين) لتغطية النوبة الليلية من <b>00:00 إلى 06:00</b>. المهمة الرسمية:</p>
+        <ol>
+          <li>ترجعون ثقة السكان وتردون على كل البلاغات.</li>
+          <li>تفصلون المقالب عن الاستغاثات الحقيقية.</li>
+          <li>تنزلون للميدان كدورية تدخل سريع.</li>
+        </ol>
+        <p>بالبداية تمشي النوبة طبيعية: مراهقين سكارى، شكاوى إزعاج، سرقات بسيطة. بعدين تبدأ تجي مكالمات غريبة: جثث تتنفس، صراخ من مبانٍ مهدومة من سنين، ورسائل مشفرة من واحد يدّعي إنه زميلكم المفقود.</p>
+      </article>
+      <article class="panel act">
+        <p class="eyebrow mono">ACT II</p>
+        <h3>ترددات الموت</h3>
+        <p>شبكة الهاتف التناظرية القديمة ما تنقل بس أصوات المتصلين الحقيقيين. تشتغل أيضاً على تردد غامض اسمه <b class="amber">«التردد الميت» (The Dead Frequency)</b>.</p>
+        <p>تنظيم سري محلي اسمه <b class="red">«أبناء الغسق» (Sons of the Dusk)</b>، متعاون ويا كيان خارق مجهول، يستخدم هذا التردد حتى يرسل مكالمات وهمية تقلّد أصوات حقيقية. الهدف:</p>
+        <ul>
+          <li>يستدرجون الشرطة لكمائن حتى يصفّوهم أو يقدّموهم قرابين.</li>
+          <li>يشغلون المركز عن جرائم حقيقية تصير بالطرف الثاني من المقاطعة.</li>
+        </ul>
+        <p>الحد بين الواقع والهلوسة يبدأ ينهار. مكالمة تبين مقلب ممكن تكون آخر استغاثة لمواطن حقيقي، واستغاثة طفل ممكن تكون فخ مفخخ ينتظر تفتحون الباب.</p>
+      </article>
+      <article class="panel act">
+        <p class="eyebrow mono">ACT III</p>
+        <h3>الحصار والنهايات</h3>
+        <p>الساعة <b>05:00</b> صباحاً توصل اللعبة لوحدة من ثلاث نهايات. النهاية تعتمد على خيارات الفريق وعلى منو بقى عايش طول الليل.</p>
+      </article>
+    </div>
+
+    <div class="section-head"><h2>النهايات</h2></div>
+    <div class="endings">
+      <article class="panel ending gold">
+        <p class="eyebrow mono">GOLDEN ENDING</p>
+        <h3>The Whistleblowers</h3>
+        <p class="cond"><b>الشروط:</b> تكشفون كل المكالمات المفخخة، تنقذون أكثر من 80% من الضحايا، وتجمعون الأدلة السرية من الكاميرات والحواسيب.</p>
+        <p><b>النتيجة:</b> الفريق يقتحم الوكر الرئيسي للتنظيم، ينعتقل الرؤوس المدبّرة، والدعم الفيدرالي يوصل مع شروق الشمس.</p>
+      </article>
+      <article class="panel ending siege">
+        <p class="eyebrow mono">SIEGE ENDING</p>
+        <h3>Station Under Siege</h3>
+        <p class="cond"><b>الشروط:</b> تعتقلون قيادي بارز بدون ما تفككون الشبكة، أو تعطّلون كمائنهم وتغضبونهم بدون ما تحمون المركز.</p>
+        <p><b>النتيجة:</b> تنقطع الكهرباء والاتصال عن المركز، وآخر الدقائق تصير بقاء دفاعي عنيف (Horde Survival) داخل غرفة العمليات.</p>
+      </article>
+      <article class="panel ending static">
+        <p class="eyebrow mono">BAD ENDING</p>
+        <h3>Lost in the Static</h3>
+        <p class="cond"><b>الشروط:</b> تفشل تحليلات الصوت، تنزلون على عجل لبلاغ ملغوم، وأغلب الفريق يموت أو يتصاوب.</p>
+        <p><b>النتيجة:</b> ينحاصر الفريق بنفق مهجور أو مصحة مسكونة، وشاشات المركز تتحول لشوشرة بيضاء. تبدأ نوبة جديدة وفريق ثاني يدوّر عليكم.</p>
+      </article>
+    </div>
+
+    <div class="section-head"><h2>مسارات القرار (Story Flags)</h2></div>
+    <div class="grid-2">
+      <article class="panel path">
+        <h3>مسار أ: تجاهل بلاغ حقيقي</h3>
+        <ol class="chain">
+          <li>تصنّفون استغاثة طفل كمقلب</li>
+          <li>تنلقى جثة باليوم الثاني</li>
+          <li>هجوم إعلامي وتحقيق داخلي يسحب سيارات الدعم</li>
+          <li>القاتل يكتسب ثقة ويبدأ يستهدف المركز</li>
+        </ol>
+      </article>
+      <article class="panel path">
+        <h3>مسار ب: اعتقال مشتبه به حياً</h3>
+        <ol class="chain">
+          <li>ما تصفّونه بالاشتباك</li>
+          <li>المفاوض يستجوبه باليوم الثاني</li>
+          <li>ينكشف مخطط كمين قادم</li>
+          <li>بالمقابل: رفاقه يحاولون يقتحمون المركز ليلاً حتى يهرّبوه</li>
+        </ol>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== GAME ===================== -->
+  <section class="view prose" id="view-game" data-title="اللعبة" hidden>
+    <div class="page-head">
+      <h1>معلومات اللعبة</h1>
+      <p>التفاصيل التقنية الكاملة بـ <a href="docs/GAMEPLAY_MECHANICS.md" data-gh>GAMEPLAY_MECHANICS.md</a> و <a href="docs/ARCHITECTURE.md" data-gh>ARCHITECTURE.md</a>.</p>
+    </div>
+
+    <div class="specs">
+      <div class="panel spec"><span>الاسم</span><b>911: The Last Call</b></div>
+      <div class="panel spec"><span>النوع</span><b>رعب تكتيكي / محاكاة طوارئ</b></div>
+      <div class="panel spec"><span>اللاعبين</span><b>2 – 4 (Co-op أونلاين)</b></div>
+      <div class="panel spec"><span>المنظور</span><b>الشخص الأول (FPP)</b></div>
+      <div class="panel spec"><span>المحرك</span><b>Godot 4.x · GDScript</b></div>
+      <div class="panel spec"><span>الأسلوب الفني</span><b>واقعي مظلم · VHS · Bodycam</b></div>
+    </div>
+
+    <div class="section-head"><h2>حلقة اللعب الأساسية</h2></div>
+    <ol class="loop">
+      <li class="panel"><span class="mono">01</span><h3>غرفة العمليات</h3><p>يرن الهاتف، يبدأ حوار متفرع، وتشتغل أدوات الرصد: الكاميرات، كاشف النبض الصوتي، والخريطة.</p></li>
+      <li class="panel"><span class="mono">02</span><h3>التقييم</h3><p>تصنيف البلاغ: مقلب / استغاثة حقيقية / كمين مشتبه / ظاهرة خارقة، أو تجاهله.</p></li>
+      <li class="panel"><span class="mono">03</span><h3>التجهيز والتصويت</h3><p>تختارون العتاد حسب الميزانية (دروع، بنادق، EMF، مطارق اقتحام) وتصوّتون على طريقة الوصول.</p></li>
+      <li class="panel"><span class="mono">04</span><h3>الميدان</h3><p>تركبون الدورية، تقتحمون تكتيكياً، تفاوضون أو تشتبكون، وتأمّنون الهدف.</p></li>
+      <li class="panel"><span class="mono">05</span><h3>التقرير والعواقب</h3><p>ترجعون للمركز، تنسجل النتائج، وآثار القرارات تنتقل للنوبات الجاية.</p></li>
+    </ol>
+
+    <div class="section-head"><h2>الفئات (Player Classes)</h2></div>
+    <div class="classes">
+      <article class="panel class-card" style="--c:#06b6d4">
+        <p class="eyebrow mono">THE TECH OPERATOR</p>
+        <h3>محلل النظم</h3>
+        <p class="role">الدعم المعلوماتي والاختراق</p>
+        <dl>
+          <dt>القوة</dt><dd>يتتبع إشارة المتصل وموقعه بدقة، يخترق كاميرات المراقبة، ويفتح الأبواب الإلكترونية عن بعد.</dd>
+          <dt>الضعف</dt><dd>يتحمل إصابات قليلة جداً، ركضه بطيء، وما يشيل أسلحة ثقيلة.</dd>
+          <dt>العتاد</dt><dd>تابلت اختراق، درون استطلاع صغيرة.</dd>
+        </dl>
+      </article>
+      <article class="panel class-card" style="--c:#f59e0b">
+        <p class="eyebrow mono">THE PROFILER</p>
+        <h3>المفاوض الجنائي</h3>
+        <p class="role">كشف الخداع والتحقيق النفسي</p>
+        <dl>
+          <dt>القوة</dt><dd>محلل نبرة الصوت (VSA)، يكشف الكذب والمقالب، ويقنع الرهائن والمشتبهين بالاستسلام.</dd>
+          <dt>الضعف</dt><dd>يطلق النار ببطء لأنه يتردد، ويتأثر بسرعة بالصدمات والرعب.</dd>
+          <dt>العتاد</dt><dd>مسجل صوتي دقيق، قنابل غاز مسيل للدموع، مكبر صوت للتفاوض.</dd>
+        </dl>
+      </article>
+      <article class="panel class-card" style="--c:#ef4444">
+        <p class="eyebrow mono">THE BREACHER</p>
+        <h3>ضابط الاقتحام</h3>
+        <p class="role">القتال والتأمين الميداني</p>
+        <dl>
+          <dt>القوة</dt><dd>يكسر الأبواب بركلة وحدة، يشيل درع مكافحة شغب، ويتحمل الرصاص والضربات.</dd>
+          <dt>الضعف</dt><dd>خطواته عالية وتكشف الفريق، وما يقدر يفك شيفرات أو يتعامل ويا أجهزة معقدة.</dd>
+          <dt>العتاد</dt><dd>درع باليستي، Shotgun، مطرقة كسر الأبواب.</dd>
+        </dl>
+      </article>
+      <article class="panel class-card" style="--c:#22c55e">
+        <p class="eyebrow mono">THE INVESTIGATOR / MEDIC</p>
+        <h3>المحقق الميداني والمسعف</h3>
+        <p class="role">معالجة الجسد والعقل ومواجهة الخوارق</p>
+        <dl>
+          <dt>القوة</dt><dd>يعالج الزملاء بالميدان، يقلل الذعر والهلوسة، ويرصد الكيانات غير المرئية.</dd>
+          <dt>الضعف</dt><dd>تصويبه سيء جداً لما ينذعر، وأدويته ومعداته تخلص بسرعة.</dd>
+          <dt>العتاد</dt><dd>حقيبة إسعاف متطورة، EMF Reader، مهدئات نفسية.</dd>
+        </dl>
+      </article>
+    </div>
+
+    <div class="section-head"><h2>أثر الفراشة (Butterfly Effect)</h2></div>
+    <div class="butterfly">
+      <article class="panel">
+        <h3><span class="dot" style="background:#ef4444"></span>إصابات جسدية مستمرة</h3>
+        <ul>
+          <li><b>Limping:</b> طلقة بالساق تبقى نوبتين؛ السرعة تقل 30% وخطواته تجذب الأعداء.</li>
+          <li><b>Fractured Hand:</b> يد مكسورة؛ المنظار يهتز والتلقيم يصير أصعب.</li>
+          <li><b>Concussion · Scarred:</b> تشوّش بالرؤية ونقص دائم بالصحة.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3><span class="dot" style="background:#a78bfa"></span>صدمات نفسية</h3>
+        <ul>
+          <li><b>Sanity:</b> الظلام والموت والكيانات تنزّل العقل؛ تبدأ هلوسات، أعداء وهميين، وأصوات بالراديو.</li>
+          <li><b>الذنب:</b> تجاهل الضحايا يخليك تسمع رنين هواتف مو موجودة بالميدان.</li>
+          <li><b>PTSD:</b> ترك زميل يموت؛ ارتعاش اليدين وهلاوس.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3><span class="dot" style="background:#22c55e"></span>مكتسبات تكتيكية</h3>
+        <ul>
+          <li><b>Battle Hardened:</b> تعبر كمين قاتل بدون أضرار؛ رد الفعل أسرع والارتداد أقل بـ 15%.</li>
+          <li><b>Community Hero:</b> تنقذ 5 مدنيين؛ المتصلين يعطونكم معلومات إضافية.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3><span class="dot" style="background:#06b6d4"></span>مؤشرات المقاطعة</h3>
+        <ul>
+          <li><b>ثقة الجمهور (0-100%):</b> اقتحام عنيف على مقلب يخلي المواطنين يرفضون يعطون عناوينهم.</li>
+          <li><b>ميزانية المركز:</b> تخرّب سيارة أو تهدر ذخيرة، فتلعب النوبة الجاية بنص العتاد.</li>
+          <li><b>وعي التنظيم:</b> كل ما تعطّلون كمائنهم، يزيد احتمال حصار المركز.</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="section-head"><h2>السيناريوهات</h2></div>
+    <div class="scenarios">
+      <article class="panel scenario">
+        <p class="eyebrow mono">PRANK → TRAP · 01:20</p>
+        <h3>صرير خلف الجدار</h3>
+        <p class="call">"هناك وحش أسود يخرج من خزانتي ويأكل قطتي، تعالوا بسرعة!"</p>
+        <p><b>إذا تجاهلتوه:</b> بعد 45 دقيقة الجيران يبلغون عن دم ينزل من تحت الباب، والثقة تنزل 20%.</p>
+        <p><b>إذا حللتوا الصوت:</b> الضحكة مسجلة وتتكرر، وبالخلفية أنفاس رجل. هذا كمين احتجاز رهينة، والمراهق بعد ما ينقذ تنلقى مفكرة فيها الكمين الجاي.</p>
+      </article>
+      <article class="panel scenario">
+        <p class="eyebrow mono">PARANORMAL</p>
+        <h3>نداء من خط مقطوع</h3>
+        <p class="call">"الماء بارد جداً… لا أستطيع الخروج من القبو… القفل من الخارج…"</p>
+        <p><b>الحقيقة:</b> الرقم لبيت مهجور غرق قبوه عام 2011 وماتت صاحبته غرقاً.</p>
+        <p><b>بالميدان:</b> الـ EMF يشتغل بقوة والأبواب تنقفل. المسعف يستخدم الملح والترددات العكسية، والفريق يدفن العظام حتى تنكسر اللعنة.</p>
+      </article>
+      <article class="panel scenario">
+        <p class="eyebrow mono">ARMED AMBUSH</p>
+        <h3>شاحنة اللحم</h3>
+        <p class="call">سائق شاحنة معطلة على طريق مهجور يقول إن مسلحين محاوطيه.</p>
+        <p><b>الدليل:</b> نبضه طبيعي ومستقر رغم الصراخ.</p>
+        <p><b>التكتيك:</b> ترسلون الدورية فارغة كطُعم وتمشون من طريق ترابي. العصابة تضرب السيارة بـ RPG، وأنتم تباغتوهم من الخلف وتأسرون القائد.</p>
+      </article>
+      <article class="panel scenario">
+        <p class="eyebrow mono">SWATTING</p>
+        <h3>المقلب الساخر</h3>
+        <p class="call">فتاة تقول إن مسلح يطلق النار داخل شقة سكنية.</p>
+        <p><b>الحقيقة:</b> بث مباشر لصنّاع محتوى يختبرون رد فعل الشرطة.</p>
+        <p><b>الخطر:</b> إذا كسرتوا الباب وأطلقتوا النار بالغلط، تجيكم غرامات ضخمة وضابط ينفصل مؤقتاً.</p>
+      </article>
+      <article class="panel scenario">
+        <p class="eyebrow mono">KILLBOX</p>
+        <h3>كمين المستودع المعزول</h3>
+        <p class="call">حارس يهمس بخوف إن أكو لصوص بمنطقة صناعية.</p>
+        <p><b>الحقيقة:</b> مكالمة مسجلة مسبقاً حتى تستدرج الدورية لكمين فيه متفجرات وقناصة.</p>
+        <p><b>الخطر:</b> تتفجر الدورية وينحاصر الفريق لحد الفجر.</p>
+      </article>
+      <article class="panel scenario">
+        <p class="eyebrow mono">BLACKOUT ENTITY</p>
+        <h3>حادثة المصحة المغلقة</h3>
+        <p class="call">مكالمة من خط أرضي ملغى من 1994 بمصحة مهجورة: فحيح وطرق معدني.</p>
+        <p><b>بالميدان:</b> الكهرباء تنقطع أول ما تدخلون، اللاسلكي يتشوّش، وكيانات ظلية تصطاد بالصوت.</p>
+        <p><b>النجاة:</b> تديرون الضوء والمولدات قبل ما تخلص بطاريات الراديو.</p>
+      </article>
+    </div>
+
+    <div class="section-head"><h2>التقنية (Godot 4 Stack)</h2></div>
+    <div class="panel table-wrap">
+      <table>
+        <thead><tr><th>النظام</th><th>التطبيق بـ Godot 4</th><th>الهدف</th></tr></thead>
+        <tbody>
+          <tr><td>الشبكات</td><td dir="ltr">SceneMultiplayer · ENet / Steam P2P · Host-Authoritative</td><td>تزامن اللاعبين والأسلحة بباندويث قليل</td></tr>
+          <tr><td>الصوت</td><td dir="ltr">Opus VoIP · AudioStreamPlayer3D · Radio/Panic buses</td><td>صوت ثلاثي الأبعاد حسب المسافة + راديو تكتيكي</td></tr>
+          <tr><td>العواقب</td><td dir="ltr">FlagSystem · ConsequenceRule Resources · JSON Save</td><td>حفظ القرارات والإصابات بين الجلسات</td></tr>
+          <tr><td>الذكاء الاصطناعي</td><td dir="ltr">NavigationServer3D · Behavior Trees · FSM</td><td>مسلحين (تطويق، استسلام) وكيانات (مطاردة، اختفاء)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== IDEAS ===================== -->
+  <section class="view" id="view-ideas" data-title="الأفكار" hidden>
+    <div class="page-head">
+      <h1>صندوق الأفكار</h1>
+      <p>أي عضو يكدر يضيف فكرة. الأفكار الجديدة تنحفظ كـ <b>GitHub Issues</b> وتظهر هنا للكل، وتكدرون تصوّتون عليها بـ 👍 على GitHub.</p>
+    </div>
+
+    <form class="panel idea-form" id="ideaForm" autocomplete="off">
+      <h2>فكرة جديدة</h2>
+      <div class="form-grid">
+        <label>صاحب الفكرة<select id="ideaAuthor" required></select></label>
+        <label>النوع<select id="ideaCat" required></select></label>
+        <label class="wide">العنوان<input id="ideaTitle" required maxlength="120" placeholder="مثلاً: مكالمة من طفل داخل صندوق سيارة"></label>
+        <label class="wide">التفاصيل<textarea id="ideaBody" rows="4" required maxlength="3000" placeholder="اشرح الفكرة: شنو يصير، ليش ممتعة، وشلون تأثر على اللعب…"></textarea></label>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" type="submit">نشر على GitHub</button>
+        <button class="btn" type="button" id="ideaCopy">نسخ كبرومبت للـ AI</button>
+        <span class="hint">«نشر» يفتح صفحة Issue جاهزة بـ GitHub، فقط اضغط Submit.</span>
+      </div>
+    </form>
+
+    <div class="panel filters">
+      <div class="chips" id="ideaChips" role="group" aria-label="نوع الفكرة"></div>
+    </div>
+    <div class="ideas" id="ideas"></div>
+  </section>
+
+  <!-- ===================== PROMPTS ===================== -->
+  <section class="view" id="view-prompts" data-title="البرومبتات" hidden>
+    <div class="page-head">
+      <h1>البرومبتات والذكاء الاصطناعي</h1>
+      <p>كل عضو عنده برومبت خاص. الذكاء الاصطناعي يتعرف عليه، يشتغل على مهامه، ويسجل تقدمه تلقائياً، فيظهر هنا بالموقع.</p>
+    </div>
+
+    <ol class="howto">
+      <li class="panel"><b>1</b><h3>افتح المشروع</h3><p>بـ Claude Code أو Cursor. الأداة تقرأ <code>AGENTS.md</code> تلقائياً.</p></li>
+      <li class="panel"><b>2</b><h3>الصق برومبتك</h3><p>الذكاء الاصطناعي يشغّل <code>scripts/whoami.py</code> ويعرف منو أنت من git.</p></li>
+      <li class="panel"><b>3</b><h3>اشتغل</h3><p>يقترح مهمتك الجاية ويتبع الوثائق التقنية.</p></li>
+      <li class="panel"><b>4</b><h3>يسجل ويرفع تلقائياً</h3><p>أول ما يخلص يحدّث <code>data/progress/&lt;id&gt;.json</code> ويسوي commit و push بدون ما تطلب، والموقع يتحدث.</p></li>
+    </ol>
+
+    <div class="panel auto-box">
+      <h2>التسجيل التلقائي: 3 طبقات حماية</h2>
+      <div class="auto-grid">
+        <div><b class="mono">AGENTS.md</b><p>قاعدة إلزامية لأي AI: بعد كل شغل يسجّل التقدم ويرفعه على GitHub من نفسه.</p></div>
+        <div><b class="mono">Stop Hook</b><p>بـ Claude Code: إذا حاول الـ AI ينهي الجلسة وأكو شغل مو مرفوع، يرجع يسجّله ويرفعه.</p></div>
+        <div><b class="mono">GitHub Action</b><p>أي push ما حدّث ملف التقدم ينسجّل تلقائياً باسم صاحبه. اكتب <code>done P1-04</code> برسالة الـ commit حتى تصير المهمة مكتملة.</p></div>
+      </div>
+    </div>
+
+    <div class="prompt-cards" id="promptCards"></div>
+  </section>
+</main>
+
+<footer class="footer">
+  <span class="mono">911: THE LAST CALL</span>
+  <span>·</span>
+  <a id="repoLink" href="https://github.com/AdnanMohammed0/911-The-Last-Call" target="_blank" rel="noopener">GitHub</a>
+  <span>·</span>
+  <span id="dataStamp">—</span>
+</footer>
+
+<dialog class="modal" id="taskModal" aria-labelledby="mTitle">
+  <form method="dialog" class="modal-body">
+    <button class="modal-x" aria-label="إغلاق">✕</button>
+    <div id="mContent"></div>
+  </form>
+</dialog>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script>
-(() => {
-  "use strict";
-
-  /* ================= DATA ================= */
-  const STORAGE_KEY = "911tlc.dashboard.v1";
-
-  const CATEGORIES = {
-    NET:   "Networking",
-    GAME:  "Core Gameplay",
-    AUDIO: "Audio/Voice",
-    AI:    "AI",
-    UI:    "UI/UX",
-    ART:   "3D Art",
-  };
-
-  const COLUMNS = [
-    { id: "backlog",  label: "Backlog",     color: "var(--muted)" },
-    { id: "progress", label: "In Progress", color: "var(--amber)" },
-    { id: "testing",  label: "Testing",     color: "var(--violet)" },
-    { id: "done",     label: "Completed",   color: "var(--green)" },
-  ];
-  const COLUMN_IDS = COLUMNS.map(c => c.id);
-
-  const PHASES = [
-    { id: 1, name: "Core Prototype & Networking",  weeks: "Weeks 1–6",   milestone: "M1 — Four On The Line" },
-    { id: 2, name: "Dispatch & Dialogue Engine",   weeks: "Weeks 7–12",  milestone: "M2 — Is This A Prank?" },
-    { id: 3, name: "Field Gameplay & AI",          weeks: "Weeks 13–22", milestone: "M3 — Vertical Slice" },
-    { id: 4, name: "Consequence Matrix & Polish",  weeks: "Weeks 23–30", milestone: "M4 — Content Complete" },
-    { id: 5, name: "Steam Release",                weeks: "Weeks 31–36", milestone: "M5 — The Last Call" },
-  ];
-
-  // [id, phase, group, category, title] — generated from docs/PROJECT_ROADMAP.md
-  const SEED_TASKS = [
-    ["P1-01", 1, "Project Foundation", "GAME", "Create Godot 4.x project, folder layout, autoload skeletons (EventBus, GameState, NetManager)"],
-    ["P1-02", 1, "Project Foundation", "GAME", "Set up Git LFS, .gitignore, GUT test framework, static-typing warnings as errors"],
-    ["P1-03", 1, "Project Foundation", "GAME", "CI build pipeline (GitHub Actions: headless export Windows/Linux + GUT tests)"],
-    ["P1-04", 1, "Networking", "NET", "NetManager host/join via ENet (port 24911, 4 peers max)"],
-    ["P1-05", 1, "Networking", "NET", "Lobby roster sync, ready-up, class selection RPCs"],
-    ["P1-06", 1, "Networking", "NET", "MultiplayerSpawner for players with class-aware spawn function"],
-    ["P1-07", 1, "Networking", "NET", "MultiplayerSynchronizer for player transform, stance, flashlight"],
-    ["P1-08", 1, "Networking", "NET", "Host-side movement validation & RPC validation helpers"],
-    ["P1-09", 1, "Networking", "NET", "Steam P2P transport via GodotSteam (SteamMultiplayerPeer), lobby invites"],
-    ["P1-10", 1, "Networking", "NET", "Disconnect handling, return-to-menu, reconnect slot reservation"],
-    ["P1-11", 1, "Networking", "NET", "Network debug overlay (RTT, packet loss, bandwidth per channel)"],
-    ["P1-12", 1, "Player Controller", "GAME", "First-person controller (walk, sprint, crouch, lean, stamina)"],
-    ["P1-13", 1, "Player Controller", "GAME", "Interaction system (raycast, prompts, hold-to-interact, networked)"],
-    ["P1-14", 1, "Player Controller", "GAME", "Door system (open, peek, kick, locked) — replicated"],
-    ["P1-15", 1, "Voice Prototype", "AUDIO", "Mic capture → Opus → unreliable channel 2 → AudioStreamGenerator playback"],
-    ["P1-16", 1, "Voice Prototype", "AUDIO", "Proximity attenuation on AudioStreamPlayer3D + push-to-talk / VAD"],
-    ["P1-17", 1, "Voice Prototype", "AUDIO", "Radio channel with bandpass/distortion bus + squelch SFX"],
-    ["P1-18", 1, "Grey-box", "ART", "Grey-box Station 4 operations room + armory + parking lot"],
-    ["P1-19", 1, "Grey-box", "UI", "Main menu, host/join screens, lobby UI with class cards"],
-    ["P2-01", 2, "Data Layer", "GAME", "CallData, StressProfile, RecordEntry resources + validator tool"],
-    ["P2-02", 2, "Data Layer", "GAME", "DialogueGraph / DialogueNode / DialogueChoice resources"],
-    ["P2-03", 2, "Data Layer", "UI", "Editor plugin: visual dialogue graph editor (GraphEdit based)"],
-    ["P2-04", 2, "Call Director", "GAME", "CallDirector (host): shift clock, call queue, ring/answer/missed lifecycle"],
-    ["P2-05", 2, "Call Director", "NET", "Handset token ownership & replicated dialogue state"],
-    ["P2-06", 2, "Call Director", "GAME", "Caller patience timer & timer-pressure modifiers"],
-    ["P2-07", 2, "Dispatch Tools", "UI", "Phone/headset UI with dialogue choices & teammate choice pings"],
-    ["P2-08", 2, "Dispatch Tools", "AUDIO", "Voice Stress Analyzer: live spectrum + authored stress curves, loop detector, background isolate"],
-    ["P2-09", 2, "Dispatch Tools", "UI", "VSA scrub-and-tag mini-game → Case Board evidence"],
-    ["P2-10", 2, "Dispatch Tools", "GAME", "Trace mini-game (3-tower triangulation) for Tech Operator"],
-    ["P2-11", 2, "Dispatch Tools", "UI", "CCTV grid with camera hijack & feed rendering (SubViewports)"],
-    ["P2-12", 2, "Dispatch Tools", "UI", "Records database terminal (criminal records, property history)"],
-    ["P2-13", 2, "Dispatch Tools", "UI", "Case Board (evidence pins, Pattern Link for Investigator)"],
-    ["P2-14", 2, "Assessment & Vote", "NET", "Verdict & approach voting system with timeouts and tie-breakers"],
-    ["P2-15", 2, "Assessment & Vote", "GAME", "Loadout armory with budget, class-locked items, requisition"],
-    ["P2-16", 2, "Content", "AUDIO", "Record/source caller VO for 3 slice calls (Closet Monster, Cut Line, Meat Truck)"],
-    ["P2-17", 2, "Content", "GAME", "Author 5 filler calls (pranks, noise complaints, shoplifting)"],
-    ["P2-18", 2, "Content", "ART", "Operations room art pass v1 (CRT monitors, analog phones, wall map)"],
-    ["P3-01", 3, "Combat", "GAME", "Weapon framework (hitscan, recoil patterns, reload, host-validated fire with lag compensation)"],
-    ["P3-02", 3, "Combat", "GAME", "Health, location damage, downed/revive, bleed-out"],
-    ["P3-03", 3, "Combat", "GAME", "Sanity system + bands + Panic audio bus driver"],
-    ["P3-04", 3, "Combat", "GAME", "Class abilities: shield, kick, ram, drone, megaphone, tear gas, revive, sedative, salt, tone"],
-    ["P3-05", 3, "Combat", "GAME", "Arrest & ROE (surrender, cuffs, excessive-force events)"],
-    ["P3-06", 3, "Combat", "GAME", "Noise event system (footsteps, gunshots, voice loudness)"],
-    ["P3-07", 3, "Hostile AI", "AI", "Behavior tree runtime (selector, sequence, decorators, blackboard) + debugger"],
-    ["P3-08", 3, "Hostile AI", "AI", "Perception: vision cone, flashlight detection, hearing, awareness meter"],
-    ["P3-09", 3, "Hostile AI", "AI", "Cover query system & navmesh baking per mission"],
-    ["P3-10", 3, "Hostile AI", "AI", "Archetypes: Thug, Cultist Gunman, Zealot, Ambush Leader, Hostage Taker"],
-    ["P3-11", 3, "Hostile AI", "AI", "Squad tactics: flank tokens, callouts, morale & surrender"],
-    ["P3-12", 3, "Anomalies", "AI", "Anomaly FSM base + Drowned Woman (dormant→manifest→stalk→hunt→attack→retreat)"],
-    ["P3-13", 3, "Anomalies", "AI", "Tension Director + per-peer hallucinations"],
-    ["P3-14", 3, "Anomalies", "AUDIO", "Dead Frequency radio mimicry (teammate voice replay / reverse)"],
-    ["P3-15", 3, "Anomalies", "GAME", "EMF reader, banish ritual, remains-burial objective"],
-    ["P3-16", 3, "Missions", "ART", "Mission map: Farmhouse (\"Scratching Behind the Wall\")"],
-    ["P3-17", 3, "Missions", "ART", "Mission map: Flooded Lake House (\"Call From a Cut Line\") with water-rise shader"],
-    ["P3-18", 3, "Missions", "ART", "Mission map: Abandoned Highway (\"The Meat Truck\") + decoy cruiser RPG set piece"],
-    ["P3-19", 3, "Missions", "GAME", "Mission flow: patrol drive, arrival, objectives, extraction, mission result"],
-    ["P3-20", 3, "Missions", "UI", "Field HUD: minimal bodycam overlay, radio indicator, sanity vignette, objective ticker"],
-    ["P3-21", 3, "Missions", "ART", "Character models: 4 officer classes + 3 hostile variants (rigged)"],
-    ["P4-01", 4, "Consequences", "GAME", "FlagSystem with events, pending rules, replication, snapshot"],
-    ["P4-02", 4, "Consequences", "GAME", "ConsequenceRule / FlagCondition / FlagEffect resources + authoring of slice rules"],
-    ["P4-03", 4, "Consequences", "GAME", "Trait system (Limping, Fractured Hand, PTSD, Phantom Ringing, Hardened…)"],
-    ["P4-04", 4, "Consequences", "GAME", "Global meters: Public Trust, Station Budget, Cult Awareness + threshold effects"],
-    ["P4-05", 4, "Consequences", "GAME", "Save system: versioned JSON, atomic writes, migrations, Steam Cloud"],
-    ["P4-06", 4, "Consequences", "UI", "Aftermath shift report (events timeline, meter deltas, traits gained, leads unlocked)"],
-    ["P4-07", 4, "Consequences", "UI", "Detroit-style flowchart screen showing branches taken / locked"],
-    ["P4-08", 4, "Consequences", "GAME", "Ending resolver + 3 endings (Whistleblowers, Station Under Siege, Lost in the Static)"],
-    ["P4-09", 4, "Consequences", "AI", "Station Siege horde-survival mode (wave spawner in operations room)"],
-    ["P4-10", 4, "Consequences", "GAME", "Shifts 2 & 3 content: interrogation call, cult hideout mission, diversion calls"],
-    ["P4-11", 4, "Polish", "ART", "VHS / bodycam post-process (chromatic aberration, scanlines, timestamp overlay)"],
-    ["P4-12", 4, "Polish", "ART", "Lighting pass (volumetric fog, flashlight shadows, SDFGI/LightmapGI per map)"],
-    ["P4-13", 4, "Polish", "AUDIO", "Ambience, foley, music stingers, full mix pass"],
-    ["P4-14", 4, "Polish", "UI", "Settings: graphics, audio devices, mic test, keybinds, accessibility (subtitles, colorblind, arachnophobia-style toggles)"],
-    ["P4-15", 4, "Polish", "UI", "Onboarding tutorial shift (\"Training Night\")"],
-    ["P4-16", 4, "Polish", "GAME", "Performance pass: profiling, LODs, occlusion culling, AI tick budget"],
-    ["P5-01", 5, "Polish", "NET", "Steamworks: achievements, rich presence, friends invites, Steam Cloud"],
-    ["P5-02", 5, "Polish", "NET", "NAT traversal / relay fallback validation (Steam Datagram Relay)"],
-    ["P5-03", 5, "Polish", "GAME", "Crash reporting & telemetry opt-in (anonymous KPIs)"],
-    ["P5-04", 5, "Polish", "UI", "Store page assets: capsule art, screenshots, trailer, description"],
-    ["P5-05", 5, "Polish", "ART", "Key art & trailer capture (bodycam footage style)"],
-    ["P5-06", 5, "Polish", "GAME", "Localization pipeline (English + Arabic with RTL UI support)"],
-    ["P5-07", 5, "Polish", "GAME", "Full QA regression: networking matrix (2/3/4 players, high latency, packet loss)"],
-    ["P5-08", 5, "Polish", "UI", "Steam Deck verification (controller UI, text size, performance)"],
-    ["P5-09", 5, "Polish", "GAME", "Steam Next Fest demo build (Training Night + Shift 1)"],
-    ["P5-10", 5, "Polish", "GAME", "Release candidate, day-one patch plan, community Discord & bug report flow"]
-  ];
-
-  /* ================= STATE ================= */
-  const defaultState = () => ({
-    status: {},           // taskId -> column id (absent = backlog)
-    custom: [],           // user-added tasks: {id, phase, group, cat, title}
-    filterCats: [],       // empty = all
-    filterPhase: "all",
-    search: "",
-    openPhases: [1],
-  });
-
-  function load() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return defaultState();
-      return sanitize(JSON.parse(raw));
-    } catch (_) {
-      return defaultState();
-    }
-  }
-
-  function sanitize(s) {
-    const d = defaultState();
-    if (!s || typeof s !== "object") return d;
-    const out = { ...d };
-    if (s.status && typeof s.status === "object") {
-      for (const [k, v] of Object.entries(s.status)) if (COLUMN_IDS.includes(v)) out.status[k] = v;
-    }
-    if (Array.isArray(s.custom)) {
-      out.custom = s.custom
-        .filter(t => t && typeof t.title === "string" && CATEGORIES[t.cat] && PHASES.some(p => p.id === t.phase))
-        .map(t => ({ id: String(t.id), phase: t.phase, group: "Custom Tasks", cat: t.cat, title: t.title.slice(0, 160) }));
-    }
-    if (Array.isArray(s.filterCats)) out.filterCats = s.filterCats.filter(c => CATEGORIES[c]);
-    if (s.filterPhase === "all" || PHASES.some(p => String(p.id) === String(s.filterPhase))) out.filterPhase = String(s.filterPhase);
-    if (typeof s.search === "string") out.search = s.search;
-    if (Array.isArray(s.openPhases)) out.openPhases = s.openPhases.filter(n => PHASES.some(p => p.id === n));
-    return out;
-  }
-
-  let state = load();
-
-  function save() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) { /* storage unavailable */ }
-  }
-
-  const allTasks = () => [
-    ...SEED_TASKS.map(([id, phase, group, cat, title]) => ({ id, phase, group, cat, title, custom: false })),
-    ...state.custom.map(t => ({ ...t, custom: true })),
-  ];
-  const statusOf = id => state.status[id] || "backlog";
-
-  function setStatus(id, col) {
-    if (col === "backlog") delete state.status[id];
-    else state.status[id] = col;
-    save();
-    render();
-  }
-
-  function matchesFilter(t) {
-    if (state.filterCats.length && !state.filterCats.includes(t.cat)) return false;
-    if (state.filterPhase !== "all" && String(t.phase) !== state.filterPhase) return false;
-    const q = state.search.trim().toLowerCase();
-    if (q && !(t.id.toLowerCase().includes(q) || t.title.toLowerCase().includes(q))) return false;
-    return true;
-  }
-
-  /* ================= HELPERS ================= */
-  const $ = sel => document.querySelector(sel);
-  const el = (tag, attrs = {}, ...kids) => {
-    const n = document.createElement(tag);
-    for (const [k, v] of Object.entries(attrs)) {
-      if (v == null || v === false) continue;
-      if (k === "class") n.className = v;
-      else if (k === "style") n.style.cssText = v;
-      else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
-      else n.setAttribute(k, v === true ? "" : v);
-    }
-    for (const kid of kids.flat()) if (kid != null) n.append(kid.nodeType ? kid : document.createTextNode(kid));
-    return n;
-  };
-  const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
-
-  let toastTimer;
-  function toast(msg) {
-    const t = $("#toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
-  }
-
-  /* ================= RENDER: OVERVIEW ================= */
-  function renderOverview(tasks) {
-    const total = tasks.length;
-    const counts = Object.fromEntries(COLUMN_IDS.map(c => [c, 0]));
-    tasks.forEach(t => counts[statusOf(t.id)]++);
-    const p = pct(counts.done, total);
-
-    $("#ovPct").textContent = p + "%";
-    $("#ovBar").style.width = p + "%";
-    $("#ovBarWrap").setAttribute("aria-valuenow", p);
-    $("#ovSplit").replaceChildren(...COLUMNS.map(c =>
-      el("span", {}, el("i", { class: "dot", style: `background:${c.color}` }), c.label + " ", el("b", {}, String(counts[c.id])))
-    ));
-
-    $("#ovTotal").textContent = total;
-    $("#ovTotalSub").textContent = `${counts.done} completed · ${total - counts.done} remaining`;
-
-    const phaseStats = PHASES.map(ph => {
-      const pts = tasks.filter(t => t.phase === ph.id);
-      const done = pts.filter(t => statusOf(t.id) === "done").length;
-      return { ...ph, total: pts.length, done, complete: pts.length > 0 && done === pts.length };
-    });
-    const active = phaseStats.find(ph => !ph.complete);
-    const cleared = phaseStats.filter(ph => ph.complete).length;
-
-    if (active) {
-      $("#ovMilestone").textContent = `P${active.id}`;
-      $("#ovMilestoneSub").textContent = `${active.milestone} · ${active.done}/${active.total}`;
-    } else {
-      $("#ovMilestone").textContent = "SHIPPED";
-      $("#ovMilestoneSub").textContent = "All milestones cleared";
-    }
-    $("#ovCleared").textContent = `${cleared} / ${PHASES.length}`;
-
-    $("#catBars").replaceChildren(...Object.entries(CATEGORIES).map(([key, name]) => {
-      const ct = tasks.filter(t => t.cat === key);
-      const d = ct.filter(t => statusOf(t.id) === "done").length;
-      const cp = pct(d, ct.length);
-      return el("div", { class: "panel cat-bar", style: `--c:var(--cat-${key})` },
-        el("div", { class: "row" }, el("span", {}, name), el("span", {}, `${d}/${ct.length}`)),
-        el("div", { class: "bar thin", role: "progressbar", "aria-label": `${name} ${cp}%`, "aria-valuenow": cp, "aria-valuemin": 0, "aria-valuemax": 100 },
-          el("i", { style: `width:${cp}%` }))
-      );
-    }));
-
-    return { phaseStats, active };
-  }
-
-  /* ================= RENDER: FILTERS ================= */
-  function renderFilters() {
-    const wrap = $("#filters");
-    wrap.querySelectorAll(".chip").forEach(c => c.remove());
-    const anchor = $("#phaseFilter");
-    const allChip = el("button", {
-      class: "chip", type: "button", "aria-pressed": String(state.filterCats.length === 0),
-      onclick: () => { state.filterCats = []; save(); render(); },
-    }, "ALL");
-    wrap.insertBefore(allChip, anchor);
-    for (const [key, name] of Object.entries(CATEGORIES)) {
-      const on = state.filterCats.includes(key);
-      wrap.insertBefore(el("button", {
-        class: "chip", type: "button", style: `--c:var(--cat-${key})`, "aria-pressed": String(on), title: `Toggle ${name}`,
-        onclick: () => {
-          state.filterCats = on ? state.filterCats.filter(c => c !== key) : [...state.filterCats, key];
-          save(); render();
-        },
-      }, name), anchor);
-    }
-    $("#phaseFilter").value = state.filterPhase;
-    if ($("#search").value !== state.search) $("#search").value = state.search;
-  }
-
-  /* ================= RENDER: KANBAN ================= */
-  let dragId = null;
-
-  function renderBoard(tasks) {
-    const visible = tasks.filter(matchesFilter);
-    $("#board").replaceChildren(...COLUMNS.map((col, ci) => {
-      const items = visible.filter(t => statusOf(t.id) === col.id);
-      const body = el("div", {
-        class: "col-body", "data-col": col.id, role: "list", "aria-label": col.label,
-        ondragover: e => { if (dragId) { e.preventDefault(); body.classList.add("drop"); } },
-        ondragleave: e => { if (!body.contains(e.relatedTarget)) body.classList.remove("drop"); },
-        ondrop: e => {
-          e.preventDefault(); body.classList.remove("drop");
-          const id = dragId || e.dataTransfer.getData("text/plain");
-          if (id && statusOf(id) !== col.id) { setStatus(id, col.id); toast(`${id} → ${col.label}`); }
-        },
-      }, items.length ? items.map(t => card(t, ci)) : el("div", { class: "empty" }, "— no units —"));
-
-      return el("div", { class: "panel col" },
-        el("div", { class: "col-head" },
-          el("i", { class: "dot", style: `background:${col.color};box-shadow:0 0 8px ${col.color}` }),
-          col.label, el("span", { class: "count" }, String(items.length))),
-        body);
-    }));
-  }
-
-  function card(t, ci) {
-    const move = dir => {
-      const next = COLUMNS[ci + dir];
-      if (!next) return;
-      setStatus(t.id, next.id);
-      toast(`${t.id} → ${next.label}`);
-      requestAnimationFrame(() => document.querySelector(`[data-task="${CSS.escape(t.id)}"] .move button[data-dir="${dir}"]`)?.focus());
-    };
-    return el("article", {
-      class: "card" + (COLUMNS[ci].id === "done" ? " done" : ""), draggable: "true", role: "listitem",
-      "data-task": t.id, style: `--c:var(--cat-${t.cat})`,
-      ondragstart: e => { dragId = t.id; e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", t.id); e.currentTarget.classList.add("dragging"); },
-      ondragend: e => { dragId = null; e.currentTarget.classList.remove("dragging"); document.querySelectorAll(".drop").forEach(n => n.classList.remove("drop")); },
-    },
-      el("div", { class: "meta" }, el("span", { class: "tag" }, t.cat), el("span", {}, "·"), el("span", {}, t.id), el("span", { style: "margin-left:auto" }, `P${t.phase}`)),
-      el("div", { class: "title" }, t.title),
-      el("div", { class: "move" },
-        t.custom ? el("button", { type: "button", class: "del", title: "Delete custom task", "aria-label": `Delete ${t.id}`, onclick: () => deleteCustom(t.id) }, "✕") : null,
-        el("button", { type: "button", "data-dir": "-1", disabled: ci === 0, "aria-label": `Move ${t.id} left`, title: "Move left", onclick: () => move(-1) }, "◀"),
-        el("button", { type: "button", "data-dir": "1", disabled: ci === COLUMNS.length - 1, "aria-label": `Move ${t.id} right`, title: "Move right", onclick: () => move(1) }, "▶"))
-    );
-  }
-
-  /* ================= RENDER: MILESTONES ================= */
-  function renderPhases(tasks, { phaseStats, active }) {
-    $("#phases").replaceChildren(...phaseStats.map(ph => {
-      const pts = tasks.filter(t => t.phase === ph.id);
-      const visible = pts.filter(matchesFilter);
-      const p = pct(ph.done, ph.total);
-      const open = state.openPhases.includes(ph.id);
-
-      const groups = [];
-      for (const t of visible) {
-        let g = groups.find(x => x.name === t.group);
-        if (!g) groups.push(g = { name: t.group, items: [] });
-        g.items.push(t);
-      }
-
-      const details = el("details", { class: "panel phase", open },
-        el("summary", {},
-          el("span", { class: "chev", "aria-hidden": "true" }, "▶"),
-          el("div", { class: "ptitle" },
-            `Phase ${ph.id} — ${ph.name}`,
-            ph.complete ? el("span", { class: "badge done" }, "CLEARED") : (active && active.id === ph.id ? el("span", { class: "badge active" }, "ACTIVE") : null),
-            el("small", {}, `${ph.weeks} · ${ph.milestone} · ${ph.done}/${ph.total} tasks`)),
-          el("div", { class: "bar", role: "progressbar", "aria-label": `Phase ${ph.id} ${p}%`, "aria-valuenow": p, "aria-valuemin": 0, "aria-valuemax": 100 }, el("i", { style: `width:${p}%` })),
-          el("span", { class: "pct" }, p + "%")),
-        el("div", { class: "phase-body" },
-          groups.length ? groups.map(g => el("div", { class: "group" },
-            el("h3", {}, g.name),
-            g.items.map(t => {
-              const st = statusOf(t.id);
-              const done = st === "done";
-              return el("label", { class: "check" + (done ? " is-done" : ""), style: `--c:var(--cat-${t.cat})` },
-                el("input", { type: "checkbox", checked: done, onchange: e => { setStatus(t.id, e.target.checked ? "done" : "backlog"); toast(`${t.id} ${e.target.checked ? "completed ✓" : "reopened"}`); } }),
-                el("span", { class: "id" }, t.id),
-                el("span", { class: "tag" }, t.cat),
-                el("span", { class: "txt" }, t.title),
-                el("span", { class: "st", "data-s": st }, COLUMNS.find(c => c.id === st).label));
-            }))) : el("div", { class: "empty" }, "No tasks match the current filters."))
-      );
-      details.addEventListener("toggle", () => {
-        state.openPhases = details.open
-          ? [...new Set([...state.openPhases, ph.id])]
-          : state.openPhases.filter(n => n !== ph.id);
-        save();
-      });
-      return details;
-    }));
-  }
-
-  /* ================= RENDER ROOT ================= */
-  function render() {
-    const tasks = allTasks();
-    const stats = renderOverview(tasks);
-    renderFilters();
-    renderBoard(tasks);
-    renderPhases(tasks, stats);
-  }
-
-  /* ================= ACTIONS ================= */
-  function deleteCustom(id) {
-    if (!confirm(`Delete custom task ${id}?`)) return;
-    state.custom = state.custom.filter(t => t.id !== id);
-    delete state.status[id];
-    save(); render(); toast(`${id} deleted`);
-  }
-
-  function initControls() {
-    // Phase filter + add-form selects
-    const phaseOpts = PHASES.map(p => el("option", { value: String(p.id) }, `Phase ${p.id} — ${p.name}`));
-    $("#phaseFilter").replaceChildren(el("option", { value: "all" }, "All phases"), ...phaseOpts.map(o => o.cloneNode(true)));
-    $("#newPhase").replaceChildren(...phaseOpts);
-    $("#newCat").replaceChildren(...Object.entries(CATEGORIES).map(([k, n]) => el("option", { value: k }, n)));
-
-    $("#phaseFilter").addEventListener("change", e => { state.filterPhase = e.target.value; save(); render(); });
-
-    let searchTimer;
-    $("#search").addEventListener("input", e => {
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => { state.search = e.target.value; save(); render(); }, 120);
-    });
-
-    $("#btnAdd").addEventListener("click", () => {
-      const f = $("#addForm");
-      const open = f.classList.toggle("open");
-      $("#btnAdd").setAttribute("aria-expanded", String(open));
-      if (open) $("#newTitle").focus();
-    });
-
-    $("#addForm").addEventListener("submit", e => {
-      e.preventDefault();
-      const title = $("#newTitle").value.trim();
-      if (!title) return;
-      const phase = Number($("#newPhase").value);
-      const existing = allTasks().filter(t => t.id.startsWith(`C${phase}-`)).length;
-      let n = existing + 1, id;
-      do { id = `C${phase}-${String(n++).padStart(2, "0")}`; } while (allTasks().some(t => t.id === id));
-      state.custom.push({ id, phase, group: "Custom Tasks", cat: $("#newCat").value, title });
-      save(); render();
-      $("#newTitle").value = "";
-      toast(`${id} added to Backlog`);
-    });
-
-    $("#btnExport").addEventListener("click", () => {
-      const blob = new Blob([JSON.stringify({ exported: new Date().toISOString(), ...state }, null, 2)], { type: "application/json" });
-      const a = el("a", { href: URL.createObjectURL(blob), download: `911-last-call-progress-${new Date().toISOString().slice(0, 10)}.json` });
-      document.body.append(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-      toast("Progress exported");
-    });
-
-    $("#btnImport").addEventListener("click", () => $("#importFile").click());
-    $("#importFile").addEventListener("change", async e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      try {
-        state = sanitize(JSON.parse(await file.text()));
-        save(); render(); toast("Progress imported");
-      } catch (_) {
-        toast("Import failed: invalid JSON");
-      }
-      e.target.value = "";
-    });
-
-    $("#btnReset").addEventListener("click", () => {
-      if (!confirm("Reset all task statuses, custom tasks and filters? Export first if you want a backup.")) return;
-      state = defaultState(); save(); render(); toast("Dashboard reset");
-    });
-
-    // Sync across tabs
-    window.addEventListener("storage", e => {
-      if (e.key === STORAGE_KEY) { state = load(); render(); }
-    });
-  }
-
-  function startClock() {
-    const tick = () => {
-      const d = new Date();
-      const hh = String(d.getHours()).padStart(2, "0");
-      const mm = String(d.getMinutes()).padStart(2, "0");
-      const ss = String(d.getSeconds()).padStart(2, "0");
-      const clock = $("#clock");
-      clock.replaceChildren(el("b", {}, "● ON DUTY"), `  SHIFT CLOCK ${hh}:${mm}:${ss}`);
-    };
-    tick();
-    setInterval(tick, 1000);
-  }
-
-  initControls();
-  startClock();
-  render();
-})();
-</script>
+<script src="assets/js/app.js" defer></script>
 </body>
 </html>

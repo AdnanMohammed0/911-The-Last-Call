@@ -1,0 +1,31 @@
+{
+ "member": "adnan",
+ "updated_at": "2026-09-17",
+ "tasks": {},
+ "log": [
+  {
+   "date": "2026-09-17",
+   "tasks": [],
+   "summary": "كتابة وثائق المشروع (Architecture, Gameplay Mechanics, Roadmap, Progress) ولوحة التقدم الأولى.",
+   "files": [
+    "docs/",
+    "PROGRESS.md",
+    "index.html"
+   ],
+   "commit": "625ec30"
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [],
+   "summary": "توزيع 84 مهمة على الفريق، برومبتات لكل عضو، تسجيل تقدم تلقائي (Hook + GitHub Action)، وموقع جديد على GitHub Pages.",
+   "files": [
+    "data/",
+    "prompts/",
+    "AGENTS.md",
+    "assets/",
+    "index.html",
+    ".github/workflows/auto-progress.yml"
+   ]
+  }
+ ]
+}

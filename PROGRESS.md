@@ -12,14 +12,14 @@
 
 ## 📊 Status Snapshot
 
-| Phase | Tasks | Done | Progress |
-| :--- | :---: | :---: | :--- |
-| Phase 1 — Core Prototype & Networking | 19 | 0 | `░░░░░░░░░░` 0 % |
-| Phase 2 — Dispatch & Dialogue Engine | 18 | 0 | `░░░░░░░░░░` 0 % |
-| Phase 3 — Field Gameplay & AI | 21 | 0 | `░░░░░░░░░░` 0 % |
-| Phase 4 — Consequence Matrix & Polish | 16 | 0 | `░░░░░░░░░░` 0 % |
-| Phase 5 — Steam Release | 10 | 0 | `░░░░░░░░░░` 0 % |
-| **Total** | **84** | **0** | **0 %** |
+Live per-member progress is on the website (**Team** tab) and in `data/progress/<id>.json`. It updates automatically when each member's AI finishes work (see `AGENTS.md` §3).
+
+| Member | Tasks | Progress file |
+| :--- | :---: | :--- |
+| Adnan (`@adnan`) | 27 | [`data/progress/adnan.json`](data/progress/adnan.json) |
+| Ali Imad (`@ali`) | 29 | [`data/progress/ali.json`](data/progress/ali.json) |
+| Mohamed (`@mohamed`) | 28 | [`data/progress/mohamed.json`](data/progress/mohamed.json) |
+| **Total** | **84** | |
 
 ---
 
@@ -30,11 +30,11 @@
 
 | ID | Task | Owner | Status | Notes |
 | :--- | :--- | :--- | :--- | :--- |
-| P1-01 | Project, folder layout, autoload skeletons | — | 🟦 Todo | |
-| P1-02 | Git LFS, GUT, typing warnings | — | 🟦 Todo | |
-| P1-04 | ENet host/join | — | 🟦 Todo | |
-| P1-12 | First-person controller | — | 🟦 Todo | |
-| P1-18 | Grey-box operations room | — | 🟦 Todo | |
+| P1-01 | Project, folder layout, autoload skeletons | Adnan | 🟦 Todo | |
+| P1-02 | Git LFS, GUT, typing warnings | Adnan | 🟦 Todo | |
+| P1-04 | ENet host/join | Adnan | 🟦 Todo | |
+| P1-12 | First-person controller | Ali | 🟦 Todo | |
+| P1-18 | Grey-box operations room | Mohamed | 🟦 Todo | |
 
 **Legend:** 🟦 Todo · 🟨 In Progress · 🟪 Testing · 🟩 Done · 🟥 Blocked
 
@@ -49,6 +49,7 @@
   - [x] Documentation suite written (Architecture, Gameplay Mechanics, Roadmap)
   - [x] Progress dashboard (`index.html`) created
   - [x] Repository initialized and pushed
+  - [x] Tasks split across 3 members, per-member prompts, automatic progress (hook + Action), new website on GitHub Pages
 - **Doing next:**
   - [ ] P1-01 Create Godot project skeleton
 - **Blockers:** none

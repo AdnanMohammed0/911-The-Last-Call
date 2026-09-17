@@ -1,0 +1,16 @@
+{
+ "member": "ali",
+ "updated_at": "2026-09-17",
+ "tasks": {},
+ "log": [
+  {
+   "date": "2026-09-17",
+   "tasks": [],
+   "summary": "رفع وثيقة تصميم اللعبة الرسمية (GDD) بصيغة PDF.",
+   "files": [
+    "docs/911_The_Last_Call_GDD.pdf"
+   ],
+   "commit": "91e3d0f"
+  }
+ ]
+}

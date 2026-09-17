@@ -273,6 +273,14 @@
     "autoload/net_manager.gd",
     "scenes/boot/main_menu.tscn"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [],
+   "summary": "مساعدة بـ CI (مهمة Mohamed P1-03): التصدير كان يفشل لأن setup-godot ينصّب نسخة .NET ومجلد الـ templates كان ينفك بمكان غلط. تصليح الاثنين حتى يطلع exe للأصدقاء.",
+   "files": [
+    ".github/workflows/ci.yml"
+   ]
   }
  ]
 }

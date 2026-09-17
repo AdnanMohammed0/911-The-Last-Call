@@ -5,6 +5,7 @@
 [ext_resource type="Script" path="res://scenes/shared/player/player_interactor.gd" id="3_interactor"]
 [ext_resource type="PackedScene" path="res://ui/hud/interaction_prompt.tscn" id="4_prompt"]
 [ext_resource type="Script" path="res://core/net/movement_validator.gd" id="5_validator"]
+[ext_resource type="Script" path="res://scenes/shared/player/player_body.gd" id="6_body"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 resource_local_to_scene = true
@@ -39,6 +40,51 @@ properties/6/path = NodePath(".:flashlight_on")
 properties/6/spawn = false
 properties/6/replication_mode = 1
 
+[sub_resource type="StandardMaterial3D" id="Mat_uniform"]
+albedo_color = Color(0.1, 0.13, 0.24, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_pants"]
+albedo_color = Color(0.07, 0.08, 0.13, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_vest"]
+albedo_color = Color(0.3, 0.8, 0.4, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_black"]
+albedo_color = Color(0.03, 0.03, 0.03, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_skin"]
+albedo_color = Color(0.85, 0.66, 0.5, 1)
+
+[sub_resource type="CapsuleMesh" id="Mesh_leg"]
+radius = 0.085
+height = 0.85
+
+[sub_resource type="CapsuleMesh" id="Mesh_torso"]
+radius = 0.2
+height = 0.72
+
+[sub_resource type="BoxMesh" id="Mesh_vest"]
+size = Vector3(0.43, 0.42, 0.31)
+
+[sub_resource type="BoxMesh" id="Mesh_belt"]
+size = Vector3(0.41, 0.07, 0.29)
+
+[sub_resource type="CapsuleMesh" id="Mesh_arm"]
+radius = 0.065
+height = 0.62
+
+[sub_resource type="SphereMesh" id="Mesh_head"]
+radius = 0.12
+height = 0.24
+
+[sub_resource type="CylinderMesh" id="Mesh_cap"]
+top_radius = 0.125
+bottom_radius = 0.135
+height = 0.08
+
+[sub_resource type="BoxMesh" id="Mesh_brim"]
+size = Vector3(0.2, 0.015, 0.1)
+
 [node name="Player" type="CharacterBody3D"]
 floor_snap_length = 0.3
 script = ExtResource("1_player")
@@ -46,6 +92,59 @@ script = ExtResource("1_player")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_body")
+
+[node name="Body" type="Node3D" parent="."]
+script = ExtResource("6_body")
+
+[node name="LegLeft" type="Node3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.11, 0.85, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Body/LegLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.425, 0)
+mesh = SubResource("Mesh_leg")
+surface_material_override/0 = SubResource("Mat_pants")
+
+[node name="LegRight" type="Node3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.11, 0.85, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Body/LegRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.425, 0)
+mesh = SubResource("Mesh_leg")
+surface_material_override/0 = SubResource("Mat_pants")
+
+[node name="Torso" type="Node3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+
+[node name="Shirt" type="MeshInstance3D" parent="Body/Torso"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34, 0)
+mesh = SubResource("Mesh_torso")
+surface_material_override/0 = SubResource("Mat_uniform")
+
+[node name="Vest" type="MeshInstance3D" parent="Body/Torso"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+mesh = SubResource("Mesh_vest")
+surface_material_override/0 = SubResource("Mat_vest")
+
+[node name="Belt" type="MeshInstance3D" parent="Body/Torso"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("Mesh_belt")
+surface_material_override/0 = SubResource("Mat_black")
+
+[node name="ArmLeft" type="Node3D" parent="Body/Torso"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 0.6, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Body/Torso/ArmLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.29, 0)
+mesh = SubResource("Mesh_arm")
+surface_material_override/0 = SubResource("Mat_uniform")
+
+[node name="ArmRight" type="Node3D" parent="Body/Torso"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 0.6, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Body/Torso/ArmRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.29, 0)
+mesh = SubResource("Mesh_arm")
+surface_material_override/0 = SubResource("Mat_uniform")
 
 [node name="Head" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
@@ -60,6 +159,31 @@ light_energy = 3.0
 shadow_enabled = true
 spot_range = 22.0
 spot_angle = 28.0
+
+[node name="HeadVisual" type="Node3D" parent="Head/Camera3D"]
+
+[node name="Face" type="MeshInstance3D" parent="Head/Camera3D/HeadVisual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.02, 0.04)
+mesh = SubResource("Mesh_head")
+surface_material_override/0 = SubResource("Mat_skin")
+
+[node name="Cap" type="MeshInstance3D" parent="Head/Camera3D/HeadVisual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, 0.04)
+mesh = SubResource("Mesh_cap")
+surface_material_override/0 = SubResource("Mat_uniform")
+
+[node name="Brim" type="MeshInstance3D" parent="Head/Camera3D/HeadVisual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, -0.08)
+mesh = SubResource("Mesh_brim")
+surface_material_override/0 = SubResource("Mat_black")
+
+[node name="NameLabel" type="Label3D" parent="Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0)
+pixel_size = 0.0035
+billboard = 1
+font_size = 48
+outline_size = 12
+text = "Player"
 
 [node name="PlayerInput" type="Node" parent="."]
 script = ExtResource("2_input")

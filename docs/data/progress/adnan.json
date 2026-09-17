@@ -258,6 +258,21 @@
     "scenes/boot/main_menu.tscn",
     "project.godot"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-07"
+   ],
+   "summary": "شخصية 3D مؤقتة لكل لاعب (زي شرطة، سترة بلون الكلاس، قبعة، اسم فوق الراس، حركة مشي للأرجل والأيدي، ينضغط وقت الـ crouch) وجسمك ما يبين بكاميرتك. الانضمام يقبل host:port حتى يشتغل ويا playit.gg.",
+   "files": [
+    "scenes/shared/player/player_body.gd",
+    "scenes/shared/player/player.tscn",
+    "scenes/shared/player/player.gd",
+    "data/classes/",
+    "autoload/net_manager.gd",
+    "scenes/boot/main_menu.tscn"
+   ]
   }
  ]
 }

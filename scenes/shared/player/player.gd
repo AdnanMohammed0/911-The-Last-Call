@@ -71,6 +71,7 @@ signal interaction_prompt_changed(prompt: String)
 
 ## Class this player was spawned as (see data/classes/).
 var class_id: StringName = &""
+var class_color: Color = Color(0.3, 0.8, 0.4)
 
 # --- Replicated by ClientSync (owner -> everyone) ---
 var sync_position: Vector3 = Vector3.ZERO
@@ -105,6 +106,9 @@ var _current_door_target: Door = null
 @onready var _interactor: PlayerInteractor = $PlayerInteractor
 @onready var _hud: CanvasLayer = $HUD
 @onready var _flashlight: SpotLight3D = $Head/Camera3D/Flashlight
+@onready var _body: PlayerBody = $Body
+@onready var _head_visual: Node3D = $Head/Camera3D/HeadVisual
+@onready var _name_label: Label3D = $Head/NameLabel
 
 
 func _ready() -> void:
@@ -113,6 +117,9 @@ func _ready() -> void:
 	_current_height = stand_height
 	_apply_height()
 	_flashlight.visible = flashlight_on
+	_body.set_class_color(class_color)
+	_name_label.text = NetManager.get_player_name(peer_id)
+	_name_label.modulate = class_color.lightened(0.3)
 	_publish_sync_state()
 	_apply_authority()
 
@@ -124,6 +131,10 @@ func _apply_authority() -> void:
 	set_process(true)  # owner: mouse look, remote: smoothing
 	_interactor.set_physics_process(is_local)
 	_hud.visible = is_local
+	# Own body only casts shadows / shows to others; our camera does not render it.
+	_body.set_first_person([_body, _head_visual, _name_label], is_local)
+	if is_local:
+		_camera.cull_mask = 0xFFFFF & ~PlayerBody.RENDER_LAYER_FIRST_PERSON
 	if is_local and DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -165,6 +176,7 @@ func apply_class(data: ClassData) -> void:
 	if data == null:
 		return
 	class_id = data.id
+	class_color = data.color
 	move_speed_multiplier = data.move_speed_multiplier
 	sprint_duration = data.sprint_duration
 	stamina = sprint_duration
@@ -264,6 +276,8 @@ func _apply_height() -> void:
 	_capsule.height = _current_height
 	_collision.position.y = _current_height * 0.5
 	_head.position.y = _current_height - eye_offset
+	if _body != null:
+		_body.set_height_ratio(_current_height / stand_height)
 
 
 # --- Sprint & stamina -------------------------------------------------------

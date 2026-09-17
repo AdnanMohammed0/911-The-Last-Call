@@ -139,9 +139,9 @@ func host_game(player_name: String, port: int = DEFAULT_PORT, open_internet_port
 func join_game(address: String, player_name: String, port: int = DEFAULT_PORT) -> Error:
 	if state != State.OFFLINE:
 		return ERR_ALREADY_IN_USE
-	address = address.strip_edges()
-	if address.is_empty():
-		address = "127.0.0.1"
+	var parsed: Array = parse_address(address, port)
+	address = parsed[0]
+	port = parsed[1]
 	var peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 	var err: Error = peer.create_client(address, port)
 	if err != OK:
@@ -190,6 +190,21 @@ func start_game(scene_path: String) -> Error:
 ## Called by a level (PlayerSpawner) on every peer once its scene is in the tree.
 func report_level_loaded(scene_path: String) -> void:
 	_send_to_host(&"_report_level_loaded", [scene_path])
+
+
+## "host", "host:port", "1.2.3.4:5678" or a tunnel address like "name.gl.at.ply.gg:12345".
+## Returns [host: String, port: int]; empty input means localhost. IPv6 literals are left untouched.
+static func parse_address(raw: String, default_port: int = DEFAULT_PORT) -> Array:
+	var text: String = raw.strip_edges().trim_prefix("udp://").trim_suffix("/")
+	if text.is_empty():
+		return ["127.0.0.1", default_port]
+	var port: int = default_port
+	if text.count(":") == 1:
+		var port_text: String = text.get_slice(":", 1)
+		if port_text.is_valid_int() and port_text.to_int() > 0 and port_text.to_int() < 65536:
+			port = port_text.to_int()
+		text = text.get_slice(":", 0)
+	return [text, port]
 
 
 static func sanitize_name(raw: String, peer_id: int) -> String:
@@ -411,7 +426,7 @@ func _upnp_worker(port: int) -> void:
 	if discover_err != UPNP.UPNP_RESULT_SUCCESS or upnp.get_gateway() == null \
 			or not upnp.get_gateway().is_valid_gateway():
 		_on_upnp_finished.call_deferred(null, "", false,
-			"No UPnP router found. Forward UDP %d manually or use a VPN (Tailscale / ZeroTier / Radmin)." % port)
+			"No UPnP router found. Use a playit.gg UDP tunnel to local port %d and share its address (host:port)." % port)
 		return
 	var map_err: int = upnp.add_port_mapping(port, port, "911 The Last Call", "UDP", 0)
 	var external: String = upnp.query_external_address()

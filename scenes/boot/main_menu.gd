@@ -87,7 +87,8 @@ func _on_start_pressed() -> void:
 
 
 func _on_class_selected(index: int) -> void:
-	NetManager.select_class(_class_option.get_item_metadata(index) as StringName)
+	var class_id: StringName = _class_option.get_item_metadata(index)
+	NetManager.select_class(class_id)
 
 
 func _on_session_started() -> void:
@@ -160,7 +161,7 @@ func _refresh_lobby_controls() -> void:
 	var my_ready: bool = NetManager.is_ready(me)
 
 	for i: int in _class_option.item_count:
-		var class_id: StringName = _class_option.get_item_metadata(i) as StringName
+		var class_id: StringName = _class_option.get_item_metadata(i)
 		_class_option.set_item_disabled(i, class_id != &"" and NetManager.is_class_taken(class_id, me))
 		if class_id == my_class:
 			_class_option.select(i)

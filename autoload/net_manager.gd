@@ -67,11 +67,15 @@ func get_player_name(peer_id: int) -> String:
 
 
 func get_class_id(peer_id: int) -> StringName:
-	return StringName(roster.get(peer_id, {}).get("class_id", &""))
+	var entry: Dictionary = roster.get(peer_id, {})
+	var value: StringName = entry.get("class_id", &"")
+	return value
 
 
 func is_ready(peer_id: int) -> bool:
-	return bool(roster.get(peer_id, {}).get("ready", false))
+	var entry: Dictionary = roster.get(peer_id, {})
+	var value: bool = entry.get("ready", false)
+	return value
 
 
 ## True when a peer other than `except_peer` already picked `class_id`.

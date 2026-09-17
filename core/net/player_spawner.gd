@@ -88,13 +88,15 @@ func _spawn_index_for(peer_id: int) -> int:
 # --- All peers ----------------------------------------------------------------
 
 func _spawn_player(data: Variant) -> Node:
-	var info: Dictionary = data as Dictionary
-	var peer_id: int = int(info["peer_id"])
+	var info: Dictionary = data
+	var peer_id: int = info.get("peer_id", 1)
+	var class_id: StringName = info.get("class_id", FALLBACK_CLASS)
+	var spawn_index: int = info.get("spawn_index", 0)
 	var player: Player = PLAYER_SCENE.instantiate() as Player
 	player.name = _player_name(peer_id)
 	player.peer_id = peer_id
-	player.apply_class(ClassCatalog.get_data(StringName(info["class_id"])))
-	player.position = _spawn_position(int(info["spawn_index"]))
+	player.apply_class(ClassCatalog.get_data(class_id))
+	player.position = _spawn_position(spawn_index)
 	return player
 
 

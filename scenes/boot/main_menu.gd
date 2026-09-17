@@ -5,6 +5,7 @@ extends Control
 
 const FIELD_SCENE: String = "res://scenes/shared/player/player_sandbox.tscn"
 const DOOR_SANDBOX_SCENE: String = "res://scenes/shared/door/door_sandbox.tscn"
+const STATION4_SCENE: String = "res://scenes/dispatch/operations_room.tscn"
 
 var _auto_class: StringName = &""
 var _auto_start: bool = false
@@ -16,6 +17,7 @@ var _auto_start: bool = false
 @onready var _leave_button: Button = %LeaveButton
 @onready var _sandbox_button: Button = %SandboxButton
 @onready var _door_sandbox_button: Button = %DoorSandboxButton
+@onready var _station4_button: Button = %Station4Button
 @onready var _status_label: Label = %StatusLabel
 @onready var _roster_list: ItemList = %RosterList
 @onready var _class_option: OptionButton = %ClassOption
@@ -39,6 +41,7 @@ func _ready() -> void:
 	_leave_button.pressed.connect(NetManager.leave_game)
 	_sandbox_button.pressed.connect(_on_sandbox_pressed)
 	_door_sandbox_button.pressed.connect(_on_door_sandbox_pressed)
+	_station4_button.pressed.connect(_on_station4_pressed)
 	_class_option.item_selected.connect(_on_class_selected)
 	_ready_button.toggled.connect(NetManager.set_ready)
 	_start_button.pressed.connect(_on_start_pressed)
@@ -104,6 +107,10 @@ func _on_session_started() -> void:
 
 func _on_door_sandbox_pressed() -> void:
 	get_tree().change_scene_to_file(DOOR_SANDBOX_SCENE)
+
+
+func _on_station4_pressed() -> void:
+	get_tree().change_scene_to_file(STATION4_SCENE)
 
 
 func _on_state_changed(new_state: NetManager.State) -> void:

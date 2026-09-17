@@ -6,6 +6,11 @@
    "status": "done",
    "note": "نظام الأبواب التفاعلي مكتمل: فتح وإغلاق هادئ مع اتجاه تأرجح ذكي حسب موقع اللاعب، مواربة 15° (peek)، اقتحام بالركل (kick) مع كسر الأقفال وصعق، نظام القفل (locked) واهتزاز المقبض، أصوات إجرائية، ومزامنة MultiplayerSynchronizer. 23 اختبار وحدة ناجحة، وتكامل كامل مع ساحة player_sandbox.",
    "updated_at": "2026-09-17"
+  },
+  "P1-18": {
+   "status": "done",
+   "note": "بناء الـ grey-box لمركز Station 4 بالكامل بـ CSG: غرفة العمليات بـ 4 مكاتب dispatch (شاشات CRT ولوحات التردد)، الممر الأمني، مخزن السلاح مع قفص التسليح وطاولة التجهيز، وموقف السيارات الخارجي مع سيارتي شرطة وفان SWAT وحواجز وإضاءة صوديوم. دمج 3 أبواب تفاعلية متزامنة، واختبارات GUT كاملة وناجحة.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -93,6 +98,20 @@
    ],
    "commit": "8dd8d90",
    "auto": true
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-18"
+   ],
+   "summary": "feat(world): grey-box Station 4 operations room + armory + parking lot — done P1-18",
+   "files": [
+    "scenes/boot/main_menu.gd",
+    "scenes/boot/main_menu.tscn",
+    "scenes/dispatch/operations_room.tscn",
+    "scenes/loadout/armory.tscn",
+    "tests/test_station4_greybox.gd"
+   ]
   }
  ]
 }

@@ -35,6 +35,19 @@
     "project.godot",
     "tests/test_door.gd"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-14"
+   ],
+   "summary": "feat(menu): add door test sandbox button to main menu — P1-14",
+   "files": [
+    "scenes/boot/main_menu.gd",
+    "scenes/boot/main_menu.tscn"
+   ],
+   "commit": "46bc27d",
+   "auto": true
   }
  ]
 }

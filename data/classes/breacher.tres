@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ClassData" format=3]
+
+[ext_resource type="Script" path="res://data/classes/class_data.gd" id="1_class"]
+
+[resource]
+script = ExtResource("1_class")
+id = &"breacher"
+display_name = "Breacher"
+summary = "Heavy entry: kicks, shield, battering ram."
+max_health = 140.0
+damage_resistance = 0.25
+max_sanity = 100.0
+sanity_drain_multiplier = 0.9
+move_speed_multiplier = 0.95
+sprint_duration = 6.0
+noise_multiplier = 1.6
+aim_stability = 1.0
+carry_slots = 4
+weapon_access = PackedStringArray("shotgun", "rifle", "shield")

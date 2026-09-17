@@ -25,6 +25,10 @@ func is_phase(p: StringName) -> bool:
 	return phase_name(phase) == p
 
 
+func is_lobby() -> bool:
+	return phase == Phase.LOBBY
+
+
 func phase_name(p: Phase) -> StringName:
 	var keys: PackedStringArray = Phase.keys()
 	return StringName(keys[p].to_lower())

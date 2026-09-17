@@ -2,16 +2,19 @@
 ## Authority: LOCAL
 extends Label
 
-const HELP_TEXT: String = "WASD move · Shift sprint · Ctrl/C crouch · Q/E lean · F interact · C peek · V kick · Esc free mouse"
+const HELP_TEXT: String = "WASD move · Shift sprint · Ctrl crouch · Q/E lean · F interact · C peek · V kick · Esc free mouse"
 
 @export var player: Player
 
 
 func _process(_delta: float) -> void:
 	if player == null:
-		return
+		player = Player.find_by_peer(get_tree(), multiplayer.get_unique_id())
+		if player == null:
+			return
 	var interact_line := ("\n>>> %s <<<\n" % player.current_interaction_prompt) if player.current_interaction_prompt != "" else ""
-	text = "Stance: %s | Sprint: %s\nStamina: %.1f / %.1f\nSpeed: %.2f m/s | Lean: %+.2f%s\n\n%s" % [
+	text = "%s (%s) | Stance: %s | Sprint: %s\nStamina: %.1f / %.1f\nSpeed: %.2f m/s | Lean: %+.2f%s\n\n%s" % [
+		NetManager.get_player_name(player.peer_id), player.class_id,
 		Player.Stance.keys()[player.stance], player.is_sprinting,
 		player.stamina, player.get_max_stamina(),
 		player.get_horizontal_speed(), player.lean_amount,

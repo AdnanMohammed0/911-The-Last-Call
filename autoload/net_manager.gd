@@ -1,4 +1,4 @@
-## Host/join over ENet, peer lifecycle, player registration and the lobby roster.
+## Host/join over ENet, peer lifecycle, lobby roster (class selection, ready-up) and level-load handshake.
 ## Authority: HOST (the roster is owned by the host and pushed to clients).
 extends Node
 
@@ -13,6 +13,7 @@ const PROTOCOL_VERSION: int = 1
 const CONNECT_TIMEOUT_SEC: float = 10.0
 const REGISTER_TIMEOUT_SEC: float = 5.0
 const MAIN_MENU_SCENE: String = "res://scenes/boot/main_menu.tscn"
+const MIN_PLAYERS_TO_START: int = 1
 
 signal state_changed(new_state: State)
 ## Host: server is up. Client: host accepted our registration.
@@ -23,6 +24,8 @@ signal connection_failed(reason: String)
 signal peer_joined(peer_id: int, player_name: String)
 signal peer_left(peer_id: int)
 signal lobby_updated(roster: Dictionary)
+## Host only: `peer_id` finished loading `scene_path` and can receive spawns.
+signal level_loaded(peer_id: int, scene_path: String)
 
 var transport: Transport = Transport.ENET
 var state: State = State.OFFLINE
@@ -31,6 +34,8 @@ var roster: Dictionary[int, Dictionary] = {}
 var local_player_name: String = ""
 
 var _connect_timer: SceneTreeTimer = null
+## Host only: peer_id -> scene path the peer reported as loaded.
+var _loaded_levels: Dictionary[int, String] = {}
 
 
 func _ready() -> void:
@@ -59,6 +64,36 @@ func get_player_name(peer_id: int) -> String:
 	var entry: Dictionary = roster.get(peer_id, {})
 	var raw: Variant = entry.get("name", "Player %d" % peer_id)
 	return str(raw)
+
+
+func get_class_id(peer_id: int) -> StringName:
+	return StringName(roster.get(peer_id, {}).get("class_id", &""))
+
+
+func is_ready(peer_id: int) -> bool:
+	return bool(roster.get(peer_id, {}).get("ready", false))
+
+
+## True when a peer other than `except_peer` already picked `class_id`.
+func is_class_taken(class_id: StringName, except_peer: int = 0) -> bool:
+	for peer_id: int in roster:
+		if peer_id != except_peer and get_class_id(peer_id) == class_id:
+			return true
+	return false
+
+
+## Host: everyone has a class and is ready, and we are still in the lobby.
+func can_start() -> bool:
+	if not is_host() or not GameState.is_lobby() or roster.size() < MIN_PLAYERS_TO_START:
+		return false
+	for peer_id: int in roster:
+		if not is_ready(peer_id) or get_class_id(peer_id) == &"":
+			return false
+	return true
+
+
+func is_level_loaded(peer_id: int, scene_path: String) -> bool:
+	return _loaded_levels.get(peer_id, "") == scene_path
 
 
 # --- Host / join / leave ----------------------------------------------------
@@ -113,6 +148,33 @@ func leave_game() -> void:
 		session_ended.emit("")
 
 
+# --- Lobby (any peer; the host validates) ----------------------------------
+
+## Pick a class (&"" clears it). Refused by the host while ready or if another player has it.
+func select_class(class_id: StringName) -> void:
+	_send_to_host(&"_request_class", [class_id])
+
+
+func set_ready(ready: bool) -> void:
+	_send_to_host(&"_request_ready", [ready])
+
+
+## Host: move every peer into the field level. Players spawn once each peer reports it loaded.
+func start_game(scene_path: String) -> Error:
+	if not can_start():
+		return ERR_UNCONFIGURED
+	if not ResourceLoader.exists(scene_path):
+		return ERR_FILE_NOT_FOUND
+	_loaded_levels.clear()
+	GameState.change_phase.rpc(GameState.Phase.FIELD, scene_path)
+	return OK
+
+
+## Called by a level (PlayerSpawner) on every peer once its scene is in the tree.
+func report_level_loaded(scene_path: String) -> void:
+	_send_to_host(&"_report_level_loaded", [scene_path])
+
+
 static func sanitize_name(raw: String, peer_id: int) -> String:
 	var clean: String = ""
 	for c: String in raw.strip_edges():
@@ -134,6 +196,9 @@ func _register_player(player_name: String, protocol_version: int) -> void:
 	if protocol_version != PROTOCOL_VERSION:
 		_kick(sender, "Version mismatch (host %d, you %d)" % [PROTOCOL_VERSION, protocol_version])
 		return
+	if not GameState.is_lobby():
+		_kick(sender, "Game already in progress")  # TODO(P1-10): spectator slot
+		return
 	if roster.size() >= MAX_PEERS:
 		_kick(sender, "Lobby is full")
 		return
@@ -143,6 +208,44 @@ func _register_player(player_name: String, protocol_version: int) -> void:
 	_accept_registration.rpc_id(sender)
 	_sync_roster.rpc(roster)
 	peer_joined.emit(sender, clean_name)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _request_class(class_id: StringName) -> void:
+	if not multiplayer.is_server():
+		return
+	var sender: int = _sender_id()
+	if not roster.has(sender) or not GameState.is_lobby() or is_ready(sender):
+		return
+	if class_id != &"" and (not ClassCatalog.has(class_id) or is_class_taken(class_id, sender)):
+		_sync_roster.rpc(roster)  # re-sync so the requester's UI snaps back
+		return
+	roster[sender]["class_id"] = class_id
+	_sync_roster.rpc(roster)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _request_ready(ready: bool) -> void:
+	if not multiplayer.is_server():
+		return
+	var sender: int = _sender_id()
+	if not roster.has(sender) or not GameState.is_lobby():
+		return
+	if ready and get_class_id(sender) == &"":
+		return
+	roster[sender]["ready"] = ready
+	_sync_roster.rpc(roster)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _report_level_loaded(scene_path: String) -> void:
+	if not multiplayer.is_server():
+		return
+	var sender: int = _sender_id()
+	if is_online() and not roster.has(sender):
+		return
+	_loaded_levels[sender] = scene_path
+	level_loaded.emit(sender, scene_path)
 
 
 @rpc("authority", "call_remote", "reliable")
@@ -196,6 +299,7 @@ func _on_peer_disconnected(peer_id: int) -> void:
 	if not multiplayer.is_server() or not roster.has(peer_id):
 		return
 	roster.erase(peer_id)
+	_loaded_levels.erase(peer_id)
 	peer_left.emit(peer_id)
 	_sync_roster.rpc(roster)
 
@@ -239,8 +343,22 @@ func _close_peer() -> void:
 		multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	roster.clear()
+	_loaded_levels.clear()
 	_connect_timer = null
+	GameState.reset()
 	_set_state(State.OFFLINE)
+
+
+func _send_to_host(method: StringName, args: Array = []) -> void:
+	if multiplayer.is_server():
+		callv(method, args)
+	else:
+		callv(&"rpc_id", [1, method] + args)
+
+
+func _sender_id() -> int:
+	var sender: int = multiplayer.get_remote_sender_id()
+	return sender if sender != 0 else multiplayer.get_unique_id()
 
 
 func _set_state(new_state: State) -> void:

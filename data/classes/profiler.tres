@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ClassData" format=3]
+
+[ext_resource type="Script" path="res://data/classes/class_data.gd" id="1_class"]
+
+[resource]
+script = ExtResource("1_class")
+id = &"profiler"
+display_name = "Profiler / Negotiator"
+summary = "Voice stress analysis, negotiation, surrender."
+max_health = 90.0
+damage_resistance = 0.05
+max_sanity = 80.0
+sanity_drain_multiplier = 1.3
+move_speed_multiplier = 1.0
+sprint_duration = 7.0
+noise_multiplier = 1.0
+aim_stability = 0.85
+carry_slots = 3
+weapon_access = PackedStringArray("pistol", "less_lethal")

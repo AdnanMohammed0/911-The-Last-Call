@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ClassData" format=3]
+
+[ext_resource type="Script" path="res://data/classes/class_data.gd" id="1_class"]
+
+[resource]
+script = ExtResource("1_class")
+id = &"medic"
+display_name = "Investigator / Medic"
+summary = "Revive, sedatives, anomaly banishing."
+max_health = 100.0
+damage_resistance = 0.05
+max_sanity = 130.0
+sanity_drain_multiplier = 0.7
+move_speed_multiplier = 1.0
+sprint_duration = 7.0
+noise_multiplier = 0.9
+aim_stability = 1.0
+carry_slots = 4
+weapon_access = PackedStringArray("pistol")

@@ -1,6 +1,7 @@
 [gd_scene load_steps=13 format=3 uid="uid://c6fdoor842p1"]
 
 [ext_resource type="Script" path="res://scenes/shared/door/door.gd" id="1_door"]
+[ext_resource type="AudioStream" uid="uid://nqhrgh24exu5" path="res://audio/Open_Door.mp3" id="2_open_sound"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_door"]
 properties/0/path = NodePath(".:current_state")
@@ -59,6 +60,7 @@ radius = 2.5
 
 [node name="Door" type="Node3D"]
 script = ExtResource("1_door")
+sound_open = ExtResource("2_open_sound")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_door")

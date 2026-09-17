@@ -7,6 +7,9 @@ extends CharacterBody3D
 
 enum Stance { STAND, CROUCH }
 
+## Movement while downed (GAMEPLAY §3.1 "crawl allowed").
+const CRAWL_SPEED: float = 0.6
+
 const GROUP: StringName = &"players"
 
 signal stance_changed(new_stance: Stance)
@@ -76,6 +79,11 @@ signal interaction_prompt_changed(prompt: String)
 		var host_sync: Node = get_node_or_null(^"HostSync")
 		if host_sync != null:
 			host_sync.set_multiplayer_authority(1)
+		# Host-validated gameplay nodes carried by the player also stay with the host.
+		for host_owned: NodePath in [^"Health", ^"ReviveArea"]:
+			var node: Node = get_node_or_null(host_owned)
+			if node != null:
+				node.set_multiplayer_authority(1)
 		if is_node_ready():
 			_apply_authority()
 
@@ -85,6 +93,10 @@ var connection_lost: bool = false:
 		connection_lost = value
 		if _name_label != null:
 			_update_name_label()
+
+## Trauma kits carried (any class can revive with one). Host-owned, replicated by HostSync.
+## TODO(P2-15): filled from the loadout armory.
+var trauma_kits: int = 0
 
 ## Class this player was spawned as (see data/classes/).
 var class_id: StringName = &""
@@ -124,6 +136,7 @@ var _current_door_target: Door = null
 @onready var _hud: CanvasLayer = $HUD
 @onready var _flashlight: SpotLight3D = $Head/Camera3D/Flashlight
 @onready var _body: PlayerBody = $Body
+@onready var _health: HealthComponent = $Health
 @onready var _head_visual: Node3D = $Head/Camera3D/HeadVisual
 @onready var _name_label: Label3D = $Head/NameLabel
 @onready var _audio_listener: AudioListener3D = $Head/Camera3D/AudioListener3D
@@ -164,6 +177,7 @@ func _apply_authority() -> void:
 func _process(delta: float) -> void:
 	if not is_multiplayer_authority():
 		_update_remote(delta)
+		_update_body_pose(delta)
 		return
 	var look: Vector2 = _input.consume_look()
 	if look == Vector2.ZERO:
@@ -174,6 +188,7 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_update_body_pose(delta)
 	_input.sample()
 	_update_stance(delta)
 	_update_sprint_and_stamina(delta)
@@ -203,7 +218,8 @@ func apply_class(data: ClassData) -> void:
 	move_speed_multiplier = data.move_speed_multiplier
 	sprint_duration = data.sprint_duration
 	stamina = sprint_duration
-	# TODO(P3-02/P3-03): max_health, damage_resistance, max_sanity, sanity drain.
+	(get_node(^"Health") as HealthComponent).setup(data.max_health, data.damage_resistance)
+	# TODO(P3-03): max_sanity, sanity drain.
 
 
 ## Owner: block gameplay input (pause menu, chat, cutscenes).
@@ -217,9 +233,15 @@ func _update_name_label() -> void:
 	_name_label.modulate = Color(0.6, 0.6, 0.6) if connection_lost else class_color.lightened(0.3)
 
 
+func get_health() -> HealthComponent:
+	return $Health
+
+
 ## Fastest legitimate horizontal speed (used by the host's MovementValidator).
 func get_max_move_speed() -> float:
-	return maxf(maxf(walk_speed, sprint_speed), crouch_speed) * move_speed_multiplier
+	var normal: float = maxf(maxf(walk_speed, sprint_speed), crouch_speed) * move_speed_multiplier
+	# Keep the normal cap: a player going down mid-sprint still has momentum for a moment.
+	return normal if get_health().is_alive() else maxf(CRAWL_SPEED, normal * 0.5)
 
 
 ## Owner: the host rejected our movement (MovementValidator); snap back.
@@ -257,6 +279,12 @@ func _publish_sync_state() -> void:
 	sync_pitch = _camera.rotation.x
 
 
+## Downed / critical bodies lie on the floor (all peers).
+func _update_body_pose(delta: float) -> void:
+	var target: float = 0.0 if _health.is_alive() else -1.35
+	_body.rotation.x = lerpf(_body.rotation.x, target, clampf(6.0 * delta, 0.0, 1.0))
+
+
 func _update_remote(delta: float) -> void:
 	var prev_pos := global_position
 	var weight: float = clampf(remote_smoothing * delta, 0.0, 1.0)
@@ -292,7 +320,7 @@ func _update_flashlight() -> void:
 func _update_stance(delta: float) -> void:
 	if _input.crouch_just_pressed:
 		_crouch_toggled = not _crouch_toggled
-	var wants_crouch: bool = _crouch_toggled if crouch_toggle else _input.crouch_held
+	var wants_crouch: bool = (_crouch_toggled if crouch_toggle else _input.crouch_held) or not _health.is_alive()
 
 	if wants_crouch and stance == Stance.STAND:
 		_set_stance(Stance.CROUCH)
@@ -328,7 +356,7 @@ func _apply_height() -> void:
 
 func _update_sprint_and_stamina(delta: float) -> void:
 	var moving_forward: bool = _input.move.y < -0.1
-	is_sprinting = _input.sprint and moving_forward and stance == Stance.STAND \
+	is_sprinting = _input.sprint and moving_forward and stance == Stance.STAND and _health.is_alive() \
 		and is_on_floor() and not _is_exhausted
 
 	var previous: float = stamina
@@ -359,6 +387,11 @@ func _update_movement(delta: float) -> void:
 	elif is_sprinting:
 		speed = sprint_speed
 	speed *= move_speed_multiplier
+	match _health.state:
+		HealthComponent.State.DOWNED:
+			speed = CRAWL_SPEED
+		HealthComponent.State.CRITICAL:
+			speed = 0.0
 
 	var direction: Vector3 = transform.basis * Vector3(_input.move.x, 0.0, _input.move.y)
 	direction.y = 0.0

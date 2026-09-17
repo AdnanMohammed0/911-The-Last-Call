@@ -86,6 +86,11 @@
    "status": "testing",
    "note": "VoteManager (autoload): الهوست يفتح تصويت بمهلة، كل peer يرسل صوته والهوست يتحقق (مؤهل، خيار صحيح، rate limit) ويوزع العدّ. يسكر بالمهلة، أو لما الكل يصوت، أو مبكراً لو بالإجماع. الفوز بالأغلبية، التعادل يحسمه كلاس (Profiler للحكم، Breacher للاقتراب)، بعده default، بعده ترتيب الخيارات. تصويت الحكم مربوط بـ CallDirector (60 ث). تصويت الاقتراب: Decoy يحتاج 3 لاعبين أو Tech. المنقطع يطلع من التصويت والراجع يستلمه. 10 اختبارات GUT + اختبار 3 عمليات نجحت.",
    "updated_at": "2026-09-17"
+  },
+  "P3-02": {
+   "status": "testing",
+   "note": "HealthComponent على الهوست ومتزامن بـ HostSync: ضرر حسب المنطقة (رأس ×2، جذع ×1، أطراف ×0.75) مع مقاومة الكلاس (Breacher 140 HP / 25%)، رجوع الصحة لأقرب 25% بس، Downed عند 0 (نزيف 45 ث، زحف 0.6 م/ث، ما يتفاعل)، إنعاش بالإمساك: Medic 4 ث أو Trauma Kit 8 ث (النزيف يوقف أثناء الإنعاش، يرجع 40%)، انتهاء النزيف = Critical. ضربة ساق/يد ≥30 ترسل trait (limping / fractured_hand). واجهة صحة وشاشة Downed. 8 اختبارات GUT + اختبار 3 عمليات (Medic يمشي ويسوي إنعاش حقيقي) نجحت.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -533,6 +538,25 @@
     "autoload/call_director.gd",
     "project.godot",
     "tests/test_vote_manager.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P3-02"
+   ],
+   "summary": "الصحة: ضرر حسب مكان الإصابة، تجدد بخطوات 25%، الإسقاط والنزيف والإنعاش بالإمساك، والحالة الحرجة. Interactable صار يدعم مدة إمساك حسب اللاعب.",
+   "files": [
+    "scenes/shared/player/health_component.gd",
+    "scenes/shared/player/revive_interactable.gd",
+    "scenes/shared/player/player.gd",
+    "scenes/shared/player/player.tscn",
+    "scenes/shared/player/player_interactor.gd",
+    "scenes/shared/interactables/interactable.gd",
+    "ui/hud/health_hud.gd",
+    "ui/hud/health_hud.tscn",
+    "autoload/event_bus.gd",
+    "tests/test_health_component.gd"
    ]
   }
  ]

@@ -9,6 +9,9 @@
 [ext_resource type="Script" uid="uid://g348ctufjxbn" path="res://scenes/shared/player/player_body.gd" id="6_body"]
 [ext_resource type="PackedScene" path="res://ui/hud/pause_menu.tscn" id="7_pause"]
 [ext_resource type="PackedScene" path="res://ui/hud/voice_hud.tscn" id="8_voice"]
+[ext_resource type="Script" path="res://scenes/shared/player/health_component.gd" id="9_health"]
+[ext_resource type="Script" path="res://scenes/shared/player/revive_interactable.gd" id="10_revive"]
+[ext_resource type="PackedScene" path="res://ui/hud/health_hud.tscn" id="11_health_hud"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 resource_local_to_scene = true
@@ -71,6 +74,24 @@ properties/0/replication_mode = 0
 properties/1/path = NodePath(".:connection_lost")
 properties/1/spawn = true
 properties/1/replication_mode = 2
+properties/2/path = NodePath("Health:hp")
+properties/2/spawn = true
+properties/2/replication_mode = 2
+properties/3/path = NodePath("Health:state")
+properties/3/spawn = true
+properties/3/replication_mode = 2
+properties/4/path = NodePath("Health:bleed_out_remaining")
+properties/4/spawn = true
+properties/4/replication_mode = 2
+properties/5/path = NodePath("Health:reviver_peer")
+properties/5/spawn = true
+properties/5/replication_mode = 2
+properties/6/path = NodePath(".:trauma_kits")
+properties/6/spawn = true
+properties/6/replication_mode = 2
+properties/7/path = NodePath("Health:max_hp")
+properties/7/spawn = true
+properties/7/replication_mode = 2
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_client"]
 properties/0/path = NodePath(".:sync_position")
@@ -94,6 +115,9 @@ properties/5/replication_mode = 1
 properties/6/path = NodePath(".:flashlight_on")
 properties/6/spawn = false
 properties/6/replication_mode = 1
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_revive"]
+radius = 0.7
 
 [node name="Player" type="CharacterBody3D" unique_id=2074329494]
 floor_snap_length = 0.3
@@ -216,6 +240,17 @@ public_visibility = false
 [node name="MovementValidator" type="Node" parent="." unique_id=1353006207]
 script = ExtResource("5_validator")
 
+[node name="Health" type="Node" parent="."]
+script = ExtResource("9_health")
+
+[node name="ReviveArea" type="Area3D" parent="."]
+script = ExtResource("10_revive")
+hold_duration = 8.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ReviveArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("SphereShape3D_revive")
+
 [node name="PlayerInteractor" type="Node" parent="." unique_id=1835673496]
 script = ExtResource("3_interactor")
 
@@ -223,6 +258,9 @@ script = ExtResource("3_interactor")
 
 [node name="InteractionPrompt" parent="HUD" unique_id=92675865 node_paths=PackedStringArray("interactor") instance=ExtResource("4_prompt")]
 interactor = NodePath("../../PlayerInteractor")
+
+[node name="HealthHud" parent="HUD" node_paths=PackedStringArray("player") instance=ExtResource("11_health_hud")]
+player = NodePath("../..")
 
 [node name="VoiceHud" parent="HUD" unique_id=806692191 instance=ExtResource("8_voice")]
 

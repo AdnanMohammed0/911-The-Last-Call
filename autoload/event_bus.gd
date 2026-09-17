@@ -34,6 +34,8 @@ signal trait_applied(peer_id: int, trait_id: StringName)
 # --- Players ---
 signal player_downed(peer_id: int)
 signal player_revived(peer_id: int, by_peer: int)
+## Bled out while downed: out for the rest of the mission.
+signal player_critical(peer_id: int)
 signal sanity_changed(peer_id: int, value: float)
 
 # --- Interaction ---

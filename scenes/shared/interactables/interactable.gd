@@ -46,6 +46,11 @@ func is_hold() -> bool:
 	return hold_duration > 0.0
 
 
+## Seconds `peer_id` must hold (subclasses vary it, e.g. Medic revives faster).
+func get_hold_duration_for(_peer_id: int) -> float:
+	return hold_duration
+
+
 func is_available_to(peer_id: int) -> bool:
 	return enabled and (holder_peer == 0 or holder_peer == peer_id or _is_hold_stale())
 
@@ -124,7 +129,7 @@ func _rpc_interact() -> void:
 	if is_hold():
 		if holder_peer != sender:
 			return
-		if now - _hold_started_msec < int((hold_duration - HOLD_TOLERANCE_SEC) * 1000.0):
+		if now - _hold_started_msec < int((get_hold_duration_for(sender) - HOLD_TOLERANCE_SEC) * 1000.0):
 			return
 	if now - _last_use_msec < int(cooldown * 1000.0):
 		return

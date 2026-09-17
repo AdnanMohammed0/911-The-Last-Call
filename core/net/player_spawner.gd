@@ -25,7 +25,7 @@ func _ready() -> void:
 	spawn_function = _spawn_player
 	spawned.connect(_on_spawned)
 	var level: Node = owner if owner != null else get_parent()
-	_level_path = level.scene_file_path
+	_level_path = level.scene_file_path if level != null else ""
 	NetManager.level_loaded.connect(_on_level_loaded)
 	_refresh_visibility()
 	if multiplayer.is_server():
@@ -36,7 +36,24 @@ func _ready() -> void:
 		for peer_id: int in NetManager.roster:
 			if peer_id != 1 and NetManager.is_level_loaded(peer_id, _level_path):
 				_on_level_loaded.call_deferred(peer_id, _level_path)
-	NetManager.report_level_loaded.call_deferred(_level_path)
+	if not NetManager.is_online():
+		if get_player(1) == null:
+			_spawn_offline_player.call_deferred()
+	elif not _level_path.is_empty():
+		NetManager.report_level_loaded.call_deferred(_level_path)
+
+
+func _spawn_offline_player() -> void:
+	if get_player(1) != null:
+		return
+	var player: Player = spawn({
+		"peer_id": 1,
+		"class_id": FALLBACK_CLASS,
+		"spawn_index": 0,
+	}) as Player
+	if player != null:
+		player_spawned.emit(player)
+	_refresh_visibility()
 
 
 func get_player(peer_id: int) -> Player:

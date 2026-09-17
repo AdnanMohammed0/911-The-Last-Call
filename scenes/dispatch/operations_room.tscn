@@ -598,16 +598,16 @@ outline_size = 8
 [node name="SpawnPoints" type="Node3D" parent="."]
 
 [node name="Spawn1_Tech" type="Marker3D" parent="SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.05, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.2, 0)
 
 [node name="Spawn2_Profiler" type="Marker3D" parent="SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.05, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.2, 0)
 
 [node name="Spawn3_Breacher" type="Marker3D" parent="SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.05, 3)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -14, 0.2, 0.5)
 
 [node name="Spawn4_Medic" type="Marker3D" parent="SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.05, 3)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -10, 0.2, 0.5)
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="." node_paths=PackedStringArray("spawn_points")]
 spawn_path = NodePath("../Players")

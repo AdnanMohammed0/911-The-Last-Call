@@ -112,6 +112,18 @@
     "scenes/loadout/armory.tscn",
     "tests/test_station4_greybox.gd"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-18"
+   ],
+   "summary": "fix(spawner): ensure offline player spawns immediately on level start — P1-18",
+   "files": [
+    "autoload/net_manager.gd",
+    "core/net/player_spawner.gd",
+    "scenes/dispatch/operations_room.tscn"
+   ]
   }
  ]
 }

@@ -71,6 +71,8 @@ var _upnp_port: int = 0
 
 
 func _ready() -> void:
+	if multiplayer.multiplayer_peer == null:
+		multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	multiplayer.connected_to_server.connect(_on_connected_to_server)

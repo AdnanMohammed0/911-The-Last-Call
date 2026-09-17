@@ -26,6 +26,14 @@
     "index.html",
     ".github/workflows/auto-progress.yml"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [],
+   "summary": "feat: split work across team, automatic AI progress tracking, new GitHub Pages site",
+   "files": [],
+   "commit": "c2077cd",
+   "auto": true
   }
  ]
 }

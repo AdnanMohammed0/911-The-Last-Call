@@ -101,6 +101,11 @@
    "status": "testing",
    "note": "AIPerception (core/ai): مخروط رؤية 100° بمدى 30م بالضوء و8م بالظلام (منطقة light_zones أو كشاف اللاعب يعتبر مضيء)، فحص خط النظر بالجدران، الانحناء يقلل الرؤية، كشاف اللاعب على الـ AI ضمن 25م = كشف فوري، سماع EventBus.noise_event و voice_noise (همس 2م → صراخ 20م)، مقياس انتباه Unaware/Suspicious 0.3/Searching 0.6/Combat 1.0 مع تلاشي وذاكرة قتال، callout للفريق بعد 1.5 ث. الهوست يطلق ضوضاء خطوات لكل لاعب (مشي 4م، ركض 10م، انحناء 1.5م × noise_multiplier للكلاس). 11 اختبار GUT نجحت.",
    "updated_at": "2026-09-17"
+  },
+  "P3-09": {
+   "status": "testing",
+   "note": "MissionNavigation (NavigationRegion3D): يسوي bake للـ navmesh من هندسة المهمة على الهوست عند التحميل (أولاد العقدة أو group)، ويولد CoverPoints تلقائياً على حافة الـ navmesh جنب الجدران (LOW للجدار الواطي، HIGH للعالي) إذا ماكو نقاط مصممة. CoverQuery: غطاء على بعد 8-20م من التهديد، محمي منه، يقدر يطل ويرمي، مو مكشوف لتهديد ثاني (flank)، مو محجوز لغيره، والتقييم بطول المسار على الـ navmesh. claim/release. 6 اختبارات GUT نجحت.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -593,6 +598,20 @@
     "autoload/event_bus.gd",
     "scenes/shared/player/player.gd",
     "tests/test_ai_perception.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P3-09"
+   ],
+   "summary": "نظام الغطاء: bake للـ navmesh لكل مهمة، توليد نقاط غطاء تلقائي، واستعلام أفضل غطاء.",
+   "files": [
+    "core/ai/mission_navigation.gd",
+    "core/ai/cover_generator.gd",
+    "core/ai/cover_point.gd",
+    "core/ai/cover_query.gd",
+    "tests/test_cover_navigation.gd"
    ]
   }
  ]

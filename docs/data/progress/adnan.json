@@ -445,6 +445,22 @@
     "tests/test_dialogue_replication.gd",
     "tests/test_voice_stress_analyzer.gd"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P2-04",
+    "P2-08"
+   ],
+   "summary": "fix(types): replace bool(Variant) with direct boolean comparisons — P2-04, P2-08",
+   "files": [
+    "autoload/call_director.gd",
+    "core/dispatch/voice_stress_analyzer.gd",
+    "data/consequences/flag_condition.gd",
+    "tests/test_voice_stress_analyzer.gd"
+   ],
+   "commit": "a1aaf33",
+   "auto": true
   }
  ]
 }

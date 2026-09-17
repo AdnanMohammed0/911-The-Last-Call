@@ -32,6 +32,8 @@ signal flag_changed(key: StringName, old_value: Variant, new_value: Variant)
 signal trait_applied(peer_id: int, trait_id: StringName)
 
 # --- Players ---
+## Host: a player took damage (Tension Director, hit feedback).
+signal player_damaged(peer_id: int, amount: float)
 signal player_downed(peer_id: int)
 signal player_revived(peer_id: int, by_peer: int)
 ## Bled out while downed: out for the rest of the mission.

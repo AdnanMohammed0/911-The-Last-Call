@@ -101,6 +101,7 @@ func apply_damage(amount: float, zone: HitZone = HitZone.TORSO, source_peer: int
 	_since_damage = 0.0
 	_regen_cap = minf(ceilf(hp / (max_hp * REGEN_STEP) - 0.0001) * max_hp * REGEN_STEP, max_hp)
 	damaged.emit(taken, zone, source_peer)
+	EventBus.player_damaged.emit(_player.peer_id, taken)
 	if taken >= TRAIT_HIT_THRESHOLD:
 		if zone == HitZone.LEG:
 			EventBus.trait_applied.emit(_player.peer_id, &"limping")      # TODO(P4): TraitSystem applies effects

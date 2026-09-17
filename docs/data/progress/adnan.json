@@ -121,6 +121,11 @@
    "status": "testing",
    "note": "StateMachine عام (core/fsm) + Anomaly base (منطقة، لاعبين بالمنطقة، الأقل عقلاً والأكثر عزلة، أضواء، نقاط ظلام، مزامنة الحالة/الظهور/الموقع). الغريقة: Dormant → (EMF≥3 / دخول القبو / trigger) Manifest (ترمش الأضواء، تسد الأبواب، تسحب عقل 4/ث للي يشوفها) → 6ث Stalk (تنتقل بين نقاط الظلام بعيد عن النظر، تستهدف الأقل عقلاً وتهمس باسمه على الراديو، الأضواء مطفية 20ث = Manifest) → عقل<40 أو 45ث Hunt (تطارد 3.8م/ث، تطفي الأضواء والكشافات ضمن 6م، الماي يرتفع) → ≤2م Attack (تمسك اللاعب 3ث، زميل يوجه الكشاف عليها أو ملح يحرره، وإلا 60 ضرر + 40 عقل) → Retreat (30-60ث) → Stalk أو Dormant. نغمة عكسية = Retreat، خط ملح أو خروج الكل = Dormant، دفن العظام = Banished نهائي. Player صار عنده sanity أولي (P3-03 يكمله) + grab/flashlight من الهوست. 13 اختبار GUT نجحت.",
    "updated_at": "2026-09-17"
+  },
+  "P3-13": {
+   "status": "testing",
+   "note": "TensionDirector (autoload، الهوست): توتر 0-1 من الضرر آخر 20ث + متوسط العقل + قتال الأعداء + مطاردة/ظهور الشبح + قرب آخر رعبة، بتنعيم. توتر < 0.3 لمدة 90ث = رعبة لضحية (وزن أكبر للأقل عقلاً، ما يتكرر نفس النوع ورا بعض). توتر > 0.8 = يمنع ظهور الأشباح (can_manifest) والرعبات لحد ما ينزل < 0.6. الهلوسات تنرسل rpc_id للضحية بس: همس راديو، خطوات وهمية تقرب، رنة تلفون، ظل أسود يختفي، بأصوات مولدة بالكود. الغريقة تسأل can_manifest. 8 اختبارات GUT + اختبار 3 عمليات (الضحية بس تسمع) نجحت.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -663,6 +668,21 @@
     "scenes/shared/player/player.tscn",
     "autoload/event_bus.gd",
     "tests/test_drowned_woman.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P3-13"
+   ],
+   "summary": "مدير التوتر والرعب: يحسب التوتر، يجدول رعبات للاعب واحد، يمنع الأشباح وقت التوتر العالي، وهلوسات محلية لكل لاعب.",
+   "files": [
+    "autoload/tension_director.gd",
+    "scenes/field/anomalies/hallucination.gd",
+    "scenes/shared/player/health_component.gd",
+    "autoload/event_bus.gd",
+    "project.godot",
+    "tests/test_tension_director.gd"
    ]
   }
  ]

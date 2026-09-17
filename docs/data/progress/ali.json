@@ -11,6 +11,11 @@
    "status": "done",
    "note": "بناء الـ grey-box لمركز Station 4 بالكامل بـ CSG: غرفة العمليات بـ 4 مكاتب dispatch (شاشات CRT ولوحات التردد)، الممر الأمني، مخزن السلاح مع قفص التسليح وطاولة التجهيز، وموقف السيارات الخارجي مع سيارتي شرطة وفان SWAT وحواجز وإضاءة صوديوم. دمج 3 أبواب تفاعلية متزامنة، واختبارات GUT كاملة وناجحة.",
    "updated_at": "2026-09-17"
+  },
+  "P1-19": {
+   "status": "done",
+   "note": "تصميم وتطوير واجهة القائمة الرئيسية والشاشات المتعددة (HomeView, HostView, JoinView, LobbyView) مع بطاقات الأدوار التكتيكية (ClassCards) للأدوار الأربعة (Tech Operator, Profiler, Breacher, Medic) بعرض الإحصائيات ونظام الحجز المتزامن، وتحديث فتح الأبواب التلقائي في محطة Station 4 واختبارات GUT كاملة.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -136,6 +141,24 @@
     "scenes/boot/main_menu.tscn",
     "scenes/shared/interactables/interactable_scene_door.gd",
     "scenes/shared/player/player_sandbox.tscn"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-19"
+   ],
+   "summary": "feat(ui): main menu, host/join screens, lobby UI with class cards — done P1-19",
+   "files": [
+    "scenes/boot/class_card.gd",
+    "scenes/boot/class_card.tscn",
+    "scenes/boot/main_menu.gd",
+    "scenes/boot/main_menu.tscn",
+    "scenes/dispatch/operations_room.tscn",
+    "scenes/loadout/armory.tscn",
+    "scenes/shared/player/player_sandbox.tscn",
+    "tests/test_lobby_ui.gd",
+    "tests/test_station4_greybox.gd"
    ]
   }
  ]

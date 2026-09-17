@@ -40,7 +40,7 @@ func test_operations_room_scene_loads_and_instantiates() -> void:
 	assert_not_null(d2, "Door from Corridor to Armory should exist")
 	assert_not_null(d3, "Door from Corridor to Parking should exist")
 	if d2 != null:
-		assert_true(d2.is_locked, "Armory door should start locked for security")
+		assert_false(d2.is_locked, "Armory door should be unlocked for open station movement")
 
 
 func test_armory_loadout_scene_loads_and_instantiates() -> void:

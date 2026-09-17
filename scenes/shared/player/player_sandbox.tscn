@@ -187,7 +187,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 
 [node name="LockedDoor" parent="Level" unique_id=923462921 instance=ExtResource("5_door")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -2)
-is_locked = true
 
 [node name="Players" type="Node3D" parent="."]
 

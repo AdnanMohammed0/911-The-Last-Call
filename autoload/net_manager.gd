@@ -176,8 +176,12 @@ func join_game(address: String, player_name: String, port: int = DEFAULT_PORT) -
 	var parsed: Array = parse_address(address, port)
 	address = parsed[0]
 	port = parsed[1]
+	var ip: String = resolve_address(address)
+	if ip.is_empty():
+		connection_failed.emit("Address not found: '%s'. Copy it exactly (e.g. name.gl.at.ply.gg:12345) and check your internet/DNS." % address)
+		return ERR_CANT_RESOLVE
 	var peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
-	var err: Error = peer.create_client(address, port)
+	var err: Error = peer.create_client(ip, port)
 	if err != OK:
 		connection_failed.emit("Could not connect to %s:%d (%s)" % [address, port, error_string(err)])
 		return err
@@ -254,7 +258,14 @@ func report_level_loaded(scene_path: String) -> void:
 ## "host", "host:port", "1.2.3.4:5678" or a tunnel address like "name.gl.at.ply.gg:12345".
 ## Returns [host: String, port: int]; empty input means localhost. IPv6 literals are left untouched.
 static func parse_address(raw: String, default_port: int = DEFAULT_PORT) -> Array:
-	var text: String = raw.strip_edges().trim_prefix("udp://").trim_suffix("/")
+	# Forgive what people paste from chat / the playit dashboard: spaces, quotes, schemes, paths.
+	var text: String = raw.strip_edges().replace(" ", "").replace("\"", "").replace("'", "")
+	for scheme: String in ["udp://", "tcp://", "http://", "https://", "enet://"]:
+		if text.to_lower().begins_with(scheme):
+			text = text.substr(scheme.length())
+	var slash: int = text.find("/")
+	if slash >= 0:
+		text = text.left(slash)
 	if text.is_empty():
 		return ["127.0.0.1", default_port]
 	var port: int = default_port
@@ -264,6 +275,17 @@ static func parse_address(raw: String, default_port: int = DEFAULT_PORT) -> Arra
 			port = port_text.to_int()
 		text = text.get_slice(":", 0)
 	return [text, port]
+
+
+## IP for a host name, preferring IPv4 (tunnels like playit.gg and most home routers are IPv4).
+## Returns "" when the name cannot be resolved.
+static func resolve_address(address: String) -> String:
+	if address.is_valid_ip_address():
+		return address
+	var ipv4: String = IP.resolve_hostname(address, IP.TYPE_IPV4)
+	if not ipv4.is_empty():
+		return ipv4
+	return IP.resolve_hostname(address, IP.TYPE_ANY)
 
 
 static func sanitize_name(raw: String, peer_id: int) -> String:

@@ -369,6 +369,16 @@
     "autoload/event_bus.gd",
     "project.godot"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-10"
+   ],
+   "summary": "تصليح \"Failed to join (Can't create)\": السبب عنوان ما ينحل (خطأ بالكتابة/مسافات/http:// أو DNS). صار ينظف العنوان، يحل الاسم بـ IPv4 أولاً، ويطلع رسالة واضحة.",
+   "files": [
+    "autoload/net_manager.gd"
+   ]
   }
  ]
 }

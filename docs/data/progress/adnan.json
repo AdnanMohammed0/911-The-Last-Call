@@ -46,6 +46,11 @@
    "status": "testing",
    "note": "اللاعب اللي ينقطع أثناء اللعب: جسمه يبقى مكتوب عليه (disconnected) ومكانه محجوز 60 ث بـ token. يرجع بنفس الكلاس وبنفس مكان جسمه، وينقل تلقائياً للمشهد الحالي. الغريب ينرفض. انتهاء المهلة يشيل الجسم. timeout مال ENet صار 4-8 ث. Esc = قائمة إيقاف (Resume / Leave / Quit) توقف الحركة. انقطاع الهوست يرجعك للقائمة مع السبب وزر Rejoin. اختبار 4 عمليات (27 فحص) نجح.",
    "updated_at": "2026-09-17"
+  },
+  "P1-11": {
+   "status": "testing",
+   "note": "NetDebug overlay (F3 أو -- --netdebug): حالة الجلسة، FPS، لكل peer: RTT + avg/max آخر 30 ث + jitter + packet loss + strikes التحقق (للهوست). الباندويث لكل قناة: voice (ch 2) من العدادات، game (ch 0) = الباقي، total من ENet. اختبار host + client نجح.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -317,6 +322,17 @@
     "ui/hud/pause_menu.tscn",
     "scenes/boot/main_menu.gd",
     "scenes/boot/main_menu.tscn"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-11"
+   ],
+   "summary": "شاشة debug للشبكة (F3): RTT و jitter و packet loss لكل لاعب، والباندويث لكل قناة.",
+   "files": [
+    "autoload/net_debug.gd",
+    "project.godot"
    ]
   }
  ]

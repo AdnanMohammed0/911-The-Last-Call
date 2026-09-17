@@ -180,11 +180,13 @@ choices = Array[ExtResource("2_hfs46")]([SubResource("Resource_78a71"), SubResou
 script = ExtResource("1_0tmbe")
 id = &"end_flee"
 line = "(engine starts) I'm out, I'm out. Please, get those people out of that box."
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
 [sub_resource type="Resource" id="Resource_t1uku"]
 script = ExtResource("1_0tmbe")
 id = &"end_units"
 line = "Please hurry. It's freezing in there. They won't last all night."
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
 [sub_resource type="Resource" id="Resource_kl4v2"]
 script = ExtResource("4_chek6")
@@ -210,7 +212,7 @@ baseline_heart_rate = 104
 script = ExtResource("6_kbftd")
 id = &"call_meat_truck"
 title = "The Meat Truck"
-earliest_minute = 55
+earliest_minute = 12
 dialogue = SubResource("Resource_kl4v2")
 phone_number = "911-555-0161"
 caller_name = "Walt Hendricks"

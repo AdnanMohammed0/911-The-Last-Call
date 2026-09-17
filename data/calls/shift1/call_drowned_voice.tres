@@ -24,97 +24,108 @@ text = "Where are you calling from?"
 next = &"where"
 
 [sub_resource type="Resource" id="Resource_q3kev"]
+script = ExtResource("2_44emm")
+text = "Stay by the phone, I'm sending a patrol car to the reservoir."
+next = &"patrol_sent"
+
+[sub_resource type="Resource" id="Resource_875cs"]
 script = ExtResource("1_c5uns")
 id = &"start"
 line = "(water dripping) Hello? Please... the water is so cold. I can't find the shore."
-choices = Array[ExtResource("2_44emm")]([SubResource("Resource_qbbpg"), SubResource("Resource_i8qna"), SubResource("Resource_qt75r")])
+choices = Array[ExtResource("2_44emm")]([SubResource("Resource_qbbpg"), SubResource("Resource_i8qna"), SubResource("Resource_qt75r"), SubResource("Resource_q3kev")])
 
-[sub_resource type="Resource" id="Resource_875cs"]
+[sub_resource type="Resource" id="Resource_gqneq"]
+script = ExtResource("1_c5uns")
+id = &"patrol_sent"
+line = "Thank you... tell them to walk out onto the ice. I'll be waiting. (water rushing, click)"
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_ovwc2"]
 script = ExtResource("2_44emm")
 text = "There's no ice this time of year."
 next = &"no_ice"
 patience_delta = -10.0
 
-[sub_resource type="Resource" id="Resource_gqneq"]
+[sub_resource type="Resource" id="Resource_v4tjp"]
 script = ExtResource("2_44emm")
 text = "Stay calm. What's your name?"
 next = &"name"
 
-[sub_resource type="Resource" id="Resource_ovwc2"]
+[sub_resource type="Resource" id="Resource_xuufk"]
 script = ExtResource("1_c5uns")
 id = &"in_water"
 line = "I was. I think I still am. It's so dark under the ice."
-choices = Array[ExtResource("2_44emm")]([SubResource("Resource_875cs"), SubResource("Resource_gqneq")])
+choices = Array[ExtResource("2_44emm")]([SubResource("Resource_ovwc2"), SubResource("Resource_v4tjp")])
 
-[sub_resource type="Resource" id="Resource_v4tjp"]
+[sub_resource type="Resource" id="Resource_rx1tf"]
 script = ExtResource("2_44emm")
 text = "What year is it, ma'am?"
 next = &"year"
 reveals = Array[StringName]([&"november_ice"])
 
-[sub_resource type="Resource" id="Resource_xuufk"]
+[sub_resource type="Resource" id="Resource_6bsur"]
 script = ExtResource("1_c5uns")
 id = &"no_ice"
 line = "There was ice. November. The car went through the ice."
-choices = Array[ExtResource("2_44emm")]([SubResource("Resource_v4tjp")])
+choices = Array[ExtResource("2_44emm")]([SubResource("Resource_rx1tf")])
 
-[sub_resource type="Resource" id="Resource_rx1tf"]
+[sub_resource type="Resource" id="Resource_a7d44"]
 script = ExtResource("2_44emm")
 text = "[Tech] Run the caller name against the archive."
 next = &"tech_record"
 required_class = &"tech"
 reveals = Array[StringName]([&"hale_record"])
 
-[sub_resource type="Resource" id="Resource_6bsur"]
+[sub_resource type="Resource" id="Resource_spwui"]
 script = ExtResource("2_44emm")
 text = "Who was with you in the car?"
 next = &"car"
 
-[sub_resource type="Resource" id="Resource_a7d44"]
+[sub_resource type="Resource" id="Resource_b0m41"]
 script = ExtResource("1_c5uns")
 id = &"year"
 line = "(long silence) ...Nineteen eighty-seven. Isn't it?"
-choices = Array[ExtResource("2_44emm")]([SubResource("Resource_rx1tf"), SubResource("Resource_6bsur")])
+choices = Array[ExtResource("2_44emm")]([SubResource("Resource_a7d44"), SubResource("Resource_spwui")])
 
-[sub_resource type="Resource" id="Resource_spwui"]
+[sub_resource type="Resource" id="Resource_xh3ax"]
 script = ExtResource("2_44emm")
 text = "[Tech] Search the archive for Margaret Hale."
 next = &"tech_record"
 required_class = &"tech"
 reveals = Array[StringName]([&"hale_record"])
 
-[sub_resource type="Resource" id="Resource_b0m41"]
+[sub_resource type="Resource" id="Resource_aohlj"]
 script = ExtResource("2_44emm")
 text = "Where are you calling from?"
 next = &"where"
 
-[sub_resource type="Resource" id="Resource_xh3ax"]
+[sub_resource type="Resource" id="Resource_056ww"]
 script = ExtResource("1_c5uns")
 id = &"name"
 line = "Margaret. Margaret Hale. My husband is waiting at home."
-choices = Array[ExtResource("2_44emm")]([SubResource("Resource_spwui"), SubResource("Resource_b0m41")])
+choices = Array[ExtResource("2_44emm")]([SubResource("Resource_xh3ax"), SubResource("Resource_aohlj")])
 
-[sub_resource type="Resource" id="Resource_aohlj"]
+[sub_resource type="Resource" id="Resource_afp5v"]
 script = ExtResource("2_44emm")
 text = "[Tech] That payphone was disconnected in 1994."
 next = &"tech_phone"
 required_class = &"tech"
 reveals = Array[StringName]([&"dead_line"])
 
-[sub_resource type="Resource" id="Resource_056ww"]
+[sub_resource type="Resource" id="Resource_pjdvl"]
 script = ExtResource("2_44emm")
 text = "[Profiler] Margaret, I can hear a hum on the line. What's making it?"
 next = &"profiler_hum"
 required_class = &"profiler"
 reveals = Array[StringName]([&"dead_frequency"])
 
-[sub_resource type="Resource" id="Resource_afp5v"]
+[sub_resource type="Resource" id="Resource_cni5s"]
 script = ExtResource("1_c5uns")
 id = &"where"
 line = "The payphone. On the south road by the reservoir. I walked up out of the water."
-choices = Array[ExtResource("2_44emm")]([SubResource("Resource_aohlj"), SubResource("Resource_056ww")])
+choices = Array[ExtResource("2_44emm")]([SubResource("Resource_afp5v"), SubResource("Resource_pjdvl")])
 
-[sub_resource type="Resource" id="Resource_pjdvl"]
+[sub_resource type="Resource" id="Resource_g4bms"]
 script = ExtResource("1_c5uns")
 id = &"tech_record"
 speaker = &"dispatcher"
@@ -122,25 +133,25 @@ line = "(Archive: Margaret Hale drowned in Blackvale Reservoir, November 14, 198
 auto_next = &"record_after"
 auto_delay = 4.0
 
-[sub_resource type="Resource" id="Resource_cni5s"]
+[sub_resource type="Resource" id="Resource_0cu6m"]
 script = ExtResource("2_44emm")
 text = "Margaret... you died in 1987."
 next = &"told"
 required_evidence = Array[StringName]([&"hale_record"])
 patience_delta = -40.0
 
-[sub_resource type="Resource" id="Resource_g4bms"]
+[sub_resource type="Resource" id="Resource_q4shr"]
 script = ExtResource("2_44emm")
 text = "Who was with you in the car?"
 next = &"car"
 
-[sub_resource type="Resource" id="Resource_0cu6m"]
+[sub_resource type="Resource" id="Resource_yphv5"]
 script = ExtResource("1_c5uns")
 id = &"record_after"
 line = "Why did you go quiet? Are they coming for me?"
-choices = Array[ExtResource("2_44emm")]([SubResource("Resource_cni5s"), SubResource("Resource_g4bms")])
+choices = Array[ExtResource("2_44emm")]([SubResource("Resource_0cu6m"), SubResource("Resource_q4shr")])
 
-[sub_resource type="Resource" id="Resource_q4shr"]
+[sub_resource type="Resource" id="Resource_748vx"]
 script = ExtResource("1_c5uns")
 id = &"tech_phone"
 speaker = &"dispatcher"
@@ -148,79 +159,79 @@ line = "(The call is live on a line that hasn't existed for thirty years.)"
 auto_next = &"where"
 auto_delay = 3.0
 
-[sub_resource type="Resource" id="Resource_yphv5"]
+[sub_resource type="Resource" id="Resource_j2p33"]
 script = ExtResource("2_44emm")
 text = "Who does it want, Margaret?"
 next = &"wants"
 
-[sub_resource type="Resource" id="Resource_748vx"]
+[sub_resource type="Resource" id="Resource_ak5su"]
 script = ExtResource("1_c5uns")
 id = &"profiler_hum"
 line = "The hum? That's the water. It sings when it wants someone."
-choices = Array[ExtResource("2_44emm")]([SubResource("Resource_yphv5")])
+choices = Array[ExtResource("2_44emm")]([SubResource("Resource_j2p33")])
 
-[sub_resource type="Resource" id="Resource_j2p33"]
+[sub_resource type="Resource" id="Resource_lfxf7"]
 script = ExtResource("1_c5uns")
 id = &"wants"
 line = "Whoever answers. It wanted me. Now it knows your voice."
 auto_next = &"end_static"
 auto_delay = 4.0
 
-[sub_resource type="Resource" id="Resource_ak5su"]
+[sub_resource type="Resource" id="Resource_uik8o"]
 script = ExtResource("2_44emm")
 text = "He watched? He didn't help you?"
 next = &"husband"
 reveals = Array[StringName]([&"husband_watched"])
 
-[sub_resource type="Resource" id="Resource_lfxf7"]
+[sub_resource type="Resource" id="Resource_ix7fb"]
 script = ExtResource("1_c5uns")
 id = &"car"
 line = "My husband was driving. He got out. He stood on the ice and watched."
-choices = Array[ExtResource("2_44emm")]([SubResource("Resource_ak5su")])
+choices = Array[ExtResource("2_44emm")]([SubResource("Resource_uik8o")])
 
-[sub_resource type="Resource" id="Resource_uik8o"]
+[sub_resource type="Resource" id="Resource_52a8p"]
 script = ExtResource("1_c5uns")
 id = &"husband"
 line = "He said the water asked for someone. Better me than him."
 auto_next = &"end_static"
 auto_delay = 4.0
 
-[sub_resource type="Resource" id="Resource_ix7fb"]
+[sub_resource type="Resource" id="Resource_nwi2w"]
 script = ExtResource("1_c5uns")
 id = &"told"
 line = "(The dripping stops.) ...Then why is it still so cold? Send someone to bring me home."
 auto_next = &"end_static"
 auto_delay = 4.0
 
-[sub_resource type="Resource" id="Resource_52a8p"]
+[sub_resource type="Resource" id="Resource_0fa22"]
 script = ExtResource("1_c5uns")
 id = &"end_static"
 speaker = &"dispatcher"
 line = "(The line fills with the sound of water rushing in. Then static.)"
 
-[sub_resource type="Resource" id="Resource_nwi2w"]
+[sub_resource type="Resource" id="Resource_sqeog"]
 script = ExtResource("4_c4a71")
-nodes = Array[ExtResource("1_c5uns")]([SubResource("Resource_q3kev"), SubResource("Resource_ovwc2"), SubResource("Resource_xuufk"), SubResource("Resource_a7d44"), SubResource("Resource_xh3ax"), SubResource("Resource_afp5v"), SubResource("Resource_pjdvl"), SubResource("Resource_0cu6m"), SubResource("Resource_q4shr"), SubResource("Resource_748vx"), SubResource("Resource_j2p33"), SubResource("Resource_lfxf7"), SubResource("Resource_uik8o"), SubResource("Resource_ix7fb"), SubResource("Resource_52a8p")])
+nodes = Array[ExtResource("1_c5uns")]([SubResource("Resource_875cs"), SubResource("Resource_gqneq"), SubResource("Resource_xuufk"), SubResource("Resource_6bsur"), SubResource("Resource_b0m41"), SubResource("Resource_056ww"), SubResource("Resource_cni5s"), SubResource("Resource_g4bms"), SubResource("Resource_yphv5"), SubResource("Resource_748vx"), SubResource("Resource_ak5su"), SubResource("Resource_lfxf7"), SubResource("Resource_ix7fb"), SubResource("Resource_52a8p"), SubResource("Resource_nwi2w"), SubResource("Resource_0fa22")])
 
-[sub_resource type="Resource" id="Resource_0fa22"]
+[sub_resource type="Resource" id="Resource_0n2r8"]
 script = ExtResource("5_wfc7d")
 id = &"rec_hale_1987"
 title = "Margaret Hale, 1987"
 content = "Drowned in Blackvale Reservoir, 14 Nov 1987. Body recovered 3 days later. Case closed: accident."
 
-[sub_resource type="Resource" id="Resource_sqeog"]
+[sub_resource type="Resource" id="Resource_q5yjc"]
 script = ExtResource("5_wfc7d")
 id = &"rec_payphone"
 title = "Reservoir payphone"
 content = "Line disconnected by the phone company in 1994. Booth removed in 2003."
 
-[sub_resource type="Curve" id="Curve_0n2r8"]
+[sub_resource type="Curve" id="Curve_ds23f"]
 _data = [Vector2(0, 0.05), 0.0, 0.0, 0, 0, Vector2(1, 0.9), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Resource" id="Resource_q5yjc"]
+[sub_resource type="Resource" id="Resource_chwsq"]
 script = ExtResource("7_suj5y")
-tremor_curve = SubResource("Curve_0n2r8")
+tremor_curve = SubResource("Curve_ds23f")
 background_tags = Array[StringName]([&"water_drip", &"emf_hum"])
 baseline_heart_rate = 40
 emf_frequency = 50.0
@@ -230,12 +241,12 @@ script = ExtResource("6_r4qhd")
 id = &"call_drowned_voice"
 title = "Reservoir Payphone"
 truth = 3
-earliest_minute = 105
-dialogue = SubResource("Resource_nwi2w")
+earliest_minute = 22
+dialogue = SubResource("Resource_sqeog")
 phone_number = "911-555-0199"
 caller_name = "Margaret Hale"
 caller_location_name = "Blackvale Reservoir, south road payphone"
 true_location = Vector2(180, 90)
-records = Array[ExtResource("5_wfc7d")]([SubResource("Resource_0fa22"), SubResource("Resource_sqeog")])
-stress_profile = SubResource("Resource_q5yjc")
+records = Array[ExtResource("5_wfc7d")]([SubResource("Resource_0n2r8"), SubResource("Resource_q5yjc")])
+stress_profile = SubResource("Resource_chwsq")
 patience_seconds = 160.0

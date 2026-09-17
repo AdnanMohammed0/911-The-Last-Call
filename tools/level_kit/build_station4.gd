@@ -142,7 +142,7 @@ static func _armory(kit: LevelKit, armory: Node3D) -> void:
 
 	# Weapon wall: steel backboard with racked rifles, shotguns and SMGs.
 	kit.box(armory, "WeaponRackBoard", Vector3(8, 1.55, -5.78), Vector3(9.0, 2.0, 0.08), kit.material("metal_painted"), 0.0, false)
-	var racks: Array = [[&"rifle", 4.6], [&"rifle", 6.3], [&"shotgun", 8.0], [&"shotgun", 9.7], [&"smg", 11.4]]
+	var racks: Array = [[&"pistol", 4.0], [&"pistol", 5.2], [&"shotgun", 6.7], [&"smg", 8.4], [&"rifle", 10.1], [&"rifle", 11.8]]
 	var index: int = 0
 	for rack: Array in racks:
 		var item: ArmoryItem = ArmoryItem.new()

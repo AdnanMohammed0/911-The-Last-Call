@@ -29,8 +29,11 @@ func _ready() -> void:
 
 func get_prompt_text() -> String:
 	var local: Player = Player.find_by_peer(get_tree(), multiplayer.get_unique_id())
+	var my_rank: int = Career.rank()
 	match kind:
 		Kind.ARMOR:
+			if my_rank < Career.ARMOR_RANK:
+				return "Ballistic vest — requires %s" % Career.rank_name(Career.ARMOR_RANK)
 			return "Put on ballistic vest"
 		Kind.AMMO:
 			return "Refill ammunition"
@@ -39,6 +42,8 @@ func get_prompt_text() -> String:
 		return ""
 	if local != null and not data.is_allowed_for(local.class_id):
 		return "%s — %s only" % [data.display_name, ", ".join(_class_names(data))]
+	if my_rank < Career.required_rank(weapon_id):
+		return "%s — requires rank %s" % [data.display_name, Career.rank_name(Career.required_rank(weapon_id))]
 	if local != null and local.get_weapons().weapon_id(data.slot) == weapon_id:
 		return "Refill %s" % data.display_name
 	return "Take %s" % data.display_name
@@ -48,9 +53,12 @@ func _can_interact(peer_id: int) -> bool:
 	var player: Player = Player.find_by_peer(get_tree(), peer_id)
 	if player == null or not player.get_health().is_alive():
 		return false
+	var rank: int = Career.rank_of(peer_id)
 	if kind == Kind.WEAPON:
 		var data: WeaponData = WeaponCatalog.get_data(weapon_id)
-		return data != null and data.is_allowed_for(player.class_id)
+		return data != null and data.is_allowed_for(player.class_id) and rank >= Career.required_rank(weapon_id)
+	if kind == Kind.ARMOR:
+		return rank >= Career.ARMOR_RANK
 	return true
 
 

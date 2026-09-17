@@ -52,6 +52,10 @@ signal noise_event(position: Vector3, radius: float, source_peer: int)
 signal hostile_killed(hostile: Node, by_peer: int)
 ## A suspect put their hands up and can be arrested (P3-05).
 signal suspect_surrendered(hostile: Node)
+## Host: a surrendered suspect was cuffed.
+signal suspect_arrested(hostile: Node, by_peer: int)
+## Host: dialogue node event from the active call (e.g. &"dispatch_units", &"dispatch_arrest").
+signal call_event(call_id: StringName, event_name: StringName)
 signal hostage_executed(hostile: Node)
 
 # --- Horror ---

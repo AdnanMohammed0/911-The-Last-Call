@@ -38,6 +38,9 @@ properties/4/replication_mode = 2
 properties/5/path = NodePath(".:is_surrendered")
 properties/5/spawn = true
 properties/5/replication_mode = 2
+properties/6/path = NodePath(".:is_arrested")
+properties/6/spawn = true
+properties/6/replication_mode = 2
 
 [node name="Hostile" type="CharacterBody3D"]
 script = ExtResource("1_agent")

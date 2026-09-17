@@ -19,7 +19,7 @@ const AUDIO_BUSES: Dictionary[StringName, String] = {
 const ACTIONS: Array[Array] = [
 	[&"move_forward", "Move forward"], [&"move_back", "Move back"], [&"move_left", "Move left"], [&"move_right", "Move right"],
 	[&"jump", "Jump"], [&"sprint", "Sprint"], [&"crouch", "Crouch"], [&"lean_left", "Lean left"], [&"lean_right", "Lean right"],
-	[&"interact", "Interact"], [&"door_peek", "Peek door"], [&"door_kick", "Kick door"], [&"flashlight", "Flashlight"],
+	[&"interact", "Interact"], [&"shout", "Shout \"Police, hands up!\""], [&"door_peek", "Peek door"], [&"door_kick", "Kick door"], [&"flashlight", "Flashlight"],
 	[&"fire", "Fire"], [&"aim", "Aim down sights"], [&"reload", "Reload"],
 	[&"weapon_primary", "Primary weapon"], [&"weapon_sidearm", "Sidearm"], [&"weapon_swap", "Swap weapon"], [&"drop_weapon", "Drop weapon"],
 	[&"voice_ptt", "Push to talk"], [&"radio_ptt", "Radio"],

@@ -47,6 +47,9 @@ func _ready() -> void:
 	dialogue_runner.patience_changed.connect(_on_dialogue_patience_changed)
 	dialogue_runner.evidence_revealed.connect(_on_dialogue_evidence_revealed)
 	dialogue_runner.dialogue_finished.connect(_on_dialogue_runner_finished)
+	dialogue_runner.event_triggered.connect(func(event_name: StringName) -> void:
+		if _is_server() and EventBus != null:
+			EventBus.call_event.emit(active_call_id, event_name))
 	
 	if EventBus != null:
 		EventBus.phase_changed.connect(_on_phase_changed)

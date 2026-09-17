@@ -14,6 +14,13 @@ const TEST_CALL: String = "res://data/calls/slice/call_closet_monster.tres"
 
 var _auto_timer: float = 0.0
 var _auto_done: bool = false
+## Host: seconds the line has been quiet (no call, no response in progress).
+var _quiet_seconds: float = 0.0
+var _shift_done: bool = false
+
+## Seconds of silence before the next queued call rings early (keeps the shift moving, so players
+## never wait long between calls).
+@export var max_quiet_seconds: float = 12.0
 
 
 func _ready() -> void:
@@ -43,18 +50,43 @@ func queue_shift_calls() -> void:
 	pending.sort_custom(func(a: CallData, b: CallData) -> bool: return a.earliest_minute < b.earliest_minute)
 	for call: CallData in pending:
 		CallDirector.enqueue_call(call.id)
+	MissionDirector.set_calls_total(CallDirector.registered_calls.size())
 
 
 func _process(delta: float) -> void:
 	if clock_label != null:
 		var minutes: int = CallDirector.shift_clock_minutes
 		clock_label.text = "%02d:%02d" % [minutes / 60, minutes % 60]
+	if multiplayer.is_server():
+		_pace_calls(delta)
 	if not multiplayer.is_server() or _auto_done or auto_test_call_delay <= 0.0:
 		return
 	_auto_timer += delta
 	if _auto_timer >= auto_test_call_delay:
 		_auto_done = true
 		ring_test_call()
+
+
+## Host: ring the next call early after a quiet spell, and roll over to the next shift when all are handled.
+func _pace_calls(delta: float) -> void:
+	var line_free: bool = CallDirector.current_state == CallDirector.CallState.IDLE
+	if not line_free or MissionDirector.state != MissionDirector.State.IDLE:
+		_quiet_seconds = 0.0
+		return
+	_quiet_seconds += delta
+	if not CallDirector.call_queue.is_empty():
+		_shift_done = false
+		if _quiet_seconds >= max_quiet_seconds:
+			_quiet_seconds = 0.0
+			var next_id: StringName = CallDirector.call_queue.pop_front()
+			CallDirector.ring_call(next_id)
+	elif not _shift_done and _quiet_seconds >= 6.0 and CallDirector.call_history.size() >= CallDirector.registered_calls.size():
+		_shift_done = true
+		MissionDirector.complete_shift()
+		CallDirector.call_history.clear()
+		CallDirector.set_shift_time(0)
+		_quiet_seconds = -20.0
+		queue_shift_calls()
 
 
 ## Any peer: ask the host to ring the test call.

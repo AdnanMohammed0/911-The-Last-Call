@@ -136,6 +136,16 @@
       "status": "testing",
       "note": "اللوب كامل: تصنيف البلاغ genuine/ambush يفتح استجابة ← المخزن (أسلحة حسب الكلاس، دروع، ذخيرة) ← باب الكراج ينقل الفريق لماب Harbor Warehouse (9 أعداء بفرقتين، أصعب حسب نوع البلاغ) ← تطهير المنطقة ← الإخلاء عند الفان ← رجوع للمحطة مع الثقة/الميزانية. الفشل عند سقوط الفريق كله. مجرّب أوفلاين وبلاعبين على الشبكة.",
       "updated_at": "2026-09-17"
+    },
+    "P3-05": {
+      "status": "testing",
+      "note": "استسلام واعتقال: صيحة [H] تكسر معنويات المشتبهين حسب إصابتهم وعددنا، والمستسلم ينعتقل بـ hold [F]؛ قتل الأعزل/المستسلم يُسجل كقتل غير قانوني ويخصم XP وثقة.",
+      "updated_at": "2026-09-17"
+    },
+    "P4-05": {
+      "status": "testing",
+      "note": "نظام تقدّم: XP ورُتب (Rookie→Captain) محفوظة بـ user://career.cfg، أسلحة المخزن مقفولة بالرُتبة، تقرير مهمة بالنقاط، شفتات متتابعة أصعب، وإشعارات XP/ترقية بالـHUD.",
+      "updated_at": "2026-09-17"
     }
   },
   "log": [
@@ -799,6 +809,31 @@
         "scenes/shared/player/player.gd",
         "tests/test_mission_loop.gd",
         "tests/test_call_validator.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-05",
+        "P3-10",
+        "P3-11",
+        "P3-19",
+        "P4-05"
+      ],
+      "summary": "ذكاء اصطناعي أذكى (تصويب يتحسن بالتتبع، زمن رد فعل، اختيار الهدف اللي أطلق عليه، كسر الاشتباك للغطاء، نيران تثبيت، تحرك جانبي، تفتيش حقيقي) + استسلام/اعتقال + archetype أعزل. 5 مكالمات جديدة (المجموع 15، أغلبها حقيقي/كمين) وتوقيت أسرع (مكالمة كل ~12-30 ثانية) وإرسال الوحدات من داخل الحوار (dispatch_units / dispatch_arrest). أنواع مهمات: raid / ambush / arrest / لا شيء حسب حقيقة البلاغ، وخريطة Aspen Drive الجديدة (بيت كامل + كراج + حديقة). الخروج ممكن بأي وقت مع XP أقل، ونظام XP/رُتب/فتح أسلحة/تقرير مهمة/شفتات. 198 اختبار + تجارب أوفلاين وشبكة.",
+      "files": [
+        "scenes/field/enemies/hostile_agent.gd",
+        "scenes/field/enemies/hostile_arrest.gd",
+        "core/ai/hostile_brains.gd",
+        "data/ai/archetypes/prankster.tres",
+        "autoload/career.gd",
+        "autoload/mission_director.gd",
+        "tools/calls/build_shift_calls.gd",
+        "data/calls/shift1/",
+        "tools/level_kit/build_aspen_drive.gd",
+        "scenes/field/missions/aspen_drive.tscn",
+        "tests/test_career.gd",
+        "tests/test_mission_loop.gd"
       ]
     }
   ]

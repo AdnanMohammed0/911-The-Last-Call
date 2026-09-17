@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ArchetypeData" format=3]
+
+[ext_resource type="Script" path="res://data/ai/archetype_data.gd" id="1_arch"]
+
+[resource]
+script = ExtResource("1_arch")
+id = &"prankster"
+display_name = "Prank Caller"
+color = Color(0.35, 0.45, 0.6, 1)
+max_hp = 80.0
+morale = 25.0
+surrender_threshold = 60.0
+armed = false
+weapon_name = "None"
+damage = 0.0
+magazine = 0
+accuracy = 0.0
+run_speed = 4.6
+uses_cover = false

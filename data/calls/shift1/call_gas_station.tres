@@ -170,39 +170,64 @@ auto_next = &"end_click"
 auto_delay = 3.0
 
 [sub_resource type="Resource" id="Resource_81ecs"]
+script = ExtResource("2_gn6k8")
+text = "All units to First Blackvale Savings, now!"
+next = &"bank_units"
+
+[sub_resource type="Resource" id="Resource_6p0ka"]
+script = ExtResource("2_gn6k8")
+text = "Log the hoax and stay on the board."
+next = &"logged"
+
+[sub_resource type="Resource" id="Resource_noi1c"]
 script = ExtResource("1_ja0d2")
 id = &"end_click"
 speaker = &"dispatcher"
 line = "(Click. Seconds later the Main Street bank alarm hits the silent-alarm board.)"
+choices = Array[ExtResource("2_gn6k8")]([SubResource("Resource_81ecs"), SubResource("Resource_6p0ka")])
 
-[sub_resource type="Resource" id="Resource_6p0ka"]
+[sub_resource type="Resource" id="Resource_uqm6m"]
+script = ExtResource("1_ja0d2")
+id = &"bank_units"
+speaker = &"dispatcher"
+line = "(Tactical units rerouted south to the bank.)"
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_gfpt0"]
+script = ExtResource("1_ja0d2")
+id = &"logged"
+speaker = &"dispatcher"
+line = "(Hoax logged. The bank alarm keeps ringing.)"
+
+[sub_resource type="Resource" id="Resource_jg2bf"]
 script = ExtResource("1_ja0d2")
 id = &"end_diverted"
 line = "Good. Good. (click)"
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
-[sub_resource type="Resource" id="Resource_noi1c"]
+[sub_resource type="Resource" id="Resource_6h13x"]
 script = ExtResource("4_2mv5i")
-nodes = Array[ExtResource("1_ja0d2")]([SubResource("Resource_ku07x"), SubResource("Resource_hliok"), SubResource("Resource_cs86k"), SubResource("Resource_ubx8h"), SubResource("Resource_u207g"), SubResource("Resource_0iu3l"), SubResource("Resource_h4uuh"), SubResource("Resource_44nwn"), SubResource("Resource_imp2a"), SubResource("Resource_yonhr"), SubResource("Resource_lsp5x"), SubResource("Resource_lje5y"), SubResource("Resource_81ecs"), SubResource("Resource_6p0ka")])
+nodes = Array[ExtResource("1_ja0d2")]([SubResource("Resource_ku07x"), SubResource("Resource_hliok"), SubResource("Resource_cs86k"), SubResource("Resource_ubx8h"), SubResource("Resource_u207g"), SubResource("Resource_0iu3l"), SubResource("Resource_h4uuh"), SubResource("Resource_44nwn"), SubResource("Resource_imp2a"), SubResource("Resource_yonhr"), SubResource("Resource_lsp5x"), SubResource("Resource_lje5y"), SubResource("Resource_noi1c"), SubResource("Resource_uqm6m"), SubResource("Resource_gfpt0"), SubResource("Resource_jg2bf")])
 
-[sub_resource type="Resource" id="Resource_uqm6m"]
+[sub_resource type="Resource" id="Resource_74sgx"]
 script = ExtResource("5_fyopk")
 id = &"rec_payphone_0170"
 title = "911-555-0170"
 content = "Payphone outside First Blackvale Savings, Main Street (south county)."
 
-[sub_resource type="Resource" id="Resource_gfpt0"]
+[sub_resource type="Resource" id="Resource_682fl"]
 script = ExtResource("5_fyopk")
 id = &"rec_quickstop"
 title = "Quick Stop Highway 40"
 content = "Closed for renovation since August."
 
-[sub_resource type="Curve" id="Curve_jg2bf"]
+[sub_resource type="Curve" id="Curve_ixpxc"]
 _data = [Vector2(0, 0.2), 0.0, 0.0, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Resource" id="Resource_6h13x"]
+[sub_resource type="Resource" id="Resource_yiwis"]
 script = ExtResource("7_xhbp6")
-tremor_curve = SubResource("Curve_jg2bf")
+tremor_curve = SubResource("Curve_ixpxc")
 background_tags = Array[StringName]([&"bank_alarm", &"traffic_downtown"])
 baseline_heart_rate = 76
 
@@ -211,11 +236,11 @@ script = ExtResource("6_qlsbe")
 id = &"call_gas_station"
 title = "Pump 6"
 truth = 4
-earliest_minute = 160
-dialogue = SubResource("Resource_noi1c")
+earliest_minute = 32
+dialogue = SubResource("Resource_6h13x")
 phone_number = "911-555-0170"
 caller_location_name = "Quick Stop gas station, Highway 40 (north county)"
 true_location = Vector2(700, 60)
-records = Array[ExtResource("5_fyopk")]([SubResource("Resource_uqm6m"), SubResource("Resource_gfpt0")])
-stress_profile = SubResource("Resource_6h13x")
+records = Array[ExtResource("5_fyopk")]([SubResource("Resource_74sgx"), SubResource("Resource_682fl")])
+stress_profile = SubResource("Resource_yiwis")
 patience_seconds = 140.0

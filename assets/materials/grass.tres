@@ -1,0 +1,48 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_3jguq"]
+colors = PackedColorArray(0.65, 0.65, 0.65, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_prref"]
+seed = 2853
+frequency = 0.05
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_vgjhr"]
+noise = SubResource("FastNoiseLite_prref")
+color_ramp = SubResource("Gradient_3jguq")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_gjj3c"]
+seed = 2860
+frequency = 0.15
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_c82c8"]
+noise = SubResource("FastNoiseLite_gjj3c")
+seamless = true
+as_normal_map = true
+bump_strength = 3.0
+
+[sub_resource type="Gradient" id="Gradient_8xqkc"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_7m5cl"]
+seed = 2866
+frequency = 0.1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0xrxe"]
+noise = SubResource("FastNoiseLite_7m5cl")
+color_ramp = SubResource("Gradient_8xqkc")
+seamless = true
+
+[resource]
+resource_name = "grass"
+albedo_color = Color(0.12, 0.17, 0.09, 1)
+albedo_texture = SubResource("NoiseTexture2D_vgjhr")
+roughness_texture = SubResource("NoiseTexture2D_0xrxe")
+normal_enabled = true
+normal_scale = 0.3
+normal_texture = SubResource("NoiseTexture2D_c82c8")
+uv1_scale = Vector3(0.4, 0.4, 0.4)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

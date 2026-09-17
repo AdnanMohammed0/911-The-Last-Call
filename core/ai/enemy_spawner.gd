@@ -37,9 +37,10 @@ func _ready() -> void:
 func spawn_from_points() -> void:
 	if not multiplayer.is_server() or spawn_points == null:
 		return
+	var kind: StringName = MissionDirector.mission_kind if MissionDirector.mission_kind != &"" else &"raid"
 	for child: Node in spawn_points.get_children():
 		var point: EnemySpawnPoint = child as EnemySpawnPoint
-		if point == null or point.archetype == null:
+		if point == null or point.archetype == null or not point.is_used_by(kind):
 			continue
 		spawn_hostile(point.archetype.resource_path, point.global_transform, _level_path_to(point, point.squad), _level_path_to(point, point.patrol_route))
 

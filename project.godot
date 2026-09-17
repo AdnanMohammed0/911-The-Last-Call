@@ -32,6 +32,7 @@ CallDirector="*res://autoload/call_director.gd"
 BTDebugger="*res://autoload/bt_debugger.gd"
 TensionDirector="*res://autoload/tension_director.gd"
 LagCompensation="*res://autoload/lag_compensation.gd"
+Career="*res://autoload/career.gd"
 MissionDirector="*res://autoload/mission_director.gd"
 WorldItems="*res://autoload/world_items.gd"
 GameSettings="*res://autoload/game_settings.gd"
@@ -139,6 +140,11 @@ jump={
 drop_weapon={
 "deadzone": 0.2,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":71,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+shout={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":72,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
 flashlight={

@@ -1,0 +1,49 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_go5vy"]
+colors = PackedColorArray(0.7, 0.7, 0.7, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_nnt4s"]
+seed = 35983
+frequency = 0.1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_7x3c3"]
+noise = SubResource("FastNoiseLite_nnt4s")
+color_ramp = SubResource("Gradient_go5vy")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_n6dg0"]
+seed = 35990
+frequency = 0.3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_rndi3"]
+noise = SubResource("FastNoiseLite_n6dg0")
+seamless = true
+as_normal_map = true
+bump_strength = 4.0
+
+[sub_resource type="Gradient" id="Gradient_xt42c"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_7hwd3"]
+seed = 35996
+frequency = 0.2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_dqwei"]
+noise = SubResource("FastNoiseLite_7hwd3")
+color_ramp = SubResource("Gradient_xt42c")
+seamless = true
+
+[resource]
+resource_name = "shingle"
+albedo_color = Color(0.14, 0.13, 0.13, 1)
+albedo_texture = SubResource("NoiseTexture2D_7x3c3")
+roughness = 0.9
+roughness_texture = SubResource("NoiseTexture2D_dqwei")
+normal_enabled = true
+normal_scale = 0.4
+normal_texture = SubResource("NoiseTexture2D_rndi3")
+uv1_scale = Vector3(0.8, 0.8, 0.8)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

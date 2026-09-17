@@ -25,6 +25,9 @@ func _rack(kind: ArmoryItem.Kind, weapon: StringName = &"rifle") -> ArmoryItem:
 func before_each() -> void:
 	MissionDirector.reset()
 	MissionDirector.scene_changes_enabled = false
+	Career.persist = false
+	Career.reset()
+	Career.award(1, 5000, "test rank")   # armory racks are rank-gated; rank is covered in test_career
 	_world = Node3D.new()
 	add_child_autofree(_world)
 
@@ -120,12 +123,14 @@ func test_objective_secured_then_extraction() -> void:
 	MissionDirector.report_hostiles(3, 5)
 	assert_eq(MissionDirector.hostiles_left, 3)
 	assert_eq(MissionDirector.state, MissionDirector.State.DEPLOYED)
-	assert_false(MissionDirector.extract(), "cannot leave before the area is secured")
 	MissionDirector.report_hostiles(0, 5)
 	assert_eq(MissionDirector.state, MissionDirector.State.SECURED)
-	var trust: int = GameState.public_trust
+	MissionDirector._kills = 5   # the kill events the hostiles would have fired
+	var trust: int = MissionDirector.public_trust
+	var xp_before: int = Career.xp
 	assert_true(MissionDirector.extract())
-	assert_eq(GameState.public_trust, trust + MissionDirector.TRUST_SUCCESS)
+	assert_gt(MissionDirector.public_trust, trust, "clearing the scene raises public trust")
+	assert_gt(Career.xp, xp_before, "the mission report awards XP")
 	assert_eq(MissionDirector.state, MissionDirector.State.IDLE)
 	assert_eq(GameState.phase, GameState.Phase.DISPATCH)
 
@@ -152,10 +157,10 @@ func test_team_wipe_fails_the_mission() -> void:
 	MissionDirector.start_response(&"call_x", &"genuine")
 	MissionDirector.deploy()
 	player.get_health().apply_damage(1000.0)
-	var trust: int = GameState.public_trust
+	var trust: int = MissionDirector.public_trust
 	MissionDirector._process(MissionDirector.WIPE_GRACE_SEC + 0.1)
 	assert_eq(MissionDirector.state, MissionDirector.State.FAILED)
-	assert_eq(GameState.public_trust, trust + MissionDirector.TRUST_FAILURE)
+	assert_eq(MissionDirector.public_trust, trust + MissionDirector.TRUST_FAILURE)
 
 
 func test_deploy_door_locked_until_response() -> void:
@@ -271,3 +276,119 @@ func test_jump() -> void:
 	assert_between(peak, 0.6, 1.3, "about a metre high (%.2f)" % peak)
 	player.stance = Player.Stance.CROUCH
 	assert_false(player.can_jump(), "no jumping while crouched")
+
+
+# --- mission kinds, scoring and early extraction -------------------------------------------------
+
+func test_mission_kind_follows_the_hidden_truth() -> void:
+	assert_eq(MissionDirector.kind_for_truth(CallData.Truth.GENUINE), &"raid")
+	assert_eq(MissionDirector.kind_for_truth(CallData.Truth.DIVERSION), &"raid")
+	assert_eq(MissionDirector.kind_for_truth(CallData.Truth.AMBUSH), &"ambush")
+	assert_eq(MissionDirector.kind_for_truth(CallData.Truth.PRANK), &"arrest")
+	assert_eq(MissionDirector.kind_for_truth(CallData.Truth.PARANORMAL), &"empty")
+	assert_gt(MissionDirector.KIND_DIFFICULTY[&"ambush"], MissionDirector.KIND_DIFFICULTY[&"raid"], "ambushes are harder")
+
+
+func test_dialogue_can_dispatch_the_team() -> void:
+	var call: CallData = load("res://data/calls/shift1/call_cut_line.tres") as CallData
+	CallDirector.register_call(call)
+	EventBus.call_event.emit(call.id, &"dispatch_units")
+	assert_eq(MissionDirector.state, MissionDirector.State.RESPONSE, "units were dispatched from the conversation")
+	assert_eq(MissionDirector.mission_kind, &"ambush", "the caller lied: it is an ambush")
+	assert_eq(MissionDirector.mission_scene, MissionDirector.SUBURB)
+
+
+func test_dialogue_arrest_dispatch_opens_an_arrest_mission() -> void:
+	var call: CallData = load("res://data/calls/shift1/call_lost_child.tres") as CallData
+	CallDirector.register_call(call)
+	EventBus.call_event.emit(call.id, &"dispatch_arrest")
+	assert_eq(MissionDirector.state, MissionDirector.State.RESPONSE)
+	assert_eq(MissionDirector.mission_kind, &"arrest")
+	assert_string_contains(MissionDirector.objective_for_kind(&"arrest"), "arrest")
+
+
+func test_verdict_xp_rewards_the_truth() -> void:
+	CallDirector.call_history[&"call_test"] = {"truth": CallData.Truth.PRANK}
+	var before: int = Career.xp
+	EventBus.call_classified.emit(&"call_test", &"prank")
+	assert_eq(Career.xp, before + MissionDirector.XP_CORRECT_VERDICT)
+	before = Career.xp
+	EventBus.call_classified.emit(&"call_test", &"genuine")
+	assert_eq(Career.xp, maxi(before + MissionDirector.XP_WRONG_VERDICT, 0))
+	CallDirector.call_history.erase(&"call_test")
+
+
+func test_score_mission_rewards_scale_with_the_result() -> void:
+	var full: Dictionary = MissionDirector.score_mission(&"raid", 5, 5, 0, 0, 0)
+	var partial: Dictionary = MissionDirector.score_mission(&"raid", 5, 4, 0, 0, 0)
+	var one_left: Dictionary = MissionDirector.score_mission(&"raid", 5, 4, 0, 0, 0)
+	var none: Dictionary = MissionDirector.score_mission(&"raid", 5, 0, 0, 0, 0)
+	var full_xp: int = full["xp"]
+	var partial_xp: int = partial["xp"]
+	var none_xp: int = none["xp"]
+	assert_gt(full_xp, partial_xp, "clearing everything pays best")
+	assert_gt(partial_xp, 0, "leaving one suspect still pays")
+	var one_left_xp: int = one_left["xp"]
+	assert_eq(partial_xp, one_left_xp)
+	assert_lt(none_xp, 0, "leaving without engaging costs XP")
+	var arrests: Dictionary = MissionDirector.score_mission(&"raid", 5, 0, 5, 0, 0)
+	var arrests_xp: int = arrests["xp"]
+	assert_gt(arrests_xp, full_xp, "arrests are worth more than kills")
+
+
+func test_score_mission_punishes_unlawful_kills_and_casualties() -> void:
+	var clean: Dictionary = MissionDirector.score_mission(&"arrest", 1, 0, 1, 0, 0)
+	var shot: Dictionary = MissionDirector.score_mission(&"arrest", 1, 0, 0, 1, 0)
+	var clean_xp: int = clean["xp"]
+	var shot_xp: int = shot["xp"]
+	var shot_trust: int = shot["trust"]
+	assert_gt(clean_xp, 0)
+	assert_lt(shot_xp, 0, "killing an unarmed prank caller is punished")
+	assert_lt(shot_trust, 0)
+	var downed: Dictionary = MissionDirector.score_mission(&"raid", 4, 4, 0, 0, 2)
+	var downed_xp: int = downed["xp"]
+	var fine: Dictionary = MissionDirector.score_mission(&"raid", 4, 4, 0, 0, 0)
+	var fine_xp: int = fine["xp"]
+	assert_lt(downed_xp, fine_xp, "officers going down costs XP")
+	var empty: Dictionary = MissionDirector.score_mission(&"empty", 0, 0, 0, 0, 0)
+	var empty_trust: int = empty["trust"]
+	assert_lt(empty_trust, 0, "sending units to a paranormal call wastes them")
+
+
+func test_extract_any_time_with_survivors_left() -> void:
+	var player: Player = _player(&"tech")
+	MissionDirector.start_response(&"call_x", &"genuine")
+	MissionDirector.deploy()
+	MissionDirector.report_hostiles(2, 5)
+	MissionDirector._kills = 3
+	var xp_before: int = Career.xp
+	assert_true(MissionDirector.extract(), "the team can leave with suspects still up")
+	assert_gt(Career.xp, xp_before)
+	assert_eq(MissionDirector.state, MissionDirector.State.IDLE)
+	player.free()
+
+
+func test_spawn_points_filter_by_mission_kind() -> void:
+	var point: EnemySpawnPoint = EnemySpawnPoint.new()
+	assert_true(point.is_used_by(&"raid"), "untagged points are the default force")
+	assert_true(point.is_used_by(&"ambush"))
+	assert_false(point.is_used_by(&"arrest"))
+	assert_false(point.is_used_by(&"empty"))
+	point.mission_kinds = [&"arrest"] as Array[StringName]
+	assert_true(point.is_used_by(&"arrest"))
+	assert_false(point.is_used_by(&"raid"))
+
+
+func test_shift_progress_and_completion() -> void:
+	MissionDirector.set_calls_total(15)
+	assert_eq(MissionDirector.calls_total, 15)
+	CallDirector.call_history[&"call_test"] = {"truth": CallData.Truth.GENUINE}
+	EventBus.call_classified.emit(&"call_test", &"genuine")
+	assert_eq(MissionDirector.calls_handled, 1)
+	CallDirector.call_history.erase(&"call_test")
+	MissionDirector.reset()
+	var xp_before: int = Career.xp
+	MissionDirector.complete_shift()
+	assert_eq(MissionDirector.shift_number, 2, "the next shift starts")
+	assert_gt(Career.xp, xp_before, "finishing a shift pays a bonus")
+	assert_eq(MissionDirector.calls_handled, 0)

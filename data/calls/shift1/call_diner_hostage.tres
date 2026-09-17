@@ -1,0 +1,208 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_44kga"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_xvcpg"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_wxssm"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_2yjij"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_85v1w"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_hvwku"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_ect6k"]
+
+[sub_resource type="Resource" id="Resource_c2b5w"]
+script = ExtResource("2_xvcpg")
+text = "How many gunmen?"
+next = &"count"
+
+[sub_resource type="Resource" id="Resource_h0q8q"]
+script = ExtResource("2_xvcpg")
+text = "Are you safe where you are?"
+next = &"safe"
+
+[sub_resource type="Resource" id="Resource_gb2ds"]
+script = ExtResource("2_xvcpg")
+text = "What do they want?"
+next = &"want"
+
+[sub_resource type="Resource" id="Resource_jhx0p"]
+script = ExtResource("1_44kga")
+id = &"start"
+line = "(whispering from a storage room) Men with guns came in, they've got Gus and two customers on the floor."
+choices = Array[ExtResource("2_xvcpg")]([SubResource("Resource_c2b5w"), SubResource("Resource_h0q8q"), SubResource("Resource_gb2ds")])
+
+[sub_resource type="Resource" id="Resource_mg25x"]
+script = ExtResource("2_xvcpg")
+text = "[Tech] Can you see the plate of the car?"
+next = &"plate"
+required_class = &"tech"
+reveals = Array[StringName]([&"getaway_car"])
+
+[sub_resource type="Resource" id="Resource_1274w"]
+script = ExtResource("2_xvcpg")
+text = "Stay hidden. Units are on the way."
+next = &"end_units"
+reveals = Array[StringName]([&"armed_suspects"])
+
+[sub_resource type="Resource" id="Resource_e642l"]
+script = ExtResource("1_44kga")
+id = &"count"
+line = "Three inside. One by the door with a shotgun. There's a car running outside."
+choices = Array[ExtResource("2_xvcpg")]([SubResource("Resource_mg25x"), SubResource("Resource_1274w")])
+
+[sub_resource type="Resource" id="Resource_06d8j"]
+script = ExtResource("2_xvcpg")
+text = "Wedge something under the door."
+next = &"wedge"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_c7cj5"]
+script = ExtResource("2_xvcpg")
+text = "Is there a back exit?"
+next = &"back_exit"
+
+[sub_resource type="Resource" id="Resource_xaj0i"]
+script = ExtResource("1_44kga")
+id = &"safe"
+line = "I'm in the storage room behind the kitchen. The door doesn't lock."
+choices = Array[ExtResource("2_xvcpg")]([SubResource("Resource_06d8j"), SubResource("Resource_c7cj5")])
+
+[sub_resource type="Resource" id="Resource_wivbb"]
+script = ExtResource("2_xvcpg")
+text = "How many gunmen?"
+next = &"count"
+
+[sub_resource type="Resource" id="Resource_o1sqe"]
+script = ExtResource("2_xvcpg")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_jjsvj"]
+script = ExtResource("1_44kga")
+id = &"wedge"
+line = "(scraping) A mop bucket. It's something."
+choices = Array[ExtResource("2_xvcpg")]([SubResource("Resource_wivbb"), SubResource("Resource_o1sqe")])
+
+[sub_resource type="Resource" id="Resource_lc8uv"]
+script = ExtResource("2_xvcpg")
+text = "Stay put. Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_ftx3u"]
+script = ExtResource("2_xvcpg")
+text = "[Profiler] When they shout next, move. They won't hear the door."
+next = &"escape"
+required_class = &"profiler"
+
+[sub_resource type="Resource" id="Resource_3b2jq"]
+script = ExtResource("1_44kga")
+id = &"back_exit"
+line = "There's the alley door, but it's right past the kitchen. They'd see me."
+choices = Array[ExtResource("2_xvcpg")]([SubResource("Resource_lc8uv"), SubResource("Resource_ftx3u")])
+
+[sub_resource type="Resource" id="Resource_rt5cu"]
+script = ExtResource("1_44kga")
+id = &"escape"
+line = "(a gunshot inside, shouting) ...I'm out! I'm in the alley! Oh God, Gus is still in there."
+auto_next = &"end_units"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_l26v4"]
+script = ExtResource("2_xvcpg")
+text = "[Profiler] Then units come in quiet. Tell me the layout."
+next = &"count"
+required_class = &"profiler"
+
+[sub_resource type="Resource" id="Resource_wp1mx"]
+script = ExtResource("2_xvcpg")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_2tm26"]
+script = ExtResource("1_44kga")
+id = &"want"
+line = "They keep yelling at Gus about money he owes. They said if cops come, everybody dies."
+choices = Array[ExtResource("2_xvcpg")]([SubResource("Resource_l26v4"), SubResource("Resource_wp1mx")])
+
+[sub_resource type="Resource" id="Resource_sc0db"]
+script = ExtResource("2_xvcpg")
+text = "[Tech] That plate is on our stolen list from the harbor."
+next = &"stolen"
+required_class = &"tech"
+reveals = Array[StringName]([&"stolen_car"])
+
+[sub_resource type="Resource" id="Resource_qulng"]
+script = ExtResource("2_xvcpg")
+text = "Good. Stay hidden, units are coming."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_h31b1"]
+script = ExtResource("1_44kga")
+id = &"plate"
+line = "Black sedan... 7-K-L... I can't see the rest."
+choices = Array[ExtResource("2_xvcpg")]([SubResource("Resource_sc0db"), SubResource("Resource_qulng")])
+
+[sub_resource type="Resource" id="Resource_t4anp"]
+script = ExtResource("2_xvcpg")
+text = "Does Gus have a panic button behind the counter?"
+next = &"panic"
+
+[sub_resource type="Resource" id="Resource_4x0ho"]
+script = ExtResource("2_xvcpg")
+text = "Units are on the way — quiet approach."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_bbnni"]
+script = ExtResource("1_44kga")
+id = &"stolen"
+line = "Stolen? So they're the harbor crew Gus was scared of."
+choices = Array[ExtResource("2_xvcpg")]([SubResource("Resource_t4anp"), SubResource("Resource_4x0ho")])
+
+[sub_resource type="Resource" id="Resource_gc0yi"]
+script = ExtResource("2_xvcpg")
+text = "Stay in the storage room and don't move."
+next = &"end_units"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_r2x4r"]
+script = ExtResource("1_44kga")
+id = &"panic"
+line = "Yes! Under the register. He never got to it— wait, the lights just went out in the dining room."
+choices = Array[ExtResource("2_xvcpg")]([SubResource("Resource_gc0yi")])
+
+[sub_resource type="Resource" id="Resource_nk8f1"]
+script = ExtResource("1_44kga")
+id = &"end_units"
+line = "Please be careful. They're going to hurt Gus."
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_5frss"]
+script = ExtResource("4_2yjij")
+nodes = Array[ExtResource("1_44kga")]([SubResource("Resource_jhx0p"), SubResource("Resource_e642l"), SubResource("Resource_xaj0i"), SubResource("Resource_jjsvj"), SubResource("Resource_3b2jq"), SubResource("Resource_rt5cu"), SubResource("Resource_2tm26"), SubResource("Resource_h31b1"), SubResource("Resource_bbnni"), SubResource("Resource_r2x4r"), SubResource("Resource_nk8f1")])
+
+[sub_resource type="Resource" id="Resource_2j2gn"]
+script = ExtResource("5_85v1w")
+id = &"rec_night_owl"
+title = "Night Owl Diner"
+content = "Owner Gus Parra reported extortion threats from a harbor crew last week."
+
+[sub_resource type="Curve" id="Curve_a3pk2"]
+_data = [Vector2(0, 0.7), 0.0, 0.0, 0, 0, Vector2(1, 0.9), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_m5hei"]
+script = ExtResource("7_ect6k")
+tremor_curve = SubResource("Curve_a3pk2")
+background_tags = Array[StringName]([&"fryer_hiss", &"man_shouting"])
+baseline_heart_rate = 136
+
+[resource]
+script = ExtResource("6_hvwku")
+id = &"call_diner_hostage"
+title = "Night Owl Diner"
+earliest_minute = 67
+dialogue = SubResource("Resource_5frss")
+phone_number = "911-555-0177"
+caller_name = "Maya (waitress)"
+caller_location_name = "Night Owl Diner, Harbor Road"
+true_location = Vector2(760, 430)
+records = Array[ExtResource("5_85v1w")]([SubResource("Resource_2j2gn")])
+stress_profile = SubResource("Resource_m5hei")

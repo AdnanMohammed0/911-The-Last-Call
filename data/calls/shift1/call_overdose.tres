@@ -189,12 +189,14 @@ choices = Array[ExtResource("2_edxku")]([SubResource("Resource_cjsa4")])
 [sub_resource type="Resource" id="Resource_6xsii"]
 script = ExtResource("1_2e55s")
 id = &"end_saved"
-line = "Thank you... thank you. I hear the ambulance. Thank you."
+line = "Thank you... thank you. I hear the ambulance. Thank you. (a door kicks open behind him) Wait— who are you guys?!"
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
 [sub_resource type="Resource" id="Resource_2beuq"]
 script = ExtResource("1_2e55s")
 id = &"end_units"
-line = "Please hurry. He's so cold."
+line = "Please hurry. He's so cold. (a door kicks open) Hey— that's not the ambulance—"
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
 [sub_resource type="Resource" id="Resource_3envc"]
 script = ExtResource("4_mci2o")
@@ -220,7 +222,7 @@ baseline_heart_rate = 140
 script = ExtResource("6_e8wkp")
 id = &"call_overdose"
 title = "Blue Lips"
-earliest_minute = 220
+earliest_minute = 42
 dialogue = SubResource("Resource_3envc")
 phone_number = "911-555-0154"
 caller_name = "Tyler"

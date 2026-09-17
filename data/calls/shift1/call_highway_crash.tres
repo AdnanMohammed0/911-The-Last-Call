@@ -268,6 +268,7 @@ line = "(Something scrapes across the car roof. The line goes dead.)"
 script = ExtResource("1_r6tt3")
 id = &"end_units"
 line = "Please hurry. The rain's getting in. I can hear the river."
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
 [sub_resource type="Resource" id="Resource_av667"]
 script = ExtResource("4_830cu")
@@ -293,7 +294,7 @@ baseline_heart_rate = 128
 script = ExtResource("6_nu2dq")
 id = &"call_highway_crash"
 title = "Route 9 Crash"
-earliest_minute = 3
+earliest_minute = 2
 dialogue = SubResource("Resource_av667")
 phone_number = "911-555-0187"
 caller_name = "Daniel Reyes"

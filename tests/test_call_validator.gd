@@ -112,11 +112,13 @@ func test_slice_call_closet_monster_loads() -> void:
 	assert_true(call.stress_profile.background_tags.has(&"adult_breathing"))
 
 
-func test_shift_one_has_ten_branching_calls() -> void:
+func test_shift_one_has_fifteen_branching_calls() -> void:
 	var truths: Dictionary[int, int] = {}
 	var minutes: Array[int] = []
 	var ids: Array[StringName] = [&"call_highway_crash", &"call_cut_line", &"call_meat_truck", &"call_lost_child",
-		&"call_drowned_voice", &"call_domestic", &"call_gas_station", &"call_church_bells", &"call_overdose", &"call_last_call"]
+		&"call_drowned_voice", &"call_domestic", &"call_gas_station", &"call_church_bells", &"call_overdose",
+		&"call_deputy_down", &"call_home_invasion", &"call_school_threat", &"call_barn_fire", &"call_diner_hostage",
+		&"call_last_call"]
 	for id: StringName in ids:
 		var call: CallData = load("res://data/calls/shift1/%s.tres" % id) as CallData
 		assert_not_null(call, String(id))
@@ -166,3 +168,48 @@ func _pick(runner: DialogueRunner, class_id: StringName) -> bool:
 	var result: Dictionary = runner.select_choice(0, class_id)
 	var success: bool = result.get("success", false)
 	return success
+
+
+func test_most_calls_are_genuine_or_ambush() -> void:
+	var genuine: int = 0
+	var ambush: int = 0
+	var count: int = 0
+	var dispatching: int = 0
+	var arrest_options: int = 0
+	for path: String in CallValidator._find_resources("res://data/calls/shift1"):
+		var call: CallData = load(path) as CallData
+		if call == null:
+			continue
+		count += 1
+		if call.truth == CallData.Truth.GENUINE:
+			genuine += 1
+		elif call.truth == CallData.Truth.AMBUSH:
+			ambush += 1
+		var has_dispatch: bool = false
+		for node: DialogueNode in call.dialogue.nodes:
+			if &"dispatch_units" in node.on_enter_events:
+				has_dispatch = true
+			if &"dispatch_arrest" in node.on_enter_events:
+				arrest_options += 1
+		if has_dispatch:
+			dispatching += 1
+	assert_eq(count, 15, "fifteen calls this shift")
+	assert_gte(genuine + ambush, 9, "most calls are worth rolling units for (%d genuine, %d ambush)" % [genuine, ambush])
+	assert_gte(ambush, 4, "several ambushes")
+	assert_gte(dispatching, 12, "most calls can dispatch the team from the conversation")
+	assert_gte(arrest_options, 2, "prank callers can be arrested")
+
+
+func test_calls_ring_early_in_the_shift() -> void:
+	var minutes: Array[int] = []
+	for path: String in CallValidator._find_resources("res://data/calls/shift1"):
+		var call: CallData = load(path) as CallData
+		if call != null:
+			minutes.append(call.earliest_minute)
+	minutes.sort()
+	assert_lte(minutes[0], 3, "the first call comes almost immediately")
+	var gaps: int = 0
+	for i: int in range(1, minutes.size() - 1):
+		gaps += minutes[i] - minutes[i - 1]
+	var average_gap: float = float(gaps) / float(maxi(minutes.size() - 2, 1))
+	assert_lte(average_gap, 8.0, "about five in-game minutes between calls (%.1f)" % average_gap)

@@ -21,6 +21,7 @@ var weapon_sidearm_just_pressed: bool = false
 var weapon_swap_just_pressed: bool = false
 var drop_just_pressed: bool = false
 var jump_just_pressed: bool = false
+var shout_just_pressed: bool = false
 
 ## False while a menu is open: sample() reports no input and the mouse is left alone.
 var enabled: bool = true
@@ -58,6 +59,7 @@ func sample() -> void:
 		weapon_swap_just_pressed = false
 		drop_just_pressed = false
 		jump_just_pressed = false
+		shout_just_pressed = false
 		return
 	move = Input.get_vector(&"move_left", &"move_right", &"move_forward", &"move_back")
 	sprint = Input.is_action_pressed(&"sprint")
@@ -79,6 +81,7 @@ func sample() -> void:
 	weapon_swap_just_pressed = Input.is_action_just_pressed(&"weapon_swap")
 	drop_just_pressed = Input.is_action_just_pressed(&"drop_weapon")
 	jump_just_pressed = Input.is_action_just_pressed(&"jump")
+	shout_just_pressed = Input.is_action_just_pressed(&"shout")
 
 
 ## Returns the mouse movement accumulated since the last call and resets it.

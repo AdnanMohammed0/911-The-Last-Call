@@ -19,6 +19,15 @@ const FLANK_COOLDOWN: float = 10.0
 const LOUD_BREACH_RADIUS: float = 25.0
 const HOSTAGE_HEARING_DISTANCE: float = 15.0
 const GUNSHOT_NOISE: float = 60.0
+## Seconds before the first shot at a newly seen target.
+const REACTION_SECONDS: float = 0.45
+## Seconds of continuous tracking until aim is fully settled.
+const AIM_SETTLE_SECONDS: float = 1.4
+## After being hit, how long an exposed shooter prioritises reaching cover.
+const UNDER_FIRE_SECONDS: float = 2.5
+const SUPPRESS_MEMORY_SECONDS: float = 3.0
+const STRAFE_INTERVAL: float = 1.6
+const ARREST_HOLD_SECONDS: float = 2.0
 const HIT_ZONES: Array[HealthComponent.HitZone] = [
 	HealthComponent.HitZone.TORSO, HealthComponent.HitZone.TORSO, HealthComponent.HitZone.TORSO,
 	HealthComponent.HitZone.TORSO, HealthComponent.HitZone.TORSO, HealthComponent.HitZone.TORSO,
@@ -29,6 +38,7 @@ const HIT_ZONES: Array[HealthComponent.HitZone] = [
 signal died()
 signal surrendered()
 signal hostage_executed()
+signal arrested(by_peer: int)
 
 @export var archetype: ArchetypeData
 ## Optional patrol route: its Node3D children are visited in order.
@@ -39,6 +49,11 @@ var anim_state: StringName = &"idle"
 var hp: float = 100.0
 var is_dead: bool = false
 var is_surrendered: bool = false
+var is_arrested: bool = false:
+	set(value):
+		is_arrested = value
+		if is_node_ready():
+			_apply_arrested()
 var sync_position: Vector3 = Vector3.ZERO
 var sync_yaw: float = 0.0
 
@@ -59,6 +74,17 @@ var _run: bool = false
 var _aim_target: Vector3 = Vector3.INF
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _patrol_index: int = 0
+var _aim_player: Player = null
+var _aim_tracked: float = 0.0
+var _aim_seen_at: float = -100.0
+var _under_fire_until: float = -100.0
+var _last_attacker_peer: int = 0
+var _last_attacker_at: float = -100.0
+var _next_strafe_at: float = 0.0
+var _search_points: Array[Vector3] = []
+## True when this suspect was killed after giving up (or unarmed) — unlawful for the mission report.
+var killed_unlawfully: bool = false
+var _arrest_point: Interactable
 
 @onready var perception: AIPerception = $Perception
 @onready var runner: BTRunner = $BTRunner
@@ -79,6 +105,7 @@ func _ready() -> void:
 	_apply_color()
 	sync_position = global_position
 	sync_yaw = rotation.y
+	_arrest_point = HostileArrest.create(self)
 	if multiplayer.is_server():
 		runner.tree = HostileBrains.build(archetype)
 		EventBus.noise_event.connect(_on_noise_for_hostage)
@@ -98,13 +125,56 @@ func get_time() -> float:
 
 ## Host: damage from players (weapons P3-01, explosions, abilities).
 func take_damage(amount: float, zone: HealthComponent.HitZone = HealthComponent.HitZone.TORSO, source_peer: int = 0) -> void:
-	if not multiplayer.is_server() or is_dead:
+	if not multiplayer.is_server() or is_dead or is_arrested:
 		return
 	hp = maxf(hp - amount * HealthComponent.ZONE_MULTIPLIERS[zone], 0.0)
 	var shooter: Player = Player.find_by_peer(get_tree(), source_peer)
 	perception.alert(shooter.global_position if shooter != null else global_position)
+	if runner != null and runner.blackboard != null:
+		_under_fire_until = get_time() + UNDER_FIRE_SECONDS
+		if source_peer != 0:
+			_last_attacker_peer = source_peer
+			_last_attacker_at = get_time()
 	if hp <= 0.0:
+		killed_unlawfully = is_surrendered or not archetype.armed
 		die(source_peer)
+
+
+## Host: a player shouted "Police! Hands up!" at us. Frightened or hurt suspects give up.
+func demand_surrender(player_armed: bool, officers_in_view: int) -> void:
+	if not multiplayer.is_server() or not is_active() or archetype.fanatic:
+		return
+	var pressure: float = 10.0 + (18.0 if player_armed else 0.0) + 22.0 * (1.0 - hp / maxf(archetype.max_hp, 1.0))
+	pressure += 8.0 * maxi(officers_in_view - 1, 0)
+	if not archetype.armed:
+		pressure += 25.0
+	elif ammo <= 0:
+		pressure += 15.0
+	change_morale(-pressure, &"demand_surrender")
+	perception.alert(global_position)
+	if morale < archetype.surrender_threshold:
+		negotiated = true
+
+
+## Host: cuff a surrendered suspect.
+func arrest(by_peer: int) -> bool:
+	if not multiplayer.is_server() or not is_surrendered or is_arrested or is_dead:
+		return false
+	is_arrested = true
+	anim_state = &"arrested"
+	_stop()
+	runner.enabled = false
+	arrested.emit(by_peer)
+	EventBus.suspect_arrested.emit(self, by_peer)
+	return true
+
+
+func _apply_arrested() -> void:
+	if is_arrested:
+		collision_layer = 0
+		if _arrest_point != null:
+			_arrest_point.enabled = false
+		_body.scale.y = 0.75
 
 
 func change_morale(amount: float, _reason: StringName) -> void:
@@ -152,6 +222,11 @@ func cond_searching(_bb: BTBlackboard) -> bool:
 
 func cond_suspicious(_bb: BTBlackboard) -> bool:
 	return perception.level == AIPerception.Level.SUSPICIOUS
+
+
+## Taking hits away from cover: break contact first.
+func cond_exposed_under_fire(bb: BTBlackboard) -> bool:
+	return get_time() < _under_fire_until and not cond_in_cover(bb)
 
 
 func cond_needs_reload(_bb: BTBlackboard) -> bool:
@@ -309,11 +384,13 @@ func act_peek_and_fire(bb: BTBlackboard) -> BTNode.Status:
 	var cycle: float = fmod(get_time(), PEEK_SECONDS + HIDE_SECONDS)
 	var peeking: bool = cycle < PEEK_SECONDS
 	anim_state = &"aim" if peeking else &"cover"
-	var target: Player = perception.target
-	if target != null:
+	var target: Player = _combat_target()
+	if target != null and perception.is_target_visible:
 		_face(target.global_position)
 		if peeking:
 			_try_fire(target)
+	elif peeking:
+		_suppress()
 	bb.set_value(&"peeking", peeking)
 	return BTNode.Status.RUNNING
 
@@ -339,7 +416,7 @@ func act_move_to_cover(_bb: BTBlackboard) -> BTNode.Status:
 
 
 func act_advance_and_fire(_bb: BTBlackboard) -> BTNode.Status:
-	var target: Player = perception.target
+	var target: Player = _combat_target()
 	if target == null:
 		if perception.last_known_position == Vector3.INF:
 			return BTNode.Status.FAILURE
@@ -350,9 +427,18 @@ func act_advance_and_fire(_bb: BTBlackboard) -> BTNode.Status:
 	if not perception.is_target_visible or distance > archetype.effective_range * 0.7:
 		anim_state = &"walk"
 		_move_to(target.global_position if perception.is_target_visible else perception.last_known_position, false)
+		if not perception.is_target_visible:
+			_suppress()
 	else:
-		_stop()
+		# In the open and in range: side-step while shooting instead of standing still.
 		anim_state = &"aim"
+		if get_time() >= _next_strafe_at:
+			_next_strafe_at = get_time() + STRAFE_INTERVAL * _rng.randf_range(0.7, 1.3)
+			var to_target: Vector3 = (target.global_position - global_position)
+			to_target.y = 0.0
+			var side: Vector3 = to_target.normalized().cross(Vector3.UP) * (1.0 if _rng.randf() < 0.5 else -1.0)
+			var step: Vector3 = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, global_position + side * _rng.randf_range(1.5, 3.0))
+			_move_to(step, false)
 	_face(target.global_position)
 	if perception.is_target_visible and distance <= archetype.effective_range:
 		_try_fire(target)
@@ -368,9 +454,19 @@ func act_search(bb: BTBlackboard) -> BTNode.Status:
 		bb.set_value(&"search_started", get_time())
 	var started: float = bb.get_value(&"search_started", get_time())
 	if get_time() - started < SEARCH_SWEEP_SECONDS:
+		# Check the nearby corners the player could have slipped into, one after another.
+		if _search_points.is_empty():
+			var map: RID = get_world_3d().navigation_map
+			var centre: Vector3 = goal if goal != Vector3.INF else global_position
+			for i: int in 3:
+				var offset: Vector3 = Vector3.FORWARD.rotated(Vector3.UP, _rng.randf() * TAU) * _rng.randf_range(4.0, 9.0)
+				_search_points.append(NavigationServer3D.map_get_closest_point(map, centre + offset))
 		anim_state = &"search"
-		rotation.y += 0.04
+		if _move_to(_search_points[0], false):
+			_search_points.remove_at(0)
+			rotation.y += _rng.randf_range(-1.2, 1.2)
 		return BTNode.Status.RUNNING
+	_search_points.clear()
 	bb.erase(&"search_started")
 	perception.awareness = AIPerception.SUSPICIOUS_AT + 0.05
 	return BTNode.Status.SUCCESS
@@ -475,7 +571,18 @@ func _face(point: Vector3) -> void:
 
 
 func _try_fire(target: Player) -> void:
-	if archetype.melee or ammo <= 0 or get_time() < _next_fire_time:
+	if not archetype.armed or archetype.melee or ammo <= 0:
+		return
+	# Aim settles while the same target stays in view; switching targets or losing sight resets it.
+	var now: float = get_time()
+	if target != _aim_player or now - _aim_seen_at > 0.6:
+		_aim_player = target
+		_aim_tracked = 0.0
+		_next_fire_time = maxf(_next_fire_time, now + REACTION_SECONDS * _rng.randf_range(0.7, 1.3))
+	else:
+		_aim_tracked += now - _aim_seen_at
+	_aim_seen_at = now
+	if now < _next_fire_time:
 		return
 	var from: Vector3 = eye.global_position
 	var aim_point: Vector3 = target.get_eye_position() - Vector3(0, 0.45, 0)
@@ -489,15 +596,64 @@ func _try_fire(target: Player) -> void:
 		_next_fire_time = get_time() + archetype.fire_interval + BURST_PAUSE
 	else:
 		_next_fire_time = get_time() + archetype.fire_interval
-	var moving_penalty: float = 0.7 if Vector2(target.velocity.x, target.velocity.z).length() > 2.0 else 1.0
-	var crouch_penalty: float = 0.8 if target.stance == Player.Stance.CROUCH else 1.0
-	var hit_chance: float = clampf(archetype.accuracy * sqrt(10.0 / maxf(distance, 1.0)) * moving_penalty * crouch_penalty, 0.05, 0.95)
+	var hit_chance: float = hit_chance_against(target, distance)
 	var end: Vector3 = aim_point
 	if _rng.randf() <= hit_chance:
+		# A settled aim lands more upper-body and head shots.
 		var zone: HealthComponent.HitZone = HIT_ZONES[_rng.randi() % HIT_ZONES.size()]
+		if settle_ratio() > 0.8 and _rng.randf() < 0.12 * archetype.accuracy / 0.55:
+			zone = HealthComponent.HitZone.HEAD
 		target.get_health().apply_damage(archetype.damage, zone, 0)
 	else:
 		end = aim_point + Vector3(_rng.randf_range(-1.0, 1.0), _rng.randf_range(-0.6, 0.8), _rng.randf_range(-1.0, 1.0))
+	EventBus.noise_event.emit(from, GUNSHOT_NOISE, 0)
+	_fx_shot.rpc(from, end)
+
+
+## 0..1 how settled our aim is on the current target.
+func settle_ratio() -> float:
+	return clampf(_aim_tracked / AIM_SETTLE_SECONDS, 0.0, 1.0)
+
+
+## Chance a shot hits `target` right now: skill, settled aim, range, target speed, stance and light.
+func hit_chance_against(target: Player, distance: float) -> float:
+	var speed: float = Vector2(target.velocity.x, target.velocity.z).length()
+	var moving: float = lerpf(1.0, 0.55, clampf(speed / 5.0, 0.0, 1.0))
+	var crouch: float = 0.8 if target.stance == Player.Stance.CROUCH else 1.0
+	var settle: float = lerpf(0.4, 1.25, settle_ratio())
+	var range_factor: float = clampf(sqrt(12.0 / maxf(distance, 1.0)), 0.25, 1.4)
+	var light: float = 1.0 if perception.is_lit(target) or target.flashlight_on else 0.75
+	return clampf(archetype.accuracy * settle * range_factor * moving * crouch * light, 0.03, 0.95)
+
+
+## Target to engage: whoever just shot us if we can see them, otherwise perception's pick.
+func _combat_target() -> Player:
+	if _last_attacker_peer != 0 and get_time() - _last_attacker_at < 4.0:
+		var attacker: Player = Player.find_by_peer(get_tree(), _last_attacker_peer)
+		if attacker != null and attacker.get_health().is_alive() \
+				and perception.has_line_of_sight(eye.global_position, attacker.get_eye_position(), attacker):
+			return attacker
+	return perception.target
+
+
+## Pin the target down: short bursts at the last known position while it is out of sight.
+func _suppress() -> void:
+	if not archetype.armed or archetype.melee or ammo <= 0 or get_time() < _next_fire_time:
+		return
+	if perception.last_known_position == Vector3.INF or perception.time_since_seen > SUPPRESS_MEMORY_SECONDS:
+		return
+	var from: Vector3 = eye.global_position
+	var point: Vector3 = perception.last_known_position + Vector3(_rng.randf_range(-0.8, 0.8), _rng.randf_range(0.6, 1.6), _rng.randf_range(-0.8, 0.8))
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, point, 1, _exclude())
+	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
+	var end: Vector3 = point
+	if not hit.is_empty():
+		end = hit["position"]
+		if from.distance_to(end) < 2.0:
+			return   # our own cover is in the way
+	ammo -= 1
+	_next_fire_time = get_time() + archetype.fire_interval * 2.5
+	_face(perception.last_known_position)
 	EventBus.noise_event.emit(from, GUNSHOT_NOISE, 0)
 	_fx_shot.rpc(from, end)
 

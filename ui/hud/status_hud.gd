@@ -23,6 +23,9 @@ var _vignette: ColorRect
 var _hit_flash: float = 0.0
 var _shown_health: float = -1.0
 var _last_hp: float = -1.0
+var _xp_bar: ProgressBar
+var _shout_label: Label
+var _shout_left: float = 0.0
 
 
 func _ready() -> void:
@@ -30,6 +33,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_vignette()
 	_build_panel()
+	_build_shout()
 
 
 func _build_vignette() -> void:
@@ -73,6 +77,9 @@ func _build_panel() -> void:
 	_name_label.add_theme_font_size_override(&"font_size", 14)
 	_name_label.add_theme_color_override(&"font_color", GameTheme.TEXT_DIM)
 	column.add_child(_name_label)
+	_xp_bar = _bar(GameTheme.ACCENT, 3.0)
+	_xp_bar.modulate.a = 0.8
+	column.add_child(_xp_bar)
 	var health: Array = _bar_row(column, HEALTH_COLOR, 12.0, 22)
 	_health_bar = health[1]
 	_health_value = health[2]
@@ -83,6 +90,25 @@ func _build_panel() -> void:
 	_stamina_bar = _bar(STAMINA_COLOR, 3.0)
 	_stamina_bar.modulate.a = 0.7
 	column.add_child(_stamina_bar)
+
+
+func _build_shout() -> void:
+	_shout_label = Label.new()
+	_shout_label.text = "\"POLICE! HANDS UP! GET ON THE GROUND!\""
+	_shout_label.add_theme_font_size_override(&"font_size", 22)
+	_shout_label.add_theme_color_override(&"font_color", Color(0.95, 0.95, 0.9))
+	_shout_label.add_theme_color_override(&"font_outline_color", Color(0, 0, 0, 0.8))
+	_shout_label.add_theme_constant_override(&"outline_size", 6)
+	_shout_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_shout_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_shout_label)
+	_shout_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	_shout_label.offset_top = -170
+	_shout_label.offset_bottom = -140
+	_shout_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_shout_label.modulate.a = 0.0
+	if player != null:
+		player.shouted.connect(func() -> void: _shout_left = 1.4)
 
 
 func _bar_row(parent: Container, color: Color, height: float, font_size: int) -> Array:
@@ -121,7 +147,13 @@ func _process(delta: float) -> void:
 		return
 	var health: HealthComponent = player.get_health()
 	var class_data: ClassData = ClassCatalog.get_data(player.class_id)
-	_name_label.text = "%s  ·  %s" % [NetManager.get_player_name(player.peer_id).to_upper(), class_data.display_name.to_upper() if class_data != null else ""]
+	_name_label.text = "%s  ·  %s  ·  %s" % [Career.rank_name(Career.rank()).to_upper(), NetManager.get_player_name(player.peer_id).to_upper(), class_data.display_name.to_upper() if class_data != null else ""]
+	var bounds: Vector2i = Career.rank_bounds()
+	_xp_bar.min_value = bounds.x
+	_xp_bar.max_value = bounds.y if bounds.y > 0 else bounds.x + 1
+	_xp_bar.value = Career.xp if bounds.y > 0 else _xp_bar.max_value
+	_shout_left = maxf(_shout_left - delta, 0.0)
+	_shout_label.modulate.a = clampf(_shout_left / 0.4, 0.0, 1.0)
 	if _shown_health < 0.0:
 		_shown_health = health.hp
 		_last_hp = health.hp

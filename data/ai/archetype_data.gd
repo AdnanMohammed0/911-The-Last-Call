@@ -17,6 +17,8 @@ extends Resource
 @export var surrender_threshold: float = 20.0
 
 @export_group("Weapon")
+## False for unarmed suspects (prank callers): they never shoot, only flee or give up.
+@export var armed: bool = true
 @export var weapon_name: String = "Pistol"
 @export var damage: float = 12.0
 @export var effective_range: float = 25.0

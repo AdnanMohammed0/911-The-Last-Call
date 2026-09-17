@@ -10,4 +10,6 @@ func _ready() -> void:
 	DirAccess.make_dir_recursive_absolute("res://scenes/field/missions")
 	var warehouse: Error = BuildWarehouseRaid.build()
 	print("BUILD warehouse_raid: ", error_string(warehouse))
-	get_tree().quit(0 if station == OK and warehouse == OK else 1)
+	var suburb: Error = BuildAspenDrive.build()
+	print("BUILD aspen_drive: ", error_string(suburb))
+	get_tree().quit(0 if station == OK and warehouse == OK and suburb == OK else 1)

@@ -3,6 +3,9 @@
 ## Node format:   [id, speaker, line, choices]            choices = Array of [text, next, options]
 ##                [id, speaker, line, "next_id", delay]    auto-advance (no choices)
 ##                [id, speaker, line]                      terminal node (call ends)
+##                any of the above + a trailing {"events": [&"dispatch_units"]} dictionary
+## Events: &"dispatch_units" sends the team (what they find follows the call's truth),
+##         &"dispatch_arrest" sends the team to arrest a prank caller.
 ## Choice options: {"class": &"profiler", "needs": [&"evidence"], "reveals": [&"evidence"], "patience": -20.0}
 ## Authority: TOOLS
 extends SceneTree
@@ -18,6 +21,7 @@ func _initialize() -> void:
 	var calls: Array[CallData] = [
 		_highway_crash(), _cut_line(), _meat_truck(), _lost_child(), _drowned_voice(),
 		_domestic(), _gas_station(), _church_bells(), _overdose(), _last_call(),
+		_deputy_down(), _home_invasion(), _school_threat(), _barn_fire(), _diner_hostage(),
 	]
 	var failures: int = 0
 	for call: CallData in calls:
@@ -79,8 +83,15 @@ func _call(meta: Dictionary, script: Array) -> CallData:
 	return call
 
 
-func _node(entry: Array) -> DialogueNode:
+func _node(raw: Array) -> DialogueNode:
+	var entry: Array = raw.duplicate()
 	var node: DialogueNode = DialogueNode.new()
+	if not entry.is_empty() and entry[entry.size() - 1] is Dictionary:
+		var options: Dictionary = entry.pop_back()
+		var events: Array[StringName] = []
+		for event_name: StringName in options.get("events", []):
+			events.append(event_name)
+		node.on_enter_events = events
 	node.id = entry[0]
 	node.speaker = entry[1]
 	node.line = entry[2]
@@ -118,7 +129,7 @@ func _choice(data: Array) -> DialogueChoice:
 
 func _highway_crash() -> CallData:
 	return _call({
-		"id": &"call_highway_crash", "title": "Route 9 Crash", "truth": CallData.Truth.GENUINE, "minute": 3,
+		"id": &"call_highway_crash", "title": "Route 9 Crash", "truth": CallData.Truth.GENUINE, "minute": 2,
 		"caller": "Daniel Reyes", "phone": "911-555-0187", "location": "Route 9, near mile marker 14",
 		"true_location": Vector2(620, 140), "patience": 200.0, "bpm": 128, "tremor_start": 0.55, "tremor_end": 0.8,
 		"tags": [&"engine_hiss", &"rain"],
@@ -182,7 +193,7 @@ func _highway_crash() -> CallData:
 		]],
 		["wife_look", "caller", "(a door creaks) Ana? ...Ana, is that you? Why are you standing like that—", "end_line_dead", 3.0],
 		["end_line_dead", "dispatcher", "(Something scrapes across the car roof. The line goes dead.)"],
-		["end_units", "caller", "Please hurry. The rain's getting in. I can hear the river."],
+		["end_units", "caller", "Please hurry. The rain's getting in. I can hear the river.", {"events": [&"dispatch_units"]}],
 	])
 
 
@@ -190,7 +201,7 @@ func _highway_crash() -> CallData:
 
 func _cut_line() -> CallData:
 	return _call({
-		"id": &"call_cut_line", "title": "The Cut Line", "truth": CallData.Truth.AMBUSH, "minute": 30,
+		"id": &"call_cut_line", "title": "The Cut Line", "truth": CallData.Truth.AMBUSH, "minute": 7,
 		"caller": "Unknown Caller", "phone": "911-555-0133", "location": "22 Willow Court",
 		"true_location": Vector2(300, 410), "patience": 150.0, "bpm": 64, "tremor_start": 0.1, "tremor_end": 0.12,
 		"loops": [Vector2(2.0, 5.5)], "tags": [&"steady_breathing", &"engine_idle"],
@@ -247,7 +258,7 @@ func _cut_line() -> CallData:
 		]],
 		["confront_loop", "unknown", "(A man laughs softly.) 'Just send the cars, dispatcher. We're waiting.'", "end_click", 3.0],
 		["end_click", "dispatcher", "(Click. The line is cut.)"],
-		["end_dispatch", "caller", "(whispering) Thank you. Tell them to come to the front door."],
+		["end_dispatch", "caller", "(whispering) Thank you. Tell them to come to the front door.", {"events": [&"dispatch_units"]}],
 	])
 
 
@@ -255,7 +266,7 @@ func _cut_line() -> CallData:
 
 func _meat_truck() -> CallData:
 	return _call({
-		"id": &"call_meat_truck", "title": "The Meat Truck", "truth": CallData.Truth.GENUINE, "minute": 55,
+		"id": &"call_meat_truck", "title": "The Meat Truck", "truth": CallData.Truth.GENUINE, "minute": 12,
 		"caller": "Walt Hendricks", "phone": "911-555-0161", "location": "Harbor warehouse district, Pier 4",
 		"true_location": Vector2(820, 520), "patience": 220.0, "bpm": 104, "tremor_start": 0.45, "tremor_end": 0.7,
 		"tags": [&"reefer_compressor", &"harbor_wind", &"knocking"],
@@ -299,8 +310,8 @@ func _meat_truck() -> CallData:
 			["Is anyone guarding the truck?", "guards"],
 			["Banging from inside? Are you sure?", "banging"],
 		]],
-		["end_flee", "caller", "(engine starts) I'm out, I'm out. Please, get those people out of that box."],
-		["end_units", "caller", "Please hurry. It's freezing in there. They won't last all night."],
+		["end_flee", "caller", "(engine starts) I'm out, I'm out. Please, get those people out of that box.", {"events": [&"dispatch_units"]}],
+		["end_units", "caller", "Please hurry. It's freezing in there. They won't last all night.", {"events": [&"dispatch_units"]}],
 	])
 
 
@@ -308,7 +319,7 @@ func _meat_truck() -> CallData:
 
 func _lost_child() -> CallData:
 	return _call({
-		"id": &"call_lost_child", "title": "Lost at the Mall", "truth": CallData.Truth.PRANK, "minute": 80,
+		"id": &"call_lost_child", "title": "Lost at the Mall", "truth": CallData.Truth.PRANK, "minute": 17,
 		"caller": "Brianna", "phone": "911-555-0112", "location": "Blackvale Mall, food court",
 		"true_location": Vector2(500, 260), "patience": 120.0, "bpm": 96, "tremor_start": 0.2, "tremor_end": 0.25,
 		"loops": [Vector2(1.0, 3.2)], "tags": [&"teen_laughter", &"bedroom_music"],
@@ -318,6 +329,7 @@ func _lost_child() -> CallData:
 		],
 	}, [
 		["start", "caller", "Hi, um, I'm like, lost? At the mall? And my mom's gone and there's a scary man. (muffled giggle)", [
+			["Stay where you are. Units are on the way.", "units_mall"],
 			["What time is it where you are?", "time"],
 			["Describe the man.", "man"],
 			["What's your full name and address?", "name"],
@@ -349,7 +361,13 @@ func _lost_child() -> CallData:
 		["tech_after", "caller", "(whispering off the phone) 'How does she know my house?'", [
 			["Brianna Keller. A deputy can visit your parents tonight.", "end_confess", {"needs": [&"home_address"]}],
 		]],
-		["end_confess", "caller", "(crying) Okay, okay, I'm sorry, it was a dare! Please don't tell my mom! (click)"],
+		["units_mall", "caller", "(whispers 'they're actually sending cops!') ...Okay, thanks! (click)", {"events": [&"dispatch_units"]}],
+		["end_confess", "caller", "(crying) Okay, okay, I'm sorry, it was a dare! Please don't tell my mom!", [
+			["A deputy is coming to Aspen Drive. You're under arrest for a false report.", "arrest_sent"],
+			["This is your only warning. I'm logging this as a prank call.", "warned", {"patience": 10.0}],
+		]],
+		["arrest_sent", "dispatcher", "(Deputies dispatched to 8 Aspen Drive. The line clicks — she hung up.)", {"events": [&"dispatch_arrest"]}],
+		["warned", "caller", "Thank you, thank you, it won't happen again. (click)"],
 	])
 
 
@@ -357,7 +375,7 @@ func _lost_child() -> CallData:
 
 func _drowned_voice() -> CallData:
 	return _call({
-		"id": &"call_drowned_voice", "title": "Reservoir Payphone", "truth": CallData.Truth.PARANORMAL, "minute": 105,
+		"id": &"call_drowned_voice", "title": "Reservoir Payphone", "truth": CallData.Truth.PARANORMAL, "minute": 22,
 		"caller": "Margaret Hale", "phone": "911-555-0199", "location": "Blackvale Reservoir, south road payphone",
 		"true_location": Vector2(180, 90), "patience": 160.0, "bpm": 40, "tremor_start": 0.05, "tremor_end": 0.9,
 		"emf": 50.0, "tags": [&"water_drip", &"emf_hum"],
@@ -370,7 +388,9 @@ func _drowned_voice() -> CallData:
 			["Ma'am, are you in the water right now?", "in_water"],
 			["What's your name?", "name"],
 			["Where are you calling from?", "where"],
+			["Stay by the phone, I'm sending a patrol car to the reservoir.", "patrol_sent"],
 		]],
+		["patrol_sent", "caller", "Thank you... tell them to walk out onto the ice. I'll be waiting. (water rushing, click)", {"events": [&"dispatch_units"]}],
 		["in_water", "caller", "I was. I think I still am. It's so dark under the ice.", [
 			["There's no ice this time of year.", "no_ice", {"patience": -10.0}],
 			["Stay calm. What's your name?", "name"],
@@ -413,7 +433,7 @@ func _drowned_voice() -> CallData:
 
 func _domestic() -> CallData:
 	return _call({
-		"id": &"call_domestic", "title": "Thin Walls", "truth": CallData.Truth.GENUINE, "minute": 130,
+		"id": &"call_domestic", "title": "Thin Walls", "truth": CallData.Truth.GENUINE, "minute": 27,
 		"caller": "Rosa Delgado", "phone": "911-555-0145", "location": "Maple Heights Apartments, unit 3B",
 		"true_location": Vector2(410, 330), "patience": 190.0, "bpm": 118, "tremor_start": 0.5, "tremor_end": 0.75,
 		"tags": [&"shouting_through_wall", &"child_crying"],
@@ -458,9 +478,9 @@ func _domestic() -> CallData:
 			["She'll need an ambulance. I'm sending one with the deputies.", "end_units", {"reveals": [&"victim_injured"]}],
 		]],
 		["stay", "caller", "Okay. Door's locked. Please hurry, the baby's still crying.", "end_units", 3.0],
-		["end_surrender", "caller", "(through the wall) He's... he's sitting in the hall. He's actually doing it."],
-		["end_barricade", "caller", "He locked himself back in with them. Please. Please hurry."],
-		["end_units", "caller", "I see lights outside. Thank you. Thank you."],
+		["end_surrender", "caller", "(through the wall) He's... he's sitting in the hall. He's actually doing it.", {"events": [&"dispatch_units"]}],
+		["end_barricade", "caller", "He locked himself back in with them. Please. Please hurry.", {"events": [&"dispatch_units"]}],
+		["end_units", "caller", "I see lights outside. Thank you. Thank you.", {"events": [&"dispatch_units"]}],
 	])
 
 
@@ -468,7 +488,7 @@ func _domestic() -> CallData:
 
 func _gas_station() -> CallData:
 	return _call({
-		"id": &"call_gas_station", "title": "Pump 6", "truth": CallData.Truth.DIVERSION, "minute": 160,
+		"id": &"call_gas_station", "title": "Pump 6", "truth": CallData.Truth.DIVERSION, "minute": 32,
 		"caller": "Unknown Caller", "phone": "911-555-0170", "location": "Quick Stop gas station, Highway 40 (north county)",
 		"true_location": Vector2(700, 60), "patience": 140.0, "bpm": 76, "tremor_start": 0.2, "tremor_end": 0.2,
 		"tags": [&"bank_alarm", &"traffic_downtown"],
@@ -511,8 +531,13 @@ func _gas_station() -> CallData:
 		]],
 		["closed", "caller", "(pause) ...Then I guess they're robbing an empty store. (laughs) Too late anyway.", "end_click", 3.0],
 		["caught", "caller", "(a car horn, someone shouts 'let's go!') Enjoy the drive north, dispatch.", "end_click", 3.0],
-		["end_click", "dispatcher", "(Click. Seconds later the Main Street bank alarm hits the silent-alarm board.)"],
-		["end_diverted", "caller", "Good. Good. (click)"],
+		["end_click", "dispatcher", "(Click. Seconds later the Main Street bank alarm hits the silent-alarm board.)", [
+			["All units to First Blackvale Savings, now!", "bank_units"],
+			["Log the hoax and stay on the board.", "logged"],
+		]],
+		["bank_units", "dispatcher", "(Tactical units rerouted south to the bank.)", {"events": [&"dispatch_units"]}],
+		["logged", "dispatcher", "(Hoax logged. The bank alarm keeps ringing.)"],
+		["end_diverted", "caller", "Good. Good. (click)", {"events": [&"dispatch_units"]}],
 	])
 
 
@@ -520,7 +545,7 @@ func _gas_station() -> CallData:
 
 func _church_bells() -> CallData:
 	return _call({
-		"id": &"call_church_bells", "title": "St. Agnes Bells", "truth": CallData.Truth.AMBUSH, "minute": 190,
+		"id": &"call_church_bells", "title": "St. Agnes Bells", "truth": CallData.Truth.AMBUSH, "minute": 37,
 		"caller": "Father Lucas", "phone": "911-555-0108", "location": "St. Agnes Church, Old Mill Road",
 		"true_location": Vector2(260, 180), "patience": 170.0, "bpm": 62, "tremor_start": 0.6, "tremor_end": 0.62,
 		"loops": [Vector2(6.0, 12.0)], "tags": [&"chanting", &"many_breathing"],
@@ -563,8 +588,13 @@ func _church_bells() -> CallData:
 			["The Lord doesn't usually breathe through fifteen people behind you.", "confront", {"reveals": [&"many_breathing"]}],
 		]],
 		["confront", "unknown", "(The chanting stops all at once.) 'Then come anyway. We have made room for all of you.'", "end_click", 4.0],
-		["end_click", "dispatcher", "(The line goes dead. The church bell starts ringing on its own, far away.)"],
-		["end_units", "caller", "Bless you. Tell them to come in through the front doors. All of them."],
+		["end_click", "dispatcher", "(The line goes dead. The church bell starts ringing on its own, far away.)", [
+			["Send the tactical team in anyway — carefully.", "tactical"],
+			["Log it as an ambush and warn every unit away from Old Mill Road.", "warned"],
+		]],
+		["tactical", "dispatcher", "(Tactical team dispatched to St. Agnes with an ambush warning.)", {"events": [&"dispatch_units"]}],
+		["warned", "dispatcher", "(All units warned. Old Mill Road is closed off until morning.)"],
+		["end_units", "caller", "Bless you. Tell them to come in through the front doors. All of them.", {"events": [&"dispatch_units"]}],
 	])
 
 
@@ -572,7 +602,7 @@ func _church_bells() -> CallData:
 
 func _overdose() -> CallData:
 	return _call({
-		"id": &"call_overdose", "title": "Blue Lips", "truth": CallData.Truth.GENUINE, "minute": 220,
+		"id": &"call_overdose", "title": "Blue Lips", "truth": CallData.Truth.GENUINE, "minute": 42,
 		"caller": "Tyler", "phone": "911-555-0154", "location": "Pinecrest Motel, room 12",
 		"true_location": Vector2(560, 380), "patience": 170.0, "bpm": 140, "tremor_start": 0.7, "tremor_end": 0.9,
 		"tags": [&"motel_tv", &"gurgling_breath"],
@@ -618,8 +648,8 @@ func _overdose() -> CallData:
 		["wait_narcan", "caller", "He's... he's so grey. He's not moving at all.", [
 			["Start pushing hard on the center of his chest, now.", "cpr"],
 		]],
-		["end_saved", "caller", "Thank you... thank you. I hear the ambulance. Thank you."],
-		["end_units", "caller", "Please hurry. He's so cold."],
+		["end_saved", "caller", "Thank you... thank you. I hear the ambulance. Thank you. (a door kicks open behind him) Wait— who are you guys?!", {"events": [&"dispatch_units"]}],
+		["end_units", "caller", "Please hurry. He's so cold. (a door kicks open) Hey— that's not the ambulance—", {"events": [&"dispatch_units"]}],
 	])
 
 
@@ -627,7 +657,7 @@ func _overdose() -> CallData:
 
 func _last_call() -> CallData:
 	return _call({
-		"id": &"call_last_call", "title": "The Last Call", "truth": CallData.Truth.PARANORMAL, "minute": 290,
+		"id": &"call_last_call", "title": "The Last Call", "truth": CallData.Truth.PARANORMAL, "minute": 80,
 		"caller": "Blackvale County 911", "phone": "911-555-0004", "location": "Station 4 — Operations Room",
 		"true_location": Vector2(400, 300), "patience": 200.0, "bpm": 44, "tremor_start": 0.9, "tremor_end": 0.1,
 		"emf": 60.0, "loops": [Vector2(0.0, 4.0)], "tags": [&"dispatch_room_ambience", &"emf_hum", &"own_voice"],
@@ -670,4 +700,247 @@ func _last_call() -> CallData:
 		]],
 		["stop", "unknown", "'Don't hang up first. Whoever hangs up first... stays on the line forever.'", "end_hold", 5.0],
 		["end_hold", "dispatcher", "(Silence. Then, very softly, the sound of someone on the line waiting for you to hang up.)"],
+	])
+
+
+# --- 11. Deputy down (AMBUSH) -------------------------------------------------------------------------
+
+func _deputy_down() -> CallData:
+	return _call({
+		"id": &"call_deputy_down", "title": "Deputy Down", "truth": CallData.Truth.AMBUSH, "minute": 47,
+		"caller": "Deputy (radio patch)", "phone": "RADIO 7", "location": "Harbor access road, gate B",
+		"true_location": Vector2(800, 470), "patience": 150.0, "bpm": 70, "tremor_start": 0.2, "tremor_end": 0.22,
+		"loops": [Vector2(1.0, 4.0)], "tags": [&"radio_hiss", &"idle_trucks"],
+		"records": [
+			[&"rec_badge_4471", "Badge 4471", "No active deputy with badge 4471. Number retired in 2012 (Deputy K. Voss, killed on duty)."],
+			[&"rec_gate_b", "Harbor gate B", "Unlit access road; two stolen box trucks recovered there last month."],
+		],
+	}, [
+		["start", "caller", "(radio static) Dispatch, 4471, shots fired, I'm hit, harbor gate B, send everything you have!", [
+			["4471, how bad is it?", "wound"],
+			["4471, who's with you?", "partner"],
+			["[Tech] Verify badge 4471.", "badge", {"class": &"tech", "reveals": [&"retired_badge"]}],
+		]],
+		["wound", "caller", "Leg, I'm bleeding bad, I'm behind my cruiser. There's four of them. Send everyone.", [
+			["[Medic] Can you apply a tourniquet?", "medic", {"class": &"medic"}],
+			["Units are on the way, hold on.", "end_units"],
+			["[Profiler] Your voice is too steady for a leg wound, 4471.", "profiler", {"class": &"profiler", "reveals": [&"steady_voice"]}],
+		]],
+		["medic", "caller", "A what? Just— just send the units to gate B, all of them.", [
+			["You're a deputy and you don't know what a tourniquet is?", "caught", {"reveals": [&"no_training"], "patience": -20.0}],
+			["Units are on the way.", "end_units"],
+		]],
+		["partner", "caller", "My partner's down. Deputy... Miller. Send the ambulance and every car.", [
+			["[Tech] There's no Deputy Miller on tonight's roster.", "caught", {"class": &"tech", "reveals": [&"fake_partner"]}],
+			["Units are on the way.", "end_units"],
+		]],
+		["badge", "dispatcher", "(Badge 4471 was retired in 2012 after Deputy Voss was killed at the harbor.)", "badge_after", 4.0],
+		["badge_after", "caller", "Dispatch? Dispatch, do you copy? Why aren't cars rolling?", [
+			["Badge 4471 belonged to a dead deputy. Who is this?", "caught", {"needs": [&"retired_badge"], "patience": -30.0}],
+			["Units are on the way.", "end_units"],
+		]],
+		["profiler", "caller", "(pause) ...Adrenaline. Stop wasting time.", [
+			["Units are on the way.", "end_units"],
+			["Say your call sign again.", "caught", {"patience": -10.0}],
+		]],
+		["caught", "unknown", "(another voice, close) 'Kill the radio.' (The static cuts out.)", [
+			["Send tactical anyway, with an ambush warning.", "tactical"],
+			["Log it as an ambush. Nobody goes to gate B.", "logged"],
+		]],
+		["tactical", "dispatcher", "(Tactical team rolling to gate B, weapons ready.)", {"events": [&"dispatch_units"]}],
+		["logged", "dispatcher", "(Ambush logged. Harbor gate B closed to all units.)"],
+		["end_units", "caller", "Copy. Tell them to come in fast, lights off. We'll be waiting.", {"events": [&"dispatch_units"]}],
+	])
+
+
+# --- 12. Home invasion (GENUINE) ----------------------------------------------------------------------
+
+func _home_invasion() -> CallData:
+	return _call({
+		"id": &"call_home_invasion", "title": "Glass in the Kitchen", "truth": CallData.Truth.GENUINE, "minute": 52,
+		"caller": "Harold Finch", "phone": "911-555-0122", "location": "22 Aspen Drive",
+		"true_location": Vector2(320, 300), "patience": 170.0, "bpm": 132, "tremor_start": 0.6, "tremor_end": 0.85,
+		"tags": [&"glass_breaking", &"male_voices_downstairs"],
+		"records": [[&"rec_aspen_burglaries", "Aspen Drive burglaries", "Three armed home invasions this month. Suspects target elderly residents."]],
+	}, [
+		["start", "caller", "(elderly man, whispering) Someone broke the kitchen window. There are men in my house.", [
+			["Where are you right now?", "where"],
+			["How many men?", "how_many"],
+			["Do you have a weapon in the house?", "weapon"],
+		]],
+		["where", "caller", "Upstairs bedroom. I locked the door. My wife is asleep next to me, she can't hear well.", [
+			["Keep the door locked and stay away from it.", "stay", {"patience": 10.0}],
+			["How many men?", "how_many"],
+		]],
+		["how_many", "caller", "Three voices. One said 'find the safe'. They have... I heard a gun being racked.", [
+			["[Profiler] Can you hear what else they're saying?", "listen", {"class": &"profiler", "reveals": [&"armed_intruders"]}],
+			["Units are on the way. Stay quiet.", "end_units", {"reveals": [&"armed_intruders"]}],
+		]],
+		["listen", "caller", "'The old man's upstairs. Check the garage first.' Oh God, they know we're here.", [
+			["[Tech] Is there another way out of the bedroom?", "exit", {"class": &"tech"}],
+			["Units are on the way. Stay quiet.", "end_units"],
+		]],
+		["exit", "caller", "The window... over the garage roof. I can't climb that. Not at my age.", [
+			["Then barricade the door with the dresser.", "barricade", {"patience": 10.0}],
+		]],
+		["barricade", "caller", "(scraping) It's done. They're on the stairs.", "end_units", 3.0],
+		["weapon", "caller", "My old service revolver. In the nightstand.", [
+			["Only use it if they come through that door.", "stay"],
+			["Leave it. Hide and wait for us.", "stay", {"patience": 10.0}],
+			["[Profiler] Harold, is your wife awake now?", "wife", {"class": &"profiler"}],
+		]],
+		["wife", "caller", "She's awake. She's scared. She keeps asking why the dog isn't barking.", [
+			["Where is the dog, Harold?", "dog", {"reveals": [&"silent_dog"]}],
+			["Keep her calm and stay low. Units are on the way.", "end_units"],
+		]],
+		["dog", "caller", "...He was in the yard. He always barks. Oh God, why isn't he barking?", [
+			["Stay in the bedroom. Don't go looking.", "stay", {"patience": -10.0}],
+			["Units are on the way.", "end_units"],
+		]],
+		["stay", "caller", "Okay. Okay. Please hurry.", [
+			["How many men?", "how_many"],
+			["Units are on the way.", "end_units"],
+		]],
+		["end_units", "caller", "(a heavy thump on the bedroom door) Please— please hurry.", {"events": [&"dispatch_units"]}],
+	])
+
+
+# --- 13. School threat (PRANK) ------------------------------------------------------------------------
+
+func _school_threat() -> CallData:
+	return _call({
+		"id": &"call_school_threat", "title": "Bomb at Blackvale High", "truth": CallData.Truth.PRANK, "minute": 57,
+		"caller": "Unknown Caller", "phone": "911-555-0191", "location": "Blackvale High School",
+		"true_location": Vector2(330, 290), "patience": 130.0, "bpm": 92, "tremor_start": 0.25, "tremor_end": 0.3,
+		"loops": [Vector2(0.5, 2.5)], "tags": [&"video_game_audio", &"voice_changer"],
+		"records": [
+			[&"rec_number_0191", "911-555-0191", "Prepaid phone bought at Aspen Drive gas station. Used for two fake threats against Blackvale High."],
+			[&"rec_exam", "Blackvale High", "Final exams scheduled 08:00 today."],
+		],
+	}, [
+		["start", "caller", "(voice changer) There's a bomb in Blackvale High. It goes off at eight. This is not a joke.", [
+			["Where is the device?", "where"],
+			["Why are you doing this?", "why"],
+			["[Profiler] Listen past the voice changer.", "listen", {"class": &"profiler", "reveals": [&"game_audio"]}],
+		]],
+		["where", "caller", "In the... the gym. No, the math wing. It's hidden. You'll never find it.", [
+			["Which one? Gym or math wing?", "caught_story", {"reveals": [&"changing_story"], "patience": -10.0}],
+			["Evacuating the school. Units are on the way.", "units_school"],
+		]],
+		["why", "caller", "Because... the system is broken. And stuff.", [
+			["[Tech] Checking this number.", "tech", {"class": &"tech", "reveals": [&"prepaid_phone"]}],
+			["Is there an exam at eight?", "exam", {"reveals": [&"exam_day"]}],
+		]],
+		["listen", "dispatcher", "(Under the voice changer: a video game menu jingle and a microwave beeping.)", "listen_after", 3.5],
+		["listen_after", "caller", "Did you hear me? A bomb!", [
+			["Pause your game, kid.", "end_confess", {"needs": [&"game_audio"], "patience": -20.0}],
+			["Is there an exam at eight?", "exam"],
+		]],
+		["exam", "caller", "(the voice changer glitches — a teenage boy) N-no! Maybe! What does that matter?", "end_confess", 3.0],
+		["tech", "dispatcher", "(Prepaid phone sold at the Aspen Drive gas station. Two previous fake threats against the high school.)", "caught_story", 4.0],
+		["caught_story", "caller", "Uh... it moves. It's a moving bomb.", [
+			["You're calling from a prepaid phone bought on Aspen Drive.", "end_confess", {"needs": [&"prepaid_phone"]}],
+			["Evacuating the school. Units are on the way.", "units_school"],
+		]],
+		["units_school", "caller", "(laughing off-mic) 'They're evacuating!' ...Good. (click)", {"events": [&"dispatch_units"]}],
+		["end_confess", "caller", "(voice changer off) Okay, okay! I just didn't want to take the exam! Don't call the cops!", [
+			["I AM the cops. A deputy is coming to arrest you.", "arrest_sent"],
+			["Log it as a prank and let the school know.", "logged"],
+		]],
+		["arrest_sent", "dispatcher", "(Deputies dispatched to the caller's address on Aspen Drive.)", {"events": [&"dispatch_arrest"]}],
+		["logged", "dispatcher", "(Prank logged. School resource officer notified.)"],
+	])
+
+
+# --- 14. Barn fire (AMBUSH, cult) ----------------------------------------------------------------------
+
+func _barn_fire() -> CallData:
+	return _call({
+		"id": &"call_barn_fire", "title": "Fire at Kessler Farm", "truth": CallData.Truth.AMBUSH, "minute": 62,
+		"caller": "Ruth Kessler", "phone": "911-555-0138", "location": "Kessler Farm, County Road 12",
+		"true_location": Vector2(120, 470), "patience": 160.0, "bpm": 66, "tremor_start": 0.4, "tremor_end": 0.42,
+		"tags": [&"no_fire_sound", &"chanting_far"],
+		"records": [
+			[&"rec_kessler", "Kessler Farm", "Foreclosed 2019. Ruth Kessler (82) moved to Pine Hill care home. Property reported used for 'night gatherings'."],
+		],
+	}, [
+		["start", "caller", "The barn's on fire, the whole barn! My husband is inside! Send the fire trucks and the police!", [
+			["Is anyone hurt?", "hurt"],
+			["Can you see the flames from where you are?", "flames"],
+			["[Tech] Pulling the farm records.", "tech", {"class": &"tech", "reveals": [&"foreclosed_farm"]}],
+		]],
+		["hurt", "caller", "Walter's in there. He went in for the horses. Please, all of you, come now.", [
+			["[Medic] Is he calling out? Can you hear him?", "medic", {"class": &"medic"}],
+			["Units are on the way.", "end_units"],
+		]],
+		["medic", "caller", "No... it's quiet. It's very quiet.", [
+			["A burning barn is loud. What do you hear?", "quiet", {"reveals": [&"no_fire_sound"], "patience": -10.0}],
+		]],
+		["flames", "caller", "Yes, huge flames, it's so hot out here.", [
+			["[Profiler] There's no crackle, no wind, no horses. Just breathing.", "quiet", {"class": &"profiler", "reveals": [&"no_fire_sound"]}],
+			["Units are on the way.", "end_units"],
+		]],
+		["tech", "dispatcher", "(Kessler Farm was foreclosed in 2019. Ruth Kessler lives in the Pine Hill care home.)", "tech_after", 4.0],
+		["tech_after", "caller", "Why are you so slow? Walter is burning!", [
+			["Ruth Kessler is in a care home. Who is this?", "quiet", {"needs": [&"foreclosed_farm"], "patience": -30.0}],
+			["Units are on the way.", "end_units"],
+		]],
+		["quiet", "unknown", "(far away, many voices begin to chant) 'Bring the fire trucks. Bring the police. Bring all of them.'", [
+			["Send tactical, fire service holds back.", "tactical"],
+			["Log it as an ambush. Nobody goes near the farm.", "logged"],
+		]],
+		["tactical", "dispatcher", "(Tactical team dispatched to Kessler Farm with an ambush warning.)", {"events": [&"dispatch_units"]}],
+		["logged", "dispatcher", "(Ambush logged. County Road 12 closed.)"],
+		["end_units", "caller", "Good. Come to the barn. Walter will be so glad.", {"events": [&"dispatch_units"]}],
+	])
+
+
+# --- 15. Diner hostage (GENUINE) ------------------------------------------------------------------------
+
+func _diner_hostage() -> CallData:
+	return _call({
+		"id": &"call_diner_hostage", "title": "Night Owl Diner", "truth": CallData.Truth.GENUINE, "minute": 67,
+		"caller": "Maya (waitress)", "phone": "911-555-0177", "location": "Night Owl Diner, Harbor Road",
+		"true_location": Vector2(760, 430), "patience": 180.0, "bpm": 136, "tremor_start": 0.7, "tremor_end": 0.9,
+		"tags": [&"fryer_hiss", &"man_shouting"],
+		"records": [[&"rec_night_owl", "Night Owl Diner", "Owner Gus Parra reported extortion threats from a harbor crew last week."]],
+	}, [
+		["start", "caller", "(whispering from a storage room) Men with guns came in, they've got Gus and two customers on the floor.", [
+			["How many gunmen?", "count"],
+			["Are you safe where you are?", "safe"],
+			["What do they want?", "want"],
+		]],
+		["count", "caller", "Three inside. One by the door with a shotgun. There's a car running outside.", [
+			["[Tech] Can you see the plate of the car?", "plate", {"class": &"tech", "reveals": [&"getaway_car"]}],
+			["Stay hidden. Units are on the way.", "end_units", {"reveals": [&"armed_suspects"]}],
+		]],
+		["safe", "caller", "I'm in the storage room behind the kitchen. The door doesn't lock.", [
+			["Wedge something under the door.", "wedge", {"patience": 10.0}],
+			["Is there a back exit?", "back_exit"],
+		]],
+		["wedge", "caller", "(scraping) A mop bucket. It's something.", [
+			["How many gunmen?", "count"],
+			["Units are on the way.", "end_units"],
+		]],
+		["back_exit", "caller", "There's the alley door, but it's right past the kitchen. They'd see me.", [
+			["Stay put. Units are on the way.", "end_units"],
+			["[Profiler] When they shout next, move. They won't hear the door.", "escape", {"class": &"profiler"}],
+		]],
+		["escape", "caller", "(a gunshot inside, shouting) ...I'm out! I'm in the alley! Oh God, Gus is still in there.", "end_units", 3.0],
+		["want", "caller", "They keep yelling at Gus about money he owes. They said if cops come, everybody dies.", [
+			["[Profiler] Then units come in quiet. Tell me the layout.", "count", {"class": &"profiler"}],
+			["Units are on the way.", "end_units"],
+		]],
+		["plate", "caller", "Black sedan... 7-K-L... I can't see the rest.", [
+			["[Tech] That plate is on our stolen list from the harbor.", "stolen", {"class": &"tech", "reveals": [&"stolen_car"]}],
+			["Good. Stay hidden, units are coming.", "end_units"],
+		]],
+		["stolen", "caller", "Stolen? So they're the harbor crew Gus was scared of.", [
+			["Does Gus have a panic button behind the counter?", "panic"],
+			["Units are on the way — quiet approach.", "end_units"],
+		]],
+		["panic", "caller", "Yes! Under the register. He never got to it— wait, the lights just went out in the dining room.", [
+			["Stay in the storage room and don't move.", "end_units", {"patience": 10.0}],
+		]],
+		["end_units", "caller", "Please be careful. They're going to hurt Gus.", {"events": [&"dispatch_units"]}],
 	])

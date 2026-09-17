@@ -1,0 +1,215 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_3f4sl"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_yoysi"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_23v55"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_3jxip"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_3heqa"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_ye4p7"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_4m6p1"]
+
+[sub_resource type="Resource" id="Resource_spwdl"]
+script = ExtResource("2_yoysi")
+text = "Where are you right now?"
+next = &"where"
+
+[sub_resource type="Resource" id="Resource_4sino"]
+script = ExtResource("2_yoysi")
+text = "How many men?"
+next = &"how_many"
+
+[sub_resource type="Resource" id="Resource_0v155"]
+script = ExtResource("2_yoysi")
+text = "Do you have a weapon in the house?"
+next = &"weapon"
+
+[sub_resource type="Resource" id="Resource_keqqk"]
+script = ExtResource("1_3f4sl")
+id = &"start"
+line = "(elderly man, whispering) Someone broke the kitchen window. There are men in my house."
+choices = Array[ExtResource("2_yoysi")]([SubResource("Resource_spwdl"), SubResource("Resource_4sino"), SubResource("Resource_0v155")])
+
+[sub_resource type="Resource" id="Resource_2xvc3"]
+script = ExtResource("2_yoysi")
+text = "Keep the door locked and stay away from it."
+next = &"stay"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_4g748"]
+script = ExtResource("2_yoysi")
+text = "How many men?"
+next = &"how_many"
+
+[sub_resource type="Resource" id="Resource_a4dsw"]
+script = ExtResource("1_3f4sl")
+id = &"where"
+line = "Upstairs bedroom. I locked the door. My wife is asleep next to me, she can't hear well."
+choices = Array[ExtResource("2_yoysi")]([SubResource("Resource_2xvc3"), SubResource("Resource_4g748")])
+
+[sub_resource type="Resource" id="Resource_1f6n3"]
+script = ExtResource("2_yoysi")
+text = "[Profiler] Can you hear what else they're saying?"
+next = &"listen"
+required_class = &"profiler"
+reveals = Array[StringName]([&"armed_intruders"])
+
+[sub_resource type="Resource" id="Resource_rw0h6"]
+script = ExtResource("2_yoysi")
+text = "Units are on the way. Stay quiet."
+next = &"end_units"
+reveals = Array[StringName]([&"armed_intruders"])
+
+[sub_resource type="Resource" id="Resource_o5h2b"]
+script = ExtResource("1_3f4sl")
+id = &"how_many"
+line = "Three voices. One said 'find the safe'. They have... I heard a gun being racked."
+choices = Array[ExtResource("2_yoysi")]([SubResource("Resource_1f6n3"), SubResource("Resource_rw0h6")])
+
+[sub_resource type="Resource" id="Resource_fmcsw"]
+script = ExtResource("2_yoysi")
+text = "[Tech] Is there another way out of the bedroom?"
+next = &"exit"
+required_class = &"tech"
+
+[sub_resource type="Resource" id="Resource_e82r2"]
+script = ExtResource("2_yoysi")
+text = "Units are on the way. Stay quiet."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_parb4"]
+script = ExtResource("1_3f4sl")
+id = &"listen"
+line = "'The old man's upstairs. Check the garage first.' Oh God, they know we're here."
+choices = Array[ExtResource("2_yoysi")]([SubResource("Resource_fmcsw"), SubResource("Resource_e82r2")])
+
+[sub_resource type="Resource" id="Resource_q836j"]
+script = ExtResource("2_yoysi")
+text = "Then barricade the door with the dresser."
+next = &"barricade"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_bx6oh"]
+script = ExtResource("1_3f4sl")
+id = &"exit"
+line = "The window... over the garage roof. I can't climb that. Not at my age."
+choices = Array[ExtResource("2_yoysi")]([SubResource("Resource_q836j")])
+
+[sub_resource type="Resource" id="Resource_it0vu"]
+script = ExtResource("1_3f4sl")
+id = &"barricade"
+line = "(scraping) It's done. They're on the stairs."
+auto_next = &"end_units"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_wl2le"]
+script = ExtResource("2_yoysi")
+text = "Only use it if they come through that door."
+next = &"stay"
+
+[sub_resource type="Resource" id="Resource_wpgt0"]
+script = ExtResource("2_yoysi")
+text = "Leave it. Hide and wait for us."
+next = &"stay"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_xyccw"]
+script = ExtResource("2_yoysi")
+text = "[Profiler] Harold, is your wife awake now?"
+next = &"wife"
+required_class = &"profiler"
+
+[sub_resource type="Resource" id="Resource_0csp6"]
+script = ExtResource("1_3f4sl")
+id = &"weapon"
+line = "My old service revolver. In the nightstand."
+choices = Array[ExtResource("2_yoysi")]([SubResource("Resource_wl2le"), SubResource("Resource_wpgt0"), SubResource("Resource_xyccw")])
+
+[sub_resource type="Resource" id="Resource_d7mvj"]
+script = ExtResource("2_yoysi")
+text = "Where is the dog, Harold?"
+next = &"dog"
+reveals = Array[StringName]([&"silent_dog"])
+
+[sub_resource type="Resource" id="Resource_7dx1y"]
+script = ExtResource("2_yoysi")
+text = "Keep her calm and stay low. Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_cdwye"]
+script = ExtResource("1_3f4sl")
+id = &"wife"
+line = "She's awake. She's scared. She keeps asking why the dog isn't barking."
+choices = Array[ExtResource("2_yoysi")]([SubResource("Resource_d7mvj"), SubResource("Resource_7dx1y")])
+
+[sub_resource type="Resource" id="Resource_wyg34"]
+script = ExtResource("2_yoysi")
+text = "Stay in the bedroom. Don't go looking."
+next = &"stay"
+patience_delta = -10.0
+
+[sub_resource type="Resource" id="Resource_ri37q"]
+script = ExtResource("2_yoysi")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_1pu8c"]
+script = ExtResource("1_3f4sl")
+id = &"dog"
+line = "...He was in the yard. He always barks. Oh God, why isn't he barking?"
+choices = Array[ExtResource("2_yoysi")]([SubResource("Resource_wyg34"), SubResource("Resource_ri37q")])
+
+[sub_resource type="Resource" id="Resource_0xusk"]
+script = ExtResource("2_yoysi")
+text = "How many men?"
+next = &"how_many"
+
+[sub_resource type="Resource" id="Resource_5f5xu"]
+script = ExtResource("2_yoysi")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_yriml"]
+script = ExtResource("1_3f4sl")
+id = &"stay"
+line = "Okay. Okay. Please hurry."
+choices = Array[ExtResource("2_yoysi")]([SubResource("Resource_0xusk"), SubResource("Resource_5f5xu")])
+
+[sub_resource type="Resource" id="Resource_y5cjl"]
+script = ExtResource("1_3f4sl")
+id = &"end_units"
+line = "(a heavy thump on the bedroom door) Please— please hurry."
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_guyn4"]
+script = ExtResource("4_3jxip")
+nodes = Array[ExtResource("1_3f4sl")]([SubResource("Resource_keqqk"), SubResource("Resource_a4dsw"), SubResource("Resource_o5h2b"), SubResource("Resource_parb4"), SubResource("Resource_bx6oh"), SubResource("Resource_it0vu"), SubResource("Resource_0csp6"), SubResource("Resource_cdwye"), SubResource("Resource_1pu8c"), SubResource("Resource_yriml"), SubResource("Resource_y5cjl")])
+
+[sub_resource type="Resource" id="Resource_bkxo8"]
+script = ExtResource("5_3heqa")
+id = &"rec_aspen_burglaries"
+title = "Aspen Drive burglaries"
+content = "Three armed home invasions this month. Suspects target elderly residents."
+
+[sub_resource type="Curve" id="Curve_txoms"]
+_data = [Vector2(0, 0.6), 0.0, 0.0, 0, 0, Vector2(1, 0.85), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_i4k4p"]
+script = ExtResource("7_4m6p1")
+tremor_curve = SubResource("Curve_txoms")
+background_tags = Array[StringName]([&"glass_breaking", &"male_voices_downstairs"])
+baseline_heart_rate = 132
+
+[resource]
+script = ExtResource("6_ye4p7")
+id = &"call_home_invasion"
+title = "Glass in the Kitchen"
+earliest_minute = 52
+dialogue = SubResource("Resource_guyn4")
+phone_number = "911-555-0122"
+caller_name = "Harold Finch"
+caller_location_name = "22 Aspen Drive"
+true_location = Vector2(320, 300)
+records = Array[ExtResource("5_3heqa")]([SubResource("Resource_bkxo8")])
+stress_profile = SubResource("Resource_i4k4p")
+patience_seconds = 170.0

@@ -216,6 +216,12 @@ static func _enemies(kit: LevelKit, root: Node3D, navigation: MissionNavigation)
 		["Leader", "ambush_leader", Vector3(2, 0, -24), "SquadWarehouse", ""],
 		["AisleGunman", "cultist_gunman", Vector3(-15, 0, -18), "SquadWarehouse", ""],
 		["OfficeGunman", "cultist_gunman", Vector3(16, 0, -25), "SquadWarehouse", ""],
+		["AmbushRoof", "cultist_gunman", Vector3(-26, 0, 6), "SquadYard", "", [&"ambush"]],
+		["AmbushContainers", "cultist_gunman", Vector3(25, 0, 6), "SquadYard", "", [&"ambush"]],
+		["AmbushZealot", "zealot", Vector3(-6, 0, -16), "SquadWarehouse", "", [&"ambush"]],
+		["AmbushDock", "thug", Vector3(8, 0, -9.5), "SquadWarehouse", "", [&"ambush"]],
+		["SquatterOffice", "prankster", Vector3(16, 0, -26), "SquadWarehouse", "", [&"arrest"]],
+		["SquatterAisle", "prankster", Vector3(-12, 0, -23.5), "SquadWarehouse", "", [&"arrest"]],
 	]
 	for entry: Array in plan:
 		var point: EnemySpawnPoint = EnemySpawnPoint.new()
@@ -228,6 +234,11 @@ static func _enemies(kit: LevelKit, root: Node3D, navigation: MissionNavigation)
 		var route: String = entry[4]
 		if route != "":
 			point.patrol_route = NodePath("../../%s" % route)
+		if entry.size() > 5:
+			var kinds: Array[StringName] = []
+			for kind: StringName in entry[5]:
+				kinds.append(kind)
+			point.mission_kinds = kinds
 
 	var spawner: EnemySpawner = EnemySpawner.new()
 	kit.own(spawner, root, "EnemySpawner")

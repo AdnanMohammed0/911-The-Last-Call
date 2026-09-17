@@ -1,5 +1,5 @@
-## Mission map logic: counts active hostiles for the objective, and extracts the team once the area is
-## secured and every standing player is inside the extraction radius.
+## Mission map logic: counts active hostiles for the objective and extracts the team when every standing
+## player waits at the van — once the area is secured, or early (for less XP) at any time.
 ## Authority: HOST
 class_name MissionController
 extends Node3D
@@ -9,18 +9,25 @@ extends Node3D
 @export var extraction_radius: float = 4.0
 ## Offline playtests of the map without a response still get a working objective.
 @export var start_response_if_idle: bool = true
-## Seconds the team must stay at the extraction point.
+## Seconds the team must stay at the extraction point once the area is secured.
 @export var extraction_hold: float = 2.0
+## Seconds to wait at the van to leave before the area is secured.
+@export var early_extraction_hold: float = 4.0
+
+## 0..1 progress of the team waiting at the van (replicated through MissionDirector's HUD text).
+var extraction_progress: float = 0.0
 
 var _poll: float = 0.0
 var _seen_hostiles: bool = false
 var _at_extraction: float = 0.0
+var _empty_timer: float = 0.0
 
 
 func _ready() -> void:
 	if multiplayer.is_server() and start_response_if_idle and MissionDirector.state == MissionDirector.State.IDLE:
 		var level: Node = owner if owner != null else self
-		MissionDirector._sync_state.rpc(MissionDirector.State.DEPLOYED, level.scene_file_path, &"", 1.0, "Clear the area of armed suspects")
+		MissionDirector._sync_state.rpc(MissionDirector.State.DEPLOYED, level.scene_file_path, &"", &"raid", 1.0, MissionDirector.objective_for_kind(&"raid"))
+	_empty_timer = 0.0
 
 
 func _physics_process(delta: float) -> void:
@@ -43,12 +50,19 @@ func _physics_process(delta: float) -> void:
 		_seen_hostiles = true
 	if _seen_hostiles:
 		MissionDirector.report_hostiles(left, total)
-	if MissionDirector.state == MissionDirector.State.SECURED and _team_at_extraction():
+	elif MissionDirector.mission_kind == &"empty":
+		_empty_timer += 0.5
+		if _empty_timer >= 3.0:
+			MissionDirector.report_hostiles(0, 0)
+	if MissionDirector.is_in_mission() and _team_at_extraction():
 		_at_extraction += 0.5
-		if _at_extraction >= extraction_hold:
+		var needed: float = extraction_hold if MissionDirector.state == MissionDirector.State.SECURED else early_extraction_hold
+		extraction_progress = clampf(_at_extraction / needed, 0.0, 1.0)
+		if _at_extraction >= needed:
 			MissionDirector.extract()
 	else:
 		_at_extraction = 0.0
+		extraction_progress = 0.0
 
 
 func _team_at_extraction() -> bool:

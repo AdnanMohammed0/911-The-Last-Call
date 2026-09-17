@@ -170,39 +170,64 @@ auto_next = &"end_click"
 auto_delay = 4.0
 
 [sub_resource type="Resource" id="Resource_wjhki"]
+script = ExtResource("2_1huaw")
+text = "Send the tactical team in anyway — carefully."
+next = &"tactical"
+
+[sub_resource type="Resource" id="Resource_v5ovo"]
+script = ExtResource("2_1huaw")
+text = "Log it as an ambush and warn every unit away from Old Mill Road."
+next = &"warned"
+
+[sub_resource type="Resource" id="Resource_gso57"]
 script = ExtResource("1_wi6ts")
 id = &"end_click"
 speaker = &"dispatcher"
 line = "(The line goes dead. The church bell starts ringing on its own, far away.)"
+choices = Array[ExtResource("2_1huaw")]([SubResource("Resource_wjhki"), SubResource("Resource_v5ovo")])
 
-[sub_resource type="Resource" id="Resource_v5ovo"]
+[sub_resource type="Resource" id="Resource_5acb3"]
+script = ExtResource("1_wi6ts")
+id = &"tactical"
+speaker = &"dispatcher"
+line = "(Tactical team dispatched to St. Agnes with an ambush warning.)"
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_wr3u5"]
+script = ExtResource("1_wi6ts")
+id = &"warned"
+speaker = &"dispatcher"
+line = "(All units warned. Old Mill Road is closed off until morning.)"
+
+[sub_resource type="Resource" id="Resource_oxe8r"]
 script = ExtResource("1_wi6ts")
 id = &"end_units"
 line = "Bless you. Tell them to come in through the front doors. All of them."
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
-[sub_resource type="Resource" id="Resource_gso57"]
+[sub_resource type="Resource" id="Resource_tda01"]
 script = ExtResource("4_x75bv")
-nodes = Array[ExtResource("1_wi6ts")]([SubResource("Resource_0bxcb"), SubResource("Resource_e7s77"), SubResource("Resource_qn0wm"), SubResource("Resource_nb6x0"), SubResource("Resource_3m14v"), SubResource("Resource_hkmed"), SubResource("Resource_ntafa"), SubResource("Resource_q4h7p"), SubResource("Resource_gwbwm"), SubResource("Resource_ki884"), SubResource("Resource_0chym"), SubResource("Resource_wjhki"), SubResource("Resource_v5ovo")])
+nodes = Array[ExtResource("1_wi6ts")]([SubResource("Resource_0bxcb"), SubResource("Resource_e7s77"), SubResource("Resource_qn0wm"), SubResource("Resource_nb6x0"), SubResource("Resource_3m14v"), SubResource("Resource_hkmed"), SubResource("Resource_ntafa"), SubResource("Resource_q4h7p"), SubResource("Resource_gwbwm"), SubResource("Resource_ki884"), SubResource("Resource_0chym"), SubResource("Resource_gso57"), SubResource("Resource_5acb3"), SubResource("Resource_wr3u5"), SubResource("Resource_oxe8r")])
 
-[sub_resource type="Resource" id="Resource_5acb3"]
+[sub_resource type="Resource" id="Resource_wcix5"]
 script = ExtResource("5_2bid3")
 id = &"rec_st_agnes"
 title = "St. Agnes Church"
 content = "Deconsecrated 2016. Father Lucas Moreno retired to Arizona in 2017."
 
-[sub_resource type="Resource" id="Resource_wr3u5"]
+[sub_resource type="Resource" id="Resource_3goib"]
 script = ExtResource("5_2bid3")
 id = &"rec_mill_cult"
 title = "Old Mill Road sightings"
 content = "Hunters report robed groups gathering at night. Two missing hikers, 2024."
 
-[sub_resource type="Curve" id="Curve_oxe8r"]
+[sub_resource type="Curve" id="Curve_540fw"]
 _data = [Vector2(0, 0.6), 0.0, 0.0, 0, 0, Vector2(1, 0.62), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Resource" id="Resource_tda01"]
+[sub_resource type="Resource" id="Resource_p80mb"]
 script = ExtResource("7_y1jw1")
-tremor_curve = SubResource("Curve_oxe8r")
+tremor_curve = SubResource("Curve_540fw")
 loop_segments = Array[Vector2]([Vector2(6, 12)])
 background_tags = Array[StringName]([&"chanting", &"many_breathing"])
 baseline_heart_rate = 62
@@ -212,12 +237,12 @@ script = ExtResource("6_kpu5t")
 id = &"call_church_bells"
 title = "St. Agnes Bells"
 truth = 2
-earliest_minute = 190
-dialogue = SubResource("Resource_gso57")
+earliest_minute = 37
+dialogue = SubResource("Resource_tda01")
 phone_number = "911-555-0108"
 caller_name = "Father Lucas"
 caller_location_name = "St. Agnes Church, Old Mill Road"
 true_location = Vector2(260, 180)
-records = Array[ExtResource("5_2bid3")]([SubResource("Resource_5acb3"), SubResource("Resource_wr3u5")])
-stress_profile = SubResource("Resource_tda01")
+records = Array[ExtResource("5_2bid3")]([SubResource("Resource_wcix5"), SubResource("Resource_3goib")])
+stress_profile = SubResource("Resource_p80mb")
 patience_seconds = 170.0

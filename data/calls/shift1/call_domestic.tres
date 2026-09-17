@@ -194,16 +194,19 @@ auto_delay = 3.0
 script = ExtResource("1_r7c7i")
 id = &"end_surrender"
 line = "(through the wall) He's... he's sitting in the hall. He's actually doing it."
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
 [sub_resource type="Resource" id="Resource_xaqld"]
 script = ExtResource("1_r7c7i")
 id = &"end_barricade"
 line = "He locked himself back in with them. Please. Please hurry."
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
 [sub_resource type="Resource" id="Resource_42jm1"]
 script = ExtResource("1_r7c7i")
 id = &"end_units"
 line = "I see lights outside. Thank you. Thank you."
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
 [sub_resource type="Resource" id="Resource_2nrdf"]
 script = ExtResource("4_7m0xh")
@@ -229,7 +232,7 @@ baseline_heart_rate = 118
 script = ExtResource("6_6idyy")
 id = &"call_domestic"
 title = "Thin Walls"
-earliest_minute = 130
+earliest_minute = 27
 dialogue = SubResource("Resource_2nrdf")
 phone_number = "911-555-0145"
 caller_name = "Rosa Delgado"

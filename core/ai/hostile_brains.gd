@@ -8,6 +8,8 @@ extends RefCounted
 
 
 static func build(archetype: ArchetypeData) -> BTNode:
+	if not archetype.armed:
+		return _unarmed(archetype)
 	var combat: Array[BTNode] = []
 	if archetype.ied_radius > 0.0:
 		combat.append(BT.seq([BT.cond(&"cond_ied_in_range"), BT.act(&"act_detonate_ied")], "Detonate IED"))
@@ -22,6 +24,7 @@ static func build(archetype: ArchetypeData) -> BTNode:
 		if archetype.uses_flanks:
 			combat.append(BT.seq([BT.cond(&"cond_can_flank"), BT.time_limit(BT.act(&"act_flank"), 8.0)], "Flank"))
 		if archetype.uses_cover:
+			combat.append(BT.seq([BT.cond(&"cond_exposed_under_fire"), BT.act(&"act_move_to_cover")], "Break contact"))
 			combat.append(BT.seq([BT.cond(&"cond_in_cover"), BT.act(&"act_peek_and_fire")], "Suppress from cover"))
 			combat.append(BT.act(&"act_move_to_cover", [], "Move to best cover"))
 		combat.append(BT.act(&"act_advance_and_fire", [], "Advance and fire"))
@@ -33,4 +36,14 @@ static func build(archetype: ArchetypeData) -> BTNode:
 		BT.seq([BT.cond(&"cond_searching"), BT.act(&"act_search")], "Search"),
 		BT.seq([BT.cond(&"cond_suspicious"), BT.act(&"act_investigate")], "Investigate"),
 		BT.act(&"act_patrol", [], "Patrol"),
+	], archetype.display_name)
+
+
+## Unarmed suspects: give up when confronted, otherwise run and hide.
+static func _unarmed(archetype: ArchetypeData) -> BTNode:
+	return BT.sel([
+		BT.seq([BT.cond(&"cond_should_surrender"), BT.act(&"act_surrender")], "Surrender"),
+		BT.seq([BT.cond(&"cond_in_combat"), BT.act(&"act_flee")], "Run from police"),
+		BT.seq([BT.cond(&"cond_searching"), BT.act(&"act_flee")], "Sneak away"),
+		BT.act(&"act_patrol", [], "Idle"),
 	], archetype.display_name)

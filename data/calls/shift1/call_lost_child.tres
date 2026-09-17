@@ -10,128 +10,133 @@
 
 [sub_resource type="Resource" id="Resource_dxu33"]
 script = ExtResource("2_sjkxi")
+text = "Stay where you are. Units are on the way."
+next = &"units_mall"
+
+[sub_resource type="Resource" id="Resource_qygxe"]
+script = ExtResource("2_sjkxi")
 text = "What time is it where you are?"
 next = &"time"
 
-[sub_resource type="Resource" id="Resource_qygxe"]
+[sub_resource type="Resource" id="Resource_er887"]
 script = ExtResource("2_sjkxi")
 text = "Describe the man."
 next = &"man"
 
-[sub_resource type="Resource" id="Resource_er887"]
+[sub_resource type="Resource" id="Resource_bbui6"]
 script = ExtResource("2_sjkxi")
 text = "What's your full name and address?"
 next = &"name"
 
-[sub_resource type="Resource" id="Resource_bbui6"]
+[sub_resource type="Resource" id="Resource_1y2q5"]
 script = ExtResource("1_slxc6")
 id = &"start"
 line = "Hi, um, I'm like, lost? At the mall? And my mom's gone and there's a scary man. (muffled giggle)"
-choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_dxu33"), SubResource("Resource_qygxe"), SubResource("Resource_er887")])
+choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_dxu33"), SubResource("Resource_qygxe"), SubResource("Resource_er887"), SubResource("Resource_bbui6")])
 
-[sub_resource type="Resource" id="Resource_1y2q5"]
+[sub_resource type="Resource" id="Resource_7kbqn"]
 script = ExtResource("2_sjkxi")
 text = "It's the middle of the night. The mall closed hours ago."
 next = &"caught_time"
 patience_delta = -20.0
 reveals = Array[StringName]([&"wrong_time"])
 
-[sub_resource type="Resource" id="Resource_7kbqn"]
+[sub_resource type="Resource" id="Resource_sfhfp"]
 script = ExtResource("2_sjkxi")
 text = "Describe the man."
 next = &"man"
 
-[sub_resource type="Resource" id="Resource_sfhfp"]
+[sub_resource type="Resource" id="Resource_1yxjv"]
 script = ExtResource("1_slxc6")
 id = &"time"
 line = "It's like... two in the afternoon?"
-choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_1y2q5"), SubResource("Resource_7kbqn")])
+choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_7kbqn"), SubResource("Resource_sfhfp")])
 
-[sub_resource type="Resource" id="Resource_1yxjv"]
+[sub_resource type="Resource" id="Resource_dvt1g"]
 script = ExtResource("2_sjkxi")
 text = "[Tech] Your number is registered to 8 Aspen Drive."
 next = &"tech_number"
 required_class = &"tech"
 reveals = Array[StringName]([&"home_address"])
 
-[sub_resource type="Resource" id="Resource_dvt1g"]
+[sub_resource type="Resource" id="Resource_ey3q4"]
 script = ExtResource("2_sjkxi")
 text = "Locked in? Then describe the store you're in front of."
 next = &"store"
 
-[sub_resource type="Resource" id="Resource_ey3q4"]
+[sub_resource type="Resource" id="Resource_us16a"]
 script = ExtResource("1_slxc6")
 id = &"caught_time"
 line = "(background: 'Bri, she knows, hang up!') N-no, I mean, I got locked in!"
-choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_1yxjv"), SubResource("Resource_dvt1g")])
+choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_dvt1g"), SubResource("Resource_ey3q4")])
 
-[sub_resource type="Resource" id="Resource_us16a"]
+[sub_resource type="Resource" id="Resource_lakga"]
 script = ExtResource("2_sjkxi")
 text = "There's no Pizza Planet in Blackvale Mall."
 next = &"end_confess"
 patience_delta = -30.0
 
-[sub_resource type="Resource" id="Resource_lakga"]
+[sub_resource type="Resource" id="Resource_tsqc2"]
 script = ExtResource("1_slxc6")
 id = &"store"
 line = "Um... the... pizza one. Pizza Planet."
-choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_us16a")])
+choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_lakga")])
 
-[sub_resource type="Resource" id="Resource_tsqc2"]
+[sub_resource type="Resource" id="Resource_hj0n0"]
 script = ExtResource("2_sjkxi")
 text = "[Profiler] Who's laughing next to you, Brianna?"
 next = &"profiler_friends"
 required_class = &"profiler"
 reveals = Array[StringName]([&"friends_present"])
 
-[sub_resource type="Resource" id="Resource_hj0n0"]
+[sub_resource type="Resource" id="Resource_vc1b6"]
 script = ExtResource("2_sjkxi")
 text = "What time is it where you are?"
 next = &"time"
 
-[sub_resource type="Resource" id="Resource_vc1b6"]
+[sub_resource type="Resource" id="Resource_lcl5y"]
 script = ExtResource("1_slxc6")
 id = &"man"
 line = "He's got, like, a big hat and he's super tall and he's got... (laughter) sorry, sorry—"
-choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_tsqc2"), SubResource("Resource_hj0n0")])
+choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_hj0n0"), SubResource("Resource_vc1b6")])
 
-[sub_resource type="Resource" id="Resource_lcl5y"]
+[sub_resource type="Resource" id="Resource_lac67"]
 script = ExtResource("2_sjkxi")
 text = "Mall food courts don't have TVs you can turn off. You're at home."
 next = &"end_confess"
 required_evidence = Array[StringName]([&"friends_present"])
 
-[sub_resource type="Resource" id="Resource_lac67"]
+[sub_resource type="Resource" id="Resource_o3ca6"]
 script = ExtResource("2_sjkxi")
 text = "What's your full name and address?"
 next = &"name"
 
-[sub_resource type="Resource" id="Resource_o3ca6"]
+[sub_resource type="Resource" id="Resource_cj8jf"]
 script = ExtResource("1_slxc6")
 id = &"profiler_friends"
 line = "Nobody! It's the TV! (music in the background suddenly stops)"
-choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_lcl5y"), SubResource("Resource_lac67")])
+choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_lac67"), SubResource("Resource_o3ca6")])
 
-[sub_resource type="Resource" id="Resource_cj8jf"]
+[sub_resource type="Resource" id="Resource_b1id0"]
 script = ExtResource("2_sjkxi")
 text = "[Tech] Checking this number's history."
 next = &"tech_number"
 required_class = &"tech"
 reveals = Array[StringName]([&"home_address"])
 
-[sub_resource type="Resource" id="Resource_b1id0"]
+[sub_resource type="Resource" id="Resource_2kjy2"]
 script = ExtResource("2_sjkxi")
 text = "Brianna, calling 911 as a joke is a crime."
 next = &"end_confess"
 patience_delta = -10.0
 
-[sub_resource type="Resource" id="Resource_2kjy2"]
+[sub_resource type="Resource" id="Resource_sxutu"]
 script = ExtResource("1_slxc6")
 id = &"name"
 line = "Brianna... Smith. I live at... the mall."
-choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_cj8jf"), SubResource("Resource_b1id0")])
+choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_b1id0"), SubResource("Resource_2kjy2")])
 
-[sub_resource type="Resource" id="Resource_sxutu"]
+[sub_resource type="Resource" id="Resource_2s6bg"]
 script = ExtResource("1_slxc6")
 id = &"tech_number"
 speaker = &"dispatcher"
@@ -139,46 +144,76 @@ line = "(Four prank calls from this number this month. Registered to the Keller 
 auto_next = &"tech_after"
 auto_delay = 3.0
 
-[sub_resource type="Resource" id="Resource_2s6bg"]
+[sub_resource type="Resource" id="Resource_wltwr"]
 script = ExtResource("2_sjkxi")
 text = "Brianna Keller. A deputy can visit your parents tonight."
 next = &"end_confess"
 required_evidence = Array[StringName]([&"home_address"])
 
-[sub_resource type="Resource" id="Resource_wltwr"]
+[sub_resource type="Resource" id="Resource_cmp0q"]
 script = ExtResource("1_slxc6")
 id = &"tech_after"
 line = "(whispering off the phone) 'How does she know my house?'"
-choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_2s6bg")])
-
-[sub_resource type="Resource" id="Resource_cmp0q"]
-script = ExtResource("1_slxc6")
-id = &"end_confess"
-line = "(crying) Okay, okay, I'm sorry, it was a dare! Please don't tell my mom! (click)"
+choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_wltwr")])
 
 [sub_resource type="Resource" id="Resource_j4xou"]
-script = ExtResource("4_1nt34")
-nodes = Array[ExtResource("1_slxc6")]([SubResource("Resource_bbui6"), SubResource("Resource_sfhfp"), SubResource("Resource_ey3q4"), SubResource("Resource_lakga"), SubResource("Resource_vc1b6"), SubResource("Resource_o3ca6"), SubResource("Resource_2kjy2"), SubResource("Resource_sxutu"), SubResource("Resource_wltwr"), SubResource("Resource_cmp0q")])
+script = ExtResource("1_slxc6")
+id = &"units_mall"
+line = "(whispers 'they're actually sending cops!') ...Okay, thanks! (click)"
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
 [sub_resource type="Resource" id="Resource_t5mks"]
+script = ExtResource("2_sjkxi")
+text = "A deputy is coming to Aspen Drive. You're under arrest for a false report."
+next = &"arrest_sent"
+
+[sub_resource type="Resource" id="Resource_tcxl4"]
+script = ExtResource("2_sjkxi")
+text = "This is your only warning. I'm logging this as a prank call."
+next = &"warned"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_34q1k"]
+script = ExtResource("1_slxc6")
+id = &"end_confess"
+line = "(crying) Okay, okay, I'm sorry, it was a dare! Please don't tell my mom!"
+choices = Array[ExtResource("2_sjkxi")]([SubResource("Resource_t5mks"), SubResource("Resource_tcxl4")])
+
+[sub_resource type="Resource" id="Resource_p0u75"]
+script = ExtResource("1_slxc6")
+id = &"arrest_sent"
+speaker = &"dispatcher"
+line = "(Deputies dispatched to 8 Aspen Drive. The line clicks — she hung up.)"
+on_enter_events = Array[StringName]([&"dispatch_arrest"])
+
+[sub_resource type="Resource" id="Resource_k7108"]
+script = ExtResource("1_slxc6")
+id = &"warned"
+line = "Thank you, thank you, it won't happen again. (click)"
+
+[sub_resource type="Resource" id="Resource_aoal3"]
+script = ExtResource("4_1nt34")
+nodes = Array[ExtResource("1_slxc6")]([SubResource("Resource_1y2q5"), SubResource("Resource_1yxjv"), SubResource("Resource_us16a"), SubResource("Resource_tsqc2"), SubResource("Resource_lcl5y"), SubResource("Resource_cj8jf"), SubResource("Resource_sxutu"), SubResource("Resource_2s6bg"), SubResource("Resource_cmp0q"), SubResource("Resource_j4xou"), SubResource("Resource_34q1k"), SubResource("Resource_p0u75"), SubResource("Resource_k7108")])
+
+[sub_resource type="Resource" id="Resource_bo2ah"]
 script = ExtResource("5_jgjh2")
 id = &"rec_mall_hours"
 title = "Blackvale Mall"
 content = "Closes at 21:00. Security guard on site until 06:00."
 
-[sub_resource type="Resource" id="Resource_tcxl4"]
+[sub_resource type="Resource" id="Resource_dgbyy"]
 script = ExtResource("5_jgjh2")
 id = &"rec_number_0112"
 title = "911-555-0112"
 content = "Four prank calls in 30 days. Registered to the Keller family, 8 Aspen Drive."
 
-[sub_resource type="Curve" id="Curve_34q1k"]
+[sub_resource type="Curve" id="Curve_vgom1"]
 _data = [Vector2(0, 0.2), 0.0, 0.0, 0, 0, Vector2(1, 0.25), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Resource" id="Resource_p0u75"]
+[sub_resource type="Resource" id="Resource_bkt8n"]
 script = ExtResource("7_ta6s1")
-tremor_curve = SubResource("Curve_34q1k")
+tremor_curve = SubResource("Curve_vgom1")
 loop_segments = Array[Vector2]([Vector2(1, 3.2)])
 background_tags = Array[StringName]([&"teen_laughter", &"bedroom_music"])
 baseline_heart_rate = 96
@@ -188,12 +223,12 @@ script = ExtResource("6_dqj54")
 id = &"call_lost_child"
 title = "Lost at the Mall"
 truth = 0
-earliest_minute = 80
-dialogue = SubResource("Resource_j4xou")
+earliest_minute = 17
+dialogue = SubResource("Resource_aoal3")
 phone_number = "911-555-0112"
 caller_name = "Brianna"
 caller_location_name = "Blackvale Mall, food court"
 true_location = Vector2(500, 260)
-records = Array[ExtResource("5_jgjh2")]([SubResource("Resource_t5mks"), SubResource("Resource_tcxl4")])
-stress_profile = SubResource("Resource_p0u75")
+records = Array[ExtResource("5_jgjh2")]([SubResource("Resource_bo2ah"), SubResource("Resource_dgbyy")])
+stress_profile = SubResource("Resource_bkt8n")
 patience_seconds = 120.0

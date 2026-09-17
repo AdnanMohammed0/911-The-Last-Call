@@ -1,0 +1,213 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_lmfw3"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_vngb4"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_7gkbb"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_ox2ij"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_y3cgh"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_4xfb0"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_4gth8"]
+
+[sub_resource type="Resource" id="Resource_erxn8"]
+script = ExtResource("2_vngb4")
+text = "4471, how bad is it?"
+next = &"wound"
+
+[sub_resource type="Resource" id="Resource_2n25g"]
+script = ExtResource("2_vngb4")
+text = "4471, who's with you?"
+next = &"partner"
+
+[sub_resource type="Resource" id="Resource_voyfb"]
+script = ExtResource("2_vngb4")
+text = "[Tech] Verify badge 4471."
+next = &"badge"
+required_class = &"tech"
+reveals = Array[StringName]([&"retired_badge"])
+
+[sub_resource type="Resource" id="Resource_d6raw"]
+script = ExtResource("1_lmfw3")
+id = &"start"
+line = "(radio static) Dispatch, 4471, shots fired, I'm hit, harbor gate B, send everything you have!"
+choices = Array[ExtResource("2_vngb4")]([SubResource("Resource_erxn8"), SubResource("Resource_2n25g"), SubResource("Resource_voyfb")])
+
+[sub_resource type="Resource" id="Resource_e711p"]
+script = ExtResource("2_vngb4")
+text = "[Medic] Can you apply a tourniquet?"
+next = &"medic"
+required_class = &"medic"
+
+[sub_resource type="Resource" id="Resource_lbn2j"]
+script = ExtResource("2_vngb4")
+text = "Units are on the way, hold on."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_s083s"]
+script = ExtResource("2_vngb4")
+text = "[Profiler] Your voice is too steady for a leg wound, 4471."
+next = &"profiler"
+required_class = &"profiler"
+reveals = Array[StringName]([&"steady_voice"])
+
+[sub_resource type="Resource" id="Resource_mxedc"]
+script = ExtResource("1_lmfw3")
+id = &"wound"
+line = "Leg, I'm bleeding bad, I'm behind my cruiser. There's four of them. Send everyone."
+choices = Array[ExtResource("2_vngb4")]([SubResource("Resource_e711p"), SubResource("Resource_lbn2j"), SubResource("Resource_s083s")])
+
+[sub_resource type="Resource" id="Resource_mikay"]
+script = ExtResource("2_vngb4")
+text = "You're a deputy and you don't know what a tourniquet is?"
+next = &"caught"
+patience_delta = -20.0
+reveals = Array[StringName]([&"no_training"])
+
+[sub_resource type="Resource" id="Resource_8et7y"]
+script = ExtResource("2_vngb4")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_5aadj"]
+script = ExtResource("1_lmfw3")
+id = &"medic"
+line = "A what? Just— just send the units to gate B, all of them."
+choices = Array[ExtResource("2_vngb4")]([SubResource("Resource_mikay"), SubResource("Resource_8et7y")])
+
+[sub_resource type="Resource" id="Resource_1dxfh"]
+script = ExtResource("2_vngb4")
+text = "[Tech] There's no Deputy Miller on tonight's roster."
+next = &"caught"
+required_class = &"tech"
+reveals = Array[StringName]([&"fake_partner"])
+
+[sub_resource type="Resource" id="Resource_gb6ar"]
+script = ExtResource("2_vngb4")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_88ofh"]
+script = ExtResource("1_lmfw3")
+id = &"partner"
+line = "My partner's down. Deputy... Miller. Send the ambulance and every car."
+choices = Array[ExtResource("2_vngb4")]([SubResource("Resource_1dxfh"), SubResource("Resource_gb6ar")])
+
+[sub_resource type="Resource" id="Resource_5gnle"]
+script = ExtResource("1_lmfw3")
+id = &"badge"
+speaker = &"dispatcher"
+line = "(Badge 4471 was retired in 2012 after Deputy Voss was killed at the harbor.)"
+auto_next = &"badge_after"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_5in2x"]
+script = ExtResource("2_vngb4")
+text = "Badge 4471 belonged to a dead deputy. Who is this?"
+next = &"caught"
+required_evidence = Array[StringName]([&"retired_badge"])
+patience_delta = -30.0
+
+[sub_resource type="Resource" id="Resource_vyltm"]
+script = ExtResource("2_vngb4")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_ysjjp"]
+script = ExtResource("1_lmfw3")
+id = &"badge_after"
+line = "Dispatch? Dispatch, do you copy? Why aren't cars rolling?"
+choices = Array[ExtResource("2_vngb4")]([SubResource("Resource_5in2x"), SubResource("Resource_vyltm")])
+
+[sub_resource type="Resource" id="Resource_saj02"]
+script = ExtResource("2_vngb4")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_sodc2"]
+script = ExtResource("2_vngb4")
+text = "Say your call sign again."
+next = &"caught"
+patience_delta = -10.0
+
+[sub_resource type="Resource" id="Resource_rr2bl"]
+script = ExtResource("1_lmfw3")
+id = &"profiler"
+line = "(pause) ...Adrenaline. Stop wasting time."
+choices = Array[ExtResource("2_vngb4")]([SubResource("Resource_saj02"), SubResource("Resource_sodc2")])
+
+[sub_resource type="Resource" id="Resource_7syru"]
+script = ExtResource("2_vngb4")
+text = "Send tactical anyway, with an ambush warning."
+next = &"tactical"
+
+[sub_resource type="Resource" id="Resource_ul7x4"]
+script = ExtResource("2_vngb4")
+text = "Log it as an ambush. Nobody goes to gate B."
+next = &"logged"
+
+[sub_resource type="Resource" id="Resource_u0gwu"]
+script = ExtResource("1_lmfw3")
+id = &"caught"
+speaker = &"unknown"
+line = "(another voice, close) 'Kill the radio.' (The static cuts out.)"
+choices = Array[ExtResource("2_vngb4")]([SubResource("Resource_7syru"), SubResource("Resource_ul7x4")])
+
+[sub_resource type="Resource" id="Resource_c4pk1"]
+script = ExtResource("1_lmfw3")
+id = &"tactical"
+speaker = &"dispatcher"
+line = "(Tactical team rolling to gate B, weapons ready.)"
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_y14eb"]
+script = ExtResource("1_lmfw3")
+id = &"logged"
+speaker = &"dispatcher"
+line = "(Ambush logged. Harbor gate B closed to all units.)"
+
+[sub_resource type="Resource" id="Resource_aqoav"]
+script = ExtResource("1_lmfw3")
+id = &"end_units"
+line = "Copy. Tell them to come in fast, lights off. We'll be waiting."
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_bvc76"]
+script = ExtResource("4_ox2ij")
+nodes = Array[ExtResource("1_lmfw3")]([SubResource("Resource_d6raw"), SubResource("Resource_mxedc"), SubResource("Resource_5aadj"), SubResource("Resource_88ofh"), SubResource("Resource_5gnle"), SubResource("Resource_ysjjp"), SubResource("Resource_rr2bl"), SubResource("Resource_u0gwu"), SubResource("Resource_c4pk1"), SubResource("Resource_y14eb"), SubResource("Resource_aqoav")])
+
+[sub_resource type="Resource" id="Resource_lyvir"]
+script = ExtResource("5_y3cgh")
+id = &"rec_badge_4471"
+title = "Badge 4471"
+content = "No active deputy with badge 4471. Number retired in 2012 (Deputy K. Voss, killed on duty)."
+
+[sub_resource type="Resource" id="Resource_whero"]
+script = ExtResource("5_y3cgh")
+id = &"rec_gate_b"
+title = "Harbor gate B"
+content = "Unlit access road; two stolen box trucks recovered there last month."
+
+[sub_resource type="Curve" id="Curve_hxcdn"]
+_data = [Vector2(0, 0.2), 0.0, 0.0, 0, 0, Vector2(1, 0.22), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_lveog"]
+script = ExtResource("7_4gth8")
+tremor_curve = SubResource("Curve_hxcdn")
+loop_segments = Array[Vector2]([Vector2(1, 4)])
+background_tags = Array[StringName]([&"radio_hiss", &"idle_trucks"])
+baseline_heart_rate = 70
+
+[resource]
+script = ExtResource("6_4xfb0")
+id = &"call_deputy_down"
+title = "Deputy Down"
+truth = 2
+earliest_minute = 47
+dialogue = SubResource("Resource_bvc76")
+phone_number = "RADIO 7"
+caller_name = "Deputy (radio patch)"
+caller_location_name = "Harbor access road, gate B"
+true_location = Vector2(800, 470)
+records = Array[ExtResource("5_y3cgh")]([SubResource("Resource_lyvir"), SubResource("Resource_whero")])
+stress_profile = SubResource("Resource_lveog")
+patience_seconds = 150.0

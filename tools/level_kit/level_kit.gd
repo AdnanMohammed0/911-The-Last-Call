@@ -267,6 +267,10 @@ func _material_specs() -> Dictionary:
 		"hazard_yellow": {"color": Color(0.85, 0.65, 0.08), "roughness": 0.6, "detail": 0.2, "frequency": 0.08, "bump": 2.0, "scale": 1.0},
 		"fabric_dark": {"color": Color(0.08, 0.09, 0.1), "roughness": 1.0, "detail": 0.2, "frequency": 0.5, "bump": 2.0, "scale": 1.0},
 		"cardboard": {"color": Color(0.55, 0.42, 0.27), "roughness": 0.95, "detail": 0.2, "frequency": 0.2, "bump": 1.5, "scale": 1.0},
+		"grass": {"color": Color(0.12, 0.17, 0.09), "roughness": 1.0, "detail": 0.35, "frequency": 0.05, "bump": 3.0, "scale": 0.4, "normal_scale": 0.3},
+		"siding": {"color": Color(0.5, 0.52, 0.5), "roughness": 0.8, "detail": 0.12, "frequency": 0.04, "bump": 2.0, "scale": 0.8, "normal_scale": 0.3},
+		"brick": {"color": Color(0.36, 0.18, 0.13), "roughness": 0.9, "detail": 0.3, "frequency": 0.08, "bump": 5.0, "scale": 0.7, "normal_scale": 0.5},
+		"shingle": {"color": Color(0.14, 0.13, 0.13), "roughness": 0.9, "detail": 0.3, "frequency": 0.1, "bump": 4.0, "scale": 0.8, "normal_scale": 0.4},
 		"paper_board": {"color": Color(0.55, 0.54, 0.5), "roughness": 0.95},
 	}
 

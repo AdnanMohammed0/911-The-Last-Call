@@ -1,0 +1,203 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_x88u4"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_4ghgh"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_b0fd2"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_6hc02"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_amt4f"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_bl2i7"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_81ilc"]
+
+[sub_resource type="Resource" id="Resource_uanaj"]
+script = ExtResource("2_4ghgh")
+text = "Where is the device?"
+next = &"where"
+
+[sub_resource type="Resource" id="Resource_3xa3o"]
+script = ExtResource("2_4ghgh")
+text = "Why are you doing this?"
+next = &"why"
+
+[sub_resource type="Resource" id="Resource_bb4uj"]
+script = ExtResource("2_4ghgh")
+text = "[Profiler] Listen past the voice changer."
+next = &"listen"
+required_class = &"profiler"
+reveals = Array[StringName]([&"game_audio"])
+
+[sub_resource type="Resource" id="Resource_pol6m"]
+script = ExtResource("1_x88u4")
+id = &"start"
+line = "(voice changer) There's a bomb in Blackvale High. It goes off at eight. This is not a joke."
+choices = Array[ExtResource("2_4ghgh")]([SubResource("Resource_uanaj"), SubResource("Resource_3xa3o"), SubResource("Resource_bb4uj")])
+
+[sub_resource type="Resource" id="Resource_165w2"]
+script = ExtResource("2_4ghgh")
+text = "Which one? Gym or math wing?"
+next = &"caught_story"
+patience_delta = -10.0
+reveals = Array[StringName]([&"changing_story"])
+
+[sub_resource type="Resource" id="Resource_q43ak"]
+script = ExtResource("2_4ghgh")
+text = "Evacuating the school. Units are on the way."
+next = &"units_school"
+
+[sub_resource type="Resource" id="Resource_3b0nf"]
+script = ExtResource("1_x88u4")
+id = &"where"
+line = "In the... the gym. No, the math wing. It's hidden. You'll never find it."
+choices = Array[ExtResource("2_4ghgh")]([SubResource("Resource_165w2"), SubResource("Resource_q43ak")])
+
+[sub_resource type="Resource" id="Resource_sg8ek"]
+script = ExtResource("2_4ghgh")
+text = "[Tech] Checking this number."
+next = &"tech"
+required_class = &"tech"
+reveals = Array[StringName]([&"prepaid_phone"])
+
+[sub_resource type="Resource" id="Resource_aghyr"]
+script = ExtResource("2_4ghgh")
+text = "Is there an exam at eight?"
+next = &"exam"
+reveals = Array[StringName]([&"exam_day"])
+
+[sub_resource type="Resource" id="Resource_g67bl"]
+script = ExtResource("1_x88u4")
+id = &"why"
+line = "Because... the system is broken. And stuff."
+choices = Array[ExtResource("2_4ghgh")]([SubResource("Resource_sg8ek"), SubResource("Resource_aghyr")])
+
+[sub_resource type="Resource" id="Resource_5tfcq"]
+script = ExtResource("1_x88u4")
+id = &"listen"
+speaker = &"dispatcher"
+line = "(Under the voice changer: a video game menu jingle and a microwave beeping.)"
+auto_next = &"listen_after"
+auto_delay = 3.5
+
+[sub_resource type="Resource" id="Resource_h3elq"]
+script = ExtResource("2_4ghgh")
+text = "Pause your game, kid."
+next = &"end_confess"
+required_evidence = Array[StringName]([&"game_audio"])
+patience_delta = -20.0
+
+[sub_resource type="Resource" id="Resource_p5lr2"]
+script = ExtResource("2_4ghgh")
+text = "Is there an exam at eight?"
+next = &"exam"
+
+[sub_resource type="Resource" id="Resource_5s8ei"]
+script = ExtResource("1_x88u4")
+id = &"listen_after"
+line = "Did you hear me? A bomb!"
+choices = Array[ExtResource("2_4ghgh")]([SubResource("Resource_h3elq"), SubResource("Resource_p5lr2")])
+
+[sub_resource type="Resource" id="Resource_vg8ni"]
+script = ExtResource("1_x88u4")
+id = &"exam"
+line = "(the voice changer glitches — a teenage boy) N-no! Maybe! What does that matter?"
+auto_next = &"end_confess"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_ib610"]
+script = ExtResource("1_x88u4")
+id = &"tech"
+speaker = &"dispatcher"
+line = "(Prepaid phone sold at the Aspen Drive gas station. Two previous fake threats against the high school.)"
+auto_next = &"caught_story"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_rxpyj"]
+script = ExtResource("2_4ghgh")
+text = "You're calling from a prepaid phone bought on Aspen Drive."
+next = &"end_confess"
+required_evidence = Array[StringName]([&"prepaid_phone"])
+
+[sub_resource type="Resource" id="Resource_wd5li"]
+script = ExtResource("2_4ghgh")
+text = "Evacuating the school. Units are on the way."
+next = &"units_school"
+
+[sub_resource type="Resource" id="Resource_m1hy5"]
+script = ExtResource("1_x88u4")
+id = &"caught_story"
+line = "Uh... it moves. It's a moving bomb."
+choices = Array[ExtResource("2_4ghgh")]([SubResource("Resource_rxpyj"), SubResource("Resource_wd5li")])
+
+[sub_resource type="Resource" id="Resource_pxmkx"]
+script = ExtResource("1_x88u4")
+id = &"units_school"
+line = "(laughing off-mic) 'They're evacuating!' ...Good. (click)"
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_kg00g"]
+script = ExtResource("2_4ghgh")
+text = "I AM the cops. A deputy is coming to arrest you."
+next = &"arrest_sent"
+
+[sub_resource type="Resource" id="Resource_28q2s"]
+script = ExtResource("2_4ghgh")
+text = "Log it as a prank and let the school know."
+next = &"logged"
+
+[sub_resource type="Resource" id="Resource_3vvqe"]
+script = ExtResource("1_x88u4")
+id = &"end_confess"
+line = "(voice changer off) Okay, okay! I just didn't want to take the exam! Don't call the cops!"
+choices = Array[ExtResource("2_4ghgh")]([SubResource("Resource_kg00g"), SubResource("Resource_28q2s")])
+
+[sub_resource type="Resource" id="Resource_jr4lq"]
+script = ExtResource("1_x88u4")
+id = &"arrest_sent"
+speaker = &"dispatcher"
+line = "(Deputies dispatched to the caller's address on Aspen Drive.)"
+on_enter_events = Array[StringName]([&"dispatch_arrest"])
+
+[sub_resource type="Resource" id="Resource_wi7j6"]
+script = ExtResource("1_x88u4")
+id = &"logged"
+speaker = &"dispatcher"
+line = "(Prank logged. School resource officer notified.)"
+
+[sub_resource type="Resource" id="Resource_h4b5s"]
+script = ExtResource("4_6hc02")
+nodes = Array[ExtResource("1_x88u4")]([SubResource("Resource_pol6m"), SubResource("Resource_3b0nf"), SubResource("Resource_g67bl"), SubResource("Resource_5tfcq"), SubResource("Resource_5s8ei"), SubResource("Resource_vg8ni"), SubResource("Resource_ib610"), SubResource("Resource_m1hy5"), SubResource("Resource_pxmkx"), SubResource("Resource_3vvqe"), SubResource("Resource_jr4lq"), SubResource("Resource_wi7j6")])
+
+[sub_resource type="Resource" id="Resource_ltgc0"]
+script = ExtResource("5_amt4f")
+id = &"rec_number_0191"
+title = "911-555-0191"
+content = "Prepaid phone bought at Aspen Drive gas station. Used for two fake threats against Blackvale High."
+
+[sub_resource type="Resource" id="Resource_gvrbo"]
+script = ExtResource("5_amt4f")
+id = &"rec_exam"
+title = "Blackvale High"
+content = "Final exams scheduled 08:00 today."
+
+[sub_resource type="Curve" id="Curve_n3xju"]
+_data = [Vector2(0, 0.25), 0.0, 0.0, 0, 0, Vector2(1, 0.3), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_acbke"]
+script = ExtResource("7_81ilc")
+tremor_curve = SubResource("Curve_n3xju")
+loop_segments = Array[Vector2]([Vector2(0.5, 2.5)])
+background_tags = Array[StringName]([&"video_game_audio", &"voice_changer"])
+baseline_heart_rate = 92
+
+[resource]
+script = ExtResource("6_bl2i7")
+id = &"call_school_threat"
+title = "Bomb at Blackvale High"
+truth = 0
+earliest_minute = 57
+dialogue = SubResource("Resource_h4b5s")
+phone_number = "911-555-0191"
+caller_location_name = "Blackvale High School"
+true_location = Vector2(330, 290)
+records = Array[ExtResource("5_amt4f")]([SubResource("Resource_ltgc0"), SubResource("Resource_gvrbo")])
+stress_profile = SubResource("Resource_acbke")
+patience_seconds = 130.0

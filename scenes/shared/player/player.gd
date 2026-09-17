@@ -16,11 +16,16 @@ const FOOTSTEP_NOISE_CROUCH: float = 1.5
 const FOOTSTEP_NOISE_INTERVAL: float = 0.45
 
 const GROUP: StringName = &"players"
+## "Police! Hands up!" reach and cooldown.
+const SHOUT_RANGE: float = 18.0
+const SHOUT_COOLDOWN: float = 2.5
 
 signal stance_changed(new_stance: Stance)
 signal stamina_changed(value: float, max_value: float)
 signal exhausted()
 signal interaction_prompt_changed(prompt: String)
+## Local: we shouted (HUD subtitle).
+signal shouted()
 
 @export_group("Speed")
 @export var walk_speed: float = 3.5            # Drowned Woman hunt speed (3.8) = 1.1x walk
@@ -119,6 +124,8 @@ var class_color: Color = Color(0.3, 0.8, 0.4)
 var noise_multiplier: float = 1.0
 var _noise_timer: float = 0.0
 var _noise_last_position: Vector3 = Vector3.INF
+var _next_shout_msec: int = 0
+var _host_next_shout_msec: int = 0
 
 # --- Replicated by ClientSync (owner -> everyone) ---
 var sync_position: Vector3 = Vector3.ZERO
@@ -217,9 +224,57 @@ func _physics_process(delta: float) -> void:
 	_update_movement(delta)
 	_update_lean(delta)
 	_update_flashlight()
+	if _input.shout_just_pressed:
+		request_shout()
 	_update_interaction()
 	_update_footsteps(delta)
 	_publish_sync_state()
+
+
+## Owner: order suspects in view to give up.
+func request_shout() -> void:
+	if Time.get_ticks_msec() < _next_shout_msec or not _health.is_alive():
+		return
+	_next_shout_msec = Time.get_ticks_msec() + int(SHOUT_COOLDOWN * 1000.0)
+	shouted.emit()
+	if multiplayer.is_server():
+		host_shout(peer_id)
+	else:
+		_rpc_shout.rpc_id(1)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_shout() -> void:
+	if RpcGuard.is_host(self) and RpcGuard.is_from_peer(self, peer_id):
+		host_shout(peer_id)
+
+
+## Host: every active suspect we can see within SHOUT_RANGE feels the pressure. Returns how many heard it.
+func host_shout(sender: int) -> int:
+	if not multiplayer.is_server() or sender != peer_id or not _health.is_alive():
+		return 0
+	var now: int = Time.get_ticks_msec()
+	if now < _host_next_shout_msec:
+		return 0
+	_host_next_shout_msec = now + int(SHOUT_COOLDOWN * 900.0)
+	var eye: Vector3 = get_eye_position()
+	var armed: bool = get_weapons().get_active_weapon() != null
+	var heard: int = 0
+	var space: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+	for node: Node in get_tree().get_nodes_in_group(HostileAgent.GROUP):
+		var hostile: HostileAgent = node as HostileAgent
+		if hostile == null or not hostile.is_active():
+			continue
+		var target: Vector3 = hostile.global_position + Vector3(0, 1.4, 0)
+		if eye.distance_to(target) > SHOUT_RANGE:
+			continue
+		var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(eye, target, 1, [get_rid(), hostile.get_rid()])
+		if not space.intersect_ray(query).is_empty():
+			continue
+		hostile.demand_surrender(armed, maxi(hostile.perception.visible_player_count, 1))
+		heard += 1
+	EventBus.noise_event.emit(global_position, 20.0, peer_id)
+	return heard
 
 
 ## Standing, alive, not exhausted and with headroom above.

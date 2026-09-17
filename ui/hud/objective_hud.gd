@@ -5,7 +5,10 @@ extends Control
 
 const ACCENT: Color = Color(0.95, 0.72, 0.25)
 const TEXT: Color = Color(0.92, 0.94, 0.96)
-const BANNER_SECONDS: float = 4.5
+const BANNER_SECONDS: float = 6.0
+const XP_GAIN: Color = Color(0.55, 0.9, 0.55)
+const XP_LOSS: Color = Color(0.95, 0.4, 0.35)
+const FEED_SECONDS: float = 3.5
 
 var _tracker: PanelContainer
 var _tracker_title: Label
@@ -14,6 +17,7 @@ var _banner: PanelContainer
 var _banner_title: Label
 var _banner_subtitle: Label
 var _banner_left: float = 0.0
+var _feed: VBoxContainer
 
 
 func _ready() -> void:
@@ -21,6 +25,11 @@ func _ready() -> void:
 	_build()
 	MissionDirector.objective_changed.connect(func(_text: String) -> void: _refresh())
 	MissionDirector.announcement.connect(_show_banner)
+	MissionDirector.shift_changed.connect(_refresh)
+	Career.xp_gained.connect(_on_xp_gained)
+	Career.promoted.connect(func(_rank: int, rank_title: String, unlocks: PackedStringArray) -> void:
+		var unlocked: String = ("  ·  Unlocked: " + ", ".join(unlocks)) if not unlocks.is_empty() else ""
+		_show_banner("PROMOTED — %s" % rank_title.to_upper(), "Keep answering calls to climb the ranks%s" % unlocked))
 	_refresh()
 
 
@@ -72,6 +81,18 @@ func _build() -> void:
 	_banner_subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_banner.modulate.a = 0.0
 
+	_feed = VBoxContainer.new()
+	_feed.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_feed.alignment = BoxContainer.ALIGNMENT_END
+	_feed.add_theme_constant_override(&"separation", 4)
+	add_child(_feed)
+	_feed.set_anchors_and_offsets_preset(Control.PRESET_CENTER_RIGHT)
+	_feed.offset_left = -360
+	_feed.offset_right = -32
+	_feed.offset_top = -60
+	_feed.offset_bottom = 120
+	_feed.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+
 
 func _label(parent: Node, size: int, color: Color) -> Label:
 	var label: Label = Label.new()
@@ -86,13 +107,21 @@ func _label(parent: Node, size: int, color: Color) -> Label:
 
 func _refresh() -> void:
 	var text: String = MissionDirector.objective_text
-	_tracker.visible = text != ""
 	if text == "":
+		# Between calls: the shift is the goal.
+		_tracker.visible = true
+		_tracker_title.text = "SHIFT %d" % MissionDirector.shift_number
+		var total: String = str(MissionDirector.calls_total) if MissionDirector.calls_total > 0 else "?"
+		_tracker_text.text = "Work the 911 line — answer calls at the CAD desks\nCalls handled %d / %s  ·  Public trust %d" % [
+			MissionDirector.calls_handled, total, MissionDirector.public_trust]
 		return
+	_tracker.visible = true
 	var title: String = "RESPONSE" if MissionDirector.state == MissionDirector.State.RESPONSE else MissionDirector.mission_name().to_upper()
 	_tracker_title.text = title
 	if MissionDirector.state == MissionDirector.State.DEPLOYED and MissionDirector.hostiles_total > 0:
 		text += "\nSuspects remaining: %d / %d" % [MissionDirector.hostiles_left, MissionDirector.hostiles_total]
+	if MissionDirector.is_in_mission():
+		text += "\nWait at the police van to leave"
 	_tracker_text.text = text
 
 
@@ -101,6 +130,19 @@ func _show_banner(title: String, subtitle: String) -> void:
 	_banner_subtitle.text = subtitle
 	_banner_left = BANNER_SECONDS
 	_refresh()
+
+
+func _on_xp_gained(amount: int, reason: String) -> void:
+	var label: Label = _label(_feed, 17, XP_GAIN if amount >= 0 else XP_LOSS)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	label.text = "%+d XP  ·  %s" % [amount, reason]
+	var tween: Tween = label.create_tween()
+	tween.tween_interval(FEED_SECONDS)
+	tween.tween_property(label, "modulate:a", 0.0, 0.6)
+	tween.tween_callback(label.queue_free)
+	while _feed.get_child_count() > 6:
+		_feed.get_child(0).queue_free()
+		_feed.remove_child(_feed.get_child(0))
 
 
 func _process(delta: float) -> void:

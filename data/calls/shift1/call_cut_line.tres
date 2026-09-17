@@ -241,6 +241,7 @@ line = "(Click. The line is cut.)"
 script = ExtResource("1_acnhv")
 id = &"end_dispatch"
 line = "(whispering) Thank you. Tell them to come to the front door."
+on_enter_events = Array[StringName]([&"dispatch_units"])
 
 [sub_resource type="Resource" id="Resource_kxspf"]
 script = ExtResource("4_npk6d")
@@ -274,7 +275,7 @@ script = ExtResource("6_u750s")
 id = &"call_cut_line"
 title = "The Cut Line"
 truth = 2
-earliest_minute = 30
+earliest_minute = 7
 dialogue = SubResource("Resource_kxspf")
 phone_number = "911-555-0133"
 caller_location_name = "22 Willow Court"

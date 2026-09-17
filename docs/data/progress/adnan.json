@@ -8,8 +8,8 @@
    "updated_at": "2026-09-17"
   },
   "P1-12": {
-   "status": "testing",
-   "note": "Player.tscn جاهز: walk 3.5 / sprint 4.75 / crouch 1.75 م/ث، stamina (7 ث + regen + exhaustion)، crouch مع فحص السقف، lean مع كشف الجدار، mouse look. 9 اختبارات headless نجحت. باقي تجربة يدوية بـ player_sandbox.tscn، والمزامنة الشبكية بـ P1-07.",
+   "status": "done",
+   "note": "FPS controller مكتمل: walk/sprint/crouch/lean/stamina، اختُبر headless (9 اختبارات) وتجربة يدوية بـ player_sandbox. المزامنة الشبكية بـ P1-07.",
    "updated_at": "2026-09-17"
   }
  },
@@ -117,6 +117,16 @@
    "summary": "player_sandbox صار المشهد الرئيسي (F5 يشغّل ساحة التجربة مباشرة) ودمج الشغل على main.",
    "files": [
     "project.godot"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-12"
+   ],
+   "summary": "إغلاق P1-12: متحكم اللاعب اختُبر يدوياً وصار على main.",
+   "files": [
+    "docs/data/progress/adnan.json"
    ]
   }
  ]

@@ -51,6 +51,12 @@ signal hostile_killed(hostile: Node, by_peer: int)
 ## A suspect put their hands up and can be arrested (P3-05).
 signal suspect_surrendered(hostile: Node)
 signal hostage_executed(hostile: Node)
+
+# --- Horror ---
+## Host: a player lost sanity (P3-03 SanitySystem applies bands / effects).
+signal sanity_damaged(peer_id: int, amount: float, source: StringName)
+## Local only: a per-peer hallucination / scare to play (radio_whisper, phantom_steps, phantom_ring, shadow_figure).
+signal hallucination(kind: StringName, position: Vector3)
 ## Host: a player spoke (proximity or radio). Loudness 0..1 (ARCHITECTURE §6.4).
 signal voice_noise(peer_id: int, position: Vector3, loudness: float)
 

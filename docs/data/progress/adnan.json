@@ -116,6 +116,11 @@
    "status": "testing",
    "note": "AISquad: callout ينقل الهدف لكل الفريق، flank tokens (نص الفريق كحد أقصى، مهلة 8ث وتبريد 10ث)، معنويات: موت حليف -15، موت القائد -30، درع/مكبر صوت/غاز (-10/-25/-20) كـ hooks، تفوق عددي +10. الاستسلام: معنويات < الحد وغير متعصب ويشوف لاعبين 2+ أو تفاوض → يرفع ايده وينتظر الاعتقال (EventBus.suspect_surrendered لـ P3-05). الهروب: HP < 25% ومعنويات < 40. 10 اختبارات GUT نجحت.",
    "updated_at": "2026-09-17"
+  },
+  "P3-12": {
+   "status": "testing",
+   "note": "StateMachine عام (core/fsm) + Anomaly base (منطقة، لاعبين بالمنطقة، الأقل عقلاً والأكثر عزلة، أضواء، نقاط ظلام، مزامنة الحالة/الظهور/الموقع). الغريقة: Dormant → (EMF≥3 / دخول القبو / trigger) Manifest (ترمش الأضواء، تسد الأبواب، تسحب عقل 4/ث للي يشوفها) → 6ث Stalk (تنتقل بين نقاط الظلام بعيد عن النظر، تستهدف الأقل عقلاً وتهمس باسمه على الراديو، الأضواء مطفية 20ث = Manifest) → عقل<40 أو 45ث Hunt (تطارد 3.8م/ث، تطفي الأضواء والكشافات ضمن 6م، الماي يرتفع) → ≤2م Attack (تمسك اللاعب 3ث، زميل يوجه الكشاف عليها أو ملح يحرره، وإلا 60 ضرر + 40 عقل) → Retreat (30-60ث) → Stalk أو Dormant. نغمة عكسية = Retreat، خط ملح أو خروج الكل = Dormant، دفن العظام = Banished نهائي. Player صار عنده sanity أولي (P3-03 يكمله) + grab/flashlight من الهوست. 13 اختبار GUT نجحت.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -643,6 +648,21 @@
     "core/net/player_spawner.gd",
     "autoload/event_bus.gd",
     "tests/test_hostile_ai.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P3-12"
+   ],
+   "summary": "آلة حالات عامة وشبح الغريقة بكل حالاته ونقاط ضعفه.",
+   "files": [
+    "core/fsm/state_machine.gd",
+    "scenes/field/anomalies/",
+    "scenes/shared/player/player.gd",
+    "scenes/shared/player/player.tscn",
+    "autoload/event_bus.gd",
+    "tests/test_drowned_woman.gd"
    ]
   }
  ]

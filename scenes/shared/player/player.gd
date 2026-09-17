@@ -99,6 +99,11 @@ var connection_lost: bool = false:
 		if _name_label != null:
 			_update_name_label()
 
+## 0..100. Host-owned, replicated by HostSync. Full sanity bands / drain rules arrive with P3-03.
+var sanity: float = 100.0
+## True while an anomaly holds this player (input disabled on the owner).
+var grabbed_by_anomaly: bool = false
+
 ## Trauma kits carried (any class can revive with one). Host-owned, replicated by HostSync.
 ## TODO(P2-15): filled from the loadout armory.
 var trauma_kits: int = 0
@@ -242,6 +247,49 @@ func _update_name_label() -> void:
 	var display_name: String = NetManager.get_player_name(peer_id)
 	_name_label.text = "%s (disconnected)" % display_name if connection_lost else display_name
 	_name_label.modulate = Color(0.6, 0.6, 0.6) if connection_lost else class_color.lightened(0.3)
+
+
+## Host: lower sanity (anomalies, witnessing deaths…).
+func apply_sanity_damage(amount: float, source: StringName) -> void:
+	if not multiplayer.is_server() or amount <= 0.0:
+		return
+	sanity = clampf(sanity - amount, 0.0, 100.0)
+	EventBus.sanity_damaged.emit(peer_id, amount, source)
+	EventBus.sanity_changed.emit(peer_id, sanity)
+
+
+## Host: make the owner switch their flashlight off (Drowned Woman kills lights).
+func force_flashlight_off() -> void:
+	if not multiplayer.is_server():
+		return
+	if is_multiplayer_authority():
+		flashlight_on = false
+	else:
+		_rpc_flashlight_off.rpc_id(peer_id)
+
+
+## Host: freeze / release the owner's controls while grabbed.
+func set_grabbed_by_anomaly(grabbed: bool) -> void:
+	if not multiplayer.is_server():
+		return
+	grabbed_by_anomaly = grabbed
+	if is_multiplayer_authority():
+		set_input_enabled(not grabbed)
+	else:
+		_rpc_set_grabbed.rpc_id(peer_id, grabbed)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_flashlight_off() -> void:
+	if RpcGuard.is_from_host(self) and is_multiplayer_authority():
+		flashlight_on = false
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_set_grabbed(grabbed: bool) -> void:
+	if RpcGuard.is_from_host(self) and is_multiplayer_authority():
+		grabbed_by_anomaly = grabbed
+		set_input_enabled(not grabbed)
 
 
 func get_health() -> HealthComponent:

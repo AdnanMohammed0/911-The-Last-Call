@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DialogueNode" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_dn"]
+[ext_resource type="Resource" path="res://data/dialogue/choices/filler_prank_kids_laugh_choices.tres" id="2_choices"]
+
+[resource]
+script = ExtResource("1_dn")
+id = &"laugh"
+speaker = &"caller"
+line = "*uncontrollable laughter* Hahaha! You fell for it! *click*"
+audio = ExtResource("audio/vo/filler/prank_kids_02_laugh.wav")
+choices = [ExtResource("2_choices")]
+on_enter_events = [&"call_ended_prank"]
+auto_next = &""
+auto_delay = 0.0

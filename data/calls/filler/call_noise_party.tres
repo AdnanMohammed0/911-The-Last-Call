@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="1_call"]
+[ext_resource type="Resource" path="res://data/calls/filler/call_noise_party_dialogue.tres" id="2_dialogue"]
+[ext_resource type="Resource" path="res://data/calls/filler/stress_noise_party.tres" id="3_stress"]
+[ext_resource type="Resource" path="res://data/loadout/gear/record_entry_noise_party_01.tres" id="4_record"]
+
+[resource]
+script = ExtResource("1_call")
+id = &"call_noise_party"
+title = "Noise Complaint: Loud Party"
+truth = 1
+earliest_minute = 90
+requires_flags = {}
+caller_audio = ExtResource("audio/vo/filler/noise_party_master.wav")
+dialogue = ExtResource("2_dialogue")
+phone_number = "911-555-0102"
+caller_name = "Margaret Whitaker"
+caller_location_name = "214 Oak Street"
+true_location = Vector2(10800.0, 11200.0)
+records = [ExtResource("4_record")]
+cctv_feeds = []
+stress_profile = ExtResource("3_stress")
+mission = null
+patience_seconds = 180.0
+ring_timeout_seconds = 20.0

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_re"]
+
+[resource]
+script = ExtResource("1_re")
+id = &"record_noise_construction_01"
+title = "Pine Street Development — Permit & Violations"
+content = "Project: Pine Street Residential Development (Lots 12-18)\nDeveloper: Blackvale Housing Partners LLC\nPermit: BP-2024-0331 (issued 2024-02-15)\n\nApproved Hours: Mon-Sat 07:00-19:00, Sun 09:00-17:00\n\nViolations:\n- 2024-03-10: Early start 05:45, warning issued\n- 2024-04-22: Sunday work 08:00, citation $500\n- 2024-05-18: Late work 19:45, citation $750\n\nComplaints: 12 noise complaints from Pine/Oak/Maple residents.\n\nContact: Site Superintendent - Mike Torelli (555-0198)\n\nRecommendation: Strict enforcement. Stop-work order if violations continue."
+unlocked_by_default = false

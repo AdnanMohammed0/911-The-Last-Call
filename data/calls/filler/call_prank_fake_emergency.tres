@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="1_call"]
+[ext_resource type="Resource" path="res://data/calls/filler/call_prank_fake_emergency_dialogue.tres" id="2_dialogue"]
+[ext_resource type="Resource" path="res://data/calls/filler/stress_prank_fake_emergency.tres" id="3_stress"]
+
+[resource]
+script = ExtResource("1_call")
+id = &"call_prank_fake_emergency"
+title = "Prank: Fake Medical Emergency"
+truth = 0
+earliest_minute = 210
+requires_flags = {}
+caller_audio = ExtResource("audio/vo/filler/prank_fake_emergency_master.wav")
+dialogue = ExtResource("2_dialogue")
+phone_number = "911-555-0104"
+caller_name = "Unknown Male"
+caller_location_name = "Cell phone, tower 3 sector"
+true_location = Vector2(9800.0, 13400.0)
+records = []
+cctv_feeds = []
+stress_profile = ExtResource("3_stress")
+mission = null
+patience_seconds = 90.0
+ring_timeout_seconds = 20.0

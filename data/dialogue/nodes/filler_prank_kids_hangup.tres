@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DialogueNode" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_dn"]
+
+[resource]
+script = ExtResource("1_dn")
+id = &"hangup"
+speaker = &"system"
+line = "*dial tone*"
+audio = ExtResource("audio/vo/filler/prank_kids_03_hangup.wav")
+choices = []
+on_enter_events = []
+auto_next = &""
+auto_delay = 0.0

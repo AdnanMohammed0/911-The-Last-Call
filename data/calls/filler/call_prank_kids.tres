@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="1_call"]
+[ext_resource type="Resource" path="res://data/calls/filler/call_prank_kids_dialogue.tres" id="2_dialogue"]
+[ext_resource type="Resource" path="res://data/calls/filler/stress_prank_kids.tres" id="3_stress"]
+
+[resource]
+script = ExtResource("1_call")
+id = &"call_prank_kids"
+title = "Prank: Kids Laughing"
+truth = 0
+earliest_minute = 30
+requires_flags = {}
+caller_audio = ExtResource("audio/vo/filler/prank_kids_master.wav")
+dialogue = ExtResource("2_dialogue")
+phone_number = "911-555-0101"
+caller_name = "Unknown Juvenile"
+caller_location_name = "Payphone, 5th & Main"
+true_location = Vector2(11200.0, 9800.0)
+records = []
+cctv_feeds = []
+stress_profile = ExtResource("3_stress")
+mission = null
+patience_seconds = 60.0
+ring_timeout_seconds = 20.0

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DialogueNode" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_dn"]
+[ext_resource type="Resource" path="res://data/dialogue/choices/filler_noise_construction_details_choices.tres" id="2_choices"]
+
+[resource]
+script = ExtResource("1_dn")
+id = &"details"
+speaker = &"caller"
+line = "Jackhammers! Heavy trucks backing up with those beeping alarms! They've been at it since 5 AM. The vibration rattles my china cabinet. This is a residential zone!"
+audio = ExtResource("audio/vo/filler/noise_construction_02_details.wav")
+choices = [ExtResource("2_choices")]
+on_enter_events = []
+auto_next = &""
+auto_delay = 0.0

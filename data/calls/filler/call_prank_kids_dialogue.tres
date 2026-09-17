@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="DialogueGraph" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="1_dg"]
+[ext_resource type="Resource" path="res://data/dialogue/nodes/filler_prank_kids_start.tres" id="2_start"]
+[ext_resource type="Resource" path="res://data/dialogue/nodes/filler_prank_kids_laugh.tres" id="3_laugh"]
+[ext_resource type="Resource" path="res://data/dialogue/nodes/filler_prank_kids_hangup.tres" id="4_hangup"]
+
+[resource]
+script = ExtResource("1_dg")
+initial_node_id = &"start"
+nodes = [ExtResource("2_start"), ExtResource("3_laugh"), ExtResource("4_hangup")]

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_re"]
+
+[resource]
+script = ExtResource("1_re")
+id = &"record_noise_party_01"
+title = "214 Oak Street — Prior Noise Complaints"
+content = "Address: 214 Oak Street, Blackvale\nOwner: James & Linda Carter\n\nNoise Complaint History:\n- 2023-06-15: Loud party, verbal warning issued\n- 2023-08-22: Loud music, citation $150\n- 2023-11-03: Party disturbance, citation $250\n- 2024-01-18: Fireworks complaint, verbal warning\n\nPattern: Repeat offender. Weekend parties 22:00-03:00.\n\nCurrent occupants: Carter family + college-age tenants in basement apartment.\n\nRecommendation: Escalated response. Consider noise abatement order."
+unlocked_by_default = false

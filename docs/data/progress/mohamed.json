@@ -41,6 +41,11 @@
       "status": "done",
       "updated_at": "2026-09-18",
       "note": "Caller VO for 3 slice calls: Closet Monster (STAGED_HOSTAGE), Cut Line (PARANORMAL), Meat Truck (AMBUSH). VO scripts written (39 segments), CallData .tres with StressProfiles, RecordEntries (6), placeholder audio structure. VSA tells documented per GAMEPLAY_MECHANICS §5.3/§10."
+    },
+    "P2-17": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Authored 5 filler calls: Prank (kids laughing), Noise Complaint (loud party), Shoplifting (Quick-Mart), Prank (fake medical emergency), Noise Complaint (early construction). Each with CallData, DialogueGraph, StressProfile, RecordEntries. Total 15 new DialogueNodes, 14 DialogueChoices, 5 StressProfiles, 3 RecordEntries."
     }
   },
   "log": [
@@ -221,6 +226,61 @@
         "data/loadout/gear/record_entry_cut_line_02.tres",
         "data/loadout/gear/record_entry_meat_truck_01.tres",
         "data/loadout/gear/record_entry_meat_truck_02.tres",
+        "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P2-17"
+      ],
+      "summary": "P2-17 Authored 5 filler calls: Prank (kids laughing), Noise Complaint (loud party), Shoplifting (Quick-Mart), Prank (fake medical emergency), Noise Complaint (early construction). Each with CallData, DialogueGraph, StressProfile, RecordEntries. Total 15 new DialogueNodes, 14 DialogueChoices, 5 StressProfiles, 3 RecordEntries.",
+      "files": [
+        "data/calls/filler/call_prank_kids.tres",
+        "data/calls/filler/call_noise_party.tres",
+        "data/calls/filler/call_shoplifting.tres",
+        "data/calls/filler/call_prank_fake_emergency.tres",
+        "data/calls/filler/call_noise_construction.tres",
+        "data/calls/filler/stress_prank_kids.tres",
+        "data/calls/filler/stress_noise_party.tres",
+        "data/calls/filler/stress_shoplifting.tres",
+        "data/calls/filler/stress_prank_fake_emergency.tres",
+        "data/calls/filler/stress_noise_construction.tres",
+        "data/calls/filler/call_prank_kids_dialogue.tres",
+        "data/calls/filler/call_noise_party_dialogue.tres",
+        "data/calls/filler/call_shoplifting_dialogue.tres",
+        "data/calls/filler/call_prank_fake_emergency_dialogue.tres",
+        "data/calls/filler/call_noise_construction_dialogue.tres",
+        "data/dialogue/nodes/filler_prank_kids_start.tres",
+        "data/dialogue/nodes/filler_prank_kids_laugh.tres",
+        "data/dialogue/nodes/filler_prank_kids_hangup.tres",
+        "data/dialogue/nodes/filler_noise_party_start.tres",
+        "data/dialogue/nodes/filler_noise_party_details.tres",
+        "data/dialogue/nodes/filler_noise_party_end.tres",
+        "data/dialogue/nodes/filler_shoplifting_start.tres",
+        "data/dialogue/nodes/filler_shoplifting_details.tres",
+        "data/dialogue/nodes/filler_shoplifting_end.tres",
+        "data/dialogue/nodes/filler_prank_fake_start.tres",
+        "data/dialogue/nodes/filler_prank_fake_details.tres",
+        "data/dialogue/nodes/filler_prank_fake_reveal.tres",
+        "data/dialogue/nodes/filler_prank_fake_end.tres",
+        "data/dialogue/nodes/filler_noise_construction_start.tres",
+        "data/dialogue/nodes/filler_noise_construction_details.tres",
+        "data/dialogue/nodes/filler_noise_construction_end.tres",
+        "data/dialogue/choices/filler_prank_kids_start_choices.tres",
+        "data/dialogue/choices/filler_prank_kids_laugh_choices.tres",
+        "data/dialogue/choices/filler_noise_party_start_choices.tres",
+        "data/dialogue/choices/filler_noise_party_details_choices.tres",
+        "data/dialogue/choices/filler_shoplifting_start_choices.tres",
+        "data/dialogue/choices/filler_shoplifting_details_choices.tres",
+        "data/dialogue/choices/filler_prank_fake_start_choices.tres",
+        "data/dialogue/choices/filler_prank_fake_details_choices.tres",
+        "data/dialogue/choices/filler_prank_fake_reveal_choices.tres",
+        "data/dialogue/choices/filler_noise_construction_start_choices.tres",
+        "data/dialogue/choices/filler_noise_construction_details_choices.tres",
+        "data/loadout/gear/record_entry_noise_party_01.tres",
+        "data/loadout/gear/record_entry_shoplifting_01.tres",
+        "data/loadout/gear/record_entry_noise_construction_01.tres",
         "docs/data/progress/mohamed.json"
       ]
     }

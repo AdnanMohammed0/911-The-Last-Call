@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="DialogueChoice" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="1_dc"]
+
+[resource]
+script = ExtResource("1_dc")
+text = "I'll send an officer to check their permits. Construction hours are 7 AM to 7 PM."
+next = &"end"
+required_class = &""
+required_evidence = []
+conditions = []
+patience_delta = 10.0
+reveals = []

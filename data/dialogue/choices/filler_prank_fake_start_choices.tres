@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="DialogueChoice" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="1_dc"]
+
+[resource]
+script = ExtResource("1_dc")
+text = "Sir, where are you? Is he breathing?"
+next = &"details"
+required_class = &""
+required_evidence = []
+conditions = []
+patience_delta = 5.0
+reveals = []

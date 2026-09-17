@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_re"]
+
+[resource]
+script = ExtResource("1_re")
+id = &"record_shoplifting_01"
+title = "Quick-Mart — Theft History"
+content = "Business: Quick-Mart, 880 Highway 12\nOwner: Raj Patel (caller)\n\nTheft Incidents (2023-2024):\n- 2023-03-12: Beer theft, $47. Suspect caught.\n- 2023-05-28: Cigarettes, $89. Suspect fled.\n- 2023-07-14: Snacks/drinks, $34. Juvenile, parents notified.\n- 2023-09-05: Alcohol, $112. Suspect arrested (repeat offender).\n- 2023-11-20: Energy drinks, $28. Suspect fled.\n- 2024-01-08: Beer, $56. Suspect cited.\n\nPattern: Primarily alcohol/tobacco. Evenings 20:00-23:00.\nSuspects: Mix of locals and transients. 60% repeat.\n\nSecurity: CCTV installed 2022. Silent alarm at register.\n\nRecommendation: Routine patrol check 21:00-23:00."
+unlocked_by_default = false

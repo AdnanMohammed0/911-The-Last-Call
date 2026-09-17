@@ -81,6 +81,11 @@
    "status": "done",
    "note": "محلل نبرة الصوت (Voice Stress Analyzer): ربط قناة Phone بـ AudioEffectSpectrumAnalyzer للترددات الحية، منحنيات الإجهاد authored (الرجفان 8-12Hz، تقلب النبرة، وتقدير نبضات القلب)، كاشف التكرار الحلقي (loop detector)، عزل أصوات الخلفية (Background Isolate)، ونظام تفاعل الوسوم (Scrub-and-Tag) للأدلة مع معاقبة الوسوم الخاطئة. اختُبر بـ 4 اختبارات GUT.",
    "updated_at": "2026-09-17"
+  },
+  "P2-14": {
+   "status": "testing",
+   "note": "VoteManager (autoload): الهوست يفتح تصويت بمهلة، كل peer يرسل صوته والهوست يتحقق (مؤهل، خيار صحيح، rate limit) ويوزع العدّ. يسكر بالمهلة، أو لما الكل يصوت، أو مبكراً لو بالإجماع. الفوز بالأغلبية، التعادل يحسمه كلاس (Profiler للحكم، Breacher للاقتراب)، بعده default، بعده ترتيب الخيارات. تصويت الحكم مربوط بـ CallDirector (60 ث). تصويت الاقتراب: Decoy يحتاج 3 لاعبين أو Tech. المنقطع يطلع من التصويت والراجع يستلمه. 10 اختبارات GUT + اختبار 3 عمليات نجحت.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -515,6 +520,19 @@
     "autoload/call_director.gd",
     "core/dispatch/dialogue_runner.gd",
     "tests/test_dialogue_replication.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P2-14"
+   ],
+   "summary": "نظام التصويت: مهلات، إجماع ينهي مبكراً، حسم التعادل بالكلاس، تصويت الحكم على المكالمة وتصويت طريقة الاقتراب.",
+   "files": [
+    "autoload/vote_manager.gd",
+    "autoload/call_director.gd",
+    "project.godot",
+    "tests/test_vote_manager.gd"
    ]
   }
  ]

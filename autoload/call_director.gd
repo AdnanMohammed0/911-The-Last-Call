@@ -32,6 +32,8 @@ var call_history: Dictionary[StringName, Dictionary] = {}
 var dialogue_runner: DialogueRunner = DialogueRunner.new()
 var vsa: VoiceStressAnalyzer = VoiceStressAnalyzer.new()
 var phone_audio_player: AudioStreamPlayer = null
+## Host: open team verdict vote for the active call (P2-14), 0 when none.
+var verdict_vote_id: int = 0
 
 
 func _ready() -> void:
@@ -49,6 +51,8 @@ func _ready() -> void:
 	if EventBus != null:
 		EventBus.phase_changed.connect(_on_phase_changed)
 	
+	VoteManager.vote_closed.connect(_on_vote_closed)
+
 	if NetManager != null:
 		if NetManager.has_signal("peer_left"):
 			NetManager.peer_left.connect(_on_player_left)
@@ -310,6 +314,20 @@ func _hangup_call(reason: StringName) -> void:
 	current_state = CallState.ASSESSMENT
 	dialogue_runner.stop(reason)
 	_sync_call_assessment_started.rpc(active_call_id)
+	# With several players the verdict is a team vote (60 s, unanimous ends early, Profiler breaks ties).
+	if _is_server() and NetManager.roster.size() > 1:
+		verdict_vote_id = VoteManager.open_verdict_vote(active_call_id)
+
+
+func _on_vote_closed(vote: Dictionary, result: StringName) -> void:
+	if not _is_server() or vote.get("id", 0) != verdict_vote_id:
+		return
+	verdict_vote_id = 0
+	var context: Dictionary = vote.get("context", {})
+	var call_id: StringName = context.get("call_id", &"")
+	var decided_by: StringName = vote.get("decided_by", &"")
+	if call_id == active_call_id and current_state == CallState.ASSESSMENT and decided_by != &"cancelled":
+		submit_verdict(0, call_id, result)
 
 
 @rpc("authority", "call_local", "reliable")
@@ -336,6 +354,10 @@ func request_classify_call(call_id: StringName, verdict: StringName) -> void:
 	if not active_call.is_valid_verdict(verdict):
 		return
 	
+	# Team assessment: the request becomes this player's ballot instead of an instant verdict.
+	if verdict_vote_id != 0:
+		VoteManager.cast_vote(verdict_vote_id, verdict)
+		return
 	submit_verdict(sender, call_id, verdict)
 
 

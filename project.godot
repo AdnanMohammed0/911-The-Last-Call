@@ -27,6 +27,7 @@ NetManager="*res://autoload/net_manager.gd"
 DisplaySettings="*res://autoload/display_settings.gd"
 NetDebug="*res://autoload/net_debug.gd"
 VoiceManager="*res://autoload/voice_manager.gd"
+VoteManager="*res://autoload/vote_manager.gd"
 CallDirector="*res://autoload/call_director.gd"
 
 [display]

@@ -11,6 +11,7 @@ var lean: float = 0.0                   # -1 = left, +1 = right
 var interact_just_pressed: bool = false
 var door_peek_just_pressed: bool = false
 var door_kick_just_pressed: bool = false
+var flashlight_just_pressed: bool = false
 
 var _look_delta: Vector2 = Vector2.ZERO
 
@@ -37,6 +38,7 @@ func sample() -> void:
 	interact_just_pressed = Input.is_action_just_pressed(&"interact")
 	door_peek_just_pressed = Input.is_action_just_pressed(&"door_peek")
 	door_kick_just_pressed = Input.is_action_just_pressed(&"door_kick")
+	flashlight_just_pressed = Input.is_action_just_pressed(&"flashlight")
 
 
 ## Returns the mouse movement accumulated since the last call and resets it.

@@ -9,7 +9,7 @@ const DEFAULT_PORT: int = 24911
 const MAX_PEERS: int = 4                       # including the host
 const MAX_NAME_LENGTH: int = 24
 ## Bump when the network protocol changes; mismatched clients are rejected.
-const PROTOCOL_VERSION: int = 1
+const PROTOCOL_VERSION: int = 2
 const CONNECT_TIMEOUT_SEC: float = 10.0
 const REGISTER_TIMEOUT_SEC: float = 5.0
 const MAIN_MENU_SCENE: String = "res://scenes/boot/main_menu.tscn"
@@ -24,8 +24,10 @@ signal connection_failed(reason: String)
 signal peer_joined(peer_id: int, player_name: String)
 signal peer_left(peer_id: int)
 signal lobby_updated(roster: Dictionary)
-## Host only: `peer_id` finished loading `scene_path` and can receive spawns.
+## Every peer: `peer_id` finished loading `scene_path` and can receive spawns / sync for it.
 signal level_loaded(peer_id: int, scene_path: String)
+## Host: result of the UPnP port mapping. `public_address` is empty when unknown.
+signal internet_hosting_changed(public_address: String, port_open: bool, message: String)
 
 var transport: Transport = Transport.ENET
 var state: State = State.OFFLINE
@@ -34,8 +36,15 @@ var roster: Dictionary[int, Dictionary] = {}
 var local_player_name: String = ""
 
 var _connect_timer: SceneTreeTimer = null
-## Host only: peer_id -> scene path the peer reported as loaded.
+## peer_id -> scene path the peer reported as loaded (host-owned, mirrored to clients).
 var _loaded_levels: Dictionary[int, String] = {}
+var _limiter: RpcRateLimiter = RpcRateLimiter.new(8.0, 8.0)
+
+## Internet hosting (UPnP). Public address as reported by the router.
+var public_address: String = ""
+var _upnp: UPNP = null
+var _upnp_thread: Thread = null
+var _upnp_port: int = 0
 
 
 func _ready() -> void:
@@ -102,7 +111,9 @@ func is_level_loaded(peer_id: int, scene_path: String) -> bool:
 
 # --- Host / join / leave ----------------------------------------------------
 
-func host_game(player_name: String, port: int = DEFAULT_PORT) -> Error:
+## `open_internet_port` asks the router (UPnP) to forward the UDP port so friends outside the LAN
+## can join by public IP. Result arrives through `internet_hosting_changed`.
+func host_game(player_name: String, port: int = DEFAULT_PORT, open_internet_port: bool = true) -> Error:
 	if state != State.OFFLINE:
 		return ERR_ALREADY_IN_USE
 	if transport != Transport.ENET:
@@ -118,6 +129,8 @@ func host_game(player_name: String, port: int = DEFAULT_PORT) -> Error:
 	roster.clear()
 	roster[1] = _new_entry(local_player_name)
 	_set_state(State.HOSTING)
+	if open_internet_port:
+		_start_upnp(port)
 	session_started.emit()
 	lobby_updated.emit(roster)
 	return OK
@@ -192,9 +205,9 @@ static func sanitize_name(raw: String, peer_id: int) -> String:
 
 @rpc("any_peer", "call_remote", "reliable")
 func _register_player(player_name: String, protocol_version: int) -> void:
-	if not multiplayer.is_server():
+	if not RpcGuard.is_host(self):
 		return
-	var sender: int = multiplayer.get_remote_sender_id()
+	var sender: int = RpcGuard.sender_id(self)
 	if roster.has(sender):
 		return
 	if protocol_version != PROTOCOL_VERSION:
@@ -216,9 +229,11 @@ func _register_player(player_name: String, protocol_version: int) -> void:
 
 @rpc("any_peer", "call_remote", "reliable")
 func _request_class(class_id: StringName) -> void:
-	if not multiplayer.is_server():
+	if not RpcGuard.is_host(self):
 		return
-	var sender: int = _sender_id()
+	var sender: int = RpcGuard.sender_id(self)
+	if not _limiter.allow(sender, &"lobby"):
+		return
 	if not roster.has(sender) or not GameState.is_lobby() or is_ready(sender):
 		return
 	if class_id != &"" and (not ClassCatalog.has(class_id) or is_class_taken(class_id, sender)):
@@ -230,9 +245,11 @@ func _request_class(class_id: StringName) -> void:
 
 @rpc("any_peer", "call_remote", "reliable")
 func _request_ready(ready: bool) -> void:
-	if not multiplayer.is_server():
+	if not RpcGuard.is_host(self):
 		return
-	var sender: int = _sender_id()
+	var sender: int = RpcGuard.sender_id(self)
+	if not _limiter.allow(sender, &"lobby"):
+		return
 	if not roster.has(sender) or not GameState.is_lobby():
 		return
 	if ready and get_class_id(sender) == &"":
@@ -243,13 +260,28 @@ func _request_ready(ready: bool) -> void:
 
 @rpc("any_peer", "call_remote", "reliable")
 func _report_level_loaded(scene_path: String) -> void:
-	if not multiplayer.is_server():
+	if not RpcGuard.is_host(self):
 		return
-	var sender: int = _sender_id()
-	if is_online() and not roster.has(sender):
+	var sender: int = RpcGuard.sender_id(self)
+	if not RpcGuard.is_registered(sender) or not scene_path.begins_with("res://"):
 		return
 	_loaded_levels[sender] = scene_path
+	if is_online():
+		_sync_loaded_levels.rpc(_loaded_levels)
 	level_loaded.emit(sender, scene_path)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _sync_loaded_levels(levels: Dictionary) -> void:
+	var previous: Dictionary[int, String] = _loaded_levels.duplicate()
+	_loaded_levels.clear()
+	for key: Variant in levels:
+		var peer_id: int = key
+		var path: String = levels[key]
+		_loaded_levels[peer_id] = path
+	for peer_id: int in _loaded_levels:
+		if previous.get(peer_id, "") != _loaded_levels[peer_id]:
+			level_loaded.emit(peer_id, _loaded_levels[peer_id])
 
 
 @rpc("authority", "call_remote", "reliable")
@@ -304,8 +336,10 @@ func _on_peer_disconnected(peer_id: int) -> void:
 		return
 	roster.erase(peer_id)
 	_loaded_levels.erase(peer_id)
+	_limiter.forget_peer(peer_id)
 	peer_left.emit(peer_id)
 	_sync_roster.rpc(roster)
+	_sync_loaded_levels.rpc(_loaded_levels)
 
 
 func _on_connected_to_server() -> void:
@@ -349,6 +383,7 @@ func _close_peer() -> void:
 	roster.clear()
 	_loaded_levels.clear()
 	_connect_timer = null
+	_stop_upnp()
 	GameState.reset()
 	_set_state(State.OFFLINE)
 
@@ -360,9 +395,72 @@ func _send_to_host(method: StringName, args: Array = []) -> void:
 		callv(&"rpc_id", [1, method] + args)
 
 
-func _sender_id() -> int:
-	var sender: int = multiplayer.get_remote_sender_id()
-	return sender if sender != 0 else multiplayer.get_unique_id()
+# --- Internet hosting (UPnP) -------------------------------------------------
+
+func _start_upnp(port: int) -> void:
+	if _upnp_thread != null:
+		return
+	_upnp_port = port
+	_upnp_thread = Thread.new()
+	_upnp_thread.start(_upnp_worker.bind(port))
+
+
+func _upnp_worker(port: int) -> void:
+	var upnp: UPNP = UPNP.new()
+	var discover_err: int = upnp.discover(2000, 2, "InternetGatewayDevice")
+	if discover_err != UPNP.UPNP_RESULT_SUCCESS or upnp.get_gateway() == null \
+			or not upnp.get_gateway().is_valid_gateway():
+		_on_upnp_finished.call_deferred(null, "", false,
+			"No UPnP router found. Forward UDP %d manually or use a VPN (Tailscale / ZeroTier / Radmin)." % port)
+		return
+	var map_err: int = upnp.add_port_mapping(port, port, "911 The Last Call", "UDP", 0)
+	var external: String = upnp.query_external_address()
+	if map_err != UPNP.UPNP_RESULT_SUCCESS:
+		_on_upnp_finished.call_deferred(upnp, external, false,
+			"Router refused UPnP mapping (error %d). Forward UDP %d manually or use a VPN." % [map_err, port])
+		return
+	var message: String = "Friends join with %s (UDP %d open)." % [external, port]
+	if is_unreachable_address(external):
+		message = "Router IP %s is behind the ISP NAT (CGNAT): internet players cannot reach it. Use a VPN (Tailscale / ZeroTier / Radmin) or Steam (P1-09)." % external
+	_on_upnp_finished.call_deferred(upnp, external, true, message)
+
+
+func _on_upnp_finished(upnp: UPNP, external: String, mapped: bool, message: String) -> void:
+	if _upnp_thread != null:
+		_upnp_thread.wait_to_finish()
+		_upnp_thread = null
+	if state != State.HOSTING:
+		if upnp != null and mapped:
+			upnp.delete_port_mapping(_upnp_port, "UDP")
+		return
+	_upnp = upnp if mapped else null
+	public_address = external
+	internet_hosting_changed.emit(external, mapped and not is_unreachable_address(external), message)
+
+
+func _stop_upnp() -> void:
+	if _upnp_thread != null:
+		_upnp_thread.wait_to_finish()
+		_upnp_thread = null
+	if _upnp != null:
+		_upnp.delete_port_mapping(_upnp_port, "UDP")
+		_upnp = null
+	public_address = ""
+
+
+## Private (RFC 1918) and carrier-grade NAT (100.64.0.0/10) addresses cannot be reached from the internet.
+static func is_unreachable_address(address: String) -> bool:
+	var parts: PackedStringArray = address.split(".")
+	if parts.size() != 4:
+		return false
+	var a: int = parts[0].to_int()
+	var b: int = parts[1].to_int()
+	return a == 10 or (a == 100 and b >= 64 and b <= 127) or (a == 172 and b >= 16 and b <= 31) \
+		or (a == 192 and b == 168)
+
+
+func _exit_tree() -> void:
+	_stop_upnp()
 
 
 func _set_state(new_state: State) -> void:

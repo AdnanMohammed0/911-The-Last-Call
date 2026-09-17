@@ -21,6 +21,9 @@ var _auto_start: bool = false
 @onready var _class_option: OptionButton = %ClassOption
 @onready var _ready_button: CheckButton = %ReadyButton
 @onready var _start_button: Button = %StartButton
+@onready var _internet_row: HBoxContainer = %InternetRow
+@onready var _internet_label: Label = %InternetLabel
+@onready var _copy_address_button: Button = %CopyAddressButton
 
 
 func _ready() -> void:
@@ -44,6 +47,8 @@ func _ready() -> void:
 	NetManager.session_started.connect(_on_session_started)
 	NetManager.session_ended.connect(_on_session_ended)
 	NetManager.lobby_updated.connect(_on_lobby_updated)
+	NetManager.internet_hosting_changed.connect(_on_internet_hosting_changed)
+	_copy_address_button.pressed.connect(_on_copy_address_pressed)
 	_address_edit.text = "127.0.0.1"
 	_name_edit.text = "Player"
 	_on_state_changed(NetManager.state)
@@ -109,6 +114,11 @@ func _on_state_changed(new_state: NetManager.State) -> void:
 	_address_edit.editable = offline
 	_leave_button.disabled = offline
 	_sandbox_button.disabled = not offline
+	_internet_row.visible = new_state == NetManager.State.HOSTING
+	if new_state != NetManager.State.HOSTING:
+		_internet_label.text = "Checking router (UPnP)…"
+		_copy_address_button.disabled = true
+		_copy_address_button.text = "Copy IP"
 	_door_sandbox_button.disabled = not offline
 	match new_state:
 		NetManager.State.OFFLINE:
@@ -120,6 +130,16 @@ func _on_state_changed(new_state: NetManager.State) -> void:
 		NetManager.State.CONNECTED:
 			_status_label.text = "Connected as peer %d" % NetManager.get_local_peer_id()
 	_refresh_lobby_controls()
+
+
+func _on_internet_hosting_changed(public_address: String, port_open: bool, message: String) -> void:
+	_internet_label.text = message
+	_copy_address_button.disabled = public_address.is_empty() or not port_open
+
+
+func _on_copy_address_pressed() -> void:
+	DisplayServer.clipboard_set(NetManager.public_address)
+	_copy_address_button.text = "Copied!"
 
 
 func _on_connection_failed(reason: String) -> void:

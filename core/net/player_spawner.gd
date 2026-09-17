@@ -1,7 +1,9 @@
 ## Spawns one Player per peer under `spawn_path`, carrying peer id + class id atomically (ARCHITECTURE §4.5).
 ## A peer only receives spawns after it reports the level as loaded, so nobody gets packets for
 ## nodes that do not exist yet. Works offline too (spawns the local player as peer 1).
-## Authority: HOST
+## Every peer also limits the synchronizers it owns (its player's ClientSync, the host's HostSync and
+## level props) to peers that loaded this level.
+## Authority: HOST (spawning) / every peer (visibility of its own synchronizers)
 class_name PlayerSpawner
 extends MultiplayerSpawner
 
@@ -22,10 +24,10 @@ func _ready() -> void:
 	spawned.connect(_on_spawned)
 	var level: Node = owner if owner != null else get_parent()
 	_level_path = level.scene_file_path
+	NetManager.level_loaded.connect(_on_level_loaded)
+	_refresh_visibility()
 	if multiplayer.is_server():
-		NetManager.level_loaded.connect(_on_level_loaded)
 		NetManager.peer_left.connect(_on_peer_left)
-		_refresh_visibility()
 		# Clients can finish loading before the host's own level is ready.
 		for peer_id: int in NetManager.roster:
 			if peer_id != 1 and NetManager.is_level_loaded(peer_id, _level_path):
@@ -43,7 +45,7 @@ func get_player(peer_id: int) -> Player:
 func _on_level_loaded(peer_id: int, scene_path: String) -> void:
 	if scene_path != _level_path:
 		return
-	if get_player(peer_id) == null:
+	if multiplayer.is_server() and get_player(peer_id) == null:
 		var class_id: StringName = NetManager.get_class_id(peer_id)
 		if not ClassCatalog.has(class_id):
 			class_id = FALLBACK_CLASS
@@ -62,9 +64,9 @@ func _on_peer_left(peer_id: int) -> void:
 		player.queue_free()  # despawn replicates to everyone
 
 
-## Host-owned synchronizers in this level (player HostSync, doors, props…) only replicate to peers that
+## Synchronizers we own in this level (HostSync, ClientSync, doors, props…) only replicate to peers that
 ## have loaded it; a peer still in the menu or loading would otherwise get packets for missing nodes.
-## Spawn visibility follows the same rule, so players spawn on a peer right after it loads.
+## On the host, spawn visibility follows the same rule, so players spawn on a peer right after it loads.
 func _refresh_visibility() -> void:
 	var level: Node = owner if owner != null else get_parent()
 	for node: Node in level.find_children("*", "MultiplayerSynchronizer", true, false):
@@ -101,6 +103,7 @@ func _spawn_player(data: Variant) -> Node:
 
 
 func _on_spawned(node: Node) -> void:
+	_refresh_visibility()
 	var player: Player = node as Player
 	if player != null:
 		player_spawned.emit(player)

@@ -31,6 +31,16 @@
    "status": "testing",
    "note": "PlayerSpawner (MultiplayerSpawner) بـ spawn_function تنقل peer_id + class_id سوية. handshake تحميل المشهد: اللاعب ينخلق عند كل peer بعد ما يحمّل المشهد فقط، وكل synchronizer مال الهوست بالمشهد (مثل الأبواب) يوصل للي حمّلوا بس. despawn عند المغادرة. يشتغل offline بالـ sandbox. 4 تشغيلات متتالية نظيفة (host + 2 clients + late + offline).",
    "updated_at": "2026-09-17"
+  },
+  "P1-07": {
+   "status": "testing",
+   "note": "ClientSync (owner → الكل، 30Hz): الموقع، yaw/pitch، الوقفة، الميلان، الركض، الكشاف (T). الـ remote يتحرك بنعومة (interpolation) ويسوي snap إذا بعيد. كل peer يرسل الـ sync بس للي حمّلوا المشهد. اختبار 4 عمليات: الحركة والـ crouch والكشاف توصل للهوست ولباقي الـ clients عبر الـ relay. PROTOCOL_VERSION صار 2.",
+   "updated_at": "2026-09-17"
+  },
+  "P1-08": {
+   "status": "testing",
+   "note": "MovementValidator على الهوست: سرعة × 1.2 على نافذة 0.5 ث + slack، منع الطيران والـ teleport، rollback + تصحيح للاعب. RpcGuard (is_host, sender_id, is_from_host, is_registered, is_player_in_range) و RpcRateLimiter (token bucket) مستخدمة بـ NetManager و Interactable. اختبار: speed hack ×4 انمنع (<1 م بـ 2 ث)، teleport انرجع، اللاعب الطبيعي 0 مخالفات.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -226,6 +236,27 @@
     "scenes/shared/player/player.tscn",
     "scenes/shared/player/player_sandbox.tscn",
     "scenes/shared/player/player_debug_hud.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-07",
+    "P1-08"
+   ],
+   "summary": "مزامنة اللاعب (موقع، نظر، وقفة، ميلان، كشاف) مع interpolation، تحقق الحركة على الهوست مع rollback، أدوات RpcGuard و RateLimiter، ومحاولة فتح البورت تلقائياً (UPnP) مع عرض الـ IP العام بالقائمة للعب عبر الإنترنت.",
+   "files": [
+    "scenes/shared/player/player.gd",
+    "scenes/shared/player/player.tscn",
+    "core/net/movement_validator.gd",
+    "core/net/rpc_guard.gd",
+    "core/net/rpc_rate_limiter.gd",
+    "core/net/player_spawner.gd",
+    "autoload/net_manager.gd",
+    "scenes/shared/interactables/interactable.gd",
+    "scenes/boot/main_menu.gd",
+    "scenes/boot/main_menu.tscn",
+    "project.godot"
    ]
   }
  ]

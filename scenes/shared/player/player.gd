@@ -1,5 +1,7 @@
-## First-person player controller: walk, sprint, crouch, lean, stamina.
-## Authority: OWNING PEER (client-authoritative movement; host sanity checks come in P1-08).
+## First-person player controller: walk, sprint, crouch, lean, stamina, flashlight.
+## The owner simulates and publishes `sync_*` + stance/lean/sprint/flashlight through ClientSync;
+## everyone else smooths toward them. The host validates movement in MovementValidator.
+## Authority: OWNING PEER (client-authoritative movement, host-validated)
 class_name Player
 extends CharacterBody3D
 
@@ -47,6 +49,12 @@ signal interaction_prompt_changed(prompt: String)
 @export var mouse_sensitivity: float = 0.0022
 @export var max_pitch_degrees: float = 85.0
 
+@export_group("Network")
+## How fast remote copies catch up with the replicated transform (1/s).
+@export var remote_smoothing: float = 18.0
+## Remote copies snap instead of gliding when further than this.
+@export var remote_snap_distance: float = 4.0
+
 @export_group("Interaction")
 @export var interaction_reach: float = 2.6
 
@@ -64,10 +72,20 @@ signal interaction_prompt_changed(prompt: String)
 ## Class this player was spawned as (see data/classes/).
 var class_id: StringName = &""
 
-# Replicated state (MultiplayerSynchronizer in P1-07).
+# --- Replicated by ClientSync (owner -> everyone) ---
+var sync_position: Vector3 = Vector3.ZERO
+var sync_yaw: float = 0.0
+var sync_pitch: float = 0.0
 var stance: Stance = Stance.STAND
 var lean_amount: float = 0.0          # -1..1
 var is_sprinting: bool = false
+var flashlight_on: bool = false:
+	set(value):
+		flashlight_on = value
+		if _flashlight != null:
+			_flashlight.visible = value
+
+# Local only.
 var stamina: float = 0.0
 
 var _is_exhausted: bool = false
@@ -86,6 +104,7 @@ var _current_door_target: Door = null
 @onready var _camera: Camera3D = $Head/Camera3D
 @onready var _interactor: PlayerInteractor = $PlayerInteractor
 @onready var _hud: CanvasLayer = $HUD
+@onready var _flashlight: SpotLight3D = $Head/Camera3D/Flashlight
 
 
 func _ready() -> void:
@@ -93,6 +112,8 @@ func _ready() -> void:
 	stamina = sprint_duration
 	_current_height = stand_height
 	_apply_height()
+	_flashlight.visible = flashlight_on
+	_publish_sync_state()
 	_apply_authority()
 
 
@@ -100,14 +121,17 @@ func _apply_authority() -> void:
 	var is_local: bool = is_multiplayer_authority()
 	_camera.current = is_local
 	set_physics_process(is_local)
-	set_process(is_local)
+	set_process(true)  # owner: mouse look, remote: smoothing
 	_interactor.set_physics_process(is_local)
 	_hud.visible = is_local
 	if is_local and DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	if not is_multiplayer_authority():
+		_update_remote(delta)
+		return
 	var look: Vector2 = _input.consume_look()
 	if look == Vector2.ZERO:
 		return
@@ -122,7 +146,9 @@ func _physics_process(delta: float) -> void:
 	_update_sprint_and_stamina(delta)
 	_update_movement(delta)
 	_update_lean(delta)
+	_update_flashlight()
 	_update_interaction()
+	_publish_sync_state()
 
 
 ## Returns the player owned by `peer_id` in the current tree, or null.
@@ -145,6 +171,18 @@ func apply_class(data: ClassData) -> void:
 	# TODO(P3-02/P3-03): max_health, damage_resistance, max_sanity, sanity drain.
 
 
+## Fastest legitimate horizontal speed (used by the host's MovementValidator).
+func get_max_move_speed() -> float:
+	return maxf(maxf(walk_speed, sprint_speed), crouch_speed) * move_speed_multiplier
+
+
+## Owner: the host rejected our movement (MovementValidator); snap back.
+func apply_server_correction(target_position: Vector3) -> void:
+	global_position = target_position
+	velocity = Vector3.ZERO
+	_publish_sync_state()
+
+
 func get_camera() -> Camera3D:
 	return _camera
 
@@ -159,6 +197,38 @@ func get_max_stamina() -> float:
 
 func get_horizontal_speed() -> float:
 	return Vector2(velocity.x, velocity.z).length()
+
+
+# --- Replication ------------------------------------------------------------
+
+func _publish_sync_state() -> void:
+	sync_position = global_position
+	sync_yaw = rotation.y
+	sync_pitch = _camera.rotation.x
+
+
+func _update_remote(delta: float) -> void:
+	var weight: float = clampf(remote_smoothing * delta, 0.0, 1.0)
+	if global_position.distance_to(sync_position) > remote_snap_distance:
+		global_position = sync_position
+	else:
+		global_position = global_position.lerp(sync_position, weight)
+	rotation.y = lerp_angle(rotation.y, sync_yaw, weight)
+	_camera.rotation.x = lerp_angle(_camera.rotation.x, sync_pitch, weight)
+
+	var target_height: float = stand_height if stance == Stance.STAND else crouch_height
+	if not is_equal_approx(_current_height, target_height):
+		_current_height = move_toward(_current_height, target_height, crouch_transition_speed * delta)
+		_apply_height()
+	_head.position.x = lean_amount * lean_distance
+	_head.rotation.z = -lean_amount * deg_to_rad(lean_angle_degrees)
+
+
+# --- Flashlight -------------------------------------------------------------
+
+func _update_flashlight() -> void:
+	if _input.flashlight_just_pressed:
+		flashlight_on = not flashlight_on
 
 
 # --- Stance -----------------------------------------------------------------

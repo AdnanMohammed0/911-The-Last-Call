@@ -6,10 +6,23 @@ extends Node
 
 # --- Shift / phase ---
 signal phase_changed(new_phase: StringName)
+signal shift_clock_updated(minutes: int)
 
-# --- Dispatch ---
+# --- Dispatch & Calls ---
 signal call_received(call_id: StringName)
+signal call_ring(call_id: StringName, call_data: CallData)
+signal call_connected(call_id: StringName, call_data: CallData)
+signal call_missed(call_id: StringName)
+signal call_ended(call_id: StringName, reason: StringName)
+signal call_assessment_started(call_id: StringName)
 signal call_classified(call_id: StringName, verdict: StringName)
+signal caller_patience_updated(current: float, max_patience: float)
+signal evidence_unlocked(evidence_key: StringName)
+
+# --- Handset & Dialogue ---
+signal handset_owner_changed(peer_id: int)
+signal dialogue_node_changed(node_id: StringName, speaker: StringName, line: String, choices: Array)
+signal dialogue_choice_pinged(peer_id: int, choice_index: int)
 
 # --- Voting ---
 signal vote_finished(topic: StringName, result: Variant)

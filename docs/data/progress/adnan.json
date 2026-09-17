@@ -66,6 +66,21 @@
    "status": "testing",
    "note": "راديو بزر B: VoiceRadio bus (HighPass 300 + LowPass 3400 + Distortion LOFI + Compressor)، squelch داخل/طالع مولّد بالكود (بدون ملفات)، ما يشتغل الراديو إذا المتكلم أقرب من 4م (تسمعه مباشرة). V كان مذكور بالوثيقة بس مستخدم للـ door kick عند Ali.",
    "updated_at": "2026-09-17"
+  },
+  "P2-04": {
+   "status": "done",
+   "note": "CallDirector (host) جاهز ومسجل كـ Autoload: ساعة الشفت (00:00 إلى 06:00 بمقياس 6×، إيقاف واستئناف ومزامنة)، طابور المكالمات مع earliest_minute، ودورة حياة المكالمة الكاملة (ring/answer/missed/assessment/verdict) مع تحقق الهوست وتوثيق السجل. اختُبر بـ 6 اختبارات GUT.",
+   "updated_at": "2026-09-17"
+  },
+  "P2-05": {
+   "status": "done",
+   "note": "ملكية رمز سماعة الهاتف (Handset token) ومزامنة الحوار: تداول السماعة بين الضباط (E)، حصر اختيار خيارات الحوار بحامل السماعة (مع خيارات مشروطة بالكلاس والأدلة)، إمكانية تأشير الخيارات (choice pings) من زملاء الفريق لتظهر لحامل السماعة، ومزامنة نص وسطور الحوار لحظياً عبر الشبكة. اختُبر بـ 5 اختبارات GUT.",
+   "updated_at": "2026-09-17"
+  },
+  "P2-08": {
+   "status": "done",
+   "note": "محلل نبرة الصوت (Voice Stress Analyzer): ربط قناة Phone بـ AudioEffectSpectrumAnalyzer للترددات الحية، منحنيات الإجهاد authored (الرجفان 8-12Hz، تقلب النبرة، وتقدير نبضات القلب)، كاشف التكرار الحلقي (loop detector)، عزل أصوات الخلفية (Background Isolate)، ونظام تفاعل الوسوم (Scrub-and-Tag) للأدلة مع معاقبة الوسوم الخاطئة. اختُبر بـ 4 اختبارات GUT.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -378,6 +393,29 @@
    "summary": "تصليح \"Failed to join (Can't create)\": السبب عنوان ما ينحل (خطأ بالكتابة/مسافات/http:// أو DNS). صار ينظف العنوان، يحل الاسم بـ IPv4 أولاً، ويطلع رسالة واضحة.",
    "files": [
     "autoload/net_manager.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P2-04",
+    "P2-05",
+    "P2-08"
+   ],
+   "summary": "محرك المكالمات والحوار والتحليل الصوتي: CallDirector (ساعة الشفت، طابور المكالمات، ودورة حياة الرنين والرد والإلغاء والتصنيف)، ملكية سماعة الهاتف ومزامنة الحوار التفاعلي وخيارات الكلاسات وتأشير الفريق، ومحلل نبرة الصوت (VSA) بترددات الطيف ومنحنيات الإجهاد وكشف التكرار وعزل الخلفية ونظام الوسوم.",
+   "files": [
+    "autoload/call_director.gd",
+    "core/dispatch/dialogue_runner.gd",
+    "core/dispatch/voice_stress_analyzer.gd",
+    "data/calls/",
+    "data/dialogue/",
+    "data/consequences/flag_condition.gd",
+    "autoload/event_bus.gd",
+    "default_bus_layout.tres",
+    "project.godot",
+    "tests/test_call_director.gd",
+    "tests/test_dialogue_replication.gd",
+    "tests/test_voice_stress_analyzer.gd"
    ]
   }
  ]

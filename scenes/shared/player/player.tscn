@@ -10,6 +10,11 @@ resource_local_to_scene = true
 radius = 0.35
 height = 1.8
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_host"]
+properties/0/path = NodePath(".:class_id")
+properties/0/spawn = true
+properties/0/replication_mode = 0
+
 [node name="Player" type="CharacterBody3D"]
 floor_snap_length = 0.3
 script = ExtResource("1_player")
@@ -27,6 +32,10 @@ fov = 75.0
 
 [node name="PlayerInput" type="Node" parent="."]
 script = ExtResource("2_input")
+
+[node name="HostSync" type="MultiplayerSynchronizer" parent="."]
+public_visibility = false
+replication_config = SubResource("SceneReplicationConfig_host")
 
 [node name="PlayerInteractor" type="Node" parent="."]
 script = ExtResource("3_interactor")

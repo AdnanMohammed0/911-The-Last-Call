@@ -21,6 +21,16 @@
    "status": "done",
    "note": "NetManager host/join عبر ENet مكتمل: 24911، 4 لاعبين، تحقق الهوست (نسخة البروتوكول، لوبي ممتلئ، تنظيف الاسم، مهلة تسجيل)، leave وخروج الهوست، وقائمة رئيسية مؤقتة. اختُبر بـ 7 عمليات.",
    "updated_at": "2026-09-17"
+  },
+  "P1-05": {
+   "status": "testing",
+   "note": "Lobby: اختيار الكلاس (4 كلاسات ClassData من GAMEPLAY §2.1، كل كلاس للاعب واحد)، ready-up، و Start للهوست. الهوست يتحقق من كل طلب (كلاس صالح/مو مأخوذ، ما يغيّر وهو ready، ما يصير ready بدون كلاس). رفض الانضمام بعد بدء اللعبة. واجهة lobby مؤقتة بالقائمة الرئيسية. اختبار شبكة متعدد العمليات نجح.",
+   "updated_at": "2026-09-17"
+  },
+  "P1-06": {
+   "status": "testing",
+   "note": "PlayerSpawner (MultiplayerSpawner) بـ spawn_function تنقل peer_id + class_id سوية. handshake تحميل المشهد: اللاعب ينخلق عند كل peer بعد ما يحمّل المشهد فقط، وكل synchronizer مال الهوست بالمشهد (مثل الأبواب) يوصل للي حمّلوا بس. despawn عند المغادرة. يشتغل offline بالـ sandbox. 4 تشغيلات متتالية نظيفة (host + 2 clients + late + offline).",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -187,6 +197,35 @@
    "summary": "إغلاق P1-04: الاستضافة والانضمام عبر ENet اختُبرت وصارت على main.",
    "files": [
     "docs/data/progress/adnan.json"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-05"
+   ],
+   "summary": "Lobby: ClassData + ClassCatalog، RPCs اختيار الكلاس و ready و start بتحقق الهوست، وواجهة lobby مؤقتة. شلت C من crouch لأن Ali يستخدمه للـ door peek.",
+   "files": [
+    "autoload/net_manager.gd",
+    "autoload/game_state.gd",
+    "data/classes/",
+    "scenes/boot/main_menu.gd",
+    "scenes/boot/main_menu.tscn",
+    "project.godot"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-06"
+   ],
+   "summary": "PlayerSpawner class-aware مع handshake تحميل المشهد وفلترة visibility، وتحويل player_sandbox لـ spawn بدل لاعب ثابت. صلّحت race لما الـ client يحمّل قبل الهوست.",
+   "files": [
+    "core/net/player_spawner.gd",
+    "scenes/shared/player/player.gd",
+    "scenes/shared/player/player.tscn",
+    "scenes/shared/player/player_sandbox.tscn",
+    "scenes/shared/player/player_debug_hud.gd"
    ]
   }
  ]

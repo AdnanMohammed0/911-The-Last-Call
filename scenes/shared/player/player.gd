@@ -54,8 +54,15 @@ signal interaction_prompt_changed(prompt: String)
 	set(value):
 		peer_id = value
 		set_multiplayer_authority(value)
+		# Host-owned state (spawn visibility now, health/sanity later) stays with the host.
+		var host_sync: Node = get_node_or_null(^"HostSync")
+		if host_sync != null:
+			host_sync.set_multiplayer_authority(1)
 		if is_node_ready():
 			_apply_authority()
+
+## Class this player was spawned as (see data/classes/).
+var class_id: StringName = &""
 
 # Replicated state (MultiplayerSynchronizer in P1-07).
 var stance: Stance = Stance.STAND
@@ -125,6 +132,17 @@ static func find_by_peer(tree: SceneTree, peer_id: int) -> Player:
 		if player != null and player.peer_id == peer_id:
 			return player
 	return null
+
+
+## Applies class stats. Call before the node enters the tree (PlayerSpawner does).
+func apply_class(data: ClassData) -> void:
+	if data == null:
+		return
+	class_id = data.id
+	move_speed_multiplier = data.move_speed_multiplier
+	sprint_duration = data.sprint_duration
+	stamina = sprint_duration
+	# TODO(P3-02/P3-03): max_health, damage_resistance, max_sanity, sanity drain.
 
 
 func get_camera() -> Camera3D:

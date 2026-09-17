@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bwiscymspulk3"]
 
-[ext_resource type="PackedScene" path="res://scenes/shared/player/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://core/net/player_spawner.gd" id="1_spawner"]
 [ext_resource type="Script" uid="uid://bo825c5b40qb2" path="res://scenes/shared/player/player_debug_hud.gd" id="2_hud"]
 [ext_resource type="Script" uid="uid://3gqspep5s0n5" path="res://scenes/shared/interactables/interactable_toggle.gd" id="3_toggle"]
 [ext_resource type="Script" uid="uid://cpbik534difst" path="res://scenes/shared/interactables/interactable_pickup.gd" id="4_pickup"]
@@ -169,13 +169,30 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -2)
 is_locked = true
 
-[node name="Player" parent="." unique_id=2101640351 instance=ExtResource("1_player")]
+[node name="Players" type="Node3D" parent="."]
+
+[node name="SpawnPoints" type="Node3D" parent="."]
+
+[node name="Spawn1" type="Marker3D" parent="SpawnPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.5)
 
-[node name="DebugHUD" type="Label" parent="." unique_id=623950685 node_paths=PackedStringArray("player")]
+[node name="Spawn2" type="Marker3D" parent="SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.05, 1.5)
+
+[node name="Spawn3" type="Marker3D" parent="SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.05, 1.5)
+
+[node name="Spawn4" type="Marker3D" parent="SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 3)
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="." node_paths=PackedStringArray("spawn_points")]
+spawn_path = NodePath("../Players")
+script = ExtResource("1_spawner")
+spawn_points = NodePath("../SpawnPoints")
+
+[node name="DebugHUD" type="Label" parent="."]
 offset_left = 12.0
 offset_top = 12.0
 offset_right = 620.0
 offset_bottom = 140.0
 script = ExtResource("2_hud")
-player = NodePath("../Player")

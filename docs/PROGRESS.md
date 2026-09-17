@@ -1,7 +1,7 @@
 # PROGRESS — 911: The Last Call
 
-> Living sprint tracker. Update daily. Task IDs reference [`docs/PROJECT_ROADMAP.md`](docs/PROJECT_ROADMAP.md).
-> Visual version: open [`index.html`](index.html) in any browser.
+> Living sprint tracker. Update daily. Task IDs reference [`docs/design/PROJECT_ROADMAP.md`](design/PROJECT_ROADMAP.md).
+> Visual version: open [`docs/index.html`](index.html) in any browser.
 
 **Current Phase:** Phase 1 — Core Prototype & Networking
 **Current Milestone:** M1 — "Four On The Line"
@@ -12,13 +12,13 @@
 
 ## 📊 Status Snapshot
 
-Live per-member progress is on the website (**Team** tab) and in `data/progress/<id>.json`. It updates automatically when each member's AI finishes work (see `AGENTS.md` §3).
+Live per-member progress is on the website (**Team** tab) and in `docs/data/progress/<id>.json`. It updates automatically when each member's AI finishes work (see `docs/AGENTS.md` §3).
 
 | Member | Tasks | Progress file |
 | :--- | :---: | :--- |
-| Adnan (`@adnan`) | 37 | [`data/progress/adnan.json`](data/progress/adnan.json) |
-| Ali Imad (`@ali`) | 24 | [`data/progress/ali.json`](data/progress/ali.json) |
-| Mohamed (`@mohamed`) | 23 | [`data/progress/mohamed.json`](data/progress/mohamed.json) |
+| Adnan (`@adnan`) | 37 | [`docs/data/progress/adnan.json`](data/progress/adnan.json) |
+| Ali Imad (`@ali`) | 24 | [`docs/data/progress/ali.json`](data/progress/ali.json) |
+| Mohamed (`@mohamed`) | 23 | [`docs/data/progress/mohamed.json`](data/progress/mohamed.json) |
 | **Total** | **84** | |
 
 ---

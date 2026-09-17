@@ -95,7 +95,7 @@
   <section class="view" id="view-team" data-title="الفريق" hidden>
     <div class="page-head">
       <h1>الفريق</h1>
-      <p>كل عضو يملك مجموعة مهام. التقدم يتحدث تلقائياً من <code>data/progress/&lt;id&gt;.json</code> لما الذكاء الاصطناعي يسجل شغل العضو.</p>
+      <p>كل عضو يملك مجموعة مهام. التقدم يتحدث تلقائياً من <code>docs/data/progress/&lt;id&gt;.json</code> لما الذكاء الاصطناعي يسجل شغل العضو.</p>
     </div>
     <div class="members" id="members"></div>
     <div class="section-head"><h2>المساهمة حسب المرحلة</h2></div>
@@ -125,7 +125,7 @@
   <section class="view" id="view-roadmap" data-title="خارطة الطريق" hidden>
     <div class="page-head">
       <h1>خارطة الطريق</h1>
-      <p>5 مراحل من النموذج الأولي إلى إطلاق Steam. التفاصيل الكاملة موجودة بـ <a href="docs/PROJECT_ROADMAP.md" data-gh>PROJECT_ROADMAP.md</a>.</p>
+      <p>5 مراحل من النموذج الأولي إلى إطلاق Steam. التفاصيل الكاملة موجودة بـ <a href="design/PROJECT_ROADMAP.md" data-gh>PROJECT_ROADMAP.md</a>.</p>
     </div>
     <div class="phases" id="phases"></div>
   </section>
@@ -223,7 +223,7 @@
   <section class="view prose" id="view-game" data-title="اللعبة" hidden>
     <div class="page-head">
       <h1>معلومات اللعبة</h1>
-      <p>التفاصيل التقنية الكاملة بـ <a href="docs/GAMEPLAY_MECHANICS.md" data-gh>GAMEPLAY_MECHANICS.md</a> و <a href="docs/ARCHITECTURE.md" data-gh>ARCHITECTURE.md</a>.</p>
+      <p>التفاصيل التقنية الكاملة بـ <a href="design/GAMEPLAY_MECHANICS.md" data-gh>GAMEPLAY_MECHANICS.md</a> و <a href="design/ARCHITECTURE.md" data-gh>ARCHITECTURE.md</a>.</p>
     </div>
 
     <div class="specs">
@@ -419,16 +419,16 @@
     </div>
 
     <ol class="howto">
-      <li class="panel"><b>1</b><h3>افتح المشروع</h3><p>بـ Claude Code أو Cursor. الأداة تقرأ <code>AGENTS.md</code> تلقائياً.</p></li>
-      <li class="panel"><b>2</b><h3>الصق برومبتك</h3><p>الذكاء الاصطناعي يشغّل <code>scripts/whoami.py</code> ويعرف منو أنت من git.</p></li>
+      <li class="panel"><b>1</b><h3>افتح المشروع</h3><p>بـ Claude Code أو Cursor. الأداة تقرأ <code>docs/AGENTS.md</code> تلقائياً.</p></li>
+      <li class="panel"><b>2</b><h3>الصق برومبتك</h3><p>الذكاء الاصطناعي يشغّل <code>docs/scripts/whoami.py</code> ويعرف منو أنت من git.</p></li>
       <li class="panel"><b>3</b><h3>اشتغل</h3><p>يقترح مهمتك الجاية ويتبع الوثائق التقنية.</p></li>
-      <li class="panel"><b>4</b><h3>يسجل ويرفع تلقائياً</h3><p>أول ما يخلص يحدّث <code>data/progress/&lt;id&gt;.json</code> ويسوي commit و push بدون ما تطلب، والموقع يتحدث.</p></li>
+      <li class="panel"><b>4</b><h3>يسجل ويرفع تلقائياً</h3><p>أول ما يخلص يحدّث <code>docs/data/progress/&lt;id&gt;.json</code> ويسوي commit و push بدون ما تطلب، والموقع يتحدث.</p></li>
     </ol>
 
     <div class="panel auto-box">
       <h2>التسجيل التلقائي: 3 طبقات حماية</h2>
       <div class="auto-grid">
-        <div><b class="mono">AGENTS.md</b><p>قاعدة إلزامية لأي AI: بعد كل شغل يسجّل التقدم ويرفعه على GitHub من نفسه.</p></div>
+        <div><b class="mono">docs/AGENTS.md</b><p>قاعدة إلزامية لأي AI: بعد كل شغل يسجّل التقدم ويرفعه على GitHub من نفسه.</p></div>
         <div><b class="mono">Stop Hook</b><p>بـ Claude Code: إذا حاول الـ AI ينهي الجلسة وأكو شغل مو مرفوع، يرجع يسجّله ويرفعه.</p></div>
         <div><b class="mono">GitHub Action</b><p>أي push ما حدّث ملف التقدم ينسجّل تلقائياً باسم صاحبه. اكتب <code>done P1-04</code> برسالة الـ commit حتى تصير المهمة مكتملة.</p></div>
       </div>

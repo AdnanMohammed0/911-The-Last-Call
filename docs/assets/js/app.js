@@ -11,7 +11,7 @@
 
   const REPO = "AdnanMohammed0/911-The-Last-Call";
   const BRANCH = "main";
-  const DATA_BASE = location.protocol === "file:" ? `https://raw.githubusercontent.com/${REPO}/${BRANCH}/` : "";
+  const DATA_BASE = location.protocol === "file:" ? `https://raw.githubusercontent.com/${REPO}/${BRANCH}/docs/` : "";
   const IDEA_PREFIX = "[فكرة]";
   const STORE_KEY = "911tlc.site.v2";
 
@@ -72,7 +72,8 @@
     return n;
   }
   const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
-  const ghBlob = path => `https://github.com/${REPO}/blob/${BRANCH}/${path}`;
+  // Site lives in docs/; paths below are relative to it.
+  const ghBlob = path => `https://github.com/${REPO}/blob/${BRANCH}/docs/${path}`;
   const byId = (a, b) => a.id.localeCompare(b.id, "en", { numeric: true });
 
   let toastT;
@@ -153,21 +154,21 @@
 
   /* ---------------- prompts ---------------- */
   const startPrompt = m =>
-    `أنا ${m.name} (${m.id}). اقرأ AGENTS.md و ${m.prompt_file} و data/progress/${m.id}.json.\n` +
+    `أنا ${m.name} (${m.id}). اقرأ docs/AGENTS.md و docs/${m.prompt_file} و docs/data/progress/${m.id}.json.\n` +
     `لخّصلي وين وصلت، وشنو المهام اللي أعتمد عليها من باقي الفريق، واقترح المهمة الجاية.\n` +
-    `كل ما تخلص شغل: سجّل التقدم تلقائياً بـ data/progress/${m.id}.json وارفعه على GitHub (commit + push) بدون ما أطلب وبدون أي توقيع AI.`;
+    `كل ما تخلص شغل: سجّل التقدم تلقائياً بـ docs/data/progress/${m.id}.json وارفعه على GitHub (commit + push) بدون ما أطلب وبدون أي توقيع AI.`;
 
   const taskPrompt = t => {
     const m = S.members[t.owner];
-    return `أنا ${m?.name || t.owner} (${t.owner}). اقرأ AGENTS.md و prompts/${t.owner}.md.\n` +
+    return `أنا ${m?.name || t.owner} (${t.owner}). اقرأ docs/AGENTS.md و docs/prompts/${t.owner}.md.\n` +
       `اشتغل على المهمة ${t.id}: ${t.title}\n` +
       `(${PHASES[t.phase - 1].en} › ${t.group} · ${t.cat}).\n` +
-      `ارجع للوثائق بـ docs/ حسب الحاجة. لما تخلص سجّل التقدم تلقائياً بـ data/progress/${t.owner}.json وارفعه على GitHub.`;
+      `ارجع للوثائق بـ docs/design/ حسب الحاجة. لما تخلص سجّل التقدم تلقائياً بـ docs/data/progress/${t.owner}.json وارفعه على GitHub.`;
   };
 
   const updatePrompt = (t, status = "done") =>
     `حدّث تقدمي: المهمة ${t.id} صارت ${status}. الملاحظة: <اكتب شنو صار>.\n` +
-    `سجّلها بـ data/progress/${t.owner}.json مع log لليوم، شغّل python scripts/validate_progress.py، وسوّي commit و push.`;
+    `سجّلها بـ docs/data/progress/${t.owner}.json مع log لليوم، شغّل python docs/scripts/validate_progress.py، وسوّي commit و push.`;
 
   /* ---------------- router ---------------- */
   const VIEWS = ["home", "team", "board", "roadmap", "story", "game", "ideas", "prompts"];
@@ -410,7 +411,7 @@
       h("div", { class: "form-actions" },
         h("button", { class: "btn primary small", type: "button", onclick: () => copy(tp) }, "نسخ برومبت البدء"),
         h("button", { class: "btn small", type: "button", onclick: () => copy(up) }, "نسخ برومبت التحديث"),
-        h("a", { class: "btn small", href: ghBlob("docs/PROJECT_ROADMAP.md"), target: "_blank", rel: "noopener" }, "الخطة")));
+        h("a", { class: "btn small", href: ghBlob("design/PROJECT_ROADMAP.md"), target: "_blank", rel: "noopener" }, "الخطة")));
     const dlg = $("#taskModal");
     if (typeof dlg.showModal === "function") { if (!dlg.open) dlg.showModal(); } else dlg.setAttribute("open", "");
   }
@@ -439,7 +440,7 @@
     $("#ideaCopy").addEventListener("click", () => {
       const i = read();
       if (!i.title) { $("#ideaTitle").focus(); return; }
-      copy(`أنا ${S.members[i.author]?.name} (${i.author}). عندي فكرة للعبة، سجّلها حسب AGENTS.md §4.\n` +
+      copy(`أنا ${S.members[i.author]?.name} (${i.author}). عندي فكرة للعبة، سجّلها حسب docs/AGENTS.md §4.\n` +
         `النوع: ${i.category}\nالعنوان: ${i.title}\nالتفاصيل: ${i.body}`);
     });
   }

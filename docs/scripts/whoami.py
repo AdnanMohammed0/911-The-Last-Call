@@ -1,8 +1,8 @@
 """Identify which team member is working in this clone.
 
 Matches `git config user.email` / `user.name` (and the gh CLI login, if available)
-against data/team.json. Prints the member id, or exits 1 if nobody matches.
-Run: python scripts/whoami.py
+against docs/data/team.json. Prints the member id, or exits 1 if nobody matches.
+Run: python docs/scripts/whoami.py
 """
 import json, pathlib, subprocess, sys
 

@@ -1,0 +1,1 @@
+Read and follow docs/AGENTS.md before doing anything in this repository (identify the team member, record progress in docs/data/progress/<id>.json and push automatically, no AI attribution in commits).

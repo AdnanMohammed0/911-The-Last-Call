@@ -2,8 +2,8 @@
 
 > Target: **Steam Early Access** with a complete first campaign (3 shifts, 3 endings) for 2–4 players.
 > Team assumption: 2–4 core developers + contract audio/3D. Estimates are in weeks from project start.
-> Task IDs match the website ([`index.html`](../index.html)). Tags: `NET` Networking · `GAME` Core Gameplay · `AUDIO` Audio/Voice · `AI` AI · `UI` UI/UX · `ART` 3D Art.
-> Owner tags: `@adnan` · `@ali` · `@mohamed` (see [`data/team.json`](../data/team.json)). After editing tasks here, run `python scripts/build_tasks.py`.
+> Task IDs match the website ([`docs/index.html`](../index.html)). Tags: `NET` Networking · `GAME` Core Gameplay · `AUDIO` Audio/Voice · `AI` AI · `UI` UI/UX · `ART` 3D Art.
+> Owner tags: `@adnan` · `@ali` · `@mohamed` (see [`docs/data/team.json`](../data/team.json)). After editing tasks here, run `python docs/scripts/build_tasks.py`.
 
 ## Team Ownership
 

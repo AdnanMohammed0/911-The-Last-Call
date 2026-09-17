@@ -1,7 +1,7 @@
 # Prompt — Mohamed (`mohamed`)
 
 > **Role:** Light Programming: Data, Tooling, Content & Simple Systems
-> **GitHub:** [@MohamedFSD](https://github.com/MohamedFSD) · **Progress file:** `data/progress/mohamed.json`
+> **GitHub:** [@MohamedFSD](https://github.com/MohamedFSD) · **Progress file:** `docs/data/progress/mohamed.json`
 
 ## هويتك بالمشروع (for the AI)
 
@@ -20,7 +20,7 @@
 - إذا المهمة احتاجت شي معقد (شبكات، AI، أداء)، وقف وسجّل الحالة `blocked` مع note تذكر إنها تحتاج Adnan.
 
 المجلدات: `data/calls/`, `data/dialogue/`, `data/traits/`, `data/consequences/rules/`, `autoload/save_manager.gd`, `audio/`, `tests/`, `.github/workflows/`.
-المرجع: `docs/GAMEPLAY_MECHANICS.md` §3–§6 و §10–§12، و `docs/ARCHITECTURE.md` §7.4 و §8.
+المرجع: `docs/design/GAMEPLAY_MECHANICS.md` §3–§6 و §10–§12، و `docs/design/ARCHITECTURE.md` §7.4 و §8.
 
 **يعتمد على:** Adnan (FlagSystem P4-01، CallDirector P2-04، Health و Noise hooks).
 **يعتمد عليه:** Adnan (CallData Resources P2-01)، و Ali (DialogueGraph P2-02 للمحرر).
@@ -53,7 +53,7 @@
 | P5-09 | GAME | Steam Release | Next Fest demo build |
 | P5-10 | GAME | Steam Release | Release candidate & day-one plan |
 
-> المصدر الحي للحالات: `data/progress/mohamed.json` + `data/tasks.json`.
+> المصدر الحي للحالات: `docs/data/progress/mohamed.json` + `docs/data/tasks.json`.
 
 ---
 
@@ -61,8 +61,8 @@
 
 ### 🟢 بداية الجلسة
 ```text
-أنا Mohamed. اقرأ AGENTS.md و prompts/mohamed.md و data/progress/mohamed.json.
-لخّصلي وين وصلت، وشوف data/progress/adnan.json إذا الأنظمة اللي أحتاجها خلصت، واقترح أسهل مهمة جاية أكدر أبدي بيها.
+أنا Mohamed. اقرأ docs/AGENTS.md و docs/prompts/mohamed.md و docs/data/progress/mohamed.json.
+لخّصلي وين وصلت، وشوف docs/data/progress/adnan.json إذا الأنظمة اللي أحتاجها خلصت، واقترح أسهل مهمة جاية أكدر أبدي بيها.
 ```
 
 ### 🛠️ الأدوات و CI (P1-02, P1-03)
@@ -74,7 +74,7 @@
 ### 🗂️ طبقة البيانات (P2-01, P2-02)
 ```text
 أنا Mohamed. اكتب Resources: CallData, StressProfile, RecordEntry, DialogueGraph, DialogueNode, DialogueChoice
-حسب docs/GAMEPLAY_MECHANICS.md §5.2 و §5.6 (بس @export fields + validate() بسيطة). Adnan و Ali يعتمدون عليها، فخلّي الأسماء نفس الموجودة بالوثيقة.
+حسب docs/design/GAMEPLAY_MECHANICS.md §5.2 و §5.6 (بس @export fields + validate() بسيطة). Adnan و Ali يعتمدون عليها، فخلّي الأسماء نفس الموجودة بالوثيقة.
 ```
 
 ### ⏱️ أنظمة بسيطة (P2-06, P2-10, P2-15, P3-05, P3-06, P3-15)
@@ -101,7 +101,7 @@
 ```
 
 ### 🔄 التسجيل والرفع (تلقائي)
-ما تحتاج تطلبه. بعد كل شغل مكتمل الـ AI يحدّث `data/progress/mohamed.json` ويسوي commit و push من نفسه (AGENTS.md §3).
+ما تحتاج تطلبه. بعد كل شغل مكتمل الـ AI يحدّث `docs/data/progress/mohamed.json` ويسوي commit و push من نفسه (docs/AGENTS.md §3).
 إذا تريد تفرض تحديث معيّن:
 ```text
 المهمة <ID> صارت <done|testing|blocked>، الملاحظة: <...>. سجّلها وارفعها.

@@ -1,6 +1,6 @@
 """GitHub Action safety net: log pushed work into the author's progress file.
 
-For every pushed commit that did NOT already update data/progress/, this:
+For every pushed commit that did NOT already update docs/data/progress/, this:
   * identifies the team member (commit author email / GitHub username / name),
   * appends a log entry (date, summary, task IDs, files, commit),
   * updates task statuses from the commit message:
@@ -11,7 +11,7 @@ For every pushed commit that did NOT already update data/progress/, this:
   * commits each changed progress file authored by that member.
 
 Skip a commit with "[skip progress]" in its message.
-Run locally (dry run): GITHUB_EVENT_PATH=event.json python scripts/auto_progress.py --dry-run
+Run locally (dry run): GITHUB_EVENT_PATH=event.json python docs/scripts/auto_progress.py --dry-run
 """
 import json, os, pathlib, re, subprocess, sys
 
@@ -52,7 +52,7 @@ def main() -> int:
                                    cwd=ROOT, capture_output=True, text=True).stdout.split()
         if not c.get("distinct", True) or "[skip progress]" in msg or msg.startswith("progress("):
             continue
-        if any(f.startswith("data/progress/") for f in files):
+        if any(f.startswith("docs/data/progress/") for f in files):
             continue  # the member's AI already recorded it
         author = c.get("author", {})
         mid = match_member(list(members.values()), author.get("email", ""), author.get("name", ""), author.get("username", ""))

@@ -1,8 +1,8 @@
-"""Regenerate data/tasks.json from docs/PROJECT_ROADMAP.md.
+"""Regenerate docs/data/tasks.json from docs/design/PROJECT_ROADMAP.md.
 
 Owners come from the `@owner` tag on each roadmap line, e.g.
 - [ ] `P1-04` `NET` `@adnan` NetManager host/join ...
-Run: python scripts/build_tasks.py
+Run: python docs/scripts/build_tasks.py
 """
 import json, re, pathlib
 
@@ -12,7 +12,7 @@ GROUP = re.compile(r"^### (\d\.\d) (.+)$")
 PHASE = re.compile(r"^## Phase \d — (.+?) \(")
 
 tasks, group = [], ""
-for line in (ROOT / "docs/PROJECT_ROADMAP.md").read_text(encoding="utf-8").splitlines():
+for line in (ROOT / "design/PROJECT_ROADMAP.md").read_text(encoding="utf-8").splitlines():
     if m := PHASE.match(line):
         group = m.group(1)
     elif m := GROUP.match(line):

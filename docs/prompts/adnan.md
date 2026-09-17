@@ -1,7 +1,7 @@
 # Prompt — Adnan (`adnan`)
 
 > **Role:** AI, Networking & Core Gameplay
-> **GitHub:** [@AdnanMohammed0](https://github.com/AdnanMohammed0) · **Progress file:** `data/progress/adnan.json`
+> **GitHub:** [@AdnanMohammed0](https://github.com/AdnanMohammed0) · **Progress file:** `docs/data/progress/adnan.json`
 
 ## هويتك بالمشروع (for the AI)
 
@@ -12,7 +12,7 @@
 - **جزء من اللعب:** هيكل المشروع، متحكم اللاعب والتفاعل، مدير المكالمات، القتال والصحة والـ Sanity وقدرات الفئات، منطق محلل نبرة الصوت، مسار المهمة، ونظام الرايات (FlagSystem) والأداء.
 
 المجلدات: `autoload/`, `core/net/`, `core/bt/`, `core/fsm/`, `scenes/shared/player/`, `scenes/field/anomalies/`, `tests/`.
-المرجع: `docs/ARCHITECTURE.md` (§3–§7)، و `docs/GAMEPLAY_MECHANICS.md` (§2، §3، §5، §7–§9).
+المرجع: `docs/design/ARCHITECTURE.md` (§3–§7)، و `docs/design/GAMEPLAY_MECHANICS.md` (§2، §3، §5، §7–§9).
 
 **يعتمد عليه:** Ali (الخرائط تحتاج player و mission flow، والواجهات تحتاج signals)، و Mohamed (يبني فوق FlagSystem و CallDirector).
 **الأولوية:** المهام اللي توقف شغل الباقين تخلص أولاً: P1-01، P1-04، P1-06، P1-12، P2-04، P4-01.
@@ -59,7 +59,7 @@
 | P5-01 | NET | Steam Release | Steamworks: achievements, presence, cloud |
 | P5-02 | NET | Steam Release | NAT traversal / relay validation |
 
-> المصدر الحي للحالات: `data/progress/adnan.json` + `data/tasks.json`.
+> المصدر الحي للحالات: `docs/data/progress/adnan.json` + `docs/data/tasks.json`.
 
 ---
 
@@ -67,26 +67,26 @@
 
 ### 🟢 بداية الجلسة
 ```text
-أنا Adnan. اقرأ AGENTS.md و prompts/adnan.md و data/progress/adnan.json.
+أنا Adnan. اقرأ docs/AGENTS.md و docs/prompts/adnan.md و docs/data/progress/adnan.json.
 لخّصلي وين وصلت، وشنو مهامي اللي موقفة شغل Ali و Mohamed، واقترح المهمة الجاية.
 ```
 
 ### 🧱 أساس المشروع واللاعب (P1-01, P1-12, P1-13)
 ```text
-أنا Adnan. أنشئ مشروع Godot 4 بالهيكل الموجود بـ docs/ARCHITECTURE.md §2 مع autoload skeletons بـ static typing،
+أنا Adnan. أنشئ مشروع Godot 4 بالهيكل الموجود بـ docs/design/ARCHITECTURE.md §2 مع autoload skeletons بـ static typing،
 وبعدها FPS controller (walk/sprint/crouch/lean/stamina) ونظام التفاعل الشبكي حسب §4.4.
 ```
 
 ### 🌐 الشبكات (P1-04 → P1-11, P2-05, P2-14)
 ```text
 أنا Adnan. اشتغل على <P1-04 | P1-05 | P1-06 | P1-07 | P1-08 | P2-14>.
-اتبع docs/ARCHITECTURE.md §4 حرفياً: host-authoritative، وكل RPC من نوع any_peer يتحقق من المرسل.
+اتبع docs/design/ARCHITECTURE.md §4 حرفياً: host-authoritative، وكل RPC من نوع any_peer يتحقق من المرسل.
 اكتب مشهد اختبار يشغّل host + client على نفس الجهاز.
 ```
 
 ### 🎙️ الصوت الشبكي والتحليل (P1-15 → P1-17, P2-08, P3-14)
 ```text
-أنا Adnan. نفّذ خط الصوت حسب docs/ARCHITECTURE.md §6 (Capture → Opus → channel 2 → jitter buffer → Generator)،
+أنا Adnan. نفّذ خط الصوت حسب docs/design/ARCHITECTURE.md §6 (Capture → Opus → channel 2 → jitter buffer → Generator)،
 ومنطق محلل نبرة الصوت (GAMEPLAY_MECHANICS §5.3) مع API واضح. الواجهة الرسومية للـ VSA يسويها Ali.
 ```
 
@@ -115,7 +115,7 @@
 ```
 
 ### 🔄 التسجيل والرفع (تلقائي)
-ما تحتاج تطلبه. بعد كل شغل مكتمل الـ AI يحدّث `data/progress/adnan.json` ويسوي commit و push من نفسه (AGENTS.md §3).
+ما تحتاج تطلبه. بعد كل شغل مكتمل الـ AI يحدّث `docs/data/progress/adnan.json` ويسوي commit و push من نفسه (docs/AGENTS.md §3).
 إذا تريد تفرض تحديث معيّن:
 ```text
 المهمة <ID> صارت <done|testing|blocked>، الملاحظة: <...>. سجّلها وارفعها.

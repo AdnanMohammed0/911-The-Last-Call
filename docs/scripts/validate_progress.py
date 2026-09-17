@@ -1,6 +1,6 @@
-"""Validate data/progress/*.json against data/tasks.json and data/team.json.
+"""Validate docs/data/progress/*.json against docs/data/tasks.json and docs/data/team.json.
 
-Run: python scripts/validate_progress.py   (exit code 1 on errors)
+Run: python docs/scripts/validate_progress.py   (exit code 1 on errors)
 """
 import json, pathlib, re, sys
 

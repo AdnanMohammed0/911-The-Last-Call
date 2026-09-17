@@ -1,7 +1,7 @@
 # Prompt — Ali Imad (`ali`)
 
 > **Role:** 3D, World, Art & UI
-> **GitHub:** [@Ali-Imad-Dev](https://github.com/Ali-Imad-Dev) · **Progress file:** `data/progress/ali.json`
+> **GitHub:** [@Ali-Imad-Dev](https://github.com/Ali-Imad-Dev) · **Progress file:** `docs/data/progress/ali.json`
 
 ## هويتك بالمشروع (for the AI)
 
@@ -13,7 +13,7 @@
 - **محرر الحوارات المرئي** (GraphEdit plugin).
 
 المجلدات: `scenes/boot/`, `scenes/dispatch/`, `scenes/field/<maps>/`, `scenes/aftermath/`, `ui/`, `art/`, `addons/dialogue_editor/`.
-المرجع: الـ GDD للجو العام (واقعي مظلم، VHS، Bodycam)، و `docs/GAMEPLAY_MECHANICS.md` §5 (أدوات غرفة العمليات) و §10 (السيناريوهات).
+المرجع: الـ GDD للجو العام (واقعي مظلم، VHS، Bodycam)، و `docs/design/GAMEPLAY_MECHANICS.md` §5 (أدوات غرفة العمليات) و §10 (السيناريوهات).
 
 **يعتمد على:** Adnan (player controller، signals الـ CallDirector، Health/Sanity، Mission flow)، و Mohamed (Resources الحوارات والمكالمات P2-01/P2-02).
 **نصيحة:** ابدأ بـ grey-box و placeholder UI بسرعة، لأن الكل يحتاجها للاختبار. الأصول الكبيرة ترفعها بـ Git LFS.
@@ -47,7 +47,7 @@
 | P5-05 | ART | Steam Release | Key art & trailer |
 | P5-08 | UI | Steam Release | Steam Deck verification |
 
-> المصدر الحي للحالات: `data/progress/ali.json` + `data/tasks.json`.
+> المصدر الحي للحالات: `docs/data/progress/ali.json` + `docs/data/tasks.json`.
 
 ---
 
@@ -55,8 +55,8 @@
 
 ### 🟢 بداية الجلسة
 ```text
-أنا Ali. اقرأ AGENTS.md و prompts/ali.md و data/progress/ali.json.
-لخّصلي وين وصلت، وشوف data/progress/adnan.json و mohamed.json إذا الأنظمة اللي تحتاجها واجهاتي وخرائطي خلصت، واقترح المهمة الجاية.
+أنا Ali. اقرأ docs/AGENTS.md و docs/prompts/ali.md و docs/data/progress/ali.json.
+لخّصلي وين وصلت، وشوف docs/data/progress/adnan.json و mohamed.json إذا الأنظمة اللي تحتاجها واجهاتي وخرائطي خلصت، واقترح المهمة الجاية.
 ```
 
 ### 🧱 Grey-box والأبواب والقوائم (P1-14, P1-18, P1-19)
@@ -69,7 +69,7 @@
 ### 🖥️ واجهات غرفة العمليات (P2-07, P2-09, P2-11 → P2-13)
 ```text
 أنا Ali. ابني <Phone UI | VSA scrub & tag | CCTV grid | Records terminal | Case Board> بـ ui/dispatch/
-حسب docs/GAMEPLAY_MECHANICS.md §5. شكل الشاشات CRT قديم (scanlines، خط monospace). اربطها بـ signals الـ CallDirector و VSA من Adnan.
+حسب docs/design/GAMEPLAY_MECHANICS.md §5. شكل الشاشات CRT قديم (scanlines، خط monospace). اربطها بـ signals الـ CallDirector و VSA من Adnan.
 ```
 
 ### ✍️ محرر الحوارات (P2-03)
@@ -97,7 +97,7 @@ grey-box أولاً + NavigationRegion3D + نقاط اقتحام + مناطق م
 ```
 
 ### 🔄 التسجيل والرفع (تلقائي)
-ما تحتاج تطلبه. بعد كل شغل مكتمل الـ AI يحدّث `data/progress/ali.json` ويسوي commit و push من نفسه (AGENTS.md §3).
+ما تحتاج تطلبه. بعد كل شغل مكتمل الـ AI يحدّث `docs/data/progress/ali.json` ويسوي commit و push من نفسه (docs/AGENTS.md §3).
 إذا تريد تفرض تحديث معيّن:
 ```text
 المهمة <ID> صارت <done|testing|blocked>، الملاحظة: <...>. سجّلها وارفعها.

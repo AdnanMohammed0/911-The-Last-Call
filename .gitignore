@@ -18,6 +18,7 @@ Thumbs.db
 .idea/
 .claude/*
 !.claude/settings.json
+!.claude/CLAUDE.md
 
 # Python
 __pycache__/

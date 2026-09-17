@@ -1,7 +1,7 @@
 # ARCHITECTURE — 911: The Last Call
 
 > Technical architecture for a 2–4 player co-op dispatch simulator / tactical CQB / psychological horror game built on **Godot 4.x (GDScript)**.
-> Source of truth for design intent: [`game_design_document_911_The_Last_call.md`](../game_design_document_911_The_Last_call.md) (working title in GDD: *911: Dead Line*).
+> Source of truth for design intent: [`game_design_document_911_The_Last_call.md`](game_design_document_911_The_Last_call.md) (working title in GDD: *911: Dead Line*).
 
 ---
 

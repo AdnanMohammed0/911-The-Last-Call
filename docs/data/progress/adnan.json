@@ -3,8 +3,8 @@
  "updated_at": "2026-09-17",
  "tasks": {
   "P1-01": {
-   "status": "testing",
-   "note": "هيكل المجلدات حسب ARCHITECTURE §2 + autoloads (EventBus, GameState, NetManager) بـ static typing + مشهد boot مؤقت. يشتغل headless على Godot 4.7.2. ينتظر الدمج على main.",
+   "status": "done",
+   "note": "مشروع Godot 4.7 جاهز: هيكل المجلدات حسب ARCHITECTURE §2، و autoloads (EventBus, GameState, NetManager) بـ static typing ومسجلة، ومشهد boot مؤقت. اختُبر headless واشتغل بدون أخطاء.",
    "updated_at": "2026-09-17"
   }
  },
@@ -77,6 +77,16 @@
     "autoload/",
     "scenes/boot/",
     "project.godot"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-01"
+   ],
+   "summary": "إغلاق P1-01: أساس المشروع اختُبر (headless boot OK) وصار جاهز للفريق يبني فوقه.",
+   "files": [
+    "docs/data/progress/adnan.json"
    ]
   }
  ]

@@ -50,7 +50,10 @@ func _ready() -> void:
 		EventBus.phase_changed.connect(_on_phase_changed)
 	
 	if NetManager != null:
-		NetManager.player_left.connect(_on_player_left)
+		if NetManager.has_signal("peer_left"):
+			NetManager.peer_left.connect(_on_player_left)
+		if NetManager.has_signal("peer_dropped"):
+			NetManager.peer_dropped.connect(_on_player_left)
 
 
 func _process(delta: float) -> void:

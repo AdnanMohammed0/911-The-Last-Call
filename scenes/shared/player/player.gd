@@ -5,6 +5,8 @@ extends CharacterBody3D
 
 enum Stance { STAND, CROUCH }
 
+const GROUP: StringName = &"players"
+
 signal stance_changed(new_stance: Stance)
 signal stamina_changed(value: float, max_value: float)
 signal exhausted()
@@ -68,9 +70,12 @@ var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var _capsule: CapsuleShape3D = _collision.shape as CapsuleShape3D
 @onready var _head: Node3D = $Head
 @onready var _camera: Camera3D = $Head/Camera3D
+@onready var _interactor: PlayerInteractor = $PlayerInteractor
+@onready var _hud: CanvasLayer = $HUD
 
 
 func _ready() -> void:
+	add_to_group(GROUP)
 	stamina = sprint_duration
 	_current_height = stand_height
 	_apply_height()
@@ -82,6 +87,8 @@ func _apply_authority() -> void:
 	_camera.current = is_local
 	set_physics_process(is_local)
 	set_process(is_local)
+	_interactor.set_physics_process(is_local)
+	_hud.visible = is_local
 	if is_local and DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -101,6 +108,23 @@ func _physics_process(delta: float) -> void:
 	_update_sprint_and_stamina(delta)
 	_update_movement(delta)
 	_update_lean(delta)
+
+
+## Returns the player owned by `peer_id` in the current tree, or null.
+static func find_by_peer(tree: SceneTree, peer_id: int) -> Player:
+	for node: Node in tree.get_nodes_in_group(GROUP):
+		var player: Player = node as Player
+		if player != null and player.peer_id == peer_id:
+			return player
+	return null
+
+
+func get_camera() -> Camera3D:
+	return _camera
+
+
+func get_eye_position() -> Vector3:
+	return _camera.global_position
 
 
 func get_max_stamina() -> float:

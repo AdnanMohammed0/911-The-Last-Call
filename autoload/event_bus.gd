@@ -23,4 +23,8 @@ signal player_downed(peer_id: int)
 signal player_revived(peer_id: int, by_peer: int)
 signal sanity_changed(peer_id: int, value: float)
 
+# --- Interaction ---
+## Emitted on every peer after the host confirmed `peer_id` used `interactable`.
+signal interacted(interactable: Node, peer_id: int)
+
 @warning_ignore_restore("unused_signal")

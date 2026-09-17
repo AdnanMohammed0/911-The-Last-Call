@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" path="res://scenes/shared/player/player.gd" id="1_player"]
 [ext_resource type="Script" path="res://scenes/shared/player/player_input.gd" id="2_input"]
+[ext_resource type="Script" path="res://scenes/shared/player/player_interactor.gd" id="3_interactor"]
+[ext_resource type="PackedScene" path="res://ui/hud/interaction_prompt.tscn" id="4_prompt"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 resource_local_to_scene = true
@@ -25,3 +27,11 @@ fov = 75.0
 
 [node name="PlayerInput" type="Node" parent="."]
 script = ExtResource("2_input")
+
+[node name="PlayerInteractor" type="Node" parent="."]
+script = ExtResource("3_interactor")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="InteractionPrompt" parent="HUD" node_paths=PackedStringArray("interactor") instance=ExtResource("4_prompt")]
+interactor = NodePath("../../PlayerInteractor")

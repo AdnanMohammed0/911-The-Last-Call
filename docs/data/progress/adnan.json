@@ -11,6 +11,11 @@
    "status": "done",
    "note": "FPS controller مكتمل: walk/sprint/crouch/lean/stamina، اختُبر headless (9 اختبارات) وتجربة يدوية بـ player_sandbox. المزامنة الشبكية بـ P1-07.",
    "updated_at": "2026-09-17"
+  },
+  "P1-13": {
+   "status": "testing",
+   "note": "Interactable (press/hold) + PlayerInteractor (raycast) + HUD prompt. الهوست يتحقق من المسافة، مدة الـ hold، الـ cooldown، ومن ماسك الشي. 13 اختبار offline + اختبار شبكة حقيقي (host+client عبر ENet) نجحت. باقي تجربة يدوية؛ مزامنة الحالة للي يدخل متأخر بـ P1-07.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -127,6 +132,23 @@
    "summary": "إغلاق P1-12: متحكم اللاعب اختُبر يدوياً وصار على main.",
    "files": [
     "docs/data/progress/adnan.json"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-13"
+   ],
+   "summary": "نظام التفاعل الشبكي: Interactable base + Toggle + Pickup، PlayerInteractor، واجهة prompt/progress، زر F، طبقة interactable، وأمثلة (مفتاح ضوء + صندوق أدلة) بالـ sandbox.",
+   "files": [
+    "scenes/shared/interactables/",
+    "scenes/shared/player/player_interactor.gd",
+    "scenes/shared/player/player.gd",
+    "scenes/shared/player/player.tscn",
+    "scenes/shared/player/player_sandbox.tscn",
+    "ui/hud/",
+    "autoload/event_bus.gd",
+    "project.godot"
    ]
   }
  ]

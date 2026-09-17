@@ -29,6 +29,7 @@ NetDebug="*res://autoload/net_debug.gd"
 VoiceManager="*res://autoload/voice_manager.gd"
 VoteManager="*res://autoload/vote_manager.gd"
 CallDirector="*res://autoload/call_director.gd"
+BTDebugger="*res://autoload/bt_debugger.gd"
 
 [display]
 

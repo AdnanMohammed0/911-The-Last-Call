@@ -91,6 +91,11 @@
    "status": "testing",
    "note": "HealthComponent على الهوست ومتزامن بـ HostSync: ضرر حسب المنطقة (رأس ×2، جذع ×1، أطراف ×0.75) مع مقاومة الكلاس (Breacher 140 HP / 25%)، رجوع الصحة لأقرب 25% بس، Downed عند 0 (نزيف 45 ث، زحف 0.6 م/ث، ما يتفاعل)، إنعاش بالإمساك: Medic 4 ث أو Trauma Kit 8 ث (النزيف يوقف أثناء الإنعاش، يرجع 40%)، انتهاء النزيف = Critical. ضربة ساق/يد ≥30 ترسل trait (limping / fractured_hand). واجهة صحة وشاشة Downed. 8 اختبارات GUT + اختبار 3 عمليات (Medic يمشي ويسوي إنعاش حقيقي) نجحت.",
    "updated_at": "2026-09-17"
+  },
+  "P3-07": {
+   "status": "testing",
+   "note": "Behavior tree runtime بـ core/bt: Selector (reactive، يقطع الفرع الأقل أولوية)، Sequence (يكمل من الابن الشغال)، Parallel، Decorator (Invert/Succeed/Repeat/Cooldown/TimeLimit)، BTCall (دوال الـ agent + تنظيف _exit عند المقاطعة)، BTCheck للـ blackboard، BTWait. الشجرة Resource مشتركة والحالة لكل agent بالـ BTBlackboard. BTRunner على الهوست 10Hz موزع. BT.sel/seq/... لبناء الشجرة بالكود. Debugger (F4، Tab يبدل) يعرض الشجرة بالألوان والـ blackboard. 12 اختبار GUT نجحت.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -557,6 +562,19 @@
     "ui/hud/health_hud.tscn",
     "autoload/event_bus.gd",
     "tests/test_health_component.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P3-07"
+   ],
+   "summary": "محرك Behavior Tree كامل مع الـ blackboard والـ decorators وأداة debugger (F4).",
+   "files": [
+    "core/bt/",
+    "autoload/bt_debugger.gd",
+    "project.godot",
+    "tests/test_behavior_tree.gd"
    ]
   }
  ]

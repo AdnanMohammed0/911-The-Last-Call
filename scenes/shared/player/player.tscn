@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://core/net/movement_validator.gd" id="5_validator"]
 [ext_resource type="Script" path="res://scenes/shared/player/player_body.gd" id="6_body"]
 [ext_resource type="PackedScene" path="res://ui/hud/pause_menu.tscn" id="7_pause"]
+[ext_resource type="PackedScene" path="res://ui/hud/voice_hud.tscn" id="8_voice"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 resource_local_to_scene = true
@@ -88,6 +89,11 @@ height = 0.08
 
 [sub_resource type="BoxMesh" id="Mesh_brim"]
 size = Vector3(0.2, 0.015, 0.1)
+
+[sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_voice"]
+resource_local_to_scene = true
+mix_rate = 16000.0
+buffer_length = 0.5
 
 [node name="Player" type="CharacterBody3D"]
 floor_snap_length = 0.3
@@ -181,6 +187,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, -0.08)
 mesh = SubResource("Mesh_brim")
 surface_material_override/0 = SubResource("Mat_black")
 
+[node name="VoiceEmitter" type="AudioStreamPlayer3D" parent="Head"]
+stream = SubResource("AudioStreamGenerator_voice")
+attenuation_model = 0
+unit_size = 3.0
+max_distance = 35.0
+bus = &"VoiceProximity"
+attenuation_filter_cutoff_hz = 5000.0
+attenuation_filter_db = -18.0
+
 [node name="NameLabel" type="Label3D" parent="Head"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0)
 pixel_size = 0.0035
@@ -211,6 +226,8 @@ script = ExtResource("3_interactor")
 
 [node name="InteractionPrompt" parent="HUD" node_paths=PackedStringArray("interactor") instance=ExtResource("4_prompt")]
 interactor = NodePath("../../PlayerInteractor")
+
+[node name="VoiceHud" parent="HUD" instance=ExtResource("8_voice")]
 
 [node name="PauseMenu" parent="HUD" node_paths=PackedStringArray("player") instance=ExtResource("7_pause")]
 visible = false

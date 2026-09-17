@@ -9,12 +9,14 @@ extends Control
 @onready var _leave_button: Button = %LeaveButton
 @onready var _quit_button: Button = %QuitButton
 @onready var _session_label: Label = %SessionLabel
+@onready var _voice_mode_button: Button = %VoiceModeButton
 
 
 func _ready() -> void:
 	_resume_button.pressed.connect(close)
 	_leave_button.pressed.connect(_on_leave_pressed)
 	_quit_button.pressed.connect(_on_quit_pressed)
+	_voice_mode_button.pressed.connect(_on_voice_mode_pressed)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -36,6 +38,7 @@ func open() -> void:
 	_leave_button.text = leave_text if NetManager.is_online() else "Back to main menu"
 	_session_label.text = "Hosting · %d players" % NetManager.roster.size() if NetManager.is_host() \
 		else ("Connected as %s" % NetManager.get_player_name(NetManager.get_local_peer_id()) if NetManager.is_online() else "Offline")
+	_voice_mode_button.text = "Voice: %s" % VoiceManager.get_mode_text()
 	_resume_button.grab_focus()
 
 
@@ -44,6 +47,11 @@ func close() -> void:
 	player.set_input_enabled(true)
 	if DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+func _on_voice_mode_pressed() -> void:
+	VoiceManager.toggle_mode()
+	_voice_mode_button.text = "Voice: %s" % VoiceManager.get_mode_text()
 
 
 func _on_leave_pressed() -> void:

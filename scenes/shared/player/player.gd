@@ -212,6 +212,10 @@ func apply_server_correction(target_position: Vector3) -> void:
 	_publish_sync_state()
 
 
+func get_voice_emitter() -> AudioStreamPlayer3D:
+	return $Head/VoiceEmitter
+
+
 func get_camera() -> Camera3D:
 	return _camera
 

@@ -51,6 +51,21 @@
    "status": "testing",
    "note": "NetDebug overlay (F3 أو -- --netdebug): حالة الجلسة، FPS، لكل peer: RTT + avg/max آخر 30 ث + jitter + packet loss + strikes التحقق (للهوست). الباندويث لكل قناة: voice (ch 2) من العدادات، game (ch 0) = الباقي، total من ENet. اختبار host + client نجح.",
    "updated_at": "2026-09-17"
+  },
+  "P1-15": {
+   "status": "testing",
+   "note": "الميكروفون → Record bus (AudioEffectCapture) → mono 16kHz إطارات 20ms → codec → RPC unreliable_ordered على channel 2 → jitter buffer 60ms → AudioStreamGenerator. الـ codec حالياً IMA ADPCM مكتوب بـ GDScript (~65 kbps، SNR 35 dB) خلف واجهة VoiceCodec؛ Opus يحتاج GDExtension خارجي (twovoip) ينضاف بعد الموافقة. اختبار 3 عمليات نجح + الميكروفون الحقيقي يلتقط.",
+   "updated_at": "2026-09-17"
+  },
+  "P1-16": {
+   "status": "testing",
+   "note": "الصوت يطلع من VoiceEmitter (AudioStreamPlayer3D) براس اللاعب: تخفيت بالمسافة (unit 3م، max 35م) + كتمان إذا أكو جدار بين الاثنين (lowpass 900Hz و -8dB). Open mic بـ VAD (RMS gate + hangover) أو push-to-talk بـ Caps Lock، يتبدل من قائمة Esc. واجهة صوت: MIC/RADIO + مستوى الميكروفون + منو يحجي. يرسل voice_noise للـ AI على الهوست.",
+   "updated_at": "2026-09-17"
+  },
+  "P1-17": {
+   "status": "testing",
+   "note": "راديو بزر B: VoiceRadio bus (HighPass 300 + LowPass 3400 + Distortion LOFI + Compressor)، squelch داخل/طالع مولّد بالكود (بدون ملفات)، ما يشتغل الراديو إذا المتكلم أقرب من 4م (تسمعه مباشرة). V كان مذكور بالوثيقة بس مستخدم للـ door kick عند Ali.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -332,6 +347,26 @@
    "summary": "شاشة debug للشبكة (F3): RTT و jitter و packet loss لكل لاعب، والباندويث لكل قناة.",
    "files": [
     "autoload/net_debug.gd",
+    "project.godot"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-15",
+    "P1-16",
+    "P1-17"
+   ],
+   "summary": "الصوت الكامل: التقاط الميكروفون، ضغط ADPCM، إرسال على قناة 2، صوت 3D بالمسافة والجدران، VAD و push-to-talk، راديو بفلاتر و squelch، واجهة مؤشرات الكلام، وأحداث ضوضاء للـ AI.",
+   "files": [
+    "autoload/voice_manager.gd",
+    "core/voice/",
+    "default_bus_layout.tres",
+    "ui/hud/voice_hud.gd",
+    "ui/hud/voice_hud.tscn",
+    "ui/hud/pause_menu.gd",
+    "scenes/shared/player/player.tscn",
+    "autoload/event_bus.gd",
     "project.godot"
    ]
   }

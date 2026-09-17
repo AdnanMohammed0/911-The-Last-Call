@@ -49,6 +49,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Resume"
 
+[node name="VoiceModeButton" type="Button" parent="Center/Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Voice: Open mic"
+
 [node name="LeaveButton" type="Button" parent="Center/Panel"]
 unique_name_in_owner = true
 layout_mode = 2

@@ -33,7 +33,7 @@
       "note": "Trace mini-game (3-tower triangulation) for Tech Operator: TraceConsole resource with dial alignment logic (frequency/phase/gain), noise drift, 6-10s per tower lock, radius calculation (1=2km, 2=400m, 3=50m), Dead Frequency impossible locations. TraceMiniGame UI with three interactive dials. Integrated into DispatchTerminal for Tech Operator class. GUT tests written (10 tests)."
     },
     "P2-15": {
-      "status": "progress",
+      "status": "done",
       "updated_at": "2026-09-18",
       "note": "Loadout armory with budget, class-locked items, requisition: GearItem resource with cost/slot/class restrictions, LoadoutManager autoload with budget tracking, Breacher discount, approach voting (Code 3/Silent/On foot/Decoy with Breacher tie-breaker), LoadoutUI for armory scene. GUT tests written (19 tests)."
     }
@@ -189,7 +189,9 @@
         "project.godot",
         "tests/test_loadout.gd",
         "docs/data/progress/mohamed.json"
-      ]
+      ],
+      "commit": "ea2299a",
+      "auto": true
     }
   ]
 }

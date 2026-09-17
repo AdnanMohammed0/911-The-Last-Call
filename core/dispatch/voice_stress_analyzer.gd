@@ -82,7 +82,7 @@ func get_live_spectrum_bands() -> Dictionary:
 		# Simulated baseline energy when audio bus is not rendering (e.g. headless tests)
 		var read: Dictionary = get_stress_readout(current_playback_time)
 		tremor_mag = float(read.get("tremor_level", 0.3))
-		emf_mag = 0.8 if bool(read.get("emf_detected", false)) else 0.05
+		emf_mag = 0.8 if read.get("emf_detected", false) == true else 0.05
 		voice_mag = 0.1 if background_isolate_active else 0.6
 		treble_mag = 0.35
 	
@@ -173,7 +173,7 @@ func tag_evidence(time_seconds: float, tag_type: StringName) -> Dictionary:
 	
 	match tag_type:
 		&"loop":
-			if bool(readout.get("is_loop", false)):
+			if readout.get("is_loop", false) == true:
 				is_correct = true
 				evidence_key = &"evidence_loop_detected"
 				reason = "Identified pre-recorded audio loop"
@@ -199,7 +199,7 @@ func tag_evidence(time_seconds: float, tag_type: StringName) -> Dictionary:
 				reason = "Tremor level is insufficient for high stress tag"
 		
 		&"emf_hum", &"emf":
-			if bool(readout.get("emf_detected", false)):
+			if readout.get("emf_detected", false) == true:
 				is_correct = true
 				evidence_key = &"evidence_emf_hum"
 				reason = "Identified sub-bass EMF frequency signature (Dead Frequency)"

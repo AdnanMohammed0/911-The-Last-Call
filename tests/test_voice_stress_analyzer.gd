@@ -32,8 +32,8 @@ func test_vsa_stress_readout_curves() -> void:
 	var read_start: Dictionary = vsa.get_stress_readout(0.0)
 	assert_almost_eq(float(read_start["tremor_level"]), 0.1, 0.05)
 	assert_almost_eq(float(read_start["pitch_variance"]), 0.2, 0.05)
-	assert_eq(bool(read_start["is_loop"]), false)
-	assert_eq(bool(read_start["emf_detected"]), true)
+	assert_eq(read_start["is_loop"] == true, false)
+	assert_eq(read_start["emf_detected"] == true, true)
 	
 	# Readout at t = 100s (end)
 	var read_end: Dictionary = vsa.get_stress_readout(100.0)

@@ -448,7 +448,7 @@ func request_dialogue_choice(choice_index: int) -> void:
 		player_class = NetManager.roster[sender].get("class_id", &"")
 	
 	var res: Dictionary = dialogue_runner.select_choice(choice_index, player_class)
-	if not bool(res.get("success", false)):
+	if res.get("success", false) != true:
 		push_warning("Dialogue choice %d rejected: %s" % [choice_index, res.get("reason", "")])
 
 

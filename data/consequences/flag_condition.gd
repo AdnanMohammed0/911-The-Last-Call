@@ -14,7 +14,8 @@ func evaluate(fs: Object = null) -> bool:
 		return true
 	if op == Op.HAS_EVENT:
 		if fs.has_method("has_event"):
-			return bool(fs.call("has_event", key, value))
+			var ev_res: Variant = fs.call("has_event", key, value)
+			return ev_res == true
 		return false
 	
 	var v: Variant = null

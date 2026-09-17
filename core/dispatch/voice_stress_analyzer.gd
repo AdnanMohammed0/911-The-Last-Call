@@ -81,7 +81,7 @@ func get_live_spectrum_bands() -> Dictionary:
 	else:
 		# Simulated baseline energy when audio bus is not rendering (e.g. headless tests)
 		var read: Dictionary = get_stress_readout(current_playback_time)
-		tremor_mag = float(read.get("tremor_level", 0.3))
+		tremor_mag = (read.get("tremor_level", 0.3) as float)
 		emf_mag = 0.8 if read.get("emf_detected", false) == true else 0.05
 		voice_mag = 0.1 if background_isolate_active else 0.6
 		treble_mag = 0.35
@@ -181,7 +181,7 @@ func tag_evidence(time_seconds: float, tag_type: StringName) -> Dictionary:
 				reason = "No repeated audio loop at this timestamp"
 		
 		&"tremor_flat":
-			var tremor: float = float(readout.get("tremor_level", 0.0))
+			var tremor: float = (readout.get("tremor_level", 0.0) as float)
 			if tremor <= 0.25:
 				is_correct = true
 				evidence_key = &"evidence_flat_tremor"
@@ -190,7 +190,7 @@ func tag_evidence(time_seconds: float, tag_type: StringName) -> Dictionary:
 				reason = "Tremor is not flat (genuine stress detected)"
 		
 		&"tremor_high":
-			var tremor: float = float(readout.get("tremor_level", 0.0))
+			var tremor: float = (readout.get("tremor_level", 0.0) as float)
 			if tremor >= 0.6:
 				is_correct = true
 				evidence_key = &"evidence_high_stress"

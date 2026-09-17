@@ -30,15 +30,15 @@ func test_vsa_stress_readout_curves() -> void:
 	
 	# Readout at t = 0s (start)
 	var read_start: Dictionary = vsa.get_stress_readout(0.0)
-	assert_almost_eq(float(read_start["tremor_level"]), 0.1, 0.05)
-	assert_almost_eq(float(read_start["pitch_variance"]), 0.2, 0.05)
+	assert_almost_eq((read_start["tremor_level"] as float), 0.1, 0.05)
+	assert_almost_eq((read_start["pitch_variance"] as float), 0.2, 0.05)
 	assert_eq(read_start["is_loop"] == true, false)
 	assert_eq(read_start["emf_detected"] == true, true)
 	
 	# Readout at t = 100s (end)
 	var read_end: Dictionary = vsa.get_stress_readout(100.0)
-	assert_almost_eq(float(read_end["tremor_level"]), 0.9, 0.05)
-	assert_true(int(read_end["estimated_bpm"]) > 100) # Higher BPM at high tremor
+	assert_almost_eq((read_end["tremor_level"] as float), 0.9, 0.05)
+	assert_true((read_end["estimated_bpm"] as int) > 100) # Higher BPM at high tremor
 
 
 func test_vsa_loop_detection() -> void:
@@ -65,7 +65,7 @@ func test_vsa_background_isolate() -> void:
 	var isolated_bands: Dictionary = vsa.get_live_spectrum_bands()
 	
 	# Voice band should be suppressed in isolate mode
-	assert_true(float(isolated_bands["voice_band"]) < float(normal_bands["voice_band"]))
+	assert_true((isolated_bands["voice_band"] as float) < (normal_bands["voice_band"] as float))
 
 
 func test_vsa_scrub_and_tag_mechanics() -> void:
@@ -77,12 +77,12 @@ func test_vsa_scrub_and_tag_mechanics() -> void:
 	var res_loop_valid: Dictionary = vsa.tag_evidence(12.0, &"loop")
 	assert_true(res_loop_valid["success"])
 	assert_eq(res_loop_valid["evidence_key"], &"evidence_loop_detected")
-	assert_true(float(res_loop_valid["patience_delta"]) > 0.0)
+	assert_true((res_loop_valid["patience_delta"] as float) > 0.0)
 	
 	# Incorrect loop tag at t = 50s
 	var res_loop_invalid: Dictionary = vsa.tag_evidence(50.0, &"loop")
 	assert_false(res_loop_invalid["success"])
-	assert_true(float(res_loop_invalid["patience_delta"]) < 0.0)
+	assert_true((res_loop_invalid["patience_delta"] as float) < 0.0)
 	
 	# Correct EMF tag
 	var res_emf: Dictionary = vsa.tag_evidence(25.0, &"emf_hum")

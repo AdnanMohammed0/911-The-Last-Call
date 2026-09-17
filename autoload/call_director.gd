@@ -568,7 +568,7 @@ func request_vsa_tag(playback_time: float, tag_type: StringName) -> void:
 		return
 	
 	var res: Dictionary = vsa.tag_evidence(playback_time, tag_type)
-	var delta_patience: float = float(res.get("patience_delta", 0.0))
+	var delta_patience: float = (res.get("patience_delta", 0.0) as float)
 	if delta_patience != 0.0:
 		dialogue_runner.modify_patience(delta_patience)
 	
@@ -615,7 +615,7 @@ func apply_snapshot(data: Dictionary) -> void:
 	current_state = CallState.values()[clampi(int(data.get("current_state", 0)), 0, CallState.size() - 1)]
 	active_call_id = StringName(data.get("active_call_id", ""))
 	active_call = registered_calls.get(active_call_id, null)
-	ring_timer = float(data.get("ring_timer", 0.0))
+	ring_timer = (data.get("ring_timer", 0.0) as float)
 	handset_owner_peer_id = int(data.get("handset_owner_peer_id", 0))
 	
 	if EventBus != null:

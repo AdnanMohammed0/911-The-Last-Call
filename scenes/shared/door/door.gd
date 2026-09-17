@@ -150,6 +150,8 @@ func _handle_toggle_open(player_global_pos: Vector3, peer_id: int) -> void:
 		# If open or peeked, close it
 		_set_state(DoorState.CLOSED)
 		_broadcast_sound(SoundType.CLOSE)
+		if NoiseSystem != null:
+			NoiseSystem.emit_door_noise(global_position, DoorAction.TOGGLE_OPEN, peer_id)
 		return
 
 	if is_locked:
@@ -161,6 +163,8 @@ func _handle_toggle_open(player_global_pos: Vector3, peer_id: int) -> void:
 	swing_direction = _calculate_swing_direction(player_global_pos)
 	_set_state(DoorState.OPEN)
 	_broadcast_sound(SoundType.OPEN)
+	if NoiseSystem != null:
+		NoiseSystem.emit_door_noise(global_position, DoorAction.TOGGLE_OPEN, peer_id)
 
 
 func _handle_peek(player_global_pos: Vector3, peer_id: int) -> void:
@@ -173,14 +177,20 @@ func _handle_peek(player_global_pos: Vector3, peer_id: int) -> void:
 		# If already peeked, close it
 		_set_state(DoorState.CLOSED)
 		_broadcast_sound(SoundType.CLOSE)
+		if NoiseSystem != null:
+			NoiseSystem.emit_door_noise(global_position, DoorAction.TOGGLE_OPEN, peer_id)
 	elif current_state == DoorState.CLOSED:
 		swing_direction = _calculate_swing_direction(player_global_pos)
 		_set_state(DoorState.PEEK)
 		_broadcast_sound(SoundType.PEEK)
+		if NoiseSystem != null:
+			NoiseSystem.emit_door_noise(global_position, DoorAction.PEEK, peer_id)
 	elif current_state == DoorState.OPEN:
 		# Can pull back to peek
 		_set_state(DoorState.PEEK)
 		_broadcast_sound(SoundType.PEEK)
+		if NoiseSystem != null:
+			NoiseSystem.emit_door_noise(global_position, DoorAction.PEEK, peer_id)
 
 
 func _handle_kick(player_global_pos: Vector3, peer_id: int) -> void:
@@ -193,6 +203,8 @@ func _handle_kick(player_global_pos: Vector3, peer_id: int) -> void:
 	swing_direction = _calculate_swing_direction(player_global_pos)
 	_set_state(DoorState.KICKED)
 	_broadcast_sound(SoundType.KICK)
+	if NoiseSystem != null:
+		NoiseSystem.emit_door_noise(global_position, DoorAction.KICK, peer_id)
 	_trigger_kick_stun(peer_id)
 	door_kicked.emit(peer_id, was_locked)
 
@@ -202,6 +214,8 @@ func _handle_unlock(peer_id: int) -> void:
 		is_locked = false
 		door_unlocked.emit(peer_id)
 		_broadcast_sound(SoundType.UNLOCK)
+		if NoiseSystem != null:
+			NoiseSystem.emit_door_noise(global_position, DoorAction.UNLOCK, peer_id)
 
 
 # --- Utilities & Motion -----------------------------------------------------

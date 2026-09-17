@@ -46,6 +46,11 @@
       "status": "done",
       "updated_at": "2026-09-18",
       "note": "Authored 5 filler calls: Prank (kids laughing), Noise Complaint (loud party), Shoplifting (Quick-Mart), Prank (fake medical emergency), Noise Complaint (early construction). Each with CallData, DialogueGraph, StressProfile, RecordEntries. Total 15 new DialogueNodes, 14 DialogueChoices, 5 StressProfiles, 3 RecordEntries."
+    },
+    "P3-06": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Noise event system: NoiseSystem autoload with footstep (walk 4m, sprint 10m, crouch 1.5m, Breacher 1.6x), door (kick 25m, open 8m, peek 3m), gunshot (60m), voice (2-20m RMS-scaled), grenade (30m), explosion (50m), glass break (15m). Integrated with Door, WeaponHolder, VoiceManager, AIPerception. GUT tests written (9 tests)."
     }
   },
   "log": [
@@ -281,6 +286,23 @@
         "data/loadout/gear/record_entry_noise_party_01.tres",
         "data/loadout/gear/record_entry_shoplifting_01.tres",
         "data/loadout/gear/record_entry_noise_construction_01.tres",
+        "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P3-06"
+      ],
+      "summary": "P3-06 Noise event system: NoiseSystem autoload with footstep (walk 4m, sprint 10m, crouch 1.5m, Breacher 1.6x), door (kick 25m, open 8m, peek 3m), gunshot (60m), voice (2-20m RMS-scaled), grenade (30m), explosion (50m), glass break (15m). Integrated with Door, WeaponHolder, VoiceManager, AIPerception. GUT tests written (9 tests).",
+      "files": [
+        "autoload/noise_system.gd",
+        "scenes/shared/door/door.gd",
+        "scenes/shared/weapons/weapon_holder.gd",
+        "autoload/voice_manager.gd",
+        "core/ai/ai_perception.gd",
+        "project.godot",
+        "tests/test_noise_system.gd",
         "docs/data/progress/mohamed.json"
       ]
     }

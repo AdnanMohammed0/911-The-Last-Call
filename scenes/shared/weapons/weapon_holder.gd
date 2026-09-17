@@ -286,7 +286,10 @@ func host_fire(sender: int, slot: int, origin: Vector3, directions: PackedVector
 		any_hit = true
 		headshot = headshot or zone == HealthComponent.HitZone.HEAD
 		killed = killed or (was_alive and target.is_dead)
-	EventBus.noise_event.emit(origin, weapon.noise_radius, sender)
+	if NoiseSystem != null:
+		NoiseSystem.emit_gunshot(origin, weapon.noise_radius, sender)
+	else:
+		EventBus.noise_event.emit(origin, weapon.noise_radius, sender)
 	_broadcast_fire(sender, slot, origin, ends)
 	if any_hit:
 		if sender == multiplayer.get_unique_id():

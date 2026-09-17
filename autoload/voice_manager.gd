@@ -542,7 +542,12 @@ func _update_occlusion() -> void:
 func _emit_noise(peer_id: int, loudness: int) -> void:
 	var speaker: Player = Player.find_by_peer(get_tree(), peer_id)
 	if speaker != null:
-		EventBus.voice_noise.emit(peer_id, speaker.global_position, loudness / 255.0)
+		var loudness_norm: float = loudness / 255.0
+		if NoiseSystem != null:
+			NoiseSystem.emit_voice_noise(speaker.global_position, loudness_norm, peer_id)
+		else:
+			EventBus.voice_noise.emit(peer_id, speaker.global_position, loudness_norm)
+			EventBus.noise_event.emit(speaker.global_position, lerpf(NoiseSystem.VOICE_MIN_RADIUS, NoiseSystem.VOICE_MAX_RADIUS, loudness_norm), peer_id)
 
 
 # --- Streams ------------------------------------------------------------------

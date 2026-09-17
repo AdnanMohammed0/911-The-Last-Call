@@ -7,7 +7,6 @@ script = ExtResource("1_class")
 id = &"profiler"
 display_name = "Profiler / Negotiator"
 summary = "Voice stress analysis, negotiation, surrender."
-color = Color(0.3, 0.8, 0.4, 1)
 max_health = 90.0
 damage_resistance = 0.05
 max_sanity = 80.0

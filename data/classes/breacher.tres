@@ -7,7 +7,6 @@ script = ExtResource("1_class")
 id = &"breacher"
 display_name = "Breacher"
 summary = "Heavy entry: kicks, shield, battering ram."
-color = Color(0.85, 0.25, 0.2, 1)
 max_health = 140.0
 damage_resistance = 0.25
 max_sanity = 100.0

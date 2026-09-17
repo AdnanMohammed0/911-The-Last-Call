@@ -1,39 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://main_menu_p119"]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/boot/main_menu.gd" id="1_menu"]
-[ext_resource type="PackedScene" uid="uid://cclasscard_p119" path="res://scenes/boot/class_card.tscn" id="2_card"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.07, 0.08, 0.11, 0.95)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.18, 0.22, 0.3, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-content_margin_left = 20.0
-content_margin_top = 20.0
-content_margin_right = 20.0
-content_margin_bottom = 20.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_roster"]
-bg_color = Color(0.04, 0.05, 0.07, 0.9)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.15, 0.18, 0.24, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-content_margin_left = 10.0
-content_margin_top = 8.0
-content_margin_right = 10.0
-content_margin_bottom = 8.0
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -51,7 +18,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.05, 0.06, 0.08, 1)
+color = Color(0.06, 0.07, 0.09, 1)
 
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -61,280 +28,84 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HomeView" type="PanelContainer" parent="Center"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(460, 0)
+[node name="Panel" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+theme_override_constants/separation = 10
 
-[node name="VBox" type="VBoxContainer" parent="Center/HomeView"]
+[node name="Title" type="Label" parent="Center/Panel"]
 layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Title" type="Label" parent="Center/HomeView/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.96, 0.62, 0.04, 1)
 theme_override_font_sizes/font_size = 32
-text = "911: THE LAST CALL"
+text = "911: The Last Call"
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="Center/HomeView/VBox"]
+[node name="NameEdit" type="LineEdit" parent="Center/Panel"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.06, 0.75, 0.9, 1)
-theme_override_font_sizes/font_size = 12
-text = "BLACKVALE COUNTY SHERIFF & EMERGENCY DISPATCH"
-horizontal_alignment = 1
+placeholder_text = "Your name"
+max_length = 24
 
-[node name="HSeparator" type="HSeparator" parent="Center/HomeView/VBox"]
+[node name="AddressEdit" type="LineEdit" parent="Center/Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Host IP (127.0.0.1)"
+
+[node name="Buttons" type="HBoxContainer" parent="Center/Panel"]
 layout_mode = 2
 
-[node name="NameRow" type="HBoxContainer" parent="Center/HomeView/VBox"]
-layout_mode = 2
-
-[node name="NameLabel" type="Label" parent="Center/HomeView/VBox/NameRow"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-text = "CALLSIGN:"
-
-[node name="NameEdit" type="LineEdit" parent="Center/HomeView/VBox/NameRow"]
+[node name="HostButton" type="Button" parent="Center/Panel/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Your callsign / name"
-max_length = 24
+text = "Host"
 
-[node name="HSeparator2" type="HSeparator" parent="Center/HomeView/VBox"]
-layout_mode = 2
-
-[node name="HostNavButton" type="Button" parent="Center/HomeView/VBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 42)
-layout_mode = 2
-theme_override_font_sizes/font_size = 15
-text = "► HOST DISPATCH (CREATE LOBBY)"
-
-[node name="JoinNavButton" type="Button" parent="Center/HomeView/VBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 42)
-layout_mode = 2
-theme_override_font_sizes/font_size = 15
-text = "► JOIN DISPATCH (CONNECT TO IP)"
-
-[node name="Station4Button" type="Button" parent="Center/HomeView/VBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 42)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.06, 0.85, 0.95, 1)
-theme_override_font_sizes/font_size = 15
-text = "► SOLO PRACTICE (STATION 4 OPS)"
-
-[node name="RejoinButton" type="Button" parent="Center/HomeView/VBox"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-text = "Rejoin last session"
-
-[node name="HSeparator3" type="HSeparator" parent="Center/HomeView/VBox"]
-layout_mode = 2
-
-[node name="DoorSandboxButton" type="Button" parent="Center/HomeView/VBox"]
+[node name="JoinButton" type="Button" parent="Center/Panel/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Door test sandbox (P1-14)"
+size_flags_horizontal = 3
+text = "Join"
 
-[node name="SandboxButton" type="Button" parent="Center/HomeView/VBox"]
+[node name="LeaveButton" type="Button" parent="Center/Panel/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Legacy movement sandbox (old map)"
+size_flags_horizontal = 3
+text = "Leave"
 
-[node name="StatusLabel" type="Label" parent="Center/HomeView/VBox"]
+[node name="StatusLabel" type="Label" parent="Center/Panel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.75, 0.8, 1)
-theme_override_font_sizes/font_size = 12
 text = "Offline"
 horizontal_alignment = 1
 
-[node name="HostView" type="PanelContainer" parent="Center"]
+[node name="RosterList" type="ItemList" parent="Center/Panel"]
 unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(460, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="VBox" type="VBoxContainer" parent="Center/HostView"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="HostTitle" type="Label" parent="Center/HostView/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.96, 0.62, 0.04, 1)
-theme_override_font_sizes/font_size = 22
-text = "HOST DISPATCH SESSION"
-horizontal_alignment = 1
-
-[node name="HostDesc" type="Label" parent="Center/HostView/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.75, 0.8, 1)
-theme_override_font_sizes/font_size = 12
-text = "Creates an authoritative ENet host session on UDP port 7777."
-autowrap_mode = 3
-
-[node name="HSeparator" type="HSeparator" parent="Center/HostView/VBox"]
+custom_minimum_size = Vector2(0, 140)
 layout_mode = 2
 
-[node name="HostButton" type="Button" parent="Center/HostView/VBox"]
+[node name="LobbyRow" type="HBoxContainer" parent="Center/Panel"]
+layout_mode = 2
+
+[node name="ClassOption" type="OptionButton" parent="Center/Panel/LobbyRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-theme_override_font_sizes/font_size = 15
-text = "CONFIRM & LAUNCH LOBBY"
-
-[node name="BackFromHostBtn" type="Button" parent="Center/HostView/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "CANCEL / BACK"
-
-[node name="JoinView" type="PanelContainer" parent="Center"]
-unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(460, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="VBox" type="VBoxContainer" parent="Center/JoinView"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="JoinTitle" type="Label" parent="Center/JoinView/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.06, 0.75, 0.9, 1)
-theme_override_font_sizes/font_size = 22
-text = "CONNECT TO DISPATCH"
-horizontal_alignment = 1
-
-[node name="AddressEdit" type="LineEdit" parent="Center/JoinView/VBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 38)
-layout_mode = 2
-text = "127.0.0.1"
-placeholder_text = "IP or tunnel address (host:port)"
-
-[node name="JoinButton" type="Button" parent="Center/JoinView/VBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-theme_override_font_sizes/font_size = 15
-text = "CONNECT TO SERVER"
-
-[node name="BackFromJoinBtn" type="Button" parent="Center/JoinView/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "CANCEL / BACK"
-
-[node name="LobbyView" type="PanelContainer" parent="Center"]
-unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(980, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="VBox" type="VBoxContainer" parent="Center/LobbyView"]
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="HeaderBar" type="HBoxContainer" parent="Center/LobbyView/VBox"]
-layout_mode = 2
-
-[node name="LobbyTitle" type="Label" parent="Center/LobbyView/VBox/HeaderBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.96, 0.62, 0.04, 1)
-theme_override_font_sizes/font_size = 22
-text = "STATION 4 DISPATCH LOBBY"
 
-[node name="InternetRow" type="HBoxContainer" parent="Center/LobbyView/VBox/HeaderBar"]
+[node name="ReadyButton" type="CheckButton" parent="Center/Panel/LobbyRow"]
 unique_name_in_owner = true
 layout_mode = 2
+text = "Ready"
 
-[node name="InternetLabel" type="Label" parent="Center/LobbyView/VBox/HeaderBar/InternetRow"]
+[node name="StartButton" type="Button" parent="Center/Panel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.75, 0.8, 1)
-theme_override_font_sizes/font_size = 12
-text = "Checking router (UPnP)…"
+text = "Start (host)"
 
-[node name="CopyAddressButton" type="Button" parent="Center/LobbyView/VBox/HeaderBar/InternetRow"]
+[node name="SandboxButton" type="Button" parent="Center/Panel"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Copy IP"
+text = "Offline sandbox (movement + interaction)"
 
-[node name="RosterPanel" type="PanelContainer" parent="Center/LobbyView/VBox"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_roster")
-
-[node name="RosterList" type="ItemList" parent="Center/LobbyView/VBox/RosterPanel"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 90)
-layout_mode = 2
-auto_height = true
-
-[node name="ClassHeaderLabel" type="Label" parent="Center/LobbyView/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.06, 0.75, 0.9, 1)
-theme_override_font_sizes/font_size = 14
-text = "SELECT OPERATIONAL ROLE (MANDATORY: 1 PER PLAYER)"
-
-[node name="ClassCardsContainer" type="HBoxContainer" parent="Center/LobbyView/VBox"]
+[node name="DoorSandboxButton" type="Button" parent="Center/Panel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="CardTech" parent="Center/LobbyView/VBox/ClassCardsContainer" instance=ExtResource("2_card")]
-unique_name_in_owner = true
-layout_mode = 2
-class_id = &"tech"
-
-[node name="CardProfiler" parent="Center/LobbyView/VBox/ClassCardsContainer" instance=ExtResource("2_card")]
-unique_name_in_owner = true
-layout_mode = 2
-class_id = &"profiler"
-
-[node name="CardBreacher" parent="Center/LobbyView/VBox/ClassCardsContainer" instance=ExtResource("2_card")]
-unique_name_in_owner = true
-layout_mode = 2
-class_id = &"breacher"
-
-[node name="CardMedic" parent="Center/LobbyView/VBox/ClassCardsContainer" instance=ExtResource("2_card")]
-unique_name_in_owner = true
-layout_mode = 2
-class_id = &"medic"
-
-[node name="HSeparator" type="HSeparator" parent="Center/LobbyView/VBox"]
-layout_mode = 2
-
-[node name="LobbyControls" type="HBoxContainer" parent="Center/LobbyView/VBox"]
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="ReadyButton" type="CheckButton" parent="Center/LobbyView/VBox/LobbyControls"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 44)
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "READY"
-
-[node name="StartButton" type="Button" parent="Center/LobbyView/VBox/LobbyControls"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.96, 0.62, 0.04, 1)
-theme_override_font_sizes/font_size = 15
-text = "► LAUNCH DISPATCH SHIFT (HOST)"
-
-[node name="LeaveButton" type="Button" parent="Center/LobbyView/VBox/LobbyControls"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(140, 44)
-layout_mode = 2
-text = "LEAVE LOBBY"
+text = "Door test sandbox (P1-14)"

@@ -1,9 +1,7 @@
 ## Spawns one Player per peer under `spawn_path`, carrying peer id + class id atomically (ARCHITECTURE §4.5).
 ## A peer only receives spawns after it reports the level as loaded, so nobody gets packets for
 ## nodes that do not exist yet. Works offline too (spawns the local player as peer 1).
-## Every peer also limits the synchronizers it owns (its player's ClientSync, the host's HostSync and
-## level props) to peers that loaded this level.
-## Authority: HOST (spawning) / every peer (visibility of its own synchronizers)
+## Authority: HOST
 class_name PlayerSpawner
 extends MultiplayerSpawner
 
@@ -17,43 +15,22 @@ signal player_spawned(player: Player)
 @export var spawn_points: Node3D
 
 var _level_path: String = ""
-## Host: new peer id -> transform to respawn a reconnecting player where their body was.
-var _reconnect_spawns: Dictionary[int, Transform3D] = {}
 
 
 func _ready() -> void:
 	spawn_function = _spawn_player
 	spawned.connect(_on_spawned)
 	var level: Node = owner if owner != null else get_parent()
-	_level_path = level.scene_file_path if level != null else ""
-	NetManager.level_loaded.connect(_on_level_loaded)
-	_refresh_visibility()
+	_level_path = level.scene_file_path
 	if multiplayer.is_server():
+		NetManager.level_loaded.connect(_on_level_loaded)
 		NetManager.peer_left.connect(_on_peer_left)
-		NetManager.peer_dropped.connect(_on_peer_dropped)
-		NetManager.peer_reconnected.connect(_on_peer_reconnected)
+		_refresh_visibility()
 		# Clients can finish loading before the host's own level is ready.
 		for peer_id: int in NetManager.roster:
 			if peer_id != 1 and NetManager.is_level_loaded(peer_id, _level_path):
 				_on_level_loaded.call_deferred(peer_id, _level_path)
-	if not NetManager.is_online():
-		if get_player(1) == null:
-			_spawn_offline_player.call_deferred()
-	elif not _level_path.is_empty():
-		NetManager.report_level_loaded.call_deferred(_level_path)
-
-
-func _spawn_offline_player() -> void:
-	if get_player(1) != null:
-		return
-	var player: Player = spawn({
-		"peer_id": 1,
-		"class_id": FALLBACK_CLASS,
-		"spawn_index": 0,
-	}) as Player
-	if player != null:
-		player_spawned.emit(player)
-	_refresh_visibility()
+	NetManager.report_level_loaded.call_deferred(_level_path)
 
 
 func get_player(peer_id: int) -> Player:
@@ -66,36 +43,17 @@ func get_player(peer_id: int) -> Player:
 func _on_level_loaded(peer_id: int, scene_path: String) -> void:
 	if scene_path != _level_path:
 		return
-	if multiplayer.is_server() and get_player(peer_id) == null:
+	if get_player(peer_id) == null:
 		var class_id: StringName = NetManager.get_class_id(peer_id)
 		if not ClassCatalog.has(class_id):
 			class_id = FALLBACK_CLASS
-		var data: Dictionary = {
+		var player: Player = spawn({
 			"peer_id": peer_id,
 			"class_id": class_id,
 			"spawn_index": _spawn_index_for(peer_id),
-		}
-		if _reconnect_spawns.has(peer_id):
-			data["transform"] = _reconnect_spawns[peer_id]
-			_reconnect_spawns.erase(peer_id)
-		var player: Player = spawn(data) as Player
+		}) as Player
 		player_spawned.emit(player)
 	_refresh_visibility()
-
-
-## The owner dropped mid-game: keep the body (frozen, labelled) until they reconnect or the slot expires.
-func _on_peer_dropped(peer_id: int) -> void:
-	var player: Player = get_player(peer_id)
-	if player != null:
-		player.connection_lost = true
-
-
-func _on_peer_reconnected(old_peer_id: int, new_peer_id: int) -> void:
-	var body: Player = get_player(old_peer_id)
-	if body == null:
-		return
-	_reconnect_spawns[new_peer_id] = body.global_transform
-	body.queue_free()
 
 
 func _on_peer_left(peer_id: int) -> void:
@@ -104,13 +62,9 @@ func _on_peer_left(peer_id: int) -> void:
 		player.queue_free()  # despawn replicates to everyone
 
 
-## Synchronizers we own in this level (HostSync, ClientSync, doors, props…) only replicate to peers that
+## Host-owned synchronizers in this level (player HostSync, doors, props…) only replicate to peers that
 ## have loaded it; a peer still in the menu or loading would otherwise get packets for missing nodes.
-## On the host, spawn visibility follows the same rule, so players spawn on a peer right after it loads.
-func refresh_visibility() -> void:
-	_refresh_visibility()
-
-
+## Spawn visibility follows the same rule, so players spawn on a peer right after it loads.
 func _refresh_visibility() -> void:
 	var level: Node = owner if owner != null else get_parent()
 	for node: Node in level.find_children("*", "MultiplayerSynchronizer", true, false):
@@ -142,15 +96,11 @@ func _spawn_player(data: Variant) -> Node:
 	player.name = _player_name(peer_id)
 	player.peer_id = peer_id
 	player.apply_class(ClassCatalog.get_data(class_id))
-	if info.has("transform"):
-		player.transform = info["transform"]
-	else:
-		player.position = _spawn_position(spawn_index)
+	player.position = _spawn_position(spawn_index)
 	return player
 
 
 func _on_spawned(node: Node) -> void:
-	_refresh_visibility()
 	var player: Player = node as Player
 	if player != null:
 		player_spawned.emit(player)

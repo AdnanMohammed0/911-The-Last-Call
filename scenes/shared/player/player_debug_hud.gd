@@ -2,7 +2,7 @@
 ## Authority: LOCAL
 extends Label
 
-const HELP_TEXT: String = "WASD move · Shift sprint · Ctrl crouch · Q/E lean · F interact · C peek · V kick · T flashlight · Caps talk · B radio · F3 net · Esc menu"
+const HELP_TEXT: String = "WASD move · Shift sprint · Ctrl crouch · Q/E lean · F interact · C peek · V kick · Esc free mouse"
 
 @export var player: Player
 

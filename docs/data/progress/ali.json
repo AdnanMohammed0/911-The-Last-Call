@@ -6,16 +6,6 @@
    "status": "done",
    "note": "نظام الأبواب التفاعلي مكتمل: فتح وإغلاق هادئ مع اتجاه تأرجح ذكي حسب موقع اللاعب، مواربة 15° (peek)، اقتحام بالركل (kick) مع كسر الأقفال وصعق، نظام القفل (locked) واهتزاز المقبض، أصوات إجرائية، ومزامنة MultiplayerSynchronizer. 23 اختبار وحدة ناجحة، وتكامل كامل مع ساحة player_sandbox.",
    "updated_at": "2026-09-17"
-  },
-  "P1-18": {
-   "status": "done",
-   "note": "بناء الـ grey-box لمركز Station 4 بالكامل بـ CSG: غرفة العمليات بـ 4 مكاتب dispatch (شاشات CRT ولوحات التردد)، الممر الأمني، مخزن السلاح مع قفص التسليح وطاولة التجهيز، وموقف السيارات الخارجي مع سيارتي شرطة وفان SWAT وحواجز وإضاءة صوديوم. دمج 3 أبواب تفاعلية متزامنة، واختبارات GUT كاملة وناجحة.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-19": {
-   "status": "done",
-   "note": "تصميم وتطوير واجهة القائمة الرئيسية والشاشات المتعددة (HomeView, HostView, JoinView, LobbyView) مع بطاقات الأدوار التكتيكية (ClassCards) للأدوار الأربعة (Tech Operator, Profiler, Breacher, Medic) بعرض الإحصائيات ونظام الحجز المتزامن، وتحديث فتح الأبواب التلقائي في محطة Station 4 واختبارات GUT كاملة.",
-   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -84,118 +74,6 @@
     "scenes/shared/player/player_sandbox.tscn"
    ],
    "commit": "53e4a11",
-   "auto": true
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-14"
-   ],
-   "summary": "feat(door): smooth easing interpolation and one-way swing support — P1-14",
-   "files": [
-    "audio/Close_Door.mp3",
-    "audio/Close_Door.mp3.import",
-    "audio/Open_Door.mp3",
-    "audio/Open_Door.mp3.import",
-    "scenes/shared/door/door.gd",
-    "scenes/shared/door/door.tscn",
-    "tests/test_door.gd"
-   ],
-   "commit": "8dd8d90",
-   "auto": true
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-18"
-   ],
-   "summary": "feat(world): grey-box Station 4 operations room + armory + parking lot — done P1-18",
-   "files": [
-    "scenes/boot/main_menu.gd",
-    "scenes/boot/main_menu.tscn",
-    "scenes/dispatch/operations_room.tscn",
-    "scenes/loadout/armory.tscn",
-    "tests/test_station4_greybox.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-18"
-   ],
-   "summary": "fix(spawner): ensure offline player spawns immediately on level start — P1-18",
-   "files": [
-    "autoload/net_manager.gd",
-    "core/net/player_spawner.gd",
-    "scenes/dispatch/operations_room.tscn"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-18"
-   ],
-   "summary": "feat(world): link Station 4 as default start scene and add portal in legacy sandbox — P1-18",
-   "files": [
-    "scenes/boot/main_menu.gd",
-    "scenes/boot/main_menu.tscn",
-    "scenes/shared/interactables/interactable_scene_door.gd",
-    "scenes/shared/player/player_sandbox.tscn"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-19"
-   ],
-   "summary": "feat(ui): main menu, host/join screens, lobby UI with class cards — done P1-19",
-   "files": [
-    "scenes/boot/class_card.gd",
-    "scenes/boot/class_card.tscn",
-    "scenes/boot/main_menu.gd",
-    "scenes/boot/main_menu.tscn",
-    "scenes/dispatch/operations_room.tscn",
-    "scenes/loadout/armory.tscn",
-    "scenes/shared/player/player_sandbox.tscn",
-    "tests/test_lobby_ui.gd",
-    "tests/test_station4_greybox.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-14"
-   ],
-   "summary": "fix(audio): replicate door sounds via RPC, activate local AudioListener3D, and add player footstep audio system",
-   "files": [
-    "scenes/shared/door/door.gd",
-    "scenes/shared/door/door.tscn",
-    "scenes/shared/player/player.gd",
-    "scenes/shared/player/player.tscn"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-14"
-   ],
-   "summary": "fix(audio): continuous looping footstep audio with smooth fade-in and fade-out on stop",
-   "files": [
-    "scenes/shared/player/player.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [],
-   "summary": "fix(dispatch): resolve unsafe cast and constructor type warnings in call director and vsa",
-   "files": [
-    "autoload/call_director.gd",
-    "core/dispatch/voice_stress_analyzer.gd",
-    "tests/test_call_director.gd",
-    "tests/test_dialogue_replication.gd",
-    "tests/test_voice_stress_analyzer.gd"
-   ],
-   "commit": "9ef8e41",
    "auto": true
   }
  ]

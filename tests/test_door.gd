@@ -66,22 +66,12 @@ func _test_toggle_open_and_close() -> void:
 
 
 func _test_swing_direction() -> void:
-	print("Test: Swing direction (one-way and two-way)")
+	print("Test: Swing direction based on player approach")
 	var door := _create_door()
 	var player_behind := Vector3(0, 0, 1.5) # Behind the door (+Z is backward)
-
-	# One-way swing (default: always opens to fixed direction 1.0)
 	door.interact(Door.DoorAction.TOGGLE_OPEN, player_behind)
-	_assert_true(door.swing_direction == 1.0, "One-way swing always uses fixed direction (1.0)")
-	_assert_true(is_equal_approx(door.target_angle_deg, 90.0), "Target angle is 90 deg in one-way mode")
-
-	# Two-way swing mode
-	door.interact(Door.DoorAction.TOGGLE_OPEN, player_behind) # Close it
-	door.one_way_swing = false
-	door.interact(Door.DoorAction.TOGGLE_OPEN, player_behind) # Open from behind
-	_assert_true(door.swing_direction == -1.0, "Two-way swing swings away (-1.0) when approached from behind")
-	_assert_true(is_equal_approx(door.target_angle_deg, -90.0), "Target angle is -90 deg in two-way mode")
-
+	_assert_true(door.swing_direction == -1.0, "Swing direction is -1.0 when approached from behind")
+	_assert_true(is_equal_approx(door.target_angle_deg, -90.0), "Target angle swings away (-90 deg)")
 	root.remove_child(door)
 	door.free()
 

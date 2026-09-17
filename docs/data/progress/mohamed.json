@@ -36,6 +36,11 @@
       "status": "done",
       "updated_at": "2026-09-18",
       "note": "Loadout armory with budget, class-locked items, requisition: GearItem resource with cost/slot/class restrictions, LoadoutManager autoload with budget tracking, Breacher discount, approach voting (Code 3/Silent/On foot/Decoy with Breacher tie-breaker), LoadoutUI for armory scene. GUT tests written (19 tests)."
+    },
+    "P2-16": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Caller VO for 3 slice calls: Closet Monster (STAGED_HOSTAGE), Cut Line (PARANORMAL), Meat Truck (AMBUSH). VO scripts written (39 segments), CallData .tres with StressProfiles, RecordEntries (6), placeholder audio structure. VSA tells documented per GAMEPLAY_MECHANICS §5.3/§10."
     }
   },
   "log": [
@@ -192,6 +197,32 @@
       ],
       "commit": "ea2299a",
       "auto": true
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P2-16"
+      ],
+      "summary": "P2-16 Caller VO for 3 slice calls: Closet Monster (STAGED_HOSTAGE), Cut Line (PARANORMAL), Meat Truck (AMBUSH). VO scripts written (39 segments), CallData .tres with StressProfiles, RecordEntries (6), placeholder audio structure. VSA tells documented per GAMEPLAY_MECHANICS §5.3/§10.",
+      "files": [
+        "audio/vo/slice/closet_monster_script.md",
+        "audio/vo/slice/cut_line_script.md",
+        "audio/vo/slice/meat_truck_script.md",
+        "audio/vo/slice/VO_TRACKING.md",
+        "data/calls/slice/call_closet_monster.tres",
+        "data/calls/slice/call_cut_line.tres",
+        "data/calls/slice/call_meat_truck.tres",
+        "data/calls/slice/stress_closet_monster.tres",
+        "data/calls/slice/stress_cut_line.tres",
+        "data/calls/slice/stress_meat_truck.tres",
+        "data/loadout/gear/record_entry_closet_monster_01.tres",
+        "data/loadout/gear/record_entry_closet_monster_02.tres",
+        "data/loadout/gear/record_entry_cut_line_01.tres",
+        "data/loadout/gear/record_entry_cut_line_02.tres",
+        "data/loadout/gear/record_entry_meat_truck_01.tres",
+        "data/loadout/gear/record_entry_meat_truck_02.tres",
+        "docs/data/progress/mohamed.json"
+      ]
     }
   ]
 }

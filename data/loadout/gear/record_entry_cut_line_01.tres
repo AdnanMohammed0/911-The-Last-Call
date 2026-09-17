@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_re"]
+
+[resource]
+script = ExtResource("1_re")
+id = &"record_cut_line_01"
+title = "Lake House — Drowning Incident (2011)"
+content = "Case #2011-01892\nDate: 2011-07-04\nReporting Officer: Dep. R. Vasquez\n\nVictim: Elena M. Vasquez (34), no relation to reporting officer.\nCause of death: Accidental drowning.\n\nCircumstances: Victim found in flooded basement of 14 Blackwater Drive. Basement had flooded due to sump pump failure during storm. Water depth: 4.5 ft. Basement door found locked from exterior — padlock on hasp (added post-construction).\n\nAutopsy: No signs of struggle. BAC: 0.00. Toxicology: negative.\nRuling: Accidental. Victim likely trapped when door locked automatically (faulty latch mechanism).\n\nNote: Husband (Marcus Vasquez) cleared of suspicion. Alibi confirmed.\n\nProperty condemned 2012. Scheduled for demolition — never executed."
+unlocked_by_default = false

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_re"]
+
+[resource]
+script = ExtResource("1_re")
+id = &"record_cut_line_02"
+title = "Blackwater Drive — EMF Survey (2023)"
+content = "Survey Team: Blackvale Paranormal Research Group (BPRG)\nDate: 2023-10-15\nLead: Dr. A. Chen\n\nLocation: 14 Blackwater Drive (condemned).\n\nBaseline EMF: 0.3 mG (environmental)\n\nReadings:\n- Basement center: 47.2 mG (spikes to 89.1 mG)\n- Basement door: 31.8 mG\n- Stairwell: 12.4 mG\n- Ground floor: 2.1 mG\n- Exterior: 0.4 mG\n\nFrequency analysis:\n- Dominant: 60.0 Hz (mains harmonics)\n- Secondary: 180 Hz, 300 Hz (odd harmonics — non-linear source)\n- Anomalous: 7.83 Hz (Schumann resonance coupling)\n\nEVP Session (30 min):\n- 3 Class-A responses to 'Are you Elena?'\n- Phrase captured: 'The water keeps you warm'\n- Voice print match: 94% to Elena Vasquez (antemortem recordings)\n\nClassification: Class 2 Haunting (Localized, Interactive)\nRecommendation: Salt barrier at basement threshold. Reverse tone protocol if manifestation occurs."
+unlocked_by_default = false

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_re"]
+
+[resource]
+script = ExtResource("1_re")
+id = &"record_closet_monster_01"
+title = "Henderson Residence — Break-in Report (2019)"
+content = "Case #2019-04451\nDate: 2019-11-12\nReporting Officer: Det. M. Kowalski\n\nResident: Sarah Henderson (28), single occupant.\nReport: Forced entry via rear kitchen window. No items stolen. Intruder fled before police arrival. Subject described as 'tall, wearing dark clothing, face obscured.'\n\nEvidence: Muddy boot prints (size 11) leading to back fence. Partial fingerprint on windowsill — no match in AFIS. Trace fiber: synthetic blend, black.\n\nNote: Resident reported 'feeling watched' for weeks prior. No stalking charges filed — insufficient evidence.\n\nStatus: COLD CASE. Reopened 2024 per FlagSystem flag 'closet_monster_resolved'."
+unlocked_by_default = false

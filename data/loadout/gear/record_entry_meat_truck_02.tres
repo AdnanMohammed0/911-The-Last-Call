@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_re"]
+
+[resource]
+script = ExtResource("1_re")
+id = &"record_meat_truck_02"
+title = "Mike Torres — Driver Profile"
+content = "Subject: Michael 'Big Rig' Torres (47)\nCDL: Class A, Hazmat, Tanker\nEmployer: Blackvale Cold Storage (12 years)\n\nRoute: Weekly Blackvale → County Line → Blackvale (refrigerated meat)\nVehicle: 2019 Freightliner Cascadia, Reefer unit Carrier Transicold X4\n\nBackground:\n- USMC 1996-2000, Motor Transport (0311)\n- Honorable discharge, rank: Corporal\n- No criminal record\n- CCW holder (expired 2022)\n- NRA member\n\nPsychological profile (voluntary, 2021):\n- High stress tolerance\n- Low neuroticism\n- 'Compartmentalizes trauma effectively'\n- Recommended for high-stress routes\n\nFamily: Wife (Maria, 44), Daughter (Elena, 16), Son (Miguel, 12)\nResidence: 312 Oak Street, Blackvale.\n\nNote: Subject's military background explains calm under fire. 'Dead things don't scream' quote consistent with combat veteran mindset."
+unlocked_by_default = false

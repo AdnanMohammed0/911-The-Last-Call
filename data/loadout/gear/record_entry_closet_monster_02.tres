@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_re"]
+
+[resource]
+script = ExtResource("1_re")
+id = &"record_closet_monster_02"
+title = "Henderson Residence — Property History"
+content = "Parcel: 742 Maple Street, Lot 14, Blackvale County.\nBuilt: 1952. Original owner: Arthur J. Pendergast.\n\nOwnership chain:\n- 1952-1978: Pendergast family\n- 1978-1994: Blackvale Savings & Loan (foreclosure)\n- 1994-2003: Miller Development (rental)\n- 2003-present: Henderson family\n\nNotable incidents:\n- 1963: Arthur Pendergast died in master bedroom (natural causes)\n- 1971: Teenager reported 'man in closet' — unfounded\n- 1988: Gas leak in basement, 2 hospitalized\n- 2019: Break-in (see record_closet_monster_01)\n\nTax assessment: $142,000. No liens. Current owner: Sarah Henderson (inherited 2018)."
+unlocked_by_default = false

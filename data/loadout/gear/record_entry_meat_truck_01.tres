@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_re"]
+
+[resource]
+script = ExtResource("1_re")
+id = &"record_meat_truck_01"
+title = "Highway 9 — Cult Activity Report (2024)"
+content = "Case #2024-00781\nDate: 2024-03-15\nReporting Officer: Sgt. J. Miller\n\nIntelligence: Sons of the Dusk cell operating along Old Highway 9 corridor.\n\nKnown activities:\n- Vehicle ambushes (3 confirmed, 2 suspected)\n- RPG deployment capability confirmed (recovered casing Mile 42)\n- Symbol: Red circle with black sun (painted on vehicles, tattooed on members)\n- Recruitment: Disaffected veterans, former law enforcement\n- Funding: Unknown. Suspected: narcotics, weapons trafficking\n\nKey figures:\n- 'Father Silas' — cell leader, former Army chaplain (dishonorable discharge)\n- 'Brother Cain' — enforcer, ex-Marsoc\n- Ambush teams: 4-6 man elements, military tactics\n\nVehicle pool: 2x technicals (mounted MGs), 1x armored SUV, 1x logistics van.\n\nThreat assessment: HIGH. Recommend SWAT + air support for any engagement."
+unlocked_by_default = false

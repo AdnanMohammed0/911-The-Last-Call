@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="StressProfile" format=3]
+
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="1_sp"]
+[ext_resource type="Resource" path="res://data/calls/curves/tremor_closet_monster.tres" id="2_tremor"]
+[ext_resource type="Resource" path="res://data/calls/curves/pitch_closet_monster.tres" id="3_pitch"]
+
+[resource]
+script = ExtResource("1_sp")
+tremor_curve = ExtResource("2_tremor")
+pitch_variance = ExtResource("3_pitch")
+loop_segments = [Vector2(180.0, 183.2), Vector2(240.0, 243.2), Vector2(300.0, 303.2)]
+background_tags = [&"adult_breathing", &"highway_silence"]
+baseline_heart_rate = 110
+emf_frequency = 0.0

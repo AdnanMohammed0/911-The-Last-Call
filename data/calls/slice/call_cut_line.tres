@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="1_call"]
+[ext_resource type="Resource" path="res://data/calls/slice/call_cut_line_dialogue.tres" id="2_dialogue"]
+[ext_resource type="Resource" path="res://data/calls/slice/stress_cut_line.tres" id="3_stress"]
+[ext_resource type="Resource" path="res://data/loadout/gear/record_entry_cut_line_01.tres" id="4_record1"]
+[ext_resource type="Resource" path="res://data/loadout/gear/record_entry_cut_line_02.tres" id="5_record2"]
+
+[resource]
+script = ExtResource("1_call")
+id = &"call_cut_line"
+title = "Call From a Cut Line"
+truth = 3
+earliest_minute = 120
+requires_flags = {}
+caller_audio = ExtResource("audio/vo/slice/cut_line_master.wav")
+dialogue = ExtResource("2_dialogue")
+phone_number = "911-555-0291"
+caller_name = "Unknown Female"
+caller_location_name = "14 Blackwater Drive, Lake House Basement"
+true_location = Vector2(8900.0, 15600.0)
+records = [ExtResource("4_record1"), ExtResource("5_record2")]
+cctv_feeds = []
+stress_profile = ExtResource("3_stress")
+mission = null
+patience_seconds = 150.0
+ring_timeout_seconds = 20.0

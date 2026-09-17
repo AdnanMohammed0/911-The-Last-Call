@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="1_call"]
+[ext_resource type="Resource" path="res://data/calls/slice/call_meat_truck_dialogue.tres" id="2_dialogue"]
+[ext_resource type="Resource" path="res://data/calls/slice/stress_meat_truck.tres" id="3_stress"]
+[ext_resource type="Resource" path="res://data/loadout/gear/record_entry_meat_truck_01.tres" id="4_record1"]
+[ext_resource type="Resource" path="res://data/loadout/gear/record_entry_meat_truck_02.tres" id="5_record2"]
+
+[resource]
+script = ExtResource("1_call")
+id = &"call_meat_truck"
+title = "The Meat Truck"
+truth = 2
+earliest_minute = 200
+requires_flags = {}
+caller_audio = ExtResource("audio/vo/slice/meat_truck_master.wav")
+dialogue = ExtResource("2_dialogue")
+phone_number = "911-555-0388"
+caller_name = "Mike 'Big Rig' Torres"
+caller_location_name = "Old Highway 9, Mile Marker 47"
+true_location = Vector2(22100.0, 5400.0)
+records = [ExtResource("4_record1"), ExtResource("5_record2")]
+cctv_feeds = []
+stress_profile = ExtResource("3_stress")
+mission = null
+patience_seconds = 120.0
+ring_timeout_seconds = 20.0

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="StressProfile" format=3]
+
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="1_sp"]
+[ext_resource type="Resource" path="res://data/calls/curves/tremor_cut_line.tres" id="2_tremor"]
+[ext_resource type="Resource" path="res://data/calls/curves/pitch_cut_line.tres" id="3_pitch"]
+
+[resource]
+script = ExtResource("1_sp")
+tremor_curve = ExtResource("2_tremor")
+pitch_variance = ExtResource("3_pitch")
+loop_segments = [Vector2(90.0, 96.0), Vector2(150.0, 156.0)]
+background_tags = [&"emf_hum", &"water_drip", &"sub_bass"]
+baseline_heart_rate = 60
+emf_frequency = 60.0

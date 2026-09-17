@@ -1,7 +1,13 @@
 {
  "member": "ali",
  "updated_at": "2026-09-17",
- "tasks": {},
+ "tasks": {
+  "P1-14": {
+   "status": "done",
+   "note": "نظام الأبواب التفاعلي مكتمل: فتح وإغلاق هادئ مع اتجاه تأرجح ذكي حسب موقع اللاعب، مواربة 15° (peek)، اقتحام بالركل (kick) مع كسر الأقفال وصعق، نظام القفل (locked) واهتزاز المقبض، أصوات إجرائية، ومزامنة MultiplayerSynchronizer. 23 اختبار وحدة ناجحة، وتكامل كامل مع ساحة player_sandbox.",
+   "updated_at": "2026-09-17"
+  }
+ },
  "log": [
   {
    "date": "2026-09-17",
@@ -11,6 +17,23 @@
     "docs/911_The_Last_Call_GDD.pdf"
    ],
    "commit": "91e3d0f"
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-14"
+   ],
+   "summary": "نظام الأبواب المكرر (P1-14): open, peek, kick, locked مع أصوات إجرائية وتزامن شبكي واختبارات GUT وتكامل مع ساحة اللاعب.",
+   "files": [
+    "scenes/shared/door/door.gd",
+    "scenes/shared/door/door.tscn",
+    "scenes/shared/player/player.gd",
+    "scenes/shared/player/player_input.gd",
+    "scenes/shared/player/player_debug_hud.gd",
+    "scenes/shared/player/player_sandbox.tscn",
+    "project.godot",
+    "tests/test_door.gd"
+   ]
   }
  ]
 }

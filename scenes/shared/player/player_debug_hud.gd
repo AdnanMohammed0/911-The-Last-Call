@@ -2,7 +2,7 @@
 ## Authority: LOCAL
 extends Label
 
-const HELP_TEXT: String = "WASD move · Shift sprint · Ctrl/C crouch · Q/E lean · F interact · Esc free mouse"
+const HELP_TEXT: String = "WASD move · Shift sprint · Ctrl/C crouch · Q/E lean · F interact · C peek · V kick · Esc free mouse"
 
 @export var player: Player
 
@@ -10,8 +10,11 @@ const HELP_TEXT: String = "WASD move · Shift sprint · Ctrl/C crouch · Q/E lea
 func _process(_delta: float) -> void:
 	if player == null:
 		return
-	text = "Stance: %s | Sprint: %s\nStamina: %.1f / %.1f\nSpeed: %.2f m/s | Lean: %+.2f\n\n%s" % [
+	var interact_line := ("\n>>> %s <<<\n" % player.current_interaction_prompt) if player.current_interaction_prompt != "" else ""
+	text = "Stance: %s | Sprint: %s\nStamina: %.1f / %.1f\nSpeed: %.2f m/s | Lean: %+.2f%s\n\n%s" % [
 		Player.Stance.keys()[player.stance], player.is_sprinting,
 		player.stamina, player.get_max_stamina(),
-		player.get_horizontal_speed(), player.lean_amount, HELP_TEXT,
+		player.get_horizontal_speed(), player.lean_amount,
+		interact_line,
+		HELP_TEXT,
 	]

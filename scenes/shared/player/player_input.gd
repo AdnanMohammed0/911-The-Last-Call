@@ -8,6 +8,9 @@ var sprint: bool = false
 var crouch_held: bool = false
 var crouch_just_pressed: bool = false
 var lean: float = 0.0                   # -1 = left, +1 = right
+var interact_just_pressed: bool = false
+var door_peek_just_pressed: bool = false
+var door_kick_just_pressed: bool = false
 
 var _look_delta: Vector2 = Vector2.ZERO
 
@@ -31,6 +34,9 @@ func sample() -> void:
 	crouch_held = Input.is_action_pressed(&"crouch")
 	crouch_just_pressed = Input.is_action_just_pressed(&"crouch")
 	lean = Input.get_axis(&"lean_left", &"lean_right")
+	interact_just_pressed = Input.is_action_just_pressed(&"interact")
+	door_peek_just_pressed = Input.is_action_just_pressed(&"door_peek")
+	door_kick_just_pressed = Input.is_action_just_pressed(&"door_kick")
 
 
 ## Returns the mouse movement accumulated since the last call and resets it.

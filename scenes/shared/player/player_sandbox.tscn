@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://scenes/shared/player/player_debug_hud.gd" id="2_hud"]
 [ext_resource type="Script" path="res://scenes/shared/interactables/interactable_toggle.gd" id="3_toggle"]
 [ext_resource type="Script" path="res://scenes/shared/interactables/interactable_pickup.gd" id="4_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/shared/door/door.tscn" id="5_door"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 
@@ -107,6 +108,51 @@ remove_node = NodePath("..")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/EvidenceCrate/PickupInteractable"]
 shape = SubResource("BoxShape3D_crate")
+
+[node name="DoorWallLeft" type="CSGBox3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 1.5, -2)
+use_collision = true
+size = Vector3(3.2, 3, 0.3)
+
+[node name="DoorWallMid1" type="CSGBox3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.5, -2)
+use_collision = true
+size = Vector3(1.9, 3, 0.3)
+
+[node name="DoorWallMid2" type="CSGBox3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1.5, -2)
+use_collision = true
+size = Vector3(1.9, 3, 0.3)
+
+[node name="DoorWallRight" type="CSGBox3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 1.5, -2)
+use_collision = true
+size = Vector3(3.2, 3, 0.3)
+
+[node name="DoorLintel1" type="CSGBox3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.6, -2)
+use_collision = true
+size = Vector3(1.1, 0.8, 0.3)
+
+[node name="DoorLintel2" type="CSGBox3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, -2)
+use_collision = true
+size = Vector3(1.1, 0.8, 0.3)
+
+[node name="DoorLintel3" type="CSGBox3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.6, -2)
+use_collision = true
+size = Vector3(1.1, 0.8, 0.3)
+
+[node name="StandardDoor" parent="Level" instance=ExtResource("5_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -2)
+
+[node name="PeekableDoor" parent="Level" instance=ExtResource("5_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="LockedDoor" parent="Level" instance=ExtResource("5_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -2)
+is_locked = true
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 6)

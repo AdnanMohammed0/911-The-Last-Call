@@ -10,6 +10,7 @@ const GROUP: StringName = &"players"
 signal stance_changed(new_stance: Stance)
 signal stamina_changed(value: float, max_value: float)
 signal exhausted()
+signal interaction_prompt_changed(prompt: String)
 
 @export_group("Speed")
 @export var walk_speed: float = 3.5            # Drowned Woman hunt speed (3.8) = 1.1x walk
@@ -46,6 +47,9 @@ signal exhausted()
 @export var mouse_sensitivity: float = 0.0022
 @export var max_pitch_degrees: float = 85.0
 
+@export_group("Interaction")
+@export var interaction_reach: float = 2.6
+
 @export var peer_id: int = 1:
 	set(value):
 		peer_id = value
@@ -64,6 +68,9 @@ var _regen_cooldown: float = 0.0
 var _crouch_toggled: bool = false
 var _current_height: float = 0.0
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
+
+var current_interaction_prompt: String = ""
+var _current_door_target: Door = null
 
 @onready var _input: PlayerInput = $PlayerInput
 @onready var _collision: CollisionShape3D = $CollisionShape3D
@@ -108,6 +115,7 @@ func _physics_process(delta: float) -> void:
 	_update_sprint_and_stamina(delta)
 	_update_movement(delta)
 	_update_lean(delta)
+	_update_interaction()
 
 
 ## Returns the player owned by `peer_id` in the current tree, or null.
@@ -242,3 +250,36 @@ func _lean_clearance(side: float) -> float:
 		return 1.0
 	var free_distance: float = origin.distance_to(hit["position"] as Vector3) - lean_wall_margin
 	return clampf(free_distance / lean_distance, 0.0, 1.0)
+
+
+# --- Interaction ------------------------------------------------------------
+
+func _update_interaction() -> void:
+	var origin: Vector3 = _camera.global_position
+	var to: Vector3 = origin - _camera.global_basis.z * interaction_reach
+	var query := PhysicsRayQueryParameters3D.create(origin, to, collision_mask | 1, [get_rid()])
+	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
+
+	var detected_door: Door = null
+	if not hit.is_empty():
+		var collider: Object = hit.get("collider")
+		if collider is Node:
+			var node: Node = collider as Node
+			while node != null and not (node is Door):
+				node = node.get_parent()
+			if node is Door:
+				detected_door = node as Door
+
+	_current_door_target = detected_door
+	var prompt: String = _current_door_target.get_prompt_text() if _current_door_target != null else ""
+	if prompt != current_interaction_prompt:
+		current_interaction_prompt = prompt
+		interaction_prompt_changed.emit(current_interaction_prompt)
+
+	if _current_door_target != null:
+		if _input.interact_just_pressed:
+			_current_door_target.interact(Door.DoorAction.TOGGLE_OPEN, global_position, peer_id)
+		elif _input.door_peek_just_pressed:
+			_current_door_target.interact(Door.DoorAction.PEEK, global_position, peer_id)
+		elif _input.door_kick_just_pressed:
+			_current_door_target.interact(Door.DoorAction.KICK, global_position, peer_id)

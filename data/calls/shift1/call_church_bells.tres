@@ -1,0 +1,223 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_wi6ts"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_1huaw"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_5jmc5"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_x75bv"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_2bid3"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_kpu5t"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_y1jw1"]
+
+[sub_resource type="Resource" id="Resource_blh38"]
+script = ExtResource("2_1huaw")
+text = "How many hostages?"
+next = &"hostages"
+
+[sub_resource type="Resource" id="Resource_sk3c0"]
+script = ExtResource("2_1huaw")
+text = "How are you calling without them noticing?"
+next = &"how_calling"
+
+[sub_resource type="Resource" id="Resource_m3knv"]
+script = ExtResource("2_1huaw")
+text = "[Tech] Checking St. Agnes on the county register."
+next = &"tech_church"
+required_class = &"tech"
+reveals = Array[StringName]([&"deconsecrated"])
+
+[sub_resource type="Resource" id="Resource_0bxcb"]
+script = ExtResource("1_wi6ts")
+id = &"start"
+line = "This is Father Lucas at St. Agnes. Men in robes broke into the church, they're holding the congregation. Please send every officer you have."
+choices = Array[ExtResource("2_1huaw")]([SubResource("Resource_blh38"), SubResource("Resource_sk3c0"), SubResource("Resource_m3knv")])
+
+[sub_resource type="Resource" id="Resource_v50yd"]
+script = ExtResource("2_1huaw")
+text = "A midnight service? On a Tuesday?"
+next = &"service"
+patience_delta = -10.0
+
+[sub_resource type="Resource" id="Resource_tcyut"]
+script = ExtResource("2_1huaw")
+text = "[Profiler] Father, your voice sounds perfectly steady."
+next = &"profiler_steady"
+required_class = &"profiler"
+reveals = Array[StringName]([&"steady_voice"])
+
+[sub_resource type="Resource" id="Resource_e7s77"]
+script = ExtResource("1_wi6ts")
+id = &"hostages"
+line = "Forty. Maybe fifty. Women, children. They're going to hurt them at midnight."
+choices = Array[ExtResource("2_1huaw")]([SubResource("Resource_v50yd"), SubResource("Resource_tcyut")])
+
+[sub_resource type="Resource" id="Resource_g5pqp"]
+script = ExtResource("2_1huaw")
+text = "Ring the bell so the units can find you."
+next = &"bell"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_nm3wv"]
+script = ExtResource("2_1huaw")
+text = "How many hostages?"
+next = &"hostages"
+
+[sub_resource type="Resource" id="Resource_qn0wm"]
+script = ExtResource("1_wi6ts")
+id = &"how_calling"
+line = "I'm in the bell tower. They don't know I'm up here."
+choices = Array[ExtResource("2_1huaw")]([SubResource("Resource_g5pqp"), SubResource("Resource_nm3wv")])
+
+[sub_resource type="Resource" id="Resource_nb6x0"]
+script = ExtResource("1_wi6ts")
+id = &"bell"
+speaker = &"dispatcher"
+line = "(The bell rings once. Behind it, a crowd starts chanting in unison — right next to the phone.)"
+auto_next = &"bell_after"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_yjtij"]
+script = ExtResource("2_1huaw")
+text = "That chanting is right beside you, not below you."
+next = &"confront"
+patience_delta = -30.0
+reveals = Array[StringName]([&"chanting_close"])
+
+[sub_resource type="Resource" id="Resource_h8xxf"]
+script = ExtResource("2_1huaw")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_3m14v"]
+script = ExtResource("1_wi6ts")
+id = &"bell_after"
+line = "They're... praying. It's just the congregation praying. Send everyone."
+choices = Array[ExtResource("2_1huaw")]([SubResource("Resource_yjtij"), SubResource("Resource_h8xxf")])
+
+[sub_resource type="Resource" id="Resource_f8i4j"]
+script = ExtResource("2_1huaw")
+text = "[Tech] What were the hikers' names?"
+next = &"hikers"
+required_class = &"tech"
+
+[sub_resource type="Resource" id="Resource_ue27c"]
+script = ExtResource("2_1huaw")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_hkmed"]
+script = ExtResource("1_wi6ts")
+id = &"service"
+line = "It's a vigil. For the missing hikers. Please, there's no time."
+choices = Array[ExtResource("2_1huaw")]([SubResource("Resource_f8i4j"), SubResource("Resource_ue27c")])
+
+[sub_resource type="Resource" id="Resource_a8ut3"]
+script = ExtResource("2_1huaw")
+text = "You don't know who you're holding a vigil for."
+next = &"confront"
+patience_delta = -20.0
+reveals = Array[StringName]([&"no_names"])
+
+[sub_resource type="Resource" id="Resource_ntafa"]
+script = ExtResource("1_wi6ts")
+id = &"hikers"
+line = "(pause) ...God knows their names, my child."
+choices = Array[ExtResource("2_1huaw")]([SubResource("Resource_a8ut3")])
+
+[sub_resource type="Resource" id="Resource_q4h7p"]
+script = ExtResource("1_wi6ts")
+id = &"tech_church"
+speaker = &"dispatcher"
+line = "(St. Agnes was deconsecrated in 2016. Father Lucas Moreno retired to Arizona in 2017.)"
+auto_next = &"tech_after"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_2ibb5"]
+script = ExtResource("2_1huaw")
+text = "Father Lucas retired to Arizona. Who is this?"
+next = &"confront"
+required_evidence = Array[StringName]([&"deconsecrated"])
+patience_delta = -40.0
+
+[sub_resource type="Resource" id="Resource_3hc0j"]
+script = ExtResource("2_1huaw")
+text = "How many hostages?"
+next = &"hostages"
+
+[sub_resource type="Resource" id="Resource_gwbwm"]
+script = ExtResource("1_wi6ts")
+id = &"tech_after"
+line = "Why are you silent? They are sharpening the knives."
+choices = Array[ExtResource("2_1huaw")]([SubResource("Resource_2ibb5"), SubResource("Resource_3hc0j")])
+
+[sub_resource type="Resource" id="Resource_8c6f0"]
+script = ExtResource("2_1huaw")
+text = "The Lord doesn't usually breathe through fifteen people behind you."
+next = &"confront"
+reveals = Array[StringName]([&"many_breathing"])
+
+[sub_resource type="Resource" id="Resource_ki884"]
+script = ExtResource("1_wi6ts")
+id = &"profiler_steady"
+line = "The Lord gives me calm."
+choices = Array[ExtResource("2_1huaw")]([SubResource("Resource_8c6f0")])
+
+[sub_resource type="Resource" id="Resource_0chym"]
+script = ExtResource("1_wi6ts")
+id = &"confront"
+speaker = &"unknown"
+line = "(The chanting stops all at once.) 'Then come anyway. We have made room for all of you.'"
+auto_next = &"end_click"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_wjhki"]
+script = ExtResource("1_wi6ts")
+id = &"end_click"
+speaker = &"dispatcher"
+line = "(The line goes dead. The church bell starts ringing on its own, far away.)"
+
+[sub_resource type="Resource" id="Resource_v5ovo"]
+script = ExtResource("1_wi6ts")
+id = &"end_units"
+line = "Bless you. Tell them to come in through the front doors. All of them."
+
+[sub_resource type="Resource" id="Resource_gso57"]
+script = ExtResource("4_x75bv")
+nodes = Array[ExtResource("1_wi6ts")]([SubResource("Resource_0bxcb"), SubResource("Resource_e7s77"), SubResource("Resource_qn0wm"), SubResource("Resource_nb6x0"), SubResource("Resource_3m14v"), SubResource("Resource_hkmed"), SubResource("Resource_ntafa"), SubResource("Resource_q4h7p"), SubResource("Resource_gwbwm"), SubResource("Resource_ki884"), SubResource("Resource_0chym"), SubResource("Resource_wjhki"), SubResource("Resource_v5ovo")])
+
+[sub_resource type="Resource" id="Resource_5acb3"]
+script = ExtResource("5_2bid3")
+id = &"rec_st_agnes"
+title = "St. Agnes Church"
+content = "Deconsecrated 2016. Father Lucas Moreno retired to Arizona in 2017."
+
+[sub_resource type="Resource" id="Resource_wr3u5"]
+script = ExtResource("5_2bid3")
+id = &"rec_mill_cult"
+title = "Old Mill Road sightings"
+content = "Hunters report robed groups gathering at night. Two missing hikers, 2024."
+
+[sub_resource type="Curve" id="Curve_oxe8r"]
+_data = [Vector2(0, 0.6), 0.0, 0.0, 0, 0, Vector2(1, 0.62), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_tda01"]
+script = ExtResource("7_y1jw1")
+tremor_curve = SubResource("Curve_oxe8r")
+loop_segments = Array[Vector2]([Vector2(6, 12)])
+background_tags = Array[StringName]([&"chanting", &"many_breathing"])
+baseline_heart_rate = 62
+
+[resource]
+script = ExtResource("6_kpu5t")
+id = &"call_church_bells"
+title = "St. Agnes Bells"
+truth = 2
+earliest_minute = 190
+dialogue = SubResource("Resource_gso57")
+phone_number = "911-555-0108"
+caller_name = "Father Lucas"
+caller_location_name = "St. Agnes Church, Old Mill Road"
+true_location = Vector2(260, 180)
+records = Array[ExtResource("5_2bid3")]([SubResource("Resource_5acb3"), SubResource("Resource_wr3u5")])
+stress_profile = SubResource("Resource_tda01")
+patience_seconds = 170.0

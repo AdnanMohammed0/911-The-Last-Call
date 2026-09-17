@@ -110,3 +110,59 @@ func test_slice_call_closet_monster_loads() -> void:
 	assert_eq(call.id, &"call_closet_monster")
 	assert_eq(call.truth, CallData.Truth.PRANK)
 	assert_true(call.stress_profile.background_tags.has(&"adult_breathing"))
+
+
+func test_shift_one_has_ten_branching_calls() -> void:
+	var truths: Dictionary[int, int] = {}
+	var minutes: Array[int] = []
+	var ids: Array[StringName] = [&"call_highway_crash", &"call_cut_line", &"call_meat_truck", &"call_lost_child",
+		&"call_drowned_voice", &"call_domestic", &"call_gas_station", &"call_church_bells", &"call_overdose", &"call_last_call"]
+	for id: StringName in ids:
+		var call: CallData = load("res://data/calls/shift1/%s.tres" % id) as CallData
+		assert_not_null(call, String(id))
+		var result: Dictionary = CallValidator.validate(call)
+		var errors: PackedStringArray = result["errors"]
+		assert_eq(errors.size(), 0, "%s: %s" % [id, errors])
+		truths[call.truth] = truths.get(call.truth, 0) + 1
+		minutes.append(call.earliest_minute)
+		var branching: int = 0
+		var class_choices: int = 0
+		var endings: int = 0
+		for node: DialogueNode in call.dialogue.nodes:
+			if node.choices.size() >= 2:
+				branching += 1
+			if node.choices.is_empty() and node.auto_next == &"":
+				endings += 1
+			for choice: DialogueChoice in node.choices:
+				if choice.required_class != &"":
+					class_choices += 1
+		assert_gte(call.dialogue.nodes.size(), 10, "%s is a real conversation" % id)
+		assert_gte(branching, 4, "%s has several decision points" % id)
+		assert_gt(class_choices, 0, "%s has class-only questions" % id)
+		assert_gte(endings, 1, "%s can end" % id)
+	assert_eq(truths.size(), 5, "every truth type appears in the shift")
+	var sorted: Array[int] = minutes.duplicate()
+	sorted.sort()
+	assert_eq(minutes, sorted, "calls are spread through the shift in order")
+	assert_lt(minutes[minutes.size() - 1], CallValidator.SHIFT_MINUTES)
+
+
+func test_evidence_gated_question_unlocks_after_reveal() -> void:
+	var call: CallData = load("res://data/calls/shift1/call_cut_line.tres") as CallData
+	var runner: DialogueRunner = DialogueRunner.new()
+	runner.start(call.dialogue, 150.0)
+	assert_true(_pick(runner, &"tech"))
+	assert_eq(runner.current_node_id, &"address")
+	assert_false(_pick(runner, &"medic"), "tech-only question")
+	assert_true(_pick(runner, &"tech"))
+	assert_true(&"vacant_address" in runner.revealed_evidence)
+	runner.tick(4.0)
+	assert_eq(runner.current_node_id, &"tech_after")
+	assert_true(_pick(runner, &"tech"), "confrontation unlocked by evidence")
+	assert_eq(runner.current_node_id, &"confront_power")
+
+
+func _pick(runner: DialogueRunner, class_id: StringName) -> bool:
+	var result: Dictionary = runner.select_choice(0, class_id)
+	var success: bool = result.get("success", false)
+	return success

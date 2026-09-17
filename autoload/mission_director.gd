@@ -111,7 +111,8 @@ func fail(reason: String) -> void:
 
 
 func _finish(title: String, subtitle: String) -> void:
-	save_loadouts()
+	# Weapons are handed back at the station: everyone returns unarmed.
+	_loadouts.clear()
 	_announce.rpc(title, subtitle)
 	_sync_state.rpc(State.IDLE, "", &"", 1.0, "")
 	_go_to(GameState.Phase.DISPATCH, STATION_SCENE)

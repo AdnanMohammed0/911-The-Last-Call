@@ -1,0 +1,240 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_r7c7i"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_bh5cs"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_k4r5l"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_7m0xh"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_lexsv"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_6idyy"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_cm2ec"]
+
+[sub_resource type="Resource" id="Resource_tuqem"]
+script = ExtResource("2_bh5cs")
+text = "What's the apartment number?"
+next = &"unit"
+
+[sub_resource type="Resource" id="Resource_j223q"]
+script = ExtResource("2_bh5cs")
+text = "Can you still hear the woman?"
+next = &"woman"
+
+[sub_resource type="Resource" id="Resource_ffrmw"]
+script = ExtResource("2_bh5cs")
+text = "Is there a weapon involved?"
+next = &"weapon"
+
+[sub_resource type="Resource" id="Resource_rhifa"]
+script = ExtResource("1_r7c7i")
+id = &"start"
+line = "My neighbor, next door, he's screaming at her again and something just smashed. There's a baby in there."
+choices = Array[ExtResource("2_bh5cs")]([SubResource("Resource_tuqem"), SubResource("Resource_j223q"), SubResource("Resource_ffrmw")])
+
+[sub_resource type="Resource" id="Resource_nof8c"]
+script = ExtResource("2_bh5cs")
+text = "[Tech] Pulling records for 3C."
+next = &"tech_record"
+required_class = &"tech"
+reveals = Array[StringName]([&"restraining_order"])
+
+[sub_resource type="Resource" id="Resource_c0y1j"]
+script = ExtResource("2_bh5cs")
+text = "Can you still hear the woman?"
+next = &"woman"
+
+[sub_resource type="Resource" id="Resource_36022"]
+script = ExtResource("1_r7c7i")
+id = &"unit"
+line = "I'm 3B, they're 3C. Kyle and Jess. He's been bad before."
+choices = Array[ExtResource("2_bh5cs")]([SubResource("Resource_nof8c"), SubResource("Resource_c0y1j")])
+
+[sub_resource type="Resource" id="Resource_2wgcn"]
+script = ExtResource("1_r7c7i")
+id = &"tech_record"
+speaker = &"dispatcher"
+line = "(Kyle Brandt, 3C: restraining order violation last year. Known firearm owner.)"
+auto_next = &"weapon"
+auto_delay = 3.5
+
+[sub_resource type="Resource" id="Resource_5nyhg"]
+script = ExtResource("2_bh5cs")
+text = "Can you knock on the wall and ask if she's okay?"
+next = &"knock"
+patience_delta = -10.0
+
+[sub_resource type="Resource" id="Resource_8i0ud"]
+script = ExtResource("2_bh5cs")
+text = "Is there a weapon involved?"
+next = &"weapon"
+
+[sub_resource type="Resource" id="Resource_ep6ih"]
+script = ExtResource("2_bh5cs")
+text = "Stay inside your apartment, lock your door."
+next = &"stay"
+
+[sub_resource type="Resource" id="Resource_nyvy3"]
+script = ExtResource("1_r7c7i")
+id = &"woman"
+line = "She's crying... she said 'put it down, Kyle'. Now it's quiet. It's too quiet."
+choices = Array[ExtResource("2_bh5cs")]([SubResource("Resource_5nyhg"), SubResource("Resource_8i0ud"), SubResource("Resource_ep6ih")])
+
+[sub_resource type="Resource" id="Resource_b1axr"]
+script = ExtResource("2_bh5cs")
+text = "Don't open it. Get away from the door, into a back room."
+next = &"back_room"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_wxc6j"]
+script = ExtResource("2_bh5cs")
+text = "[Profiler] Put me on speaker. Let me talk to him through the door."
+next = &"negotiate"
+required_class = &"profiler"
+
+[sub_resource type="Resource" id="Resource_f22ww"]
+script = ExtResource("1_r7c7i")
+id = &"knock"
+line = "(knocking) Jess? Jess, you okay? ...Oh God, he's at my door. He's banging on MY door."
+choices = Array[ExtResource("2_bh5cs")]([SubResource("Resource_b1axr"), SubResource("Resource_wxc6j")])
+
+[sub_resource type="Resource" id="Resource_o48kt"]
+script = ExtResource("2_bh5cs")
+text = "[Profiler] Kyle, this is 911. Nobody's in trouble yet. Is Jess hurt?"
+next = &"kyle_calm"
+required_class = &"profiler"
+patience_delta = 20.0
+
+[sub_resource type="Resource" id="Resource_2ewvu"]
+script = ExtResource("2_bh5cs")
+text = "[Profiler] Kyle, deputies are already outside. Put the weapon down."
+next = &"kyle_angry"
+required_class = &"profiler"
+patience_delta = -30.0
+
+[sub_resource type="Resource" id="Resource_jqtfl"]
+script = ExtResource("1_r7c7i")
+id = &"negotiate"
+speaker = &"unknown"
+line = "(through the door) 'Who you talking to? You called the cops on me?!'"
+choices = Array[ExtResource("2_bh5cs")]([SubResource("Resource_o48kt"), SubResource("Resource_2ewvu")])
+
+[sub_resource type="Resource" id="Resource_qocuc"]
+script = ExtResource("2_bh5cs")
+text = "Kyle, leave the door open and wait in the hall with your hands empty."
+next = &"end_surrender"
+reveals = Array[StringName]([&"victim_injured"])
+
+[sub_resource type="Resource" id="Resource_eeami"]
+script = ExtResource("1_r7c7i")
+id = &"kyle_calm"
+speaker = &"unknown"
+line = "'...She fell. She fell, okay? I didn't— she needs a doctor. The baby won't stop.'"
+choices = Array[ExtResource("2_bh5cs")]([SubResource("Resource_qocuc")])
+
+[sub_resource type="Resource" id="Resource_t0ghj"]
+script = ExtResource("1_r7c7i")
+id = &"kyle_angry"
+speaker = &"unknown"
+line = "'You think I'm going back? Nobody's taking my kid!' (footsteps running away)"
+auto_next = &"end_barricade"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_3qhhw"]
+script = ExtResource("2_bh5cs")
+text = "Stay inside, lock your door, stay low."
+next = &"stay"
+reveals = Array[StringName]([&"armed_suspect"])
+
+[sub_resource type="Resource" id="Resource_ajiv2"]
+script = ExtResource("2_bh5cs")
+text = "Can you still hear the woman?"
+next = &"woman"
+
+[sub_resource type="Resource" id="Resource_boj0q"]
+script = ExtResource("1_r7c7i")
+id = &"weapon"
+line = "He's got a gun. I've seen it on his belt in the laundry room."
+choices = Array[ExtResource("2_bh5cs")]([SubResource("Resource_3qhhw"), SubResource("Resource_ajiv2")])
+
+[sub_resource type="Resource" id="Resource_kmtvm"]
+script = ExtResource("2_bh5cs")
+text = "[Medic] Can you hear the woman breathing or moving?"
+next = &"medic_listen"
+required_class = &"medic"
+
+[sub_resource type="Resource" id="Resource_qs00m"]
+script = ExtResource("2_bh5cs")
+text = "Units are almost there. Stay put."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_kwxw1"]
+script = ExtResource("1_r7c7i")
+id = &"back_room"
+line = "(whispering) I'm in the bathroom. He stopped banging. I hear the baby through the vent."
+choices = Array[ExtResource("2_bh5cs")]([SubResource("Resource_kmtvm"), SubResource("Resource_qs00m")])
+
+[sub_resource type="Resource" id="Resource_ukths"]
+script = ExtResource("2_bh5cs")
+text = "She'll need an ambulance. I'm sending one with the deputies."
+next = &"end_units"
+reveals = Array[StringName]([&"victim_injured"])
+
+[sub_resource type="Resource" id="Resource_t0w44"]
+script = ExtResource("1_r7c7i")
+id = &"medic_listen"
+line = "There's... a groan. Like she's on the floor. She's alive, I think."
+choices = Array[ExtResource("2_bh5cs")]([SubResource("Resource_ukths")])
+
+[sub_resource type="Resource" id="Resource_tpcwd"]
+script = ExtResource("1_r7c7i")
+id = &"stay"
+line = "Okay. Door's locked. Please hurry, the baby's still crying."
+auto_next = &"end_units"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_p4is2"]
+script = ExtResource("1_r7c7i")
+id = &"end_surrender"
+line = "(through the wall) He's... he's sitting in the hall. He's actually doing it."
+
+[sub_resource type="Resource" id="Resource_xaqld"]
+script = ExtResource("1_r7c7i")
+id = &"end_barricade"
+line = "He locked himself back in with them. Please. Please hurry."
+
+[sub_resource type="Resource" id="Resource_42jm1"]
+script = ExtResource("1_r7c7i")
+id = &"end_units"
+line = "I see lights outside. Thank you. Thank you."
+
+[sub_resource type="Resource" id="Resource_2nrdf"]
+script = ExtResource("4_7m0xh")
+nodes = Array[ExtResource("1_r7c7i")]([SubResource("Resource_rhifa"), SubResource("Resource_36022"), SubResource("Resource_2wgcn"), SubResource("Resource_nyvy3"), SubResource("Resource_f22ww"), SubResource("Resource_jqtfl"), SubResource("Resource_eeami"), SubResource("Resource_t0ghj"), SubResource("Resource_boj0q"), SubResource("Resource_kwxw1"), SubResource("Resource_t0w44"), SubResource("Resource_tpcwd"), SubResource("Resource_p4is2"), SubResource("Resource_xaqld"), SubResource("Resource_42jm1")])
+
+[sub_resource type="Resource" id="Resource_fba5j"]
+script = ExtResource("5_lexsv")
+id = &"rec_3c"
+title = "Maple Heights 3C"
+content = "Two prior welfare checks. Resident Kyle Brandt, restraining order violation 2023."
+
+[sub_resource type="Curve" id="Curve_8yr73"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 0.75), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_8jwbs"]
+script = ExtResource("7_cm2ec")
+tremor_curve = SubResource("Curve_8yr73")
+background_tags = Array[StringName]([&"shouting_through_wall", &"child_crying"])
+baseline_heart_rate = 118
+
+[resource]
+script = ExtResource("6_6idyy")
+id = &"call_domestic"
+title = "Thin Walls"
+earliest_minute = 130
+dialogue = SubResource("Resource_2nrdf")
+phone_number = "911-555-0145"
+caller_name = "Rosa Delgado"
+caller_location_name = "Maple Heights Apartments, unit 3B"
+true_location = Vector2(410, 330)
+records = Array[ExtResource("5_lexsv")]([SubResource("Resource_fba5j")])
+stress_profile = SubResource("Resource_8jwbs")
+patience_seconds = 190.0

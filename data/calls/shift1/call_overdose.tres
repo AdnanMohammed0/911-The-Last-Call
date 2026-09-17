@@ -1,0 +1,231 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_2e55s"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_edxku"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_yw8bt"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_mci2o"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_od5r6"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_e8wkp"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_ysbp7"]
+
+[sub_resource type="Resource" id="Resource_bhhw6"]
+script = ExtResource("2_edxku")
+text = "Is he breathing?"
+next = &"breathing"
+
+[sub_resource type="Resource" id="Resource_otlks"]
+script = ExtResource("2_edxku")
+text = "What did he take?"
+next = &"took"
+
+[sub_resource type="Resource" id="Resource_0jalm"]
+script = ExtResource("2_edxku")
+text = "Where are you?"
+next = &"where"
+
+[sub_resource type="Resource" id="Resource_noq6p"]
+script = ExtResource("1_2e55s")
+id = &"start"
+line = "My friend's not waking up, man, his lips are blue, I think he took something bad, please!"
+choices = Array[ExtResource("2_edxku")]([SubResource("Resource_bhhw6"), SubResource("Resource_otlks"), SubResource("Resource_0jalm")])
+
+[sub_resource type="Resource" id="Resource_jv67x"]
+script = ExtResource("2_edxku")
+text = "Nobody's arresting you for calling. Is he breathing?"
+next = &"breathing"
+patience_delta = 20.0
+
+[sub_resource type="Resource" id="Resource_pjq38"]
+script = ExtResource("2_edxku")
+text = "What did he take?"
+next = &"took"
+
+[sub_resource type="Resource" id="Resource_pb1xr"]
+script = ExtResource("1_2e55s")
+id = &"where"
+line = "Pinecrest Motel, room twelve. Please, I don't want to get arrested, I just—"
+choices = Array[ExtResource("2_edxku")]([SubResource("Resource_jv67x"), SubResource("Resource_pjq38")])
+
+[sub_resource type="Resource" id="Resource_c2cp5"]
+script = ExtResource("2_edxku")
+text = "[Tech] Pinecrest has had fentanyl overdoses all year."
+next = &"tech"
+required_class = &"tech"
+reveals = Array[StringName]([&"fentanyl_risk"])
+
+[sub_resource type="Resource" id="Resource_dnewb"]
+script = ExtResource("2_edxku")
+text = "Is he breathing?"
+next = &"breathing"
+
+[sub_resource type="Resource" id="Resource_tdfba"]
+script = ExtResource("1_2e55s")
+id = &"took"
+line = "Pills. They were supposed to be Percs. They looked weird. Blue."
+choices = Array[ExtResource("2_edxku")]([SubResource("Resource_c2cp5"), SubResource("Resource_dnewb")])
+
+[sub_resource type="Resource" id="Resource_mwfbl"]
+script = ExtResource("1_2e55s")
+id = &"tech"
+speaker = &"dispatcher"
+line = "(Six overdose calls from Pinecrest this year. Counterfeit pills with fentanyl.)"
+auto_next = &"breathing"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_4nc1w"]
+script = ExtResource("2_edxku")
+text = "[Medic] That's agonal breathing. Do you have Narcan? A nasal spray?"
+next = &"narcan"
+required_class = &"medic"
+reveals = Array[StringName]([&"agonal_breathing"])
+
+[sub_resource type="Resource" id="Resource_imonj"]
+script = ExtResource("2_edxku")
+text = "Roll him onto his side."
+next = &"recovery"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_ea2c2"]
+script = ExtResource("2_edxku")
+text = "Shake him and shout his name."
+next = &"shake"
+
+[sub_resource type="Resource" id="Resource_bny37"]
+script = ExtResource("1_2e55s")
+id = &"breathing"
+line = "He's making this snoring sound... like gurgling. Then nothing for a while."
+choices = Array[ExtResource("2_edxku")]([SubResource("Resource_4nc1w"), SubResource("Resource_imonj"), SubResource("Resource_ea2c2")])
+
+[sub_resource type="Resource" id="Resource_ag5ir"]
+script = ExtResource("2_edxku")
+text = "[Medic] Do you have Narcan? A nasal spray?"
+next = &"narcan"
+required_class = &"medic"
+
+[sub_resource type="Resource" id="Resource_ecafl"]
+script = ExtResource("2_edxku")
+text = "Roll him onto his side."
+next = &"recovery"
+
+[sub_resource type="Resource" id="Resource_f4uoq"]
+script = ExtResource("1_2e55s")
+id = &"shake"
+line = "JAMES! James, wake up! ...Nothing. His eyes are rolled back."
+choices = Array[ExtResource("2_edxku")]([SubResource("Resource_ag5ir"), SubResource("Resource_ecafl")])
+
+[sub_resource type="Resource" id="Resource_5c0fn"]
+script = ExtResource("2_edxku")
+text = "[Medic] Clear his mouth with your finger. Check for Narcan."
+next = &"narcan"
+required_class = &"medic"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_5moo0"]
+script = ExtResource("2_edxku")
+text = "Help is coming. Keep him on his side."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_pytlu"]
+script = ExtResource("1_2e55s")
+id = &"recovery"
+line = "Okay, he's on his side, there's foam coming out of his mouth."
+choices = Array[ExtResource("2_edxku")]([SubResource("Resource_5c0fn"), SubResource("Resource_5moo0")])
+
+[sub_resource type="Resource" id="Resource_l0fl6"]
+script = ExtResource("2_edxku")
+text = "[Medic] Tilt his head back, spray it all in one nostril."
+next = &"sprayed"
+required_class = &"medic"
+patience_delta = 30.0
+
+[sub_resource type="Resource" id="Resource_ol7hi"]
+script = ExtResource("1_2e55s")
+id = &"narcan"
+line = "There's... yeah, there's a box in his bag, they gave it to him at the clinic."
+choices = Array[ExtResource("2_edxku")]([SubResource("Resource_l0fl6")])
+
+[sub_resource type="Resource" id="Resource_eba7v"]
+script = ExtResource("2_edxku")
+text = "[Medic] It takes two to three minutes. Start chest compressions — hard, fast, center of his chest."
+next = &"cpr"
+required_class = &"medic"
+
+[sub_resource type="Resource" id="Resource_eofx6"]
+script = ExtResource("2_edxku")
+text = "Wait. Watch his chest."
+next = &"wait_narcan"
+patience_delta = -20.0
+
+[sub_resource type="Resource" id="Resource_846ya"]
+script = ExtResource("1_2e55s")
+id = &"sprayed"
+line = "I did it. I did it. ...Nothing's happening. Oh God, it's not working."
+choices = Array[ExtResource("2_edxku")]([SubResource("Resource_eba7v"), SubResource("Resource_eofx6")])
+
+[sub_resource type="Resource" id="Resource_p3jlg"]
+script = ExtResource("2_edxku")
+text = "[Medic] Stop compressions. Roll him on his side and don't let him use again tonight."
+next = &"end_saved"
+required_class = &"medic"
+reveals = Array[StringName]([&"patient_revived"])
+
+[sub_resource type="Resource" id="Resource_kn548"]
+script = ExtResource("1_2e55s")
+id = &"cpr"
+line = "(counting, crying) one, two, three, four... he coughed! He's breathing! He's breathing!"
+choices = Array[ExtResource("2_edxku")]([SubResource("Resource_p3jlg")])
+
+[sub_resource type="Resource" id="Resource_cjsa4"]
+script = ExtResource("2_edxku")
+text = "Start pushing hard on the center of his chest, now."
+next = &"cpr"
+
+[sub_resource type="Resource" id="Resource_o2vo6"]
+script = ExtResource("1_2e55s")
+id = &"wait_narcan"
+line = "He's... he's so grey. He's not moving at all."
+choices = Array[ExtResource("2_edxku")]([SubResource("Resource_cjsa4")])
+
+[sub_resource type="Resource" id="Resource_6xsii"]
+script = ExtResource("1_2e55s")
+id = &"end_saved"
+line = "Thank you... thank you. I hear the ambulance. Thank you."
+
+[sub_resource type="Resource" id="Resource_2beuq"]
+script = ExtResource("1_2e55s")
+id = &"end_units"
+line = "Please hurry. He's so cold."
+
+[sub_resource type="Resource" id="Resource_3envc"]
+script = ExtResource("4_mci2o")
+nodes = Array[ExtResource("1_2e55s")]([SubResource("Resource_noq6p"), SubResource("Resource_pb1xr"), SubResource("Resource_tdfba"), SubResource("Resource_mwfbl"), SubResource("Resource_bny37"), SubResource("Resource_f4uoq"), SubResource("Resource_pytlu"), SubResource("Resource_ol7hi"), SubResource("Resource_846ya"), SubResource("Resource_kn548"), SubResource("Resource_o2vo6"), SubResource("Resource_6xsii"), SubResource("Resource_2beuq")])
+
+[sub_resource type="Resource" id="Resource_xd77y"]
+script = ExtResource("5_od5r6")
+id = &"rec_pinecrest"
+title = "Pinecrest Motel"
+content = "Six overdose calls this year, three fatal. Suspected fentanyl-laced supply."
+
+[sub_resource type="Curve" id="Curve_58ooo"]
+_data = [Vector2(0, 0.7), 0.0, 0.0, 0, 0, Vector2(1, 0.9), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_f0hie"]
+script = ExtResource("7_ysbp7")
+tremor_curve = SubResource("Curve_58ooo")
+background_tags = Array[StringName]([&"motel_tv", &"gurgling_breath"])
+baseline_heart_rate = 140
+
+[resource]
+script = ExtResource("6_e8wkp")
+id = &"call_overdose"
+title = "Blue Lips"
+earliest_minute = 220
+dialogue = SubResource("Resource_3envc")
+phone_number = "911-555-0154"
+caller_name = "Tyler"
+caller_location_name = "Pinecrest Motel, room 12"
+true_location = Vector2(560, 380)
+records = Array[ExtResource("5_od5r6")]([SubResource("Resource_xd77y")])
+stress_profile = SubResource("Resource_f0hie")
+patience_seconds = 170.0

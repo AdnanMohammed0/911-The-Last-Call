@@ -1,0 +1,227 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_it0a4"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_1g1nc"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_4y5mj"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_dplg5"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_nkg7r"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_l7ssx"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_ejdgn"]
+
+[sub_resource type="Resource" id="Resource_tkx7q"]
+script = ExtResource("2_1g1nc")
+text = "Who is this?"
+next = &"who"
+
+[sub_resource type="Resource" id="Resource_q16h7"]
+script = ExtResource("2_1g1nc")
+text = "[Tech] Caller ID shows... this station."
+next = &"tech_id"
+required_class = &"tech"
+reveals = Array[StringName]([&"internal_line"])
+
+[sub_resource type="Resource" id="Resource_8d5vu"]
+script = ExtResource("2_1g1nc")
+text = "Hang on. Everyone, be quiet for a second."
+next = &"quiet"
+
+[sub_resource type="Resource" id="Resource_qjifg"]
+script = ExtResource("1_it0a4")
+id = &"start"
+speaker = &"unknown"
+line = "(Your own voice, from the other end of the line.) 'Blackvale County 911, what is your emergency?'"
+choices = Array[ExtResource("2_1g1nc")]([SubResource("Resource_tkx7q"), SubResource("Resource_q16h7"), SubResource("Resource_8d5vu")])
+
+[sub_resource type="Resource" id="Resource_3nau2"]
+script = ExtResource("2_1g1nc")
+text = "What's your emergency, then?"
+next = &"emergency"
+
+[sub_resource type="Resource" id="Resource_8jrwu"]
+script = ExtResource("2_1g1nc")
+text = "[Profiler] It's repeating what I say before I say it."
+next = &"profiler_echo"
+required_class = &"profiler"
+reveals = Array[StringName]([&"echo_ahead"])
+
+[sub_resource type="Resource" id="Resource_wgdhy"]
+script = ExtResource("1_it0a4")
+id = &"who"
+speaker = &"unknown"
+line = "'This is dispatch. You called us. You always call us at five o'clock.'"
+choices = Array[ExtResource("2_1g1nc")]([SubResource("Resource_3nau2"), SubResource("Resource_8jrwu")])
+
+[sub_resource type="Resource" id="Resource_bnts8"]
+script = ExtResource("1_it0a4")
+id = &"tech_id"
+speaker = &"dispatcher"
+line = "(The call is coming from line 4 — the phone on the desk right next to you. The handset is in its cradle.)"
+auto_next = &"tech_after"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_mv2ud"]
+script = ExtResource("2_1g1nc")
+text = "Don't touch it. Stay on this line."
+next = &"who"
+
+[sub_resource type="Resource" id="Resource_58uip"]
+script = ExtResource("2_1g1nc")
+text = "Check the other phone."
+next = &"other_phone"
+patience_delta = -30.0
+
+[sub_resource type="Resource" id="Resource_7mco0"]
+script = ExtResource("1_it0a4")
+id = &"tech_after"
+speaker = &"unknown"
+line = "'Look at the phone on desk four. Go on. It's ringing for you.'"
+choices = Array[ExtResource("2_1g1nc")]([SubResource("Resource_mv2ud"), SubResource("Resource_58uip")])
+
+[sub_resource type="Resource" id="Resource_c81v7"]
+script = ExtResource("1_it0a4")
+id = &"other_phone"
+speaker = &"dispatcher"
+line = "(Desk four's phone is silent. But on your line you now hear the room you are standing in — your own breathing.)"
+auto_next = &"emergency"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_eoha1"]
+script = ExtResource("1_it0a4")
+id = &"quiet"
+speaker = &"dispatcher"
+line = "(The room goes silent. On the line, you hear the station's own clock ticking a second ahead of the one on the wall.)"
+auto_next = &"who"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_nmjp5"]
+script = ExtResource("2_1g1nc")
+text = "What happens at six?"
+next = &"six"
+
+[sub_resource type="Resource" id="Resource_qgwr1"]
+script = ExtResource("2_1g1nc")
+text = "[Tech] Search the archive for Station 4 incidents."
+next = &"archive"
+required_class = &"tech"
+reveals = Array[StringName]([&"crew_1996"])
+
+[sub_resource type="Resource" id="Resource_fe15t"]
+script = ExtResource("2_1g1nc")
+text = "Is this a threat?"
+next = &"threat"
+
+[sub_resource type="Resource" id="Resource_6d0yb"]
+script = ExtResource("1_it0a4")
+id = &"emergency"
+speaker = &"unknown"
+line = "'The emergency is at Station 4. The night crew. They don't make it to six.'"
+choices = Array[ExtResource("2_1g1nc")]([SubResource("Resource_nmjp5"), SubResource("Resource_qgwr1"), SubResource("Resource_fe15t")])
+
+[sub_resource type="Resource" id="Resource_218rr"]
+script = ExtResource("1_it0a4")
+id = &"profiler_echo"
+speaker = &"unknown"
+line = "'...It's repeating what I say before I say it.' 'Yes. We've had this conversation many times.'"
+auto_next = &"emergency"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_3ejpa"]
+script = ExtResource("1_it0a4")
+id = &"archive"
+speaker = &"dispatcher"
+line = "(1996: the Station 4 night crew vanished after a final call logged at 05:00. The tape was blank.)"
+auto_next = &"archive_after"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_gpt6a"]
+script = ExtResource("2_1g1nc")
+text = "How do we stop it?"
+next = &"stop"
+required_evidence = Array[StringName]([&"crew_1996"])
+
+[sub_resource type="Resource" id="Resource_ghhxg"]
+script = ExtResource("2_1g1nc")
+text = "What happens at six?"
+next = &"six"
+
+[sub_resource type="Resource" id="Resource_77c4e"]
+script = ExtResource("1_it0a4")
+id = &"archive_after"
+speaker = &"unknown"
+line = "'The tape wasn't blank. It was this call. It's always this call.'"
+choices = Array[ExtResource("2_1g1nc")]([SubResource("Resource_gpt6a"), SubResource("Resource_ghhxg")])
+
+[sub_resource type="Resource" id="Resource_xvtep"]
+script = ExtResource("2_1g1nc")
+text = "What happens at six?"
+next = &"six"
+
+[sub_resource type="Resource" id="Resource_73jeh"]
+script = ExtResource("1_it0a4")
+id = &"threat"
+speaker = &"unknown"
+line = "'A warning. Warnings sound like threats when they come too late.'"
+choices = Array[ExtResource("2_1g1nc")]([SubResource("Resource_xvtep")])
+
+[sub_resource type="Resource" id="Resource_p1pdf"]
+script = ExtResource("2_1g1nc")
+text = "How do we stop it?"
+next = &"stop"
+
+[sub_resource type="Resource" id="Resource_r374n"]
+script = ExtResource("1_it0a4")
+id = &"six"
+speaker = &"unknown"
+line = "'The last call ends. The line opens both ways. Something comes through the phone.'"
+choices = Array[ExtResource("2_1g1nc")]([SubResource("Resource_p1pdf")])
+
+[sub_resource type="Resource" id="Resource_qfvlf"]
+script = ExtResource("1_it0a4")
+id = &"stop"
+speaker = &"unknown"
+line = "'Don't hang up first. Whoever hangs up first... stays on the line forever.'"
+auto_next = &"end_hold"
+auto_delay = 5.0
+
+[sub_resource type="Resource" id="Resource_m3xt1"]
+script = ExtResource("1_it0a4")
+id = &"end_hold"
+speaker = &"dispatcher"
+line = "(Silence. Then, very softly, the sound of someone on the line waiting for you to hang up.)"
+
+[sub_resource type="Resource" id="Resource_lyy5l"]
+script = ExtResource("4_dplg5")
+nodes = Array[ExtResource("1_it0a4")]([SubResource("Resource_qjifg"), SubResource("Resource_wgdhy"), SubResource("Resource_bnts8"), SubResource("Resource_7mco0"), SubResource("Resource_c81v7"), SubResource("Resource_eoha1"), SubResource("Resource_6d0yb"), SubResource("Resource_218rr"), SubResource("Resource_3ejpa"), SubResource("Resource_77c4e"), SubResource("Resource_73jeh"), SubResource("Resource_r374n"), SubResource("Resource_qfvlf"), SubResource("Resource_m3xt1")])
+
+[sub_resource type="Resource" id="Resource_pehwp"]
+script = ExtResource("5_nkg7r")
+id = &"rec_station4_1996"
+title = "Station 4 night shift, 1996"
+content = "Entire night crew missing after a final logged call at 05:00. Recording tape blank."
+
+[sub_resource type="Curve" id="Curve_q5a0m"]
+_data = [Vector2(0, 0.9), 0.0, 0.0, 0, 0, Vector2(1, 0.1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_vw0c8"]
+script = ExtResource("7_ejdgn")
+tremor_curve = SubResource("Curve_q5a0m")
+loop_segments = Array[Vector2]([Vector2(0, 4)])
+background_tags = Array[StringName]([&"dispatch_room_ambience", &"emf_hum", &"own_voice"])
+baseline_heart_rate = 44
+emf_frequency = 60.0
+
+[resource]
+script = ExtResource("6_l7ssx")
+id = &"call_last_call"
+title = "The Last Call"
+truth = 3
+earliest_minute = 290
+dialogue = SubResource("Resource_lyy5l")
+phone_number = "911-555-0004"
+caller_name = "Blackvale County 911"
+caller_location_name = "Station 4 — Operations Room"
+true_location = Vector2(400, 300)
+records = Array[ExtResource("5_nkg7r")]([SubResource("Resource_pehwp")])
+stress_profile = SubResource("Resource_vw0c8")
+patience_seconds = 200.0

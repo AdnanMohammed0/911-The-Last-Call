@@ -30,6 +30,10 @@ signal interaction_prompt_changed(prompt: String)
 @export var move_speed_multiplier: float = 1.0
 @export var ground_acceleration: float = 12.0
 @export var air_acceleration: float = 2.0
+## Take-off speed (≈0.9 m jump height).
+@export var jump_velocity: float = 4.2
+## Stamina seconds spent per jump.
+@export var jump_stamina_cost: float = 0.8
 
 @export_group("Stamina")
 ## Seconds of continuous sprint (per class: 5-7 s).
@@ -216,6 +220,12 @@ func _physics_process(delta: float) -> void:
 	_update_interaction()
 	_update_footsteps(delta)
 	_publish_sync_state()
+
+
+## Standing, alive, not exhausted and with headroom above.
+func can_jump() -> bool:
+	return is_on_floor() and stance == Stance.STAND and _health.is_alive() and not grabbed_by_anomaly \
+		and not _is_exhausted and stamina >= jump_stamina_cost * 0.5 and not test_move(global_transform, Vector3.UP * 0.3)
 
 
 ## Returns the player owned by `peer_id` in the current tree, or null.
@@ -503,6 +513,11 @@ func _update_movement(delta: float) -> void:
 
 	if not is_on_floor():
 		velocity.y -= _gravity * delta
+	elif _input.jump_just_pressed and can_jump():
+		velocity.y = jump_velocity
+		stamina = maxf(stamina - jump_stamina_cost, 0.0)
+		_regen_cooldown = stamina_regen_delay
+		stamina_changed.emit(stamina, sprint_duration)
 	move_and_slide()
 
 

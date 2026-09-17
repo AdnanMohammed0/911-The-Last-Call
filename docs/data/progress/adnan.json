@@ -781,6 +781,25 @@
         "scenes/boot/main_menu.tscn",
         "tests/test_settings.gd"
       ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-01",
+        "P3-19"
+      ],
+      "summary": "10 مكالمات جديدة بحوارات متفرعة (Route 9 Crash, Cut Line, Meat Truck, Lost at the Mall, Reservoir Payphone, Thin Walls, Pump 6, St. Agnes Bells, Blue Lips, The Last Call) موزعة على الشفت بكل أنواع الحقيقة، أسئلة خاصة بالكلاسات وأسئلة تنفتح بالأدلة ونهايات متعددة؛ جدولة المكالمات تلقائياً بغرفة العمليات. قفز (Space). اللاعب يبدأ بدون سلاح ويرجع للمحطة بدون سلاح؛ رمي السلاح (G) والتقاطه/تبديله مع الذخيرة، مجرّب على الشبكة. 177/177 اختبار.",
+      "files": [
+        "tools/calls/build_shift_calls.gd",
+        "data/calls/shift1/",
+        "scenes/dispatch/dispatch_setup.gd",
+        "autoload/world_items.gd",
+        "scenes/shared/weapons/weapon_pickup.gd",
+        "scenes/shared/weapons/weapon_holder.gd",
+        "scenes/shared/player/player.gd",
+        "tests/test_mission_loop.gd",
+        "tests/test_call_validator.gd"
+      ]
     }
   ]
 }

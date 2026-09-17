@@ -39,6 +39,8 @@ func before_each() -> void:
 	add_child_autofree(_world)
 	_player = _spawn_player(&"tech")
 	_weapons = _player.get_weapons()
+	_weapons.give_loadout(WeaponCatalog.default_loadout(ClassCatalog.get_data(&"tech")))
+	_weapons.active_slot = WeaponData.Slot.PRIMARY
 
 
 # --- Data / maths ----------------------------------------------------------------------
@@ -99,7 +101,10 @@ func test_default_loadouts_follow_class_access() -> void:
 	assert_eq(_weapons.sidearm_id, &"pistol")
 	assert_eq(_weapons.primary_id, &"smg")
 	assert_eq(_weapons.primary_mag, WeaponCatalog.get_data(&"smg").magazine_size)
-	assert_eq(_weapons.active_slot, WeaponData.Slot.PRIMARY, "spawns holding the primary")
+	assert_eq(_weapons.active_slot, WeaponData.Slot.PRIMARY)
+	var fresh: Player = _spawn_player(&"breacher")
+	assert_false(fresh.get_weapons().has_weapon(WeaponData.Slot.PRIMARY), "players spawn unarmed")
+	assert_false(fresh.get_weapons().has_weapon(WeaponData.Slot.SIDEARM))
 
 
 # --- Host validation ---------------------------------------------------------------------

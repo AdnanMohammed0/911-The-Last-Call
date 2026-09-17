@@ -1,0 +1,304 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_r6tt3"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_1s7m1"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_xrmko"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_830cu"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_kmxx8"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_nu2dq"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_0h6qj"]
+
+[sub_resource type="Resource" id="Resource_ft3ar"]
+script = ExtResource("2_1s7m1")
+text = "Stay with me. Where exactly are you?"
+next = &"where"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_sdof8"]
+script = ExtResource("2_1s7m1")
+text = "Are you hurt?"
+next = &"injuries"
+
+[sub_resource type="Resource" id="Resource_y2vme"]
+script = ExtResource("2_1s7m1")
+text = "Is anyone else in the vehicle?"
+next = &"passenger"
+
+[sub_resource type="Resource" id="Resource_te8gf"]
+script = ExtResource("1_r6tt3")
+id = &"start"
+line = "Oh God— my car went off the road, I'm in a ditch, there's glass everywhere—"
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_ft3ar"), SubResource("Resource_sdof8"), SubResource("Resource_y2vme")])
+
+[sub_resource type="Resource" id="Resource_bq25d"]
+script = ExtResource("2_1s7m1")
+text = "Mile marker fourteen. Can you see any lights or buildings?"
+next = &"lights"
+reveals = Array[StringName]([&"mile_14"])
+
+[sub_resource type="Resource" id="Resource_3uex5"]
+script = ExtResource("2_1s7m1")
+text = "Are you hurt?"
+next = &"injuries"
+
+[sub_resource type="Resource" id="Resource_s3lqv"]
+script = ExtResource("2_1s7m1")
+text = "[Tech] Keep your phone on — I'm pinging your location."
+next = &"trace"
+required_class = &"tech"
+reveals = Array[StringName]([&"gps_ping"])
+
+[sub_resource type="Resource" id="Resource_fihje"]
+script = ExtResource("1_r6tt3")
+id = &"where"
+line = "Route 9, heading north... I passed a green sign, fourteen maybe? It's so dark out here."
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_bq25d"), SubResource("Resource_3uex5"), SubResource("Resource_s3lqv")])
+
+[sub_resource type="Resource" id="Resource_b4yo5"]
+script = ExtResource("1_r6tt3")
+id = &"trace"
+speaker = &"dispatcher"
+line = "(The ping resolves: 300 m north of mile 14, in the tree line — not on the road.)"
+auto_next = &"where_off_road"
+auto_delay = 3.5
+
+[sub_resource type="Resource" id="Resource_q03k3"]
+script = ExtResource("2_1s7m1")
+text = "Did something hit your car?"
+next = &"hit"
+
+[sub_resource type="Resource" id="Resource_mygm2"]
+script = ExtResource("2_1s7m1")
+text = "Are you hurt?"
+next = &"injuries"
+
+[sub_resource type="Resource" id="Resource_3ril6"]
+script = ExtResource("1_r6tt3")
+id = &"where_off_road"
+line = "The tree line? No, no, I was on the road... how did I get this far in?"
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_q03k3"), SubResource("Resource_mygm2")])
+
+[sub_resource type="Resource" id="Resource_2l0ck"]
+script = ExtResource("2_1s7m1")
+text = "Don't call out to it. Stay in the car."
+next = &"stay_quiet"
+reveals = Array[StringName]([&"moving_light"])
+
+[sub_resource type="Resource" id="Resource_ukruw"]
+script = ExtResource("2_1s7m1")
+text = "It might be another driver. Flash your headlights."
+next = &"headlights"
+patience_delta = -15.0
+
+[sub_resource type="Resource" id="Resource_fsxrl"]
+script = ExtResource("1_r6tt3")
+id = &"lights"
+line = "Nothing. Just trees. Wait... there's a light moving between them. Like a flashlight."
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_2l0ck"), SubResource("Resource_ukruw")])
+
+[sub_resource type="Resource" id="Resource_xom1m"]
+script = ExtResource("2_1s7m1")
+text = "Lock your doors and get low. Now."
+next = &"stay_quiet"
+reveals = Array[StringName]([&"moving_light"])
+
+[sub_resource type="Resource" id="Resource_bc1j3"]
+script = ExtResource("1_r6tt3")
+id = &"headlights"
+line = "Okay... it stopped. It's... it's coming towards me. Why is it so fast?"
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_xom1m")])
+
+[sub_resource type="Resource" id="Resource_hhmw0"]
+script = ExtResource("2_1s7m1")
+text = "Is it bleeding?"
+next = &"injuries"
+
+[sub_resource type="Resource" id="Resource_6shk6"]
+script = ExtResource("2_1s7m1")
+text = "Units are on the way, I'll stay on the line."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_rqfxe"]
+script = ExtResource("1_r6tt3")
+id = &"stay_quiet"
+line = "(whispering) Okay. Okay. My leg is stuck under the dash. I can't run anyway."
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_hhmw0"), SubResource("Resource_6shk6")])
+
+[sub_resource type="Resource" id="Resource_xeb1l"]
+script = ExtResource("2_1s7m1")
+text = "[Medic] Is the blood pulsing or flowing steadily?"
+next = &"medic_bleed"
+required_class = &"medic"
+
+[sub_resource type="Resource" id="Resource_6we2p"]
+script = ExtResource("2_1s7m1")
+text = "Press something against it, hard."
+next = &"pressure"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_4p01h"]
+script = ExtResource("2_1s7m1")
+text = "Is anyone else in the vehicle?"
+next = &"passenger"
+
+[sub_resource type="Resource" id="Resource_87rsq"]
+script = ExtResource("1_r6tt3")
+id = &"injuries"
+line = "My leg... it's pinned, there's a lot of blood on my jeans. It's warm."
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_xeb1l"), SubResource("Resource_6we2p"), SubResource("Resource_4p01h")])
+
+[sub_resource type="Resource" id="Resource_hgrib"]
+script = ExtResource("2_1s7m1")
+text = "[Medic] Arterial. Take your belt off and tie it above the wound, tight as you can."
+next = &"tourniquet"
+required_class = &"medic"
+patience_delta = 25.0
+reveals = Array[StringName]([&"arterial_bleed"])
+
+[sub_resource type="Resource" id="Resource_xd8wh"]
+script = ExtResource("1_r6tt3")
+id = &"medic_bleed"
+line = "It's... pulsing. It comes in pushes."
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_hgrib")])
+
+[sub_resource type="Resource" id="Resource_b32ql"]
+script = ExtResource("2_1s7m1")
+text = "Good. Keep talking to me. Is anyone else with you?"
+next = &"passenger"
+
+[sub_resource type="Resource" id="Resource_aodrt"]
+script = ExtResource("2_1s7m1")
+text = "Help is coming, stay awake."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_phiib"]
+script = ExtResource("1_r6tt3")
+id = &"tourniquet"
+line = "(straining) It's... it's tight. It's slowing down. I feel dizzy."
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_b32ql"), SubResource("Resource_aodrt")])
+
+[sub_resource type="Resource" id="Resource_0bo57"]
+script = ExtResource("2_1s7m1")
+text = "Keep pressing. Is anyone else in the vehicle?"
+next = &"passenger"
+
+[sub_resource type="Resource" id="Resource_wysco"]
+script = ExtResource("1_r6tt3")
+id = &"pressure"
+line = "I'm using my jacket. It's soaking through."
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_0bo57")])
+
+[sub_resource type="Resource" id="Resource_voajx"]
+script = ExtResource("2_1s7m1")
+text = "Did she get out to find help?"
+next = &"wife_help"
+
+[sub_resource type="Resource" id="Resource_w4ro0"]
+script = ExtResource("2_1s7m1")
+text = "Can you see her outside?"
+next = &"wife_look"
+patience_delta = -10.0
+
+[sub_resource type="Resource" id="Resource_eo70j"]
+script = ExtResource("2_1s7m1")
+text = "[Profiler] Daniel, what was the last thing she said?"
+next = &"wife_last"
+required_class = &"profiler"
+
+[sub_resource type="Resource" id="Resource_4skux"]
+script = ExtResource("1_r6tt3")
+id = &"passenger"
+line = "My wife, Ana— she was right here. The passenger door is open. She's not here."
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_voajx"), SubResource("Resource_w4ro0"), SubResource("Resource_eo70j")])
+
+[sub_resource type="Resource" id="Resource_wd8db"]
+script = ExtResource("2_1s7m1")
+text = "Can you see her outside?"
+next = &"wife_look"
+
+[sub_resource type="Resource" id="Resource_3wffp"]
+script = ExtResource("2_1s7m1")
+text = "Units are on the way. Stay in the car."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_wm7ei"]
+script = ExtResource("1_r6tt3")
+id = &"wife_help"
+line = "She wouldn't leave me. She wouldn't. Not without saying something."
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_wd8db"), SubResource("Resource_3wffp")])
+
+[sub_resource type="Resource" id="Resource_dnlnp"]
+script = ExtResource("2_1s7m1")
+text = "Someone was in the road? Describe them."
+next = &"hit"
+reveals = Array[StringName]([&"figure_in_road"])
+
+[sub_resource type="Resource" id="Resource_d2546"]
+script = ExtResource("1_r6tt3")
+id = &"wife_last"
+line = "She said... 'Somebody's standing in the road.' Then we swerved."
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_dnlnp")])
+
+[sub_resource type="Resource" id="Resource_vmofc"]
+script = ExtResource("2_1s7m1")
+text = "Stay in the car, doors locked. Units are coming."
+next = &"end_units"
+reveals = Array[StringName]([&"figure_in_road"])
+
+[sub_resource type="Resource" id="Resource_e8jav"]
+script = ExtResource("1_r6tt3")
+id = &"hit"
+line = "Tall. Wet. Like they'd come out of the river. We didn't hit them — they just... weren't there after."
+choices = Array[ExtResource("2_1s7m1")]([SubResource("Resource_vmofc")])
+
+[sub_resource type="Resource" id="Resource_0jpwg"]
+script = ExtResource("1_r6tt3")
+id = &"wife_look"
+line = "(a door creaks) Ana? ...Ana, is that you? Why are you standing like that—"
+auto_next = &"end_line_dead"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_macuo"]
+script = ExtResource("1_r6tt3")
+id = &"end_line_dead"
+speaker = &"dispatcher"
+line = "(Something scrapes across the car roof. The line goes dead.)"
+
+[sub_resource type="Resource" id="Resource_2uv47"]
+script = ExtResource("1_r6tt3")
+id = &"end_units"
+line = "Please hurry. The rain's getting in. I can hear the river."
+
+[sub_resource type="Resource" id="Resource_av667"]
+script = ExtResource("4_830cu")
+nodes = Array[ExtResource("1_r6tt3")]([SubResource("Resource_te8gf"), SubResource("Resource_fihje"), SubResource("Resource_b4yo5"), SubResource("Resource_3ril6"), SubResource("Resource_fsxrl"), SubResource("Resource_bc1j3"), SubResource("Resource_rqfxe"), SubResource("Resource_87rsq"), SubResource("Resource_xd8wh"), SubResource("Resource_phiib"), SubResource("Resource_wysco"), SubResource("Resource_4skux"), SubResource("Resource_wm7ei"), SubResource("Resource_d2546"), SubResource("Resource_e8jav"), SubResource("Resource_0jpwg"), SubResource("Resource_macuo"), SubResource("Resource_2uv47")])
+
+[sub_resource type="Resource" id="Resource_d5qdp"]
+script = ExtResource("5_kmxx8")
+id = &"rec_route9"
+title = "Route 9 — mile 12-16"
+content = "Three fatal crashes this year. Deer crossing zone, no lighting after mile 11."
+
+[sub_resource type="Curve" id="Curve_q0b4n"]
+_data = [Vector2(0, 0.55), 0.0, 0.0, 0, 0, Vector2(1, 0.8), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_si1ql"]
+script = ExtResource("7_0h6qj")
+tremor_curve = SubResource("Curve_q0b4n")
+background_tags = Array[StringName]([&"engine_hiss", &"rain"])
+baseline_heart_rate = 128
+
+[resource]
+script = ExtResource("6_nu2dq")
+id = &"call_highway_crash"
+title = "Route 9 Crash"
+earliest_minute = 3
+dialogue = SubResource("Resource_av667")
+phone_number = "911-555-0187"
+caller_name = "Daniel Reyes"
+caller_location_name = "Route 9, near mile marker 14"
+true_location = Vector2(620, 140)
+records = Array[ExtResource("5_kmxx8")]([SubResource("Resource_d5qdp")])
+stress_profile = SubResource("Resource_si1ql")
+patience_seconds = 200.0

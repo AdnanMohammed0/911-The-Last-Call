@@ -104,6 +104,7 @@ func _process(delta: float) -> void:
 			hints.append("[1] %s" % holder.weapon_data(WeaponData.Slot.PRIMARY).display_name)
 		if holder.has_weapon(WeaponData.Slot.SIDEARM):
 			hints.append("[2] %s" % holder.weapon_data(WeaponData.Slot.SIDEARM).display_name)
+		hints.append("[%s] Drop" % GameSettings.binding_text(&"drop_weapon"))
 		_slots_label.text = "   ".join(hints)
 	var target_gap: float = 4.0 + holder.current_spread() * 7.0
 	_gap = lerpf(_gap, target_gap, clampf(12.0 * delta, 0.0, 1.0))

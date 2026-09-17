@@ -11,7 +11,8 @@ const SPEED_TOLERANCE: float = 1.2
 const WINDOW_SEC: float = 0.5
 ## Absorbs lag spikes / packet bunching (~0.8 s of stalled packets at sprint speed).
 const SLACK_METERS: float = 1.5
-const MAX_RISE_SPEED: float = 4.0
+## Above jump take-off speed (Player.jump_velocity 4.2).
+const MAX_RISE_SPEED: float = 5.5
 ## A single update moving further than this is a teleport, whatever the timing.
 const TELEPORT_DISTANCE: float = 5.0
 const CORRECTION_ACCEPT_DISTANCE: float = 1.0

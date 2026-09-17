@@ -96,10 +96,9 @@ func _ready() -> void:
 	_local_shot_player.volume_db = -4.0
 	add_child(_local_shot_player)
 	if multiplayer.is_server() and primary_id == &"" and sidearm_id == &"":
+		# Players start unarmed (weapons come from the armory); a deployment carries its loadout over.
 		var saved: Dictionary = MissionDirector.get_loadout(_player.peer_id)
-		if saved.is_empty():
-			give_loadout(WeaponCatalog.default_loadout(ClassCatalog.get_data(_player.class_id)))
-		else:
+		if not saved.is_empty():
 			restore_loadout(saved)
 	if not has_weapon(active_slot) and has_weapon(WeaponData.Slot.PRIMARY):
 		active_slot = WeaponData.Slot.PRIMARY
@@ -381,6 +380,39 @@ func _accept_fire_rate(slot: int, weapon: WeaponData) -> bool:
 	return true
 
 
+## Host: set a slot's magazine and reserve (pickups keep the ammo they were dropped with).
+func set_ammo(slot: int, mag: int, spare: int) -> void:
+	if multiplayer.is_server() and has_weapon(slot):
+		var data: WeaponData = weapon_data(slot)
+		_set_ammo(slot, clampi(mag, 0, data.magazine_size), clampi(spare, 0, data.max_reserve))
+
+
+## Host: drop the weapon in `slot` on the floor (at `at`, or in front of the player). Returns true on success.
+func host_drop(sender: int, slot: int, at: Vector3 = Vector3.INF) -> bool:
+	if not multiplayer.is_server() or sender != _player.peer_id or not has_weapon(slot):
+		return false
+	var position: Vector3 = at if at != Vector3.INF else _drop_position()
+	WorldItems.spawn_weapon(weapon_id(slot), magazine(slot), reserve(slot), position, _player.rotation.y + randf_range(-0.4, 0.4))
+	set_weapon(slot, &"")
+	return true
+
+
+func _drop_position() -> Vector3:
+	var forward: Vector3 = -_player.global_basis.z
+	var from: Vector3 = _player.get_eye_position()
+	var ahead: Vector3 = _player.global_position + forward * 0.9 + Vector3(0, 1.0, 0)
+	var space: PhysicsDirectSpaceState3D = _player.get_world_3d().direct_space_state
+	# Don't push the weapon through a wall in front of the player.
+	var wall: Dictionary = space.intersect_ray(PhysicsRayQueryParameters3D.create(from, ahead, 1, [_player.get_rid()]))
+	if not wall.is_empty():
+		ahead = _player.global_position + Vector3(0, 1.0, 0)
+	var floor_hit: Dictionary = space.intersect_ray(PhysicsRayQueryParameters3D.create(ahead, ahead + Vector3.DOWN * 3.0, 1, [_player.get_rid()]))
+	if floor_hit.is_empty():
+		return _player.global_position
+	var point: Vector3 = floor_hit["position"]
+	return point
+
+
 func _set_ammo(slot: int, mag: int, spare: int) -> void:
 	if slot == WeaponData.Slot.PRIMARY:
 		primary_mag = mag
@@ -461,9 +493,31 @@ func _physics_process(delta: float) -> void:
 		return
 	if input.reload_just_pressed:
 		request_reload()
+	if input.drop_just_pressed:
+		request_drop()
+		return
 	var wants_fire: bool = input.fire_held if weapon.automatic else input.fire_just_pressed
 	if wants_fire and _draw_left <= 0.0 and reloading_slot != active_slot:
 		_try_fire_local(weapon, input.fire_just_pressed)
+
+
+## Owner: drop the active weapon.
+func request_drop() -> void:
+	if not has_weapon(active_slot):
+		return
+	if multiplayer.is_server():
+		host_drop(multiplayer.get_unique_id(), active_slot)
+	else:
+		_rpc_drop.rpc_id(1, active_slot)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_drop(slot: int) -> void:
+	if not RpcGuard.is_host(self):
+		return
+	var sender: int = RpcGuard.sender_id(self)
+	if RpcGuard.is_registered(sender) and _limiter.allow(sender, &"drop"):
+		host_drop(sender, slot)
 
 
 ## Owner: ask the host to reload the active weapon.

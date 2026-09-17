@@ -69,6 +69,7 @@ func test_weapon_rack_respects_class() -> void:
 
 func test_ammo_crate_refills() -> void:
 	var tech: Player = _player(&"tech")
+	tech.get_weapons().set_weapon(WeaponData.Slot.PRIMARY, &"smg")
 	tech.get_weapons().primary_mag = 2
 	tech.get_weapons().primary_reserve = 0
 	_rack(ArmoryItem.Kind.AMMO)._on_interact(1)
@@ -166,3 +167,107 @@ func test_deploy_door_locked_until_response() -> void:
 	assert_true(door._can_interact(1))
 	door._on_interact(1)
 	assert_eq(MissionDirector.state, MissionDirector.State.DEPLOYED)
+
+
+func _floor() -> void:
+	var floor_body: StaticBody3D = StaticBody3D.new()
+	var shape: CollisionShape3D = CollisionShape3D.new()
+	var box: BoxShape3D = BoxShape3D.new()
+	box.size = Vector3(20, 0.2, 20)
+	shape.shape = box
+	floor_body.add_child(shape)
+	_world.add_child(floor_body)
+	floor_body.global_position = Vector3(0, -0.1, 0)
+
+
+func _clear_pickups() -> void:
+	for item: WeaponPickup in WorldItems.pickups():
+		WorldItems.remove(item.name)
+	await wait_frames(2)
+
+
+func test_returning_to_station_hands_weapons_back() -> void:
+	var tech: Player = _player(&"tech")
+	tech.get_weapons().set_weapon(WeaponData.Slot.PRIMARY, &"rifle")
+	MissionDirector.start_response(&"call_x", &"genuine")
+	MissionDirector.deploy()
+	assert_false(MissionDirector.get_loadout(1).is_empty(), "gear goes into the mission")
+	MissionDirector.report_hostiles(0, 3)
+	MissionDirector.extract()
+	assert_true(MissionDirector.get_loadout(1).is_empty(), "nothing is carried back to the station")
+	tech.free()
+	var back: Player = _player(&"tech")
+	assert_false(back.get_weapons().has_weapon(WeaponData.Slot.PRIMARY))
+
+
+func test_drop_and_pick_up_weapon() -> void:
+	_floor()
+	var owner_player: Player = _player(&"breacher")
+	var weapons: WeaponHolder = owner_player.get_weapons()
+	weapons.set_weapon(WeaponData.Slot.PRIMARY, &"shotgun")
+	weapons.primary_mag = 3
+	await wait_physics_frames(2)
+	assert_false(weapons.host_drop(2, WeaponData.Slot.PRIMARY), "only the owner can drop")
+	assert_true(weapons.host_drop(1, WeaponData.Slot.PRIMARY))
+	assert_false(weapons.has_weapon(WeaponData.Slot.PRIMARY))
+	var pickups: Array[WeaponPickup] = WorldItems.pickups()
+	assert_eq(pickups.size(), 1)
+	var pickup: WeaponPickup = pickups[0]
+	assert_eq(pickup.weapon_id, &"shotgun")
+	assert_eq(pickup.magazine, 3, "keeps its ammo")
+	assert_almost_eq(pickup.global_position.y, 0.0, 0.05, "lands on the floor")
+	assert_true(pickup._can_interact(1))
+	pickup._on_interact(1)
+	assert_eq(weapons.primary_id, &"shotgun")
+	assert_eq(weapons.primary_mag, 3)
+	await wait_seconds(0.4)
+	assert_eq(WorldItems.pickups().size(), 0, "removed after pickup")
+
+
+func test_pickup_swaps_with_carried_weapon() -> void:
+	var owner_player: Player = _player(&"breacher")
+	var weapons: WeaponHolder = owner_player.get_weapons()
+	weapons.set_weapon(WeaponData.Slot.PRIMARY, &"rifle")
+	var pickup_name: String = WorldItems.spawn_weapon(&"shotgun", 5, 10, Vector3(1, 0, 0), 0.0)
+	var pickup: WeaponPickup = WorldItems.find(pickup_name)
+	pickup._on_interact(1)
+	assert_eq(weapons.primary_id, &"shotgun")
+	var dropped: Array[StringName] = []
+	for item: WeaponPickup in WorldItems.pickups():
+		dropped.append(item.weapon_id)
+	assert_true(&"rifle" in dropped, "the rifle is left on the floor")
+	await wait_seconds(0.4)
+	await _clear_pickups()
+
+
+func test_class_restricted_pickup() -> void:
+	_player(&"breacher")
+	var pickup_name: String = WorldItems.spawn_weapon(&"smg", 30, 90, Vector3.ZERO, 0.0)
+	assert_false(WorldItems.find(pickup_name)._can_interact(1), "SMG is Tech only")
+	await _clear_pickups()
+
+
+func test_jump() -> void:
+	_floor()
+	var player: Player = _player(&"tech")
+	player.global_position = Vector3(0, 0.05, 0)
+	player.get_input().enabled = false
+	player.set_physics_process(true)
+	await wait_physics_frames(10)
+	assert_true(player.is_on_floor())
+	assert_true(player.can_jump())
+	var stamina_before: float = player.stamina
+	player.set_physics_process(false)
+	player.get_input().jump_just_pressed = true
+	player._update_movement(1.0 / 60.0)
+	player.get_input().jump_just_pressed = false
+	assert_gt(player.velocity.y, 3.0)
+	assert_lt(player.stamina, stamina_before, "jumping costs stamina")
+	player.set_physics_process(true)
+	var peak: float = 0.0
+	for i: int in 40:
+		await get_tree().physics_frame
+		peak = maxf(peak, player.global_position.y)
+	assert_between(peak, 0.6, 1.3, "about a metre high (%.2f)" % peak)
+	player.stance = Player.Stance.CROUCH
+	assert_false(player.can_jump(), "no jumping while crouched")

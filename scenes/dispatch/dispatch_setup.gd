@@ -1,6 +1,7 @@
 ## Wires the operations room into the call system: registers every authored call on every peer (clients
-## need the CallData to show caller info), starts the shift clock, rings a test call after
-## `auto_test_call_delay` seconds on the host, and forwards "Start test call" from any player's terminal.
+## need the CallData to show caller info), starts the shift clock, queues every call that has not been
+## handled yet by its `earliest_minute` (the shift schedule), and forwards "Start test call" from any
+## player's terminal.
 ## Authority: HOST (ringing) / every peer (registration, UI)
 class_name DispatchSetup
 extends Node3D
@@ -8,7 +9,7 @@ extends Node3D
 const TEST_CALL: String = "res://data/calls/slice/call_closet_monster.tres"
 
 ## Seconds after the room loads before the host rings the test call (0 = never automatically).
-@export var auto_test_call_delay: float = 15.0
+@export var auto_test_call_delay: float = 0.0
 @export var clock_label: Label3D
 
 var _auto_timer: float = 0.0
@@ -27,6 +28,21 @@ func _ready() -> void:
 		terminal.test_call_requested.connect(request_test_call)
 	if multiplayer.is_server():
 		CallDirector.start_shift()
+		queue_shift_calls()
+
+
+## Host: queue every registered call that has not rung yet, earliest first.
+func queue_shift_calls() -> void:
+	if not multiplayer.is_server():
+		return
+	var pending: Array[CallData] = []
+	for call_id: StringName in CallDirector.registered_calls:
+		if CallDirector.call_history.has(call_id) or call_id in CallDirector.call_queue or call_id == CallDirector.active_call_id:
+			continue
+		pending.append(CallDirector.registered_calls[call_id])
+	pending.sort_custom(func(a: CallData, b: CallData) -> bool: return a.earliest_minute < b.earliest_minute)
+	for call: CallData in pending:
+		CallDirector.enqueue_call(call.id)
 
 
 func _process(delta: float) -> void:

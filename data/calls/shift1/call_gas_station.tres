@@ -1,0 +1,221 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_ja0d2"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_gn6k8"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_xcg7m"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_2mv5i"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_fyopk"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_qlsbe"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_xhbp6"]
+
+[sub_resource type="Resource" id="Resource_v6lpi"]
+script = ExtResource("2_gn6k8")
+text = "Are you inside the store?"
+next = &"inside"
+
+[sub_resource type="Resource" id="Resource_46rdf"]
+script = ExtResource("2_gn6k8")
+text = "How many people are hurt?"
+next = &"hurt"
+
+[sub_resource type="Resource" id="Resource_cbr6c"]
+script = ExtResource("2_gn6k8")
+text = "[Tech] Tracing this call."
+next = &"trace"
+required_class = &"tech"
+reveals = Array[StringName]([&"payphone_downtown"])
+
+[sub_resource type="Resource" id="Resource_ku07x"]
+script = ExtResource("1_ja0d2")
+id = &"start"
+line = "Armed robbery at the Quick Stop on Highway 40! Three guys with shotguns, they're shooting! Send everyone!"
+choices = Array[ExtResource("2_gn6k8")]([SubResource("Resource_v6lpi"), SubResource("Resource_46rdf"), SubResource("Resource_cbr6c")])
+
+[sub_resource type="Resource" id="Resource_6ysmc"]
+script = ExtResource("2_gn6k8")
+text = "Describe the getaway car."
+next = &"car"
+
+[sub_resource type="Resource" id="Resource_scmfs"]
+script = ExtResource("2_gn6k8")
+text = "[Profiler] You're very calm for someone watching a shooting."
+next = &"profiler"
+required_class = &"profiler"
+reveals = Array[StringName]([&"too_calm"])
+
+[sub_resource type="Resource" id="Resource_hliok"]
+script = ExtResource("1_ja0d2")
+id = &"inside"
+line = "I'm across the street, at... at the pumps. Pump 6. They're still in there!"
+choices = Array[ExtResource("2_gn6k8")]([SubResource("Resource_6ysmc"), SubResource("Resource_scmfs")])
+
+[sub_resource type="Resource" id="Resource_hnl0w"]
+script = ExtResource("2_gn6k8")
+text = "All the units? Why all of them?"
+next = &"all_units"
+patience_delta = -10.0
+
+[sub_resource type="Resource" id="Resource_240xt"]
+script = ExtResource("2_gn6k8")
+text = "Are you inside the store?"
+next = &"inside"
+
+[sub_resource type="Resource" id="Resource_cs86k"]
+script = ExtResource("1_ja0d2")
+id = &"hurt"
+line = "The cashier, the cashier's down! Send all the units in the county!"
+choices = Array[ExtResource("2_gn6k8")]([SubResource("Resource_hnl0w"), SubResource("Resource_240xt")])
+
+[sub_resource type="Resource" id="Resource_5x0be"]
+script = ExtResource("2_gn6k8")
+text = "[Profiler] Listen to what's behind him."
+next = &"listen"
+required_class = &"profiler"
+reveals = Array[StringName]([&"alarm_background"])
+
+[sub_resource type="Resource" id="Resource_41vw7"]
+script = ExtResource("2_gn6k8")
+text = "Units are heading north."
+next = &"end_diverted"
+
+[sub_resource type="Resource" id="Resource_ubx8h"]
+script = ExtResource("1_ja0d2")
+id = &"all_units"
+line = "Because they're— they've got a lot of guns! Just send them north, now!"
+choices = Array[ExtResource("2_gn6k8")]([SubResource("Resource_5x0be"), SubResource("Resource_41vw7")])
+
+[sub_resource type="Resource" id="Resource_u207g"]
+script = ExtResource("1_ja0d2")
+id = &"trace"
+speaker = &"dispatcher"
+line = "(Trace: payphone on Main Street, outside First Blackvale Savings — twenty miles south.)"
+auto_next = &"trace_after"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_oq6g6"]
+script = ExtResource("2_gn6k8")
+text = "You're calling from Main Street, not Highway 40."
+next = &"caught"
+required_evidence = Array[StringName]([&"payphone_downtown"])
+patience_delta = -30.0
+
+[sub_resource type="Resource" id="Resource_0iu3l"]
+script = ExtResource("1_ja0d2")
+id = &"trace_after"
+line = "Hello? Are they coming? Send them north!"
+choices = Array[ExtResource("2_gn6k8")]([SubResource("Resource_oq6g6")])
+
+[sub_resource type="Resource" id="Resource_h4uuh"]
+script = ExtResource("1_ja0d2")
+id = &"listen"
+speaker = &"dispatcher"
+line = "(Under his voice: a bell alarm ringing, and city traffic. No highway, no gunfire.)"
+auto_next = &"listen_after"
+auto_delay = 3.5
+
+[sub_resource type="Resource" id="Resource_uq61p"]
+script = ExtResource("2_gn6k8")
+text = "That's a bank alarm behind you."
+next = &"caught"
+required_evidence = Array[StringName]([&"alarm_background"])
+patience_delta = -30.0
+
+[sub_resource type="Resource" id="Resource_44nwn"]
+script = ExtResource("1_ja0d2")
+id = &"listen_after"
+line = "Why are you waiting? People are dying!"
+choices = Array[ExtResource("2_gn6k8")]([SubResource("Resource_uq61p")])
+
+[sub_resource type="Resource" id="Resource_7t63s"]
+script = ExtResource("2_gn6k8")
+text = "Describe the getaway car."
+next = &"car"
+
+[sub_resource type="Resource" id="Resource_imp2a"]
+script = ExtResource("1_ja0d2")
+id = &"profiler"
+line = "Calm? I'm— I'm in shock, lady. Send the cops north."
+choices = Array[ExtResource("2_gn6k8")]([SubResource("Resource_7t63s")])
+
+[sub_resource type="Resource" id="Resource_av4iv"]
+script = ExtResource("2_gn6k8")
+text = "[Tech] That Quick Stop has been closed since August."
+next = &"closed"
+required_class = &"tech"
+reveals = Array[StringName]([&"store_closed"])
+
+[sub_resource type="Resource" id="Resource_vs644"]
+script = ExtResource("2_gn6k8")
+text = "Units are heading north."
+next = &"end_diverted"
+
+[sub_resource type="Resource" id="Resource_yonhr"]
+script = ExtResource("1_ja0d2")
+id = &"car"
+line = "Uh... a van. White. Or grey."
+choices = Array[ExtResource("2_gn6k8")]([SubResource("Resource_av4iv"), SubResource("Resource_vs644")])
+
+[sub_resource type="Resource" id="Resource_lsp5x"]
+script = ExtResource("1_ja0d2")
+id = &"closed"
+line = "(pause) ...Then I guess they're robbing an empty store. (laughs) Too late anyway."
+auto_next = &"end_click"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_lje5y"]
+script = ExtResource("1_ja0d2")
+id = &"caught"
+line = "(a car horn, someone shouts 'let's go!') Enjoy the drive north, dispatch."
+auto_next = &"end_click"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_81ecs"]
+script = ExtResource("1_ja0d2")
+id = &"end_click"
+speaker = &"dispatcher"
+line = "(Click. Seconds later the Main Street bank alarm hits the silent-alarm board.)"
+
+[sub_resource type="Resource" id="Resource_6p0ka"]
+script = ExtResource("1_ja0d2")
+id = &"end_diverted"
+line = "Good. Good. (click)"
+
+[sub_resource type="Resource" id="Resource_noi1c"]
+script = ExtResource("4_2mv5i")
+nodes = Array[ExtResource("1_ja0d2")]([SubResource("Resource_ku07x"), SubResource("Resource_hliok"), SubResource("Resource_cs86k"), SubResource("Resource_ubx8h"), SubResource("Resource_u207g"), SubResource("Resource_0iu3l"), SubResource("Resource_h4uuh"), SubResource("Resource_44nwn"), SubResource("Resource_imp2a"), SubResource("Resource_yonhr"), SubResource("Resource_lsp5x"), SubResource("Resource_lje5y"), SubResource("Resource_81ecs"), SubResource("Resource_6p0ka")])
+
+[sub_resource type="Resource" id="Resource_uqm6m"]
+script = ExtResource("5_fyopk")
+id = &"rec_payphone_0170"
+title = "911-555-0170"
+content = "Payphone outside First Blackvale Savings, Main Street (south county)."
+
+[sub_resource type="Resource" id="Resource_gfpt0"]
+script = ExtResource("5_fyopk")
+id = &"rec_quickstop"
+title = "Quick Stop Highway 40"
+content = "Closed for renovation since August."
+
+[sub_resource type="Curve" id="Curve_jg2bf"]
+_data = [Vector2(0, 0.2), 0.0, 0.0, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_6h13x"]
+script = ExtResource("7_xhbp6")
+tremor_curve = SubResource("Curve_jg2bf")
+background_tags = Array[StringName]([&"bank_alarm", &"traffic_downtown"])
+baseline_heart_rate = 76
+
+[resource]
+script = ExtResource("6_qlsbe")
+id = &"call_gas_station"
+title = "Pump 6"
+truth = 4
+earliest_minute = 160
+dialogue = SubResource("Resource_noi1c")
+phone_number = "911-555-0170"
+caller_location_name = "Quick Stop gas station, Highway 40 (north county)"
+true_location = Vector2(700, 60)
+records = Array[ExtResource("5_fyopk")]([SubResource("Resource_uqm6m"), SubResource("Resource_gfpt0")])
+stress_profile = SubResource("Resource_6h13x")
+patience_seconds = 140.0

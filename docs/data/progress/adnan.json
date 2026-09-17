@@ -461,6 +461,16 @@
    ],
    "commit": "a1aaf33",
    "auto": true
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [],
+   "summary": "fix(call_director): connect to peer_left and peer_dropped signals on NetManager",
+   "files": [
+    "autoload/call_director.gd"
+   ],
+   "commit": "a8ffd7e",
+   "auto": true
   }
  ]
 }

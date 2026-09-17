@@ -3,6 +3,8 @@ extends GutTest
 
 var _nav: MissionNavigation
 var _agent: CharacterBody3D
+## Own World3D so navigation regions / bodies from other tests never share our navigation map.
+var _viewport: SubViewport
 
 
 func _box(parent: Node, center: Vector3, size: Vector3) -> void:
@@ -18,14 +20,17 @@ func _box(parent: Node, center: Vector3, size: Vector3) -> void:
 
 ## 40x40 floor; a low wall (1 m) and a tall wall (3 m) between the AI side (z > 0) and the threat (z < -10).
 func before_each() -> void:
+	_viewport = SubViewport.new()
+	_viewport.own_world_3d = true
+	add_child_autofree(_viewport)
 	_nav = MissionNavigation.new()
 	_nav.bake_on_ready = false
-	add_child_autofree(_nav)
+	_viewport.add_child(_nav)
 	_box(_nav, Vector3(0, -0.5, 0), Vector3(40, 1, 40))
 	_box(_nav, Vector3(-6, 0.5, 0), Vector3(4, 1, 0.4))     # low wall
 	_box(_nav, Vector3(6, 1.5, 0), Vector3(4, 3, 0.4))      # tall wall
 	_agent = CharacterBody3D.new()
-	add_child_autofree(_agent)
+	_viewport.add_child(_agent)
 	_agent.global_position = Vector3(0, 0, 6)
 	await wait_physics_frames(2)
 	_nav.bake_now()
@@ -35,7 +40,8 @@ func before_each() -> void:
 func _points() -> Array[CoverPoint]:
 	var result: Array[CoverPoint] = []
 	for node: Node in get_tree().get_nodes_in_group(CoverPoint.GROUP):
-		result.append(node as CoverPoint)
+		if _nav.is_ancestor_of(node):
+			result.append(node as CoverPoint)
 	return result
 
 
@@ -77,7 +83,7 @@ func test_claimed_cover_is_not_given_to_another_agent() -> void:
 	var first: CoverPoint = CoverQuery.find_best(_agent, threat)
 	CoverQuery.claim(first, _agent)
 	var other: CharacterBody3D = CharacterBody3D.new()
-	add_child_autofree(other)
+	_viewport.add_child(other)
 	other.global_position = Vector3(0, 0, 6)
 	var second: CoverPoint = CoverQuery.find_best(other, threat)
 	assert_ne(first, second)

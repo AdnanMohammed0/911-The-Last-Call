@@ -1,5 +1,6 @@
-[gd_scene load_steps=27 format=3 uid="uid://station4_ops_room_p1"]
+[gd_scene format=3 uid="uid://station4_ops_room_p1"]
 
+[ext_resource type="PackedScene" path="res://scenes/dispatch/dispatch_setup.tscn" id="90_dispatch"]
 [ext_resource type="Script" path="res://core/net/player_spawner.gd" id="1_spawner"]
 [ext_resource type="Script" path="res://scenes/shared/player/player_debug_hud.gd" id="2_hud"]
 [ext_resource type="PackedScene" uid="uid://c6fdoor842p1" path="res://scenes/shared/door/door.tscn" id="3_door"]
@@ -591,6 +592,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 10.4)
 text = "BLACKVALE COUNTY 911 - STATION 4"
 font_size = 32
 outline_size = 8
+
+[node name="DispatchSetup" parent="." instance=ExtResource("90_dispatch")]
 
 [node name="Players" type="Node3D" parent="."]
 

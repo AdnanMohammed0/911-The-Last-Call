@@ -695,6 +695,26 @@
     "scenes/",
     "project.godot"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P2-04",
+    "P2-05"
+   ],
+   "summary": "غرفة العمليات صارت شغالة: حاسبة CAD بكل مكتب (F) تعرض حالة المكالمة، المتصل، الصبر، النص، الردود (حامل السماعة بس)، السجلات، والحكم/تصويت الفريق؛ تلفون 911 يرن بصوت وضوء ويتجاوب بـ F؛ مكالمة تجريبية (Closet Monster) ترن تلقائياً بعد 15 ث + زر «Start test call»؛ ساعة المناوبة على الحايط، شاشة حالة، كراسي. الدخول لـ Station 4 صار مرحلة DISPATCH حتى الساعة تمشي. واجهة مؤقتة لحد ما Ali يخلص P2-07/P2-12/P2-18. اختبار offline كامل + اختبار شبكة (الـ client يجاوب ويختار رد Profiler والتصويت يعطي PRANK صحيح). صلّحت اختبارين متقلبين.",
+   "files": [
+    "scenes/dispatch/dispatch_setup.tscn",
+    "scenes/dispatch/dispatch_setup.gd",
+    "scenes/dispatch/dispatch_computer.gd",
+    "scenes/dispatch/dispatch_phone.gd",
+    "ui/dispatch/dispatch_terminal.gd",
+    "scenes/dispatch/operations_room.tscn",
+    "autoload/net_manager.gd",
+    "ui/hud/pause_menu.gd",
+    "tests/test_cover_navigation.gd",
+    "tests/test_tension_director.gd"
+   ]
   }
  ]
 }

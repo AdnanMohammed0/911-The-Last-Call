@@ -35,6 +35,15 @@ func after_each() -> void:
 		node.queue_free()
 
 
+## Nodes queued for deletion by an earlier test's cleanup still sit in the group until the frame ends.
+func _live_hallucinations() -> int:
+	var count: int = 0
+	for node: Node in get_tree().get_nodes_in_group(Hallucination.GROUP):
+		if not node.is_queued_for_deletion():
+			count += 1
+	return count
+
+
 func _run(seconds: float) -> void:
 	for i: int in int(seconds / 0.5):
 		TensionDirector.update(0.5)
@@ -86,13 +95,13 @@ func test_scare_plays_locally_for_the_victim() -> void:
 	EventBus.hallucination.disconnect(on_hallucination)
 	assert_ne(victim, 0)
 	assert_eq(seen, [&"shadow_figure"] as Array[StringName])
-	assert_eq(get_tree().get_nodes_in_group(Hallucination.GROUP).size(), 1)
+	assert_eq(_live_hallucinations(), 1)
 
 
 func test_hallucination_expires() -> void:
 	TensionDirector.schedule_scare(&"shadow_figure")
 	await wait_seconds(1.8)
-	assert_eq(get_tree().get_nodes_in_group(Hallucination.GROUP).size(), 0)
+	assert_eq(_live_hallucinations(), 0)
 
 
 func test_same_scare_kind_does_not_repeat_back_to_back() -> void:

@@ -1,0 +1,230 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/dispatch/dispatch_setup.gd" id="1_setup"]
+[ext_resource type="Script" path="res://scenes/dispatch/dispatch_computer.gd" id="2_computer"]
+[ext_resource type="Script" path="res://scenes/dispatch/dispatch_phone.gd" id="3_phone"]
+[ext_resource type="Script" path="res://ui/dispatch/dispatch_terminal.gd" id="4_terminal"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_monitor"]
+size = Vector3(1.1, 0.7, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tacmap"]
+size = Vector3(1.6, 0.3, 1.0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_phone"]
+size = Vector3(0.5, 0.4, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Chair"]
+albedo_color = Color(0.07, 0.08, 0.1, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Mat_PhoneRed"]
+albedo_color = Color(0.5, 0.05, 0.05, 1)
+emission_enabled = true
+emission = Color(0.8, 0.05, 0.05, 1)
+emission_energy_multiplier = 1.5
+
+[sub_resource type="StandardMaterial3D" id="Mat_Clock"]
+albedo_color = Color(0.02, 0.02, 0.03, 1)
+
+[node name="DispatchSetup" type="Node3D" node_paths=PackedStringArray("clock_label")]
+script = ExtResource("1_setup")
+clock_label = NodePath("WallClock/Time")
+
+[node name="Computers" type="Node3D" parent="."]
+
+[node name="TechComputer" type="Area3D" parent="Computers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 1.05, -2.2)
+script = ExtResource("2_computer")
+
+[node name="Shape" type="CollisionShape3D" parent="Computers/TechComputer"]
+shape = SubResource("BoxShape3D_monitor")
+
+[node name="Sign" type="Label3D" parent="Computers/TechComputer"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+pixel_size = 0.003
+text = "911 CAD  [F]"
+font_size = 40
+outline_size = 8
+modulate = Color(0.45, 1, 0.6, 1)
+
+[node name="ProfilerComputer" type="Area3D" parent="Computers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.3, 1.05, -2.2)
+script = ExtResource("2_computer")
+
+[node name="Shape" type="CollisionShape3D" parent="Computers/ProfilerComputer"]
+shape = SubResource("BoxShape3D_monitor")
+
+[node name="MedicComputer" type="Area3D" parent="Computers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.05, 2.2)
+script = ExtResource("2_computer")
+
+[node name="Shape" type="CollisionShape3D" parent="Computers/MedicComputer"]
+shape = SubResource("BoxShape3D_monitor")
+
+[node name="Sign" type="Label3D" parent="Computers/MedicComputer"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.45, 0)
+pixel_size = 0.003
+text = "911 CAD  [F]"
+font_size = 40
+outline_size = 8
+modulate = Color(0.45, 1, 0.6, 1)
+
+[node name="BreacherTacMap" type="Area3D" parent="Computers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.9, 2)
+script = ExtResource("2_computer")
+
+[node name="Shape" type="CollisionShape3D" parent="Computers/BreacherTacMap"]
+shape = SubResource("BoxShape3D_tacmap")
+
+[node name="SupervisorComputer" type="Area3D" parent="Computers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 1.05, -4.3)
+script = ExtResource("2_computer")
+
+[node name="Shape" type="CollisionShape3D" parent="Computers/SupervisorComputer"]
+shape = SubResource("BoxShape3D_monitor")
+
+[node name="Phone" type="Area3D" parent="." node_paths=PackedStringArray("ring_light", "status_label")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.2, 0.95, -2)
+script = ExtResource("3_phone")
+ring_light = NodePath("RingLight")
+status_label = NodePath("../StatusScreen")
+
+[node name="Shape" type="CollisionShape3D" parent="Phone"]
+shape = SubResource("BoxShape3D_phone")
+
+[node name="Handset" type="CSGBox3D" parent="Phone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+size = Vector3(0.28, 0.06, 0.1)
+material = SubResource("Mat_PhoneRed")
+
+[node name="RingLight" type="OmniLight3D" parent="Phone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+visible = false
+light_color = Color(1, 0.12, 0.08, 1)
+light_energy = 3.0
+omni_range = 3.5
+
+[node name="Sign" type="Label3D" parent="Phone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.1)
+pixel_size = 0.0025
+text = "911 LINE  [F]"
+font_size = 40
+outline_size = 8
+modulate = Color(1, 0.55, 0.45, 1)
+
+[node name="StatusScreen" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.3, 1.62, -2.15)
+pixel_size = 0.003
+text = "LINES CLEAR"
+font_size = 44
+outline_size = 10
+modulate = Color(0.55, 0.75, 0.7, 1)
+
+[node name="WallClock" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 3.3, -5.62)
+
+[node name="Face" type="CSGBox3D" parent="WallClock"]
+size = Vector3(1.6, 0.5, 0.05)
+material = SubResource("Mat_Clock")
+
+[node name="Time" type="Label3D" parent="WallClock"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.04)
+pixel_size = 0.004
+text = "00:00"
+font_size = 96
+outline_size = 0
+modulate = Color(1, 0.3, 0.2, 1)
+
+[node name="Caption" type="Label3D" parent="WallClock"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.38, 0.04)
+pixel_size = 0.0025
+text = "SHIFT CLOCK  00:00 - 06:00"
+font_size = 40
+modulate = Color(0.7, 0.75, 0.8, 1)
+
+[node name="Chairs" type="Node3D" parent="."]
+
+[node name="ChairTech" type="CSGCombiner3D" parent="Chairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -0.95)
+
+[node name="Seat" type="CSGBox3D" parent="Chairs/ChairTech"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
+size = Vector3(0.55, 0.08, 0.55)
+material = SubResource("Mat_Chair")
+
+[node name="Back" type="CSGBox3D" parent="Chairs/ChairTech"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0.25)
+size = Vector3(0.55, 0.7, 0.06)
+material = SubResource("Mat_Chair")
+
+[node name="Stem" type="CSGBox3D" parent="Chairs/ChairTech"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
+size = Vector3(0.08, 0.45, 0.08)
+material = SubResource("Mat_Chair")
+
+[node name="ChairProfiler" type="CSGCombiner3D" parent="Chairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -0.95)
+
+[node name="Seat" type="CSGBox3D" parent="Chairs/ChairProfiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
+size = Vector3(0.55, 0.08, 0.55)
+material = SubResource("Mat_Chair")
+
+[node name="Back" type="CSGBox3D" parent="Chairs/ChairProfiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0.25)
+size = Vector3(0.55, 0.7, 0.06)
+material = SubResource("Mat_Chair")
+
+[node name="Stem" type="CSGBox3D" parent="Chairs/ChairProfiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
+size = Vector3(0.08, 0.45, 0.08)
+material = SubResource("Mat_Chair")
+
+[node name="ChairBreacher" type="CSGCombiner3D" parent="Chairs"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -14, 0, 0.95)
+
+[node name="Seat" type="CSGBox3D" parent="Chairs/ChairBreacher"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
+size = Vector3(0.55, 0.08, 0.55)
+material = SubResource("Mat_Chair")
+
+[node name="Back" type="CSGBox3D" parent="Chairs/ChairBreacher"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0.25)
+size = Vector3(0.55, 0.7, 0.06)
+material = SubResource("Mat_Chair")
+
+[node name="Stem" type="CSGBox3D" parent="Chairs/ChairBreacher"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
+size = Vector3(0.08, 0.45, 0.08)
+material = SubResource("Mat_Chair")
+
+[node name="ChairMedic" type="CSGCombiner3D" parent="Chairs"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -10, 0, 0.95)
+
+[node name="Seat" type="CSGBox3D" parent="Chairs/ChairMedic"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
+size = Vector3(0.55, 0.08, 0.55)
+material = SubResource("Mat_Chair")
+
+[node name="Back" type="CSGBox3D" parent="Chairs/ChairMedic"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0.25)
+size = Vector3(0.55, 0.7, 0.06)
+material = SubResource("Mat_Chair")
+
+[node name="Stem" type="CSGBox3D" parent="Chairs/ChairMedic"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
+size = Vector3(0.08, 0.45, 0.08)
+material = SubResource("Mat_Chair")
+
+[node name="TerminalLayer" type="CanvasLayer" parent="."]
+layer = 40
+
+[node name="DispatchTerminal" type="Control" parent="TerminalLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_terminal")

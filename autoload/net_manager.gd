@@ -246,7 +246,10 @@ func start_game(scene_path: String) -> Error:
 	if not ResourceLoader.exists(scene_path):
 		return ERR_FILE_NOT_FOUND
 	_loaded_levels.clear()
-	GameState.change_phase.rpc(GameState.Phase.FIELD, scene_path)
+	var phase: GameState.Phase = GameState.Phase.FIELD
+	if scene_path == GameState.PHASE_SCENES.get(GameState.Phase.DISPATCH, ""):
+		phase = GameState.Phase.DISPATCH
+	GameState.change_phase.rpc(phase, scene_path)
 	return OK
 
 

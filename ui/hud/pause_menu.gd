@@ -40,6 +40,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if player == null or not player.is_multiplayer_authority():
 		return
 	if event.is_action_pressed(&"ui_cancel"):
+		if not visible and not get_tree().get_nodes_in_group(DispatchTerminal.MODAL_GROUP).is_empty():
+			return
 		if visible:
 			close()
 		else:

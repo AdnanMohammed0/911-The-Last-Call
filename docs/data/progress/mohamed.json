@@ -8,8 +8,8 @@
     "updated_at": "2026-09-17"
    },
    "P1-03": {
-    "status": "progress",
-    "note": "بدأت CI build pipeline: GitHub Action workflow headless export Windows/Linux + GUT tests.",
+    "status": "testing",
+    "note": "CI build pipeline جاهز: .github/workflows/ci.yml (GUT tests + headless export Windows/Linux بـ Godot 4.7.2-stable + templates + artifacts). export_presets.cfg معياريتان (Windows Desktop, Linux/X11) ورفعته من .gitignore. تم التحقق محلياً: YAML صحيح، presets تنقرأ، GUT يخرج 0/1. ينتظر تشغيل GitHub Actions.",
     "updated_at": "2026-09-17"
    }
   },
@@ -39,9 +39,11 @@
    "tasks": [
     "P1-03"
    ],
-   "summary": "بدأت CI build pipeline (GitHub Actions): headless export Windows/Linux + GUT tests.",
+   "summary": "CI build pipeline: GitHub Actions workflow (GUT + headless export Windows/Linux 4.7.2).",
    "files": [
-    ".github/workflows/"
+    ".github/workflows/ci.yml",
+    "export_presets.cfg",
+    ".gitignore"
    ]
   },
   {

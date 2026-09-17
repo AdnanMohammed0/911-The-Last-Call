@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  GODOT_VERSION: "4.7.2-stable"
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: GUT tests (Godot ${{ env.GODOT_VERSION }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup Godot ${{ env.GODOT_VERSION }}
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+
+      - name: Import assets (headless)
+        run: godot --headless --import
+
+      - name: Run GUT tests
+        run: godot --headless -s res://addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
+
+  export:
+    name: Export ${{ matrix.preset }} (Godot ${{ env.GODOT_VERSION }})
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - preset: "Windows Desktop"
+            executable: "build/windows/911-the-last-call.exe"
+            artifact: "911-the-last-call-windows"
+          - preset: "Linux/X11"
+            executable: "build/linux/911-the-last-call.x86_64"
+            artifact: "911-the-last-call-linux"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup Godot ${{ env.GODOT_VERSION }}
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+
+      - name: Install export templates
+        run: |
+          TEMPLATE_DIR="${GODOT_VERSION//-/.}"
+          mkdir -p "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR}"
+          curl -fL -o /tmp/godot-export-templates.tpz \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz"
+          python3 -m zipfile -e /tmp/godot-export-templates.tpz "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR}/"
+
+      - name: Import assets (headless)
+        run: godot --headless --import
+
+      - name: Export release (${{ matrix.preset }})
+        run: godot --headless --export-release "${{ matrix.preset }}" "${{ matrix.executable }}"
+
+      - name: Upload artifact (${{ matrix.preset }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: build/**
+          if-no-files-found: error

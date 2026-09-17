@@ -17,6 +17,15 @@ enum DoorAction {
 	UNLOCK = 3,
 }
 
+enum SoundType {
+	OPEN = 0,
+	CLOSE = 1,
+	PEEK = 2,
+	KICK = 3,
+	LOCKED = 4,
+	UNLOCK = 5,
+}
+
 signal state_changed(new_state: DoorState, old_state: DoorState)
 signal locked_interacted(peer_id: int)
 signal door_kicked(by_peer: int, was_locked: bool)
@@ -32,9 +41,13 @@ signal door_unlocked(by_peer: int)
 @export_group("Angles & Motion")
 @export var open_angle_deg: float = 90.0
 @export var peek_angle_deg: float = 15.0
-@export var swing_speed: float = 4.0
-@export var kick_speed: float = 16.0
+@export var swing_speed: float = 5.0
+@export var kick_speed: float = 18.0
 @export var stun_radius: float = 2.5
+## If true, the door opens to one fixed side only (realistic architectural stop).
+@export var one_way_swing: bool = true
+## Direction when one_way_swing is true: 1.0 (inwards / clockwise) or -1.0 (outwards).
+@export var fixed_swing_direction: float = 1.0
 
 @export_group("Audio (Optional)")
 @export var sound_open: AudioStream
@@ -79,15 +92,19 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not hinge:
 		return
-	var speed := kick_speed if current_state == DoorState.KICKED else swing_speed
-	var step := deg_to_rad(speed * 45.0 * delta)
-	var current_rad := deg_to_rad(current_angle_deg)
-	var target_rad := deg_to_rad(target_angle_deg)
-
-	if not is_equal_approx(current_rad, target_rad):
-		current_rad = move_toward(current_rad, target_rad, step)
-		current_angle_deg = rad_to_deg(current_rad)
+	if is_equal_approx(current_angle_deg, target_angle_deg):
+		current_angle_deg = target_angle_deg
 		hinge.rotation_degrees.y = current_angle_deg
+		return
+
+	var smooth_rate: float = kick_speed if current_state == DoorState.KICKED else swing_speed
+	var weight: float = 1.0 - exp(-smooth_rate * delta)
+	current_angle_deg = lerpf(current_angle_deg, target_angle_deg, weight)
+
+	if absf(current_angle_deg - target_angle_deg) < 0.05:
+		current_angle_deg = target_angle_deg
+
+	hinge.rotation_degrees.y = current_angle_deg
 
 
 # --- Interaction API --------------------------------------------------------
@@ -132,50 +149,50 @@ func _handle_toggle_open(player_global_pos: Vector3, peer_id: int) -> void:
 	if current_state != DoorState.CLOSED:
 		# If open or peeked, close it
 		_set_state(DoorState.CLOSED)
-		_play_sound(sound_close)
+		_broadcast_sound(SoundType.CLOSE)
 		return
 
 	if is_locked:
 		locked_interacted.emit(peer_id)
-		_play_sound(sound_locked)
+		_broadcast_sound(SoundType.LOCKED)
 		return
 
 	# Calculate swing direction away from player
 	swing_direction = _calculate_swing_direction(player_global_pos)
 	_set_state(DoorState.OPEN)
-	_play_sound(sound_open)
+	_broadcast_sound(SoundType.OPEN)
 
 
 func _handle_peek(player_global_pos: Vector3, peer_id: int) -> void:
 	if is_locked:
 		locked_interacted.emit(peer_id)
-		_play_sound(sound_locked)
+		_broadcast_sound(SoundType.LOCKED)
 		return
 
 	if current_state == DoorState.PEEK:
 		# If already peeked, close it
 		_set_state(DoorState.CLOSED)
-		_play_sound(sound_close)
+		_broadcast_sound(SoundType.CLOSE)
 	elif current_state == DoorState.CLOSED:
 		swing_direction = _calculate_swing_direction(player_global_pos)
 		_set_state(DoorState.PEEK)
-		_play_sound(sound_peek)
+		_broadcast_sound(SoundType.PEEK)
 	elif current_state == DoorState.OPEN:
 		# Can pull back to peek
 		_set_state(DoorState.PEEK)
-		_play_sound(sound_peek)
+		_broadcast_sound(SoundType.PEEK)
 
 
 func _handle_kick(player_global_pos: Vector3, peer_id: int) -> void:
 	if not can_be_kicked or is_reinforced:
-		_play_sound(sound_locked)
+		_broadcast_sound(SoundType.LOCKED)
 		return
 
 	var was_locked := is_locked
 	is_locked = false # Kick breaks the latch
 	swing_direction = _calculate_swing_direction(player_global_pos)
 	_set_state(DoorState.KICKED)
-	_play_sound(sound_kick)
+	_broadcast_sound(SoundType.KICK)
 	_trigger_kick_stun(peer_id)
 	door_kicked.emit(peer_id, was_locked)
 
@@ -184,21 +201,21 @@ func _handle_unlock(peer_id: int) -> void:
 	if is_locked:
 		is_locked = false
 		door_unlocked.emit(peer_id)
-		_play_sound(sound_unlock)
+		_broadcast_sound(SoundType.UNLOCK)
 
 
 # --- Utilities & Motion -----------------------------------------------------
 
-## Calculates swing direction (+1 or -1) so the door swings away from the interacting player.
+## Calculates swing direction (+1 or -1). If one_way_swing is true, always returns fixed_swing_direction.
 func _calculate_swing_direction(player_global_pos: Vector3) -> float:
-	# Local z points backwards in Godot. -basis.z points towards front of the door.
+	if one_way_swing:
+		return fixed_swing_direction
+	# Dynamic two-way swing: away from player's approach vector
 	var door_pos: Vector3 = global_position if is_inside_tree() else position
 	var door_basis: Basis = global_transform.basis if is_inside_tree() else transform.basis
 	var to_player := (player_global_pos - door_pos).normalized()
 	var forward := -door_basis.z
 	var dot := forward.dot(to_player)
-	# If player is in front (dot > 0), swing into back (+1.0)
-	# If player is in back (dot <= 0), swing towards front (-1.0)
 	return 1.0 if dot >= 0.0 else -1.0
 
 
@@ -245,6 +262,32 @@ func get_prompt_text() -> String:
 
 
 # --- Audio Playback ---------------------------------------------------------
+
+func _broadcast_sound(type: SoundType) -> void:
+	if is_inside_tree() and multiplayer != null and multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		_play_door_sound_rpc.rpc(type as int)
+	else:
+		_play_door_sound_rpc(type as int)
+
+
+@rpc("authority", "call_local", "reliable")
+func _play_door_sound_rpc(type_val: int) -> void:
+	var stream: AudioStream = null
+	match type_val as SoundType:
+		SoundType.OPEN:
+			stream = sound_open
+		SoundType.CLOSE:
+			stream = sound_close
+		SoundType.PEEK:
+			stream = sound_peek if sound_peek != null else sound_open
+		SoundType.KICK:
+			stream = sound_kick if sound_kick != null else sound_open
+		SoundType.LOCKED:
+			stream = sound_locked
+		SoundType.UNLOCK:
+			stream = sound_unlock
+	_play_sound(stream)
+
 
 func _play_sound(stream: AudioStream) -> void:
 	if not audio_player or stream == null:

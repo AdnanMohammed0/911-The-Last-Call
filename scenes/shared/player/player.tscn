@@ -1,46 +1,280 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dpvqfmawiopgy"]
 
-[ext_resource type="Script" path="res://scenes/shared/player/player.gd" id="1_player"]
-[ext_resource type="Script" path="res://scenes/shared/player/player_input.gd" id="2_input"]
-[ext_resource type="Script" path="res://scenes/shared/player/player_interactor.gd" id="3_interactor"]
+[ext_resource type="Script" uid="uid://boywnqm8sh6jq" path="res://scenes/shared/player/player.gd" id="1_player"]
+[ext_resource type="Script" uid="uid://dhrl6kt7haiqs" path="res://scenes/shared/player/player_input.gd" id="2_input"]
+[ext_resource type="AudioStream" uid="uid://bmty1nmck035w" path="res://audio/Walking-2.mp3" id="2_oi5gy"]
+[ext_resource type="Script" uid="uid://dsmenk523p6e4" path="res://scenes/shared/player/player_interactor.gd" id="3_interactor"]
 [ext_resource type="PackedScene" path="res://ui/hud/interaction_prompt.tscn" id="4_prompt"]
+[ext_resource type="Script" uid="uid://c1p8atgiqkv5p" path="res://core/net/movement_validator.gd" id="5_validator"]
+[ext_resource type="Script" uid="uid://g348ctufjxbn" path="res://scenes/shared/player/player_body.gd" id="6_body"]
+[ext_resource type="PackedScene" path="res://ui/hud/pause_menu.tscn" id="7_pause"]
+[ext_resource type="PackedScene" path="res://ui/hud/voice_hud.tscn" id="8_voice"]
+[ext_resource type="Script" path="res://scenes/shared/player/health_component.gd" id="9_health"]
+[ext_resource type="Script" path="res://scenes/shared/player/revive_interactable.gd" id="10_revive"]
+[ext_resource type="PackedScene" path="res://ui/hud/health_hud.tscn" id="11_health_hud"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 resource_local_to_scene = true
 radius = 0.35
 height = 1.8
 
+[sub_resource type="CapsuleMesh" id="Mesh_leg"]
+radius = 0.085
+height = 0.85
+
+[sub_resource type="StandardMaterial3D" id="Mat_pants"]
+albedo_color = Color(0.07, 0.08, 0.13, 1)
+
+[sub_resource type="CapsuleMesh" id="Mesh_torso"]
+radius = 0.2
+height = 0.72
+
+[sub_resource type="StandardMaterial3D" id="Mat_uniform"]
+albedo_color = Color(0.1, 0.13, 0.24, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_vest"]
+size = Vector3(0.43, 0.42, 0.31)
+
+[sub_resource type="StandardMaterial3D" id="Mat_vest"]
+albedo_color = Color(0.3, 0.8, 0.4, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_belt"]
+size = Vector3(0.41, 0.07, 0.29)
+
+[sub_resource type="StandardMaterial3D" id="Mat_black"]
+albedo_color = Color(0.03, 0.03, 0.03, 1)
+
+[sub_resource type="CapsuleMesh" id="Mesh_arm"]
+radius = 0.065
+height = 0.62
+
+[sub_resource type="SphereMesh" id="Mesh_head"]
+radius = 0.12
+height = 0.24
+
+[sub_resource type="StandardMaterial3D" id="Mat_skin"]
+albedo_color = Color(0.85, 0.66, 0.5, 1)
+
+[sub_resource type="CylinderMesh" id="Mesh_cap"]
+top_radius = 0.125
+bottom_radius = 0.135
+height = 0.08
+
+[sub_resource type="BoxMesh" id="Mesh_brim"]
+size = Vector3(0.2, 0.015, 0.1)
+
+[sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_voice"]
+resource_local_to_scene = true
+mix_rate = 16000.0
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_host"]
 properties/0/path = NodePath(".:class_id")
 properties/0/spawn = true
 properties/0/replication_mode = 0
+properties/1/path = NodePath(".:connection_lost")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+properties/2/path = NodePath("Health:hp")
+properties/2/spawn = true
+properties/2/replication_mode = 2
+properties/3/path = NodePath("Health:state")
+properties/3/spawn = true
+properties/3/replication_mode = 2
+properties/4/path = NodePath("Health:bleed_out_remaining")
+properties/4/spawn = true
+properties/4/replication_mode = 2
+properties/5/path = NodePath("Health:reviver_peer")
+properties/5/spawn = true
+properties/5/replication_mode = 2
+properties/6/path = NodePath(".:trauma_kits")
+properties/6/spawn = true
+properties/6/replication_mode = 2
+properties/7/path = NodePath("Health:max_hp")
+properties/7/spawn = true
+properties/7/replication_mode = 2
+properties/8/path = NodePath(".:sanity")
+properties/8/spawn = true
+properties/8/replication_mode = 2
+properties/9/path = NodePath(".:grabbed_by_anomaly")
+properties/9/spawn = true
+properties/9/replication_mode = 2
 
-[node name="Player" type="CharacterBody3D"]
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_client"]
+properties/0/path = NodePath(".:sync_position")
+properties/0/spawn = false
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:sync_yaw")
+properties/1/spawn = false
+properties/1/replication_mode = 1
+properties/2/path = NodePath(".:sync_pitch")
+properties/2/spawn = false
+properties/2/replication_mode = 1
+properties/3/path = NodePath(".:stance")
+properties/3/spawn = false
+properties/3/replication_mode = 1
+properties/4/path = NodePath(".:lean_amount")
+properties/4/spawn = false
+properties/4/replication_mode = 1
+properties/5/path = NodePath(".:is_sprinting")
+properties/5/spawn = false
+properties/5/replication_mode = 1
+properties/6/path = NodePath(".:flashlight_on")
+properties/6/spawn = false
+properties/6/replication_mode = 1
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_revive"]
+radius = 0.7
+
+[node name="Player" type="CharacterBody3D" unique_id=2074329494]
 floor_snap_length = 0.3
 script = ExtResource("1_player")
+footstep_sound = ExtResource("2_oi5gy")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=404388565]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_body")
 
-[node name="Head" type="Node3D" parent="."]
+[node name="Body" type="Node3D" parent="." unique_id=405185775]
+script = ExtResource("6_body")
+
+[node name="LegLeft" type="Node3D" parent="Body" unique_id=623779019]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.11, 0.85, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Body/LegLeft" unique_id=1473503132]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.425, 0)
+mesh = SubResource("Mesh_leg")
+surface_material_override/0 = SubResource("Mat_pants")
+
+[node name="LegRight" type="Node3D" parent="Body" unique_id=874741328]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.11, 0.85, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Body/LegRight" unique_id=60910157]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.425, 0)
+mesh = SubResource("Mesh_leg")
+surface_material_override/0 = SubResource("Mat_pants")
+
+[node name="Torso" type="Node3D" parent="Body" unique_id=550894363]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+
+[node name="Shirt" type="MeshInstance3D" parent="Body/Torso" unique_id=529944249]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34, 0)
+mesh = SubResource("Mesh_torso")
+surface_material_override/0 = SubResource("Mat_uniform")
+
+[node name="Vest" type="MeshInstance3D" parent="Body/Torso" unique_id=1541803834]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+mesh = SubResource("Mesh_vest")
+surface_material_override/0 = SubResource("Mat_vest")
+
+[node name="Belt" type="MeshInstance3D" parent="Body/Torso" unique_id=62481815]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("Mesh_belt")
+surface_material_override/0 = SubResource("Mat_black")
+
+[node name="ArmLeft" type="Node3D" parent="Body/Torso" unique_id=2117933631]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 0.6, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Body/Torso/ArmLeft" unique_id=588146776]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.29, 0)
+mesh = SubResource("Mesh_arm")
+surface_material_override/0 = SubResource("Mat_uniform")
+
+[node name="ArmRight" type="Node3D" parent="Body/Torso" unique_id=179713511]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 0.6, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Body/Torso/ArmRight" unique_id=1443823876]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.29, 0)
+mesh = SubResource("Mesh_arm")
+surface_material_override/0 = SubResource("Mat_uniform")
+
+[node name="Head" type="Node3D" parent="." unique_id=963403761]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Head"]
-near = 0.05
-fov = 75.0
+[node name="Camera3D" type="Camera3D" parent="Head" unique_id=1236777270]
 
-[node name="PlayerInput" type="Node" parent="."]
+[node name="AudioListener3D" type="AudioListener3D" parent="Head/Camera3D" unique_id=830580424]
+
+[node name="Flashlight" type="SpotLight3D" parent="Head/Camera3D" unique_id=1766286870]
+visible = false
+light_energy = 3.0
+shadow_enabled = true
+spot_range = 22.0
+spot_angle = 28.0
+
+[node name="HeadVisual" type="Node3D" parent="Head/Camera3D" unique_id=2091410783]
+
+[node name="Face" type="MeshInstance3D" parent="Head/Camera3D/HeadVisual" unique_id=902227521]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.02, 0.04)
+mesh = SubResource("Mesh_head")
+surface_material_override/0 = SubResource("Mat_skin")
+
+[node name="Cap" type="MeshInstance3D" parent="Head/Camera3D/HeadVisual" unique_id=1287885646]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, 0.04)
+mesh = SubResource("Mesh_cap")
+surface_material_override/0 = SubResource("Mat_uniform")
+
+[node name="Brim" type="MeshInstance3D" parent="Head/Camera3D/HeadVisual" unique_id=880233354]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, -0.08)
+mesh = SubResource("Mesh_brim")
+surface_material_override/0 = SubResource("Mat_black")
+
+[node name="VoiceEmitter" type="AudioStreamPlayer3D" parent="Head" unique_id=1649450775]
+stream = SubResource("AudioStreamGenerator_voice")
+unit_size = 3.0
+max_distance = 35.0
+attenuation_filter_db = -18.0
+
+[node name="NameLabel" type="Label3D" parent="Head" unique_id=2034937205]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0)
+pixel_size = 0.0035
+billboard = 1
+text = "Player"
+font_size = 48
+
+[node name="PlayerInput" type="Node" parent="." unique_id=1907502648]
 script = ExtResource("2_input")
 
-[node name="HostSync" type="MultiplayerSynchronizer" parent="."]
-public_visibility = false
+[node name="HostSync" type="MultiplayerSynchronizer" parent="." unique_id=1289953233]
 replication_config = SubResource("SceneReplicationConfig_host")
+public_visibility = false
 
-[node name="PlayerInteractor" type="Node" parent="."]
+[node name="ClientSync" type="MultiplayerSynchronizer" parent="." unique_id=874860393]
+replication_interval = 0.033
+replication_config = SubResource("SceneReplicationConfig_client")
+public_visibility = false
+
+[node name="MovementValidator" type="Node" parent="." unique_id=1353006207]
+script = ExtResource("5_validator")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("9_health")
+
+[node name="ReviveArea" type="Area3D" parent="."]
+script = ExtResource("10_revive")
+hold_duration = 8.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ReviveArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("SphereShape3D_revive")
+
+[node name="PlayerInteractor" type="Node" parent="." unique_id=1835673496]
 script = ExtResource("3_interactor")
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1596156894]
 
-[node name="InteractionPrompt" parent="HUD" node_paths=PackedStringArray("interactor") instance=ExtResource("4_prompt")]
+[node name="InteractionPrompt" parent="HUD" unique_id=92675865 node_paths=PackedStringArray("interactor") instance=ExtResource("4_prompt")]
 interactor = NodePath("../../PlayerInteractor")
+
+[node name="HealthHud" parent="HUD" node_paths=PackedStringArray("player") instance=ExtResource("11_health_hud")]
+player = NodePath("../..")
+
+[node name="VoiceHud" parent="HUD" unique_id=806692191 instance=ExtResource("8_voice")]
+
+[node name="PauseMenu" parent="HUD" unique_id=835144918 node_paths=PackedStringArray("player") instance=ExtResource("7_pause")]
+visible = false
+player = NodePath("../..")
+
+[node name="FootstepPlayer" type="AudioStreamPlayer3D" parent="." unique_id=921877300]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+unit_size = 3.0
+max_distance = 20.0

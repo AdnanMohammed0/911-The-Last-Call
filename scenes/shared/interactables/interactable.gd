@@ -7,7 +7,6 @@ extends Area3D
 
 const LAYER: int = 1 << 3                  # physics layer 4 "interactable"
 const HOLD_TOLERANCE_SEC: float = 0.25     # latency slack when validating hold time
-const DISTANCE_TOLERANCE: float = 1.5      # lean + latency slack on the host range check
 const HOLD_STALE_SEC: float = 2.0          # a hold with no completion is released after this
 
 ## Emitted on every peer once the host confirmed the interaction.
@@ -28,6 +27,7 @@ var holder_peer: int = 0
 
 var _hold_started_msec: int = 0
 var _last_use_msec: int = -1_000_000
+var _limiter: RpcRateLimiter = RpcRateLimiter.new(10.0, 6.0)
 
 
 func _ready() -> void:
@@ -44,6 +44,11 @@ func get_prompt_text() -> String:
 
 func is_hold() -> bool:
 	return hold_duration > 0.0
+
+
+## Seconds `peer_id` must hold (subclasses vary it, e.g. Medic revives faster).
+func get_hold_duration_for(_peer_id: int) -> float:
+	return hold_duration
 
 
 func is_available_to(peer_id: int) -> bool:
@@ -90,16 +95,13 @@ func _send_to_host(method: StringName) -> void:
 		rpc_id(1, method)
 
 
-func _sender_id() -> int:
-	var sender: int = multiplayer.get_remote_sender_id()
-	return sender if sender != 0 else multiplayer.get_unique_id()
-
-
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_hold_start() -> void:
-	if not multiplayer.is_server():
+	if not RpcGuard.is_host(self):
 		return
-	var sender: int = _sender_id()
+	var sender: int = RpcGuard.sender_id(self)
+	if not _limiter.allow(sender):
+		return
 	if not is_hold() or not _validate(sender):
 		return
 	_hold_started_msec = Time.get_ticks_msec()
@@ -108,24 +110,26 @@ func _rpc_hold_start() -> void:
 
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_hold_cancel() -> void:
-	if not multiplayer.is_server():
+	if not RpcGuard.is_host(self):
 		return
-	if holder_peer != 0 and holder_peer == _sender_id():
+	if holder_peer != 0 and holder_peer == RpcGuard.sender_id(self):
 		_set_holder.rpc(0)
 
 
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_interact() -> void:
-	if not multiplayer.is_server():
+	if not RpcGuard.is_host(self):
 		return
-	var sender: int = _sender_id()
+	var sender: int = RpcGuard.sender_id(self)
+	if not _limiter.allow(sender):
+		return
 	if not _validate(sender):
 		return
 	var now: int = Time.get_ticks_msec()
 	if is_hold():
 		if holder_peer != sender:
 			return
-		if now - _hold_started_msec < int((hold_duration - HOLD_TOLERANCE_SEC) * 1000.0):
+		if now - _hold_started_msec < int((get_hold_duration_for(sender) - HOLD_TOLERANCE_SEC) * 1000.0):
 			return
 	if now - _last_use_msec < int(cooldown * 1000.0):
 		return
@@ -157,10 +161,8 @@ func _confirm_interact(peer_id: int) -> void:
 func _validate(sender: int) -> bool:
 	if not is_available_to(sender):
 		return false
-	var player: Player = Player.find_by_peer(get_tree(), sender)
-	if player == null:
-		return false
-	return player.get_eye_position().distance_to(global_position) <= max_distance + DISTANCE_TOLERANCE
+	return RpcGuard.is_registered(sender) \
+		and RpcGuard.is_player_in_range(get_tree(), sender, global_position, max_distance)
 
 
 func _is_hold_stale() -> bool:

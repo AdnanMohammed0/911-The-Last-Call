@@ -6,6 +6,8 @@ extends Resource
 @export var id: StringName = &""
 @export var display_name: String = ""
 @export_multiline var summary: String = ""
+## Vest colour on the placeholder body and lobby accents.
+@export var color: Color = Color.WHITE
 
 @export_group("Survivability")
 @export var max_health: float = 100.0

@@ -7,6 +7,7 @@ script = ExtResource("1_class")
 id = &"tech"
 display_name = "Tech Operator"
 summary = "Traces, CCTV, drone, e-locks."
+color = Color(0.2, 0.55, 0.95, 1)
 max_health = 80.0
 damage_resistance = 0.0
 max_sanity = 100.0

@@ -26,9 +26,13 @@ jobs:
         uses: chickensoft-games/setup-godot@v2
         with:
           version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
 
       - name: Import assets (headless)
         run: godot --headless --import
+
+      - name: Validate call data
+        run: godot --headless -s res://tools/validate_calls.gd
 
       - name: Run GUT tests
         run: godot --headless -s res://addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
@@ -57,20 +61,27 @@ jobs:
         uses: chickensoft-games/setup-godot@v2
         with:
           version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
 
       - name: Install export templates
         run: |
           TEMPLATE_DIR="${GODOT_VERSION//-/.}"
-          mkdir -p "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR}"
           curl -fL -o /tmp/godot-export-templates.tpz \
             "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz"
-          python3 -m zipfile -e /tmp/godot-export-templates.tpz "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR}/"
+          # The .tpz holds a top-level templates/ folder; Godot expects its contents directly in <version>/.
+          python3 -m zipfile -e /tmp/godot-export-templates.tpz /tmp/godot-templates
+          mkdir -p "$HOME/.local/share/godot/export_templates"
+          rm -rf "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR}"
+          mv /tmp/godot-templates/templates "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR}"
+          ls "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR}"
 
       - name: Import assets (headless)
         run: godot --headless --import
 
       - name: Export release (${{ matrix.preset }})
-        run: godot --headless --export-release "${{ matrix.preset }}" "${{ matrix.executable }}"
+        run: |
+          mkdir -p "$(dirname "${{ matrix.executable }}")"
+          godot --headless --export-release "${{ matrix.preset }}" "${{ matrix.executable }}"
 
       - name: Upload artifact (${{ matrix.preset }})
         uses: actions/upload-artifact@v4

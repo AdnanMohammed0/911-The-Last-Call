@@ -43,8 +43,9 @@ func _physics_process(delta: float) -> void:
 			_hold_time = 0.0
 			focused.request_hold_start()
 		_hold_time += delta
-		hold_progress_changed.emit(clampf(_hold_time / focused.hold_duration, 0.0, 1.0))
-		if _hold_time >= focused.hold_duration:
+		var duration: float = focused.get_hold_duration_for(multiplayer.get_unique_id())
+		hold_progress_changed.emit(clampf(_hold_time / duration, 0.0, 1.0))
+		if _hold_time >= duration:
 			focused.request_interact()
 			_is_holding = false
 			_hold_consumed = true
@@ -52,6 +53,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _find_target() -> Interactable:
+	if not _player.get_health().is_alive():
+		return null  # downed / critical players cannot use anything
 	var camera: Camera3D = _player.get_camera()
 	var origin: Vector3 = camera.global_position
 	var to: Vector3 = origin - camera.global_basis.z * reach
@@ -61,6 +64,11 @@ func _find_target() -> Interactable:
 	if hit.is_empty():
 		return null
 	var candidate_v: Variant = hit["collider"]
+	# Looking straight at another player's body targets what they carry (e.g. their revive area).
+	var collider: Object = hit["collider"]
+	var hit_player: Player = collider as Player
+	if hit_player != null:
+		candidate_v = hit_player.get_node_or_null(^"ReviveArea")
 	if not (candidate_v is Interactable):
 		return null
 	var candidate: Interactable = candidate_v

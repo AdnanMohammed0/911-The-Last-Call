@@ -22,10 +22,10 @@
    "note": "P2-02 done — اعتماد نسخة origin/main: تبيّن أن زميلي Adnan أنجز نفس الـ resources (data/dialogue/dialogue_node|choice|graph.gd + tests/test_dialogue_graph.gd) على نفس المسارات بالتوازي. بموجب قاعدة 'لا يُدمج عمل زميل ولا يُمحى ولا يُحل تعارض بِنسخة هجينة'، اعتمدت محتوى origin/main كحرفي نهائي للملفات (verify: hash مطابق لـ origin/main) وسجّلت العملية في هذا الـ log. فحص GUT محلياً على نفس خط CI: 9/9 أخضر.",
    "updated_at": "2026-09-17"
   },
-  "P2-06": {
-   "status": "progress",
-   "updated_at": "2026-09-18",
-   "note": "feat(call): Caller patience timer & timer-pressure modifiers — P2-06"
+"P2-06": {
+    "status": "done",
+    "updated_at": "2026-09-18",
+    "note": "Caller patience timer & timer-pressure modifiers implemented: StressProfile, CallData, RecordEntry, MissionData resources + CallDirector autoload with patience timer (180s base), Rapport (+30s once), Wrong Challenge (-60s stacks), Low Trust <40 (-25%), choice patience_delta, low/last_chance warnings, call timeout handling. GUT tests written (18 tests total including 7 new for modifiers). CI runs tests."
   }
  },
  "log": [
@@ -130,21 +130,24 @@
     "docs/data/progress/mohamed.json"
    ]
   },
-  {
-   "date": "2026-09-18",
-   "tasks": [
-    "P2-06"
-   ],
-   "summary": "feat(call): Caller patience timer & timer-pressure modifiers — P2-06",
-   "files": [
-    "autoload/call_director.gd",
-    "data/calls/call_data.gd",
-    "data/calls/record_entry.gd",
-    "data/calls/stress_profile.gd",
-    "tests/test_call_director.gd"
-   ],
-   "commit": "430256e",
-   "auto": true
-  }
+{
+      "date": "2026-09-18",
+      "tasks": [
+        "P2-06"
+      ],
+      "summary": "P2-06 Caller patience timer & timer-pressure modifiers: StressProfile, CallData, RecordEntry, MissionData resources + CallDirector autoload with patience timer (180s base), Rapport (+30s once), Wrong Challenge (-60s stacks), Low Trust <40 (-25%), choice patience_delta, low/last_chance warnings, call timeout handling. GUT tests written (18 tests).",
+      "files": [
+        "data/calls/stress_profile.gd",
+        "data/calls/call_data.gd",
+        "data/calls/record_entry.gd",
+        "data/calls/mission_data.gd",
+        "autoload/call_director.gd",
+        "tests/test_call_director.gd",
+        "project.godot",
+        "docs/data/progress/mohamed.json"
+      ],
+      "commit": "430256e",
+      "auto": true
+    }
  ]
 }

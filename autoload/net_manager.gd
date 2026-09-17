@@ -250,6 +250,22 @@ func start_game(scene_path: String) -> Error:
 	return OK
 
 
+## Host (or offline): move everyone to another level mid-game (portals, mission transitions).
+## Clients cannot change level on their own; their request is ignored.
+func change_level(scene_path: String) -> Error:
+	if not ResourceLoader.exists(scene_path):
+		return ERR_FILE_NOT_FOUND
+	if not is_online():
+		get_tree().change_scene_to_file.call_deferred(scene_path)
+		return OK
+	if not is_host():
+		return ERR_UNAUTHORIZED
+	_loaded_levels.clear()
+	_sync_loaded_levels.rpc(_loaded_levels)
+	GameState.change_phase.rpc(GameState.phase, scene_path)
+	return OK
+
+
 ## Called by a level (PlayerSpawner) on every peer once its scene is in the tree.
 func report_level_loaded(scene_path: String) -> void:
 	_send_to_host(&"_report_level_loaded", [scene_path])

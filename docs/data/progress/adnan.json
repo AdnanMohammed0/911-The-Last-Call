@@ -486,6 +486,24 @@
    ],
    "commit": "689fadb",
    "auto": true
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-10",
+    "P1-11",
+    "P1-15",
+    "P1-16",
+    "P1-17"
+   ],
+   "summary": "تصليح «الصوت ما ينسمع» و«التقطيع»: auto gain، بوابة صوت تكيّفية، pre-roll، اختيار المايك واختبار المايك، jitter buffer أكبر مع تعويض، وتصليح البورتال اللي كان يغير المشهد لكل لاعب لحاله. إغلاق المهام اللي تحت الاختبار.",
+   "files": [
+    "autoload/voice_manager.gd",
+    "autoload/net_manager.gd",
+    "ui/hud/pause_menu.gd",
+    "ui/hud/pause_menu.tscn",
+    "scenes/shared/interactables/interactable_scene_door.gd"
+   ]
   }
  ]
 }

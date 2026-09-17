@@ -1,6 +1,6 @@
 {
  "member": "mohamed",
- "updated_at": "2026-09-17",
+ "updated_at": "2026-09-18",
  "tasks": {
   "P1-02": {
    "status": "done",
@@ -21,6 +21,11 @@
    "status": "done",
    "note": "P2-02 done — اعتماد نسخة origin/main: تبيّن أن زميلي Adnan أنجز نفس الـ resources (data/dialogue/dialogue_node|choice|graph.gd + tests/test_dialogue_graph.gd) على نفس المسارات بالتوازي. بموجب قاعدة 'لا يُدمج عمل زميل ولا يُمحى ولا يُحل تعارض بِنسخة هجينة'، اعتمدت محتوى origin/main كحرفي نهائي للملفات (verify: hash مطابق لـ origin/main) وسجّلت العملية في هذا الـ log. فحص GUT محلياً على نفس خط CI: 9/9 أخضر.",
    "updated_at": "2026-09-17"
+  },
+  "P2-06": {
+   "status": "progress",
+   "updated_at": "2026-09-18",
+   "note": "feat(call): Caller patience timer & timer-pressure modifiers — P2-06"
   }
  },
  "log": [
@@ -124,6 +129,22 @@
     "tests/test_dialogue_graph.gd",
     "docs/data/progress/mohamed.json"
    ]
+  },
+  {
+   "date": "2026-09-18",
+   "tasks": [
+    "P2-06"
+   ],
+   "summary": "feat(call): Caller patience timer & timer-pressure modifiers — P2-06",
+   "files": [
+    "autoload/call_director.gd",
+    "data/calls/call_data.gd",
+    "data/calls/record_entry.gd",
+    "data/calls/stress_profile.gd",
+    "tests/test_call_director.gd"
+   ],
+   "commit": "430256e",
+   "auto": true
   }
  ]
 }

@@ -6,3 +6,14 @@ extends Resource
 @export var title: String = ""
 @export_multiline var content: String = ""
 @export var unlocked_by_default: bool = false
+
+func validate() -> Dictionary:
+	var errors: PackedStringArray = PackedStringArray()
+	var warnings: PackedStringArray = PackedStringArray()
+
+	if id == &"":
+		errors.append("id is empty")
+	if title.is_empty():
+		warnings.append("title is empty")
+
+	return {"errors": errors, "warnings": warnings}

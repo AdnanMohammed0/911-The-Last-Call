@@ -35,6 +35,16 @@ var phone_audio_player: AudioStreamPlayer = null
 ## Host: open team verdict vote for the active call (P2-14), 0 when none.
 var verdict_vote_id: int = 0
 
+# --- Timer Pressure Modifiers (GAMEPLAY_MECHANICS §5.5) ---
+const RAPPORT_BONUS: float = 30.0          # +30s once per call (Rapport)
+const CHALLENGE_PENALTY: float = -60.0     # -60s per wrong Challenge (stacks)
+const LOW_TRUST_THRESHOLD: int = 40        # Trust < 40 triggers penalty
+const LOW_TRUST_PENALTY_MULT: float = 0.75 # -25% patience when Trust < 40
+
+# Per-call modifier state
+var _rapport_applied: bool = false
+var _challenge_penalties: int = 0
+
 
 func _ready() -> void:
 	phone_audio_player = AudioStreamPlayer.new()
@@ -264,15 +274,27 @@ func request_answer_call(call_id: StringName) -> void:
 func _answer_call() -> void:
 	current_state = CallState.CONNECTED
 	
+	# Reset per-call modifier state
+	_rapport_applied = false
+	_challenge_penalties = 0
+	
+	# Calculate initial patience with Trust modifier (GAMEPLAY_MECHANICS §5.5)
+	var base_patience: float = active_call.patience_seconds
+	var trust_multiplier: float = 1.0
+	if GameState != null and GameState.public_trust < LOW_TRUST_THRESHOLD:
+		trust_multiplier = LOW_TRUST_PENALTY_MULT
+	
+	var initial_patience: float = base_patience * trust_multiplier
+	
 	# Setup VSA profile
 	if active_call.stress_profile != null:
-		vsa.set_profile(active_call.stress_profile, active_call.patience_seconds)
+		vsa.set_profile(active_call.stress_profile, initial_patience)
 	
-	# Start dialogue runner
+	# Start dialogue runner with modified patience
 	if active_call.dialogue != null:
-		dialogue_runner.start(active_call.dialogue, active_call.patience_seconds)
+		dialogue_runner.start(active_call.dialogue, initial_patience)
 	
-	_sync_call_connected.rpc(active_call_id, active_call.patience_seconds)
+	_sync_call_connected.rpc(active_call_id, initial_patience)
 	
 	# Start audio playback on Phone bus
 	if active_call.caller_audio != null and phone_audio_player != null:
@@ -620,6 +642,63 @@ func get_vsa() -> VoiceStressAnalyzer:
 
 
 # ==============================================================================
+# Timer Pressure Modifiers (GAMEPLAY_MECHANICS §5.5, P2-06)
+# ==============================================================================
+
+## Applies Rapport bonus (+30s) once per call. Returns true if applied.
+func apply_rapport() -> bool:
+	if not _is_server():
+		return false
+	if not (current_state == CallState.CONNECTED or current_state == CallState.RINGING):
+		return false
+	if _rapport_applied:
+		return false
+	
+	_rapport_applied = true
+	dialogue_runner.modify_patience(RAPPORT_BONUS)
+	return true
+
+## Applies Wrong Challenge penalty (-60s). Can stack. Returns true if applied.
+func apply_challenge_penalty() -> bool:
+	if not _is_server():
+		return false
+	if not (current_state == CallState.CONNECTED or current_state == CallState.RINGING):
+		return false
+	
+	_challenge_penalties += 1
+	dialogue_runner.modify_patience(CHALLENGE_PENALTY)
+	return true
+
+## Applies a dialogue choice patience delta. Returns true if applied.
+func apply_choice_patience_delta(delta: float) -> bool:
+	if not _is_server():
+		return false
+	if current_state != CallState.CONNECTED:
+		return false
+	
+	dialogue_runner.modify_patience(delta)
+	return true
+
+## Gets current patience for the active call.
+func get_current_patience() -> float:
+	return dialogue_runner.patience_remaining
+
+## Gets max patience for the active call.
+func get_max_patience() -> float:
+	return dialogue_runner.max_patience
+
+## Checks if a call is active (ringing, connected, or assessment).
+func is_call_active(call_id: StringName) -> bool:
+	return is_active(call_id)
+
+## Gets the active call's truth for testing.
+func get_active_call_truth() -> CallData.Truth:
+	if active_call != null:
+		return active_call.truth
+	return CallData.Truth.GENUINE
+
+
+# ==============================================================================
 # Snapshot & State Recovery
 # ==============================================================================
 
@@ -636,6 +715,8 @@ func get_snapshot() -> Dictionary:
 		"handset_owner_peer_id": handset_owner_peer_id,
 		"patience_remaining": dialogue_runner.patience_remaining,
 		"revealed_evidence": dialogue_runner.revealed_evidence,
+		"rapport_applied": _rapport_applied,
+		"challenge_penalties": _challenge_penalties,
 	}
 
 
@@ -651,6 +732,10 @@ func apply_snapshot(data: Dictionary) -> void:
 	ring_timer = (data.get("ring_timer", 0.0) as float)
 	@warning_ignore("unsafe_call_argument")
 	handset_owner_peer_id = int(data.get("handset_owner_peer_id", 0))
+	@warning_ignore("unsafe_cast")
+	_rapport_applied = bool(data.get("rapport_applied", false))
+	@warning_ignore("unsafe_call_argument")
+	_challenge_penalties = int(data.get("challenge_penalties", 0))
 	
 	if EventBus != null:
 		EventBus.shift_clock_updated.emit(shift_clock_minutes)
@@ -684,6 +769,8 @@ func reset() -> void:
 	active_call = null
 	active_call_id = &""
 	handset_owner_peer_id = 0
+	_rapport_applied = false
+	_challenge_penalties = 0
 	call_queue.clear()
 	call_history.clear()
 	if phone_audio_player != null and phone_audio_player.playing:

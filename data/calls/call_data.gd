@@ -44,3 +44,36 @@ enum Truth { PRANK, GENUINE, AMBUSH, PARANORMAL, DIVERSION }
 
 func is_valid_verdict(verdict: StringName) -> bool:
 	return verdict in VERDICTS
+
+## Validates the resource for authoring mistakes.
+func validate() -> Dictionary:
+	var errors: PackedStringArray = PackedStringArray()
+	var warnings: PackedStringArray = PackedStringArray()
+
+	if id == &"":
+		errors.append("id is empty")
+
+	if caller_audio == null:
+		warnings.append("caller_audio is empty")
+
+	if dialogue == null:
+		warnings.append("dialogue is empty")
+	else:
+		var dlg_result := dialogue.validate()
+		errors.append_array(dlg_result.errors)
+		warnings.append_array(dlg_result.warnings)
+
+	if stress_profile == null:
+		warnings.append("stress_profile is empty")
+	else:
+		var sp_result := stress_profile.validate()
+		errors.append_array(sp_result.errors)
+		warnings.append_array(sp_result.warnings)
+
+	if patience_seconds <= 0.0:
+		errors.append("patience_seconds must be > 0")
+
+	if ring_timeout_seconds <= 0.0:
+		errors.append("ring_timeout_seconds must be > 0")
+
+	return {"errors": errors, "warnings": warnings}

@@ -183,6 +183,20 @@
    "files": [
     "scenes/shared/player/player.gd"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [],
+   "summary": "fix(dispatch): resolve unsafe cast and constructor type warnings in call director and vsa",
+   "files": [
+    "autoload/call_director.gd",
+    "core/dispatch/voice_stress_analyzer.gd",
+    "tests/test_call_director.gd",
+    "tests/test_dialogue_replication.gd",
+    "tests/test_voice_stress_analyzer.gd"
+   ],
+   "commit": "9ef8e41",
+   "auto": true
   }
  ]
 }

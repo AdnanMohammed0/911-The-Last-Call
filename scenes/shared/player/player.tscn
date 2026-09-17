@@ -163,6 +163,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
 near = 0.05
 fov = 75.0
 
+[node name="AudioListener3D" type="AudioListener3D" parent="Head/Camera3D"]
+
 [node name="Flashlight" type="SpotLight3D" parent="Head/Camera3D"]
 visible = false
 light_energy = 3.0
@@ -232,3 +234,9 @@ interactor = NodePath("../../PlayerInteractor")
 [node name="PauseMenu" parent="HUD" node_paths=PackedStringArray("player") instance=ExtResource("7_pause")]
 visible = false
 player = NodePath("../..")
+
+[node name="FootstepPlayer" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+bus = &"SFX"
+unit_size = 3.0
+max_distance = 20.0

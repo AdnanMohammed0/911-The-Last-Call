@@ -120,4 +120,6 @@ shape = SubResource("SphereShape3D_stun")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=1016416418]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0)
-max_distance = 15.0
+bus = &"SFX"
+unit_size = 4.0
+max_distance = 30.0

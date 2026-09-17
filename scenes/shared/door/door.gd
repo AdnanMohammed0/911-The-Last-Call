@@ -17,6 +17,15 @@ enum DoorAction {
 	UNLOCK = 3,
 }
 
+enum SoundType {
+	OPEN = 0,
+	CLOSE = 1,
+	PEEK = 2,
+	KICK = 3,
+	LOCKED = 4,
+	UNLOCK = 5,
+}
+
 signal state_changed(new_state: DoorState, old_state: DoorState)
 signal locked_interacted(peer_id: int)
 signal door_kicked(by_peer: int, was_locked: bool)
@@ -140,50 +149,50 @@ func _handle_toggle_open(player_global_pos: Vector3, peer_id: int) -> void:
 	if current_state != DoorState.CLOSED:
 		# If open or peeked, close it
 		_set_state(DoorState.CLOSED)
-		_play_sound(sound_close)
+		_broadcast_sound(SoundType.CLOSE)
 		return
 
 	if is_locked:
 		locked_interacted.emit(peer_id)
-		_play_sound(sound_locked)
+		_broadcast_sound(SoundType.LOCKED)
 		return
 
 	# Calculate swing direction away from player
 	swing_direction = _calculate_swing_direction(player_global_pos)
 	_set_state(DoorState.OPEN)
-	_play_sound(sound_open)
+	_broadcast_sound(SoundType.OPEN)
 
 
 func _handle_peek(player_global_pos: Vector3, peer_id: int) -> void:
 	if is_locked:
 		locked_interacted.emit(peer_id)
-		_play_sound(sound_locked)
+		_broadcast_sound(SoundType.LOCKED)
 		return
 
 	if current_state == DoorState.PEEK:
 		# If already peeked, close it
 		_set_state(DoorState.CLOSED)
-		_play_sound(sound_close)
+		_broadcast_sound(SoundType.CLOSE)
 	elif current_state == DoorState.CLOSED:
 		swing_direction = _calculate_swing_direction(player_global_pos)
 		_set_state(DoorState.PEEK)
-		_play_sound(sound_peek)
+		_broadcast_sound(SoundType.PEEK)
 	elif current_state == DoorState.OPEN:
 		# Can pull back to peek
 		_set_state(DoorState.PEEK)
-		_play_sound(sound_peek)
+		_broadcast_sound(SoundType.PEEK)
 
 
 func _handle_kick(player_global_pos: Vector3, peer_id: int) -> void:
 	if not can_be_kicked or is_reinforced:
-		_play_sound(sound_locked)
+		_broadcast_sound(SoundType.LOCKED)
 		return
 
 	var was_locked := is_locked
 	is_locked = false # Kick breaks the latch
 	swing_direction = _calculate_swing_direction(player_global_pos)
 	_set_state(DoorState.KICKED)
-	_play_sound(sound_kick)
+	_broadcast_sound(SoundType.KICK)
 	_trigger_kick_stun(peer_id)
 	door_kicked.emit(peer_id, was_locked)
 
@@ -192,7 +201,7 @@ func _handle_unlock(peer_id: int) -> void:
 	if is_locked:
 		is_locked = false
 		door_unlocked.emit(peer_id)
-		_play_sound(sound_unlock)
+		_broadcast_sound(SoundType.UNLOCK)
 
 
 # --- Utilities & Motion -----------------------------------------------------
@@ -253,6 +262,32 @@ func get_prompt_text() -> String:
 
 
 # --- Audio Playback ---------------------------------------------------------
+
+func _broadcast_sound(type: SoundType) -> void:
+	if is_inside_tree() and multiplayer != null and multiplayer.has_multiplayer_peer() and multiplayer.is_server():
+		_play_door_sound_rpc.rpc(type as int)
+	else:
+		_play_door_sound_rpc(type as int)
+
+
+@rpc("authority", "call_local", "reliable")
+func _play_door_sound_rpc(type_val: int) -> void:
+	var stream: AudioStream = null
+	match type_val as SoundType:
+		SoundType.OPEN:
+			stream = sound_open
+		SoundType.CLOSE:
+			stream = sound_close
+		SoundType.PEEK:
+			stream = sound_peek if sound_peek != null else sound_open
+		SoundType.KICK:
+			stream = sound_kick if sound_kick != null else sound_open
+		SoundType.LOCKED:
+			stream = sound_locked
+		SoundType.UNLOCK:
+			stream = sound_unlock
+	_play_sound(stream)
+
 
 func _play_sound(stream: AudioStream) -> void:
 	if not audio_player or stream == null:

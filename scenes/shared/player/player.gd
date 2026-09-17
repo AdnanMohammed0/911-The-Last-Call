@@ -58,6 +58,15 @@ signal interaction_prompt_changed(prompt: String)
 @export_group("Interaction")
 @export var interaction_reach: float = 2.6
 
+@export_group("Audio / Footsteps")
+## Single footstep audio stream (drag & drop here in Inspector).
+@export var footstep_sound: AudioStream
+## Optional array of footstep variations; if non-empty, one is chosen at random.
+@export var footstep_sounds: Array[AudioStream] = []
+@export var step_interval_walk: float = 0.44
+@export var step_interval_sprint: float = 0.28
+@export var step_interval_crouch: float = 0.62
+
 @export var peer_id: int = 1:
 	set(value):
 		peer_id = value
@@ -116,6 +125,10 @@ var _current_door_target: Door = null
 @onready var _body: PlayerBody = $Body
 @onready var _head_visual: Node3D = $Head/Camera3D/HeadVisual
 @onready var _name_label: Label3D = $Head/NameLabel
+@onready var _audio_listener: AudioListener3D = $Head/Camera3D/AudioListener3D
+@onready var _footstep_player: AudioStreamPlayer3D = $FootstepPlayer
+
+var _step_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -141,6 +154,8 @@ func _apply_authority() -> void:
 	_body.set_first_person([_body, _head_visual, _name_label], is_local)
 	if is_local:
 		_camera.cull_mask = 0xFFFFF & ~PlayerBody.RENDER_LAYER_FIRST_PERSON
+		if _audio_listener != null:
+			_audio_listener.make_current()
 	if is_local and DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -165,6 +180,7 @@ func _physics_process(delta: float) -> void:
 	_update_lean(delta)
 	_update_flashlight()
 	_update_interaction()
+	_update_footsteps(delta)
 	_publish_sync_state()
 
 
@@ -241,6 +257,7 @@ func _publish_sync_state() -> void:
 
 
 func _update_remote(delta: float) -> void:
+	var prev_pos := global_position
 	var weight: float = clampf(remote_smoothing * delta, 0.0, 1.0)
 	if global_position.distance_to(sync_position) > remote_snap_distance:
 		global_position = sync_position
@@ -255,6 +272,15 @@ func _update_remote(delta: float) -> void:
 		_apply_height()
 	_head.position.x = lean_amount * lean_distance
 	_head.rotation.z = -lean_amount * deg_to_rad(lean_angle_degrees)
+
+	# Remote player footstep sounds
+	var moved: float = Vector2(global_position.x - prev_pos.x, global_position.z - prev_pos.z).length()
+	if moved > 0.01:
+		_step_timer -= delta
+		if _step_timer <= 0.0:
+			var interval: float = step_interval_sprint if is_sprinting else (step_interval_crouch if stance == Stance.CROUCH else step_interval_walk)
+			_step_timer = interval
+			_play_footstep()
 
 
 # --- Flashlight -------------------------------------------------------------
@@ -407,3 +433,35 @@ func _update_interaction() -> void:
 			_current_door_target.interact(Door.DoorAction.PEEK, global_position, peer_id)
 		elif _input.door_kick_just_pressed:
 			_current_door_target.interact(Door.DoorAction.KICK, global_position, peer_id)
+
+
+# --- Footstep Audio ---------------------------------------------------------
+
+func _update_footsteps(delta: float) -> void:
+	if not is_on_floor():
+		return
+	var h_speed: float = get_horizontal_speed()
+	if h_speed < 0.4:
+		_step_timer = 0.12
+		return
+
+	_step_timer -= delta
+	if _step_timer <= 0.0:
+		var interval: float = step_interval_sprint if is_sprinting else (step_interval_crouch if stance == Stance.CROUCH else step_interval_walk)
+		_step_timer = interval
+		_play_footstep()
+
+
+func _play_footstep() -> void:
+	if _footstep_player == null:
+		return
+	var stream: AudioStream = null
+	if not footstep_sounds.is_empty():
+		stream = footstep_sounds.pick_random()
+	elif footstep_sound != null:
+		stream = footstep_sound
+
+	if stream != null:
+		_footstep_player.stream = stream
+		_footstep_player.pitch_scale = randf_range(0.93, 1.07)
+		_footstep_player.play()

@@ -160,6 +160,19 @@
     "tests/test_lobby_ui.gd",
     "tests/test_station4_greybox.gd"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-14"
+   ],
+   "summary": "fix(audio): replicate door sounds via RPC, activate local AudioListener3D, and add player footstep audio system",
+   "files": [
+    "scenes/shared/door/door.gd",
+    "scenes/shared/door/door.tscn",
+    "scenes/shared/player/player.gd",
+    "scenes/shared/player/player.tscn"
+   ]
   }
  ]
 }

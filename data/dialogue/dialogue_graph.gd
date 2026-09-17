@@ -33,6 +33,13 @@ func add_node(node: DialogueNode) -> void:
 		_nodes_by_id[node.id] = node
 
 
+func remove_node(node_id: StringName) -> void:
+	for i in range(nodes.size() - 1, -1, -1):
+		if nodes[i] != null and nodes[i].id == node_id:
+			nodes.remove_at(i)
+	_rebuild_cache()
+
+
 func has_node(node_id: StringName) -> bool:
 	if not _cache_valid or _nodes_by_id.size() != nodes.size():
 		_rebuild_cache()
@@ -109,3 +116,14 @@ func validate() -> Dictionary:
 				warnings.append("node '%s' can never be reached from '%s'" % [id, initial_node_id])
 
 	return {"errors": errors, "warnings": warnings}
+
+
+## Compatibility helper for DialogueGraphEditor
+func validate_graph() -> Dictionary:
+	var res: Dictionary = validate()
+	var errs: PackedStringArray = res.get("errors", PackedStringArray())
+	return {
+		"valid": errs.is_empty(),
+		"errors": Array(errs),
+		"warnings": Array(res.get("warnings", PackedStringArray()))
+	}

@@ -18,3 +18,5 @@ extends Resource
 @export var auto_next: StringName = &""
 ## Auto-advance delay in seconds (0.0 = advance when audio finishes or default pacing).
 @export var auto_delay: float = 0.0
+## Visual coordinates for GraphEdit in DialogueGraphEditor.
+@export var editor_position: Vector2 = Vector2.ZERO

@@ -1,0 +1,119 @@
+[gd_resource type="Resource" script_class="DialogueGraph" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_cinvk"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_h5tvm"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_yra7m"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_ryggl"]
+
+[sub_resource type="Resource" id="Resource_kbqew"]
+script = ExtResource("2_h5tvm")
+text = "Stay calm. Can you confirm how many people you see?"
+next = &"count_people"
+patience_delta = 5.0
+
+[sub_resource type="Resource" id="Resource_dqnoq"]
+script = ExtResource("2_h5tvm")
+text = "[PROFILER] Analyze vocal stress: flat micro-tremor detected."
+next = &"profiler_interrogate"
+required_class = &"profiler"
+patience_delta = 10.0
+reveals = Array[StringName]([&"clue_caller_feigning_panic"])
+
+[sub_resource type="Resource" id="Resource_dcmch"]
+script = ExtResource("2_h5tvm")
+text = "We are dispatching units Code 3 immediately!"
+next = &"hasty_dispatch"
+patience_delta = -15.0
+
+[sub_resource type="Resource" id="Resource_mbdth"]
+script = ExtResource("1_cinvk")
+id = &"start"
+line = "Help! There are people in robes surrounding my farmhouse... they're cutting the power lines!"
+choices = Array[ExtResource("2_h5tvm")]([SubResource("Resource_kbqew"), SubResource("Resource_dqnoq"), SubResource("Resource_dcmch")])
+editor_position = Vector2(80, 100)
+
+[sub_resource type="Resource" id="Resource_37u4a"]
+script = ExtResource("2_h5tvm")
+text = "Check audio line for sub-bass EMF frequency signature."
+next = &"dead_frequency_detected"
+required_evidence = Array[StringName]([&"evidence_emf_hum"])
+patience_delta = 15.0
+reveals = Array[StringName]([&"intel_dead_frequency_active"])
+
+[sub_resource type="Resource" id="Resource_6mrpn"]
+script = ExtResource("2_h5tvm")
+text = "Lock all doors and find a secure interior room."
+next = &"barricade_order"
+patience_delta = 5.0
+
+[sub_resource type="Resource" id="Resource_rwr6t"]
+script = ExtResource("1_cinvk")
+id = &"count_people"
+line = "Three... maybe four! Wait, there is a weird low hum on the line, can you hear it?"
+choices = Array[ExtResource("2_h5tvm")]([SubResource("Resource_37u4a"), SubResource("Resource_6mrpn")])
+editor_position = Vector2(460, 40)
+
+[sub_resource type="Resource" id="Resource_w1v3i"]
+script = ExtResource("2_h5tvm")
+text = "Your background audio is an 8-second loop. Who told you to call?"
+next = &"cult_diversion_exposed"
+required_evidence = Array[StringName]([&"evidence_loop_detected"])
+patience_delta = 20.0
+reveals = Array[StringName]([&"intel_cult_diversion_confirmed"])
+
+[sub_resource type="Resource" id="Resource_kgxas"]
+script = ExtResource("1_cinvk")
+id = &"profiler_interrogate"
+line = "What?! Why aren't you sending cars?! Listen to me, they're right outside my window!"
+choices = Array[ExtResource("2_h5tvm")]([SubResource("Resource_w1v3i")])
+editor_position = Vector2(460, 260)
+
+[sub_resource type="Resource" id="Resource_8284k"]
+script = ExtResource("1_cinvk")
+id = &"dead_frequency_detected"
+speaker = &"dispatcher"
+line = "Paranormal EMF resonance confirmed on phone relay. Alerting Medic with EMF Reader and salt wards."
+on_enter_events = Array[StringName]([&"event_paranormal_confirmed", &"lead_farmhouse_haunting"])
+auto_next = &"end_call"
+auto_delay = 3.0
+editor_position = Vector2(860, 20)
+
+[sub_resource type="Resource" id="Resource_7tekw"]
+script = ExtResource("1_cinvk")
+id = &"barricade_order"
+line = "I'm in the closet now... hurry, please!"
+auto_next = &"end_call"
+auto_delay = 2.0
+editor_position = Vector2(860, 140)
+
+[sub_resource type="Resource" id="Resource_5cdqc"]
+script = ExtResource("1_cinvk")
+id = &"cult_diversion_exposed"
+speaker = &"dispatcher"
+line = "Caller disconnected immediately. Diversion detected. Cultists are staging an ambush at the power substation."
+on_enter_events = Array[StringName]([&"event_diversion_exposed", &"intel_ambush_prevented"])
+auto_next = &"end_call"
+auto_delay = 3.0
+editor_position = Vector2(860, 260)
+
+[sub_resource type="Resource" id="Resource_474re"]
+script = ExtResource("1_cinvk")
+id = &"hasty_dispatch"
+speaker = &"dispatcher"
+line = "Patrol units routed blindly into dark perimeter without tactical recon."
+on_enter_events = Array[StringName]([&"event_blind_dispatch"])
+auto_next = &"end_call"
+auto_delay = 3.0
+editor_position = Vector2(860, 400)
+
+[sub_resource type="Resource" id="Resource_7hjuk"]
+script = ExtResource("1_cinvk")
+id = &"end_call"
+speaker = &"dispatcher"
+line = "Call terminated. Assessment window active on dispatch terminal."
+on_enter_events = Array[StringName]([&"event_call_finished"])
+editor_position = Vector2(1240, 200)
+
+[resource]
+script = ExtResource("4_ryggl")
+nodes = Array[ExtResource("1_cinvk")]([SubResource("Resource_mbdth"), SubResource("Resource_rwr6t"), SubResource("Resource_kgxas"), SubResource("Resource_8284k"), SubResource("Resource_7tekw"), SubResource("Resource_5cdqc"), SubResource("Resource_474re"), SubResource("Resource_7hjuk")])

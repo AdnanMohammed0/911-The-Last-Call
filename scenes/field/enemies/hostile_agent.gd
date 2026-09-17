@@ -69,6 +69,7 @@ var _patrol_index: int = 0
 
 func _ready() -> void:
 	add_to_group(GROUP)
+	add_to_group(LagCompensation.GROUP)
 	if archetype == null:
 		archetype = load("res://data/ai/archetypes/thug.tres") as ArchetypeData
 	hp = archetype.max_hp

@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://data/weapons/weapon_data.gd" id="1_xeyu3"]
+
+[resource]
+script = ExtResource("1_xeyu3")
+id = &"smg"
+display_name = "Compact SMG"
+damage = 22.0
+max_range = 70.0
+falloff_start = 15.0
+falloff_min_ratio = 0.45
+fire_interval = 0.075
+automatic = true
+max_reserve = 120
+reload_seconds = 2.0
+hip_spread = 2.2
+aim_spread = 0.6
+move_spread = 1.2
+aim_fov = 58.0
+recoil_pattern = PackedVector2Array(0.55, 0.05, 0.6, 0.12, 0.55, -0.1, 0.65, 0.2, 0.6, -0.25, 0.5, 0.15)
+recoil_recovery = 10.0
+cost = 350
+allowed_classes = Array[StringName]([&"tech"])
+noise_radius = 55.0
+body_length = 0.42
+barrel_length = 0.12
+body_color = Color(0.12, 0.12, 0.13, 1)

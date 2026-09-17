@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://data/weapons/weapon_data.gd" id="1_ihp4e"]
+
+[resource]
+script = ExtResource("1_ihp4e")
+id = &"pistol"
+display_name = "Service Pistol"
+slot = 1
+damage = 34.0
+max_range = 80.0
+falloff_start = 20.0
+fire_interval = 0.2
+magazine_size = 15
+max_reserve = 60
+reload_seconds = 1.6
+hip_spread = 1.6
+aim_spread = 0.25
+move_spread = 1.4
+aim_fov = 60.0
+recoil_pattern = PackedVector2Array(1.8, 0.2, 1.6, -0.3, 1.7, 0.4)
+recoil_recovery = 14.0
+noise_radius = 50.0
+body_length = 0.22
+barrel_length = 0.06
+body_color = Color(0.1, 0.1, 0.11, 1)

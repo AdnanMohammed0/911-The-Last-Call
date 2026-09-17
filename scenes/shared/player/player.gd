@@ -91,6 +91,7 @@ signal interaction_prompt_changed(prompt: String)
 				node.set_multiplayer_authority(1)
 		if is_node_ready():
 			_apply_authority()
+			get_weapons().refresh_authority()
 
 ## Host-replicated (HostSync): the owner dropped; the body waits for a reconnect.
 var connection_lost: bool = false:
@@ -296,6 +297,14 @@ func get_health() -> HealthComponent:
 	return $Health
 
 
+func get_weapons() -> WeaponHolder:
+	return $Weapons
+
+
+func get_input() -> PlayerInput:
+	return $PlayerInput
+
+
 ## Fastest legitimate horizontal speed (used by the host's MovementValidator).
 func get_max_move_speed() -> float:
 	var normal: float = maxf(maxf(walk_speed, sprint_speed), crouch_speed) * move_speed_multiplier
@@ -315,11 +324,11 @@ func get_voice_emitter() -> AudioStreamPlayer3D:
 
 
 func get_camera() -> Camera3D:
-	return _camera
+	return $Head/Camera3D
 
 
 func get_eye_position() -> Vector3:
-	return _camera.global_position
+	return get_camera().global_position
 
 
 func get_max_stamina() -> float:

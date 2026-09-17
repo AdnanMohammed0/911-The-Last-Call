@@ -12,6 +12,13 @@ var interact_just_pressed: bool = false
 var door_peek_just_pressed: bool = false
 var door_kick_just_pressed: bool = false
 var flashlight_just_pressed: bool = false
+var fire_held: bool = false
+var fire_just_pressed: bool = false
+var aim_held: bool = false
+var reload_just_pressed: bool = false
+var weapon_primary_just_pressed: bool = false
+var weapon_sidearm_just_pressed: bool = false
+var weapon_swap_just_pressed: bool = false
 
 ## False while a menu is open: sample() reports no input and the mouse is left alone.
 var enabled: bool = true
@@ -40,6 +47,13 @@ func sample() -> void:
 		door_peek_just_pressed = false
 		door_kick_just_pressed = false
 		flashlight_just_pressed = false
+		fire_held = false
+		fire_just_pressed = false
+		aim_held = false
+		reload_just_pressed = false
+		weapon_primary_just_pressed = false
+		weapon_sidearm_just_pressed = false
+		weapon_swap_just_pressed = false
 		return
 	move = Input.get_vector(&"move_left", &"move_right", &"move_forward", &"move_back")
 	sprint = Input.is_action_pressed(&"sprint")
@@ -50,6 +64,15 @@ func sample() -> void:
 	door_peek_just_pressed = Input.is_action_just_pressed(&"door_peek")
 	door_kick_just_pressed = Input.is_action_just_pressed(&"door_kick")
 	flashlight_just_pressed = Input.is_action_just_pressed(&"flashlight")
+	# Mouse buttons only count once the mouse is captured (the first click just captures it).
+	var captured: bool = Input.mouse_mode == Input.MOUSE_MODE_CAPTURED or DisplayServer.get_name() == "headless"
+	fire_held = captured and Input.is_action_pressed(&"fire")
+	fire_just_pressed = captured and Input.is_action_just_pressed(&"fire")
+	aim_held = captured and Input.is_action_pressed(&"aim")
+	reload_just_pressed = Input.is_action_just_pressed(&"reload")
+	weapon_primary_just_pressed = Input.is_action_just_pressed(&"weapon_primary")
+	weapon_sidearm_just_pressed = Input.is_action_just_pressed(&"weapon_sidearm")
+	weapon_swap_just_pressed = Input.is_action_just_pressed(&"weapon_swap")
 
 
 ## Returns the mouse movement accumulated since the last call and resets it.

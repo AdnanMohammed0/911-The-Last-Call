@@ -1,720 +1,744 @@
 {
- "member": "adnan",
- "updated_at": "2026-09-17",
- "tasks": {
-  "P1-01": {
-   "status": "done",
-   "note": "مشروع Godot 4.7 جاهز: هيكل المجلدات حسب ARCHITECTURE §2، و autoloads (EventBus, GameState, NetManager) بـ static typing ومسجلة، ومشهد boot مؤقت. اختُبر headless واشتغل بدون أخطاء.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-12": {
-   "status": "done",
-   "note": "FPS controller مكتمل: walk/sprint/crouch/lean/stamina، اختُبر headless (9 اختبارات) وتجربة يدوية بـ player_sandbox. المزامنة الشبكية بـ P1-07.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-13": {
-   "status": "done",
-   "note": "نظام التفاعل الشبكي مكتمل: Interactable (press/hold) مع تحقق الهوست (المسافة، مدة الـ hold، cooldown، الماسك)، PlayerInteractor بالـ raycast، واجهة prompt + progress. اختُبر offline (13) وبشبكة ENet حقيقية host+client.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-04": {
-   "status": "done",
-   "note": "NetManager host/join عبر ENet مكتمل: 24911، 4 لاعبين، تحقق الهوست (نسخة البروتوكول، لوبي ممتلئ، تنظيف الاسم، مهلة تسجيل)، leave وخروج الهوست، وقائمة رئيسية مؤقتة. اختُبر بـ 7 عمليات.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-05": {
-   "status": "done",
-   "note": "Lobby: اختيار الكلاس (4 كلاسات ClassData من GAMEPLAY §2.1، كل كلاس للاعب واحد)، ready-up، و Start للهوست. الهوست يتحقق من كل طلب (كلاس صالح/مو مأخوذ، ما يغيّر وهو ready، ما يصير ready بدون كلاس). رفض الانضمام بعد بدء اللعبة. واجهة lobby مؤقتة بالقائمة الرئيسية. اختبار شبكة متعدد العمليات نجح.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-06": {
-   "status": "done",
-   "note": "PlayerSpawner (MultiplayerSpawner) بـ spawn_function تنقل peer_id + class_id سوية. handshake تحميل المشهد: اللاعب ينخلق عند كل peer بعد ما يحمّل المشهد فقط، وكل synchronizer مال الهوست بالمشهد (مثل الأبواب) يوصل للي حمّلوا بس. despawn عند المغادرة. يشتغل offline بالـ sandbox. 4 تشغيلات متتالية نظيفة (host + 2 clients + late + offline).",
-   "updated_at": "2026-09-17"
-  },
-  "P1-07": {
-   "status": "done",
-   "note": "ClientSync (owner → الكل، 30Hz): الموقع، yaw/pitch، الوقفة، الميلان، الركض، الكشاف (T). الـ remote يتحرك بنعومة (interpolation) ويسوي snap إذا بعيد. كل peer يرسل الـ sync بس للي حمّلوا المشهد. اختبار 4 عمليات: الحركة والـ crouch والكشاف توصل للهوست ولباقي الـ clients عبر الـ relay. PROTOCOL_VERSION صار 2.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-08": {
-   "status": "done",
-   "note": "MovementValidator على الهوست: سرعة × 1.2 على نافذة 0.5 ث + slack، منع الطيران والـ teleport، rollback + تصحيح للاعب. RpcGuard (is_host, sender_id, is_from_host, is_registered, is_player_in_range) و RpcRateLimiter (token bucket) مستخدمة بـ NetManager و Interactable. اختبار: speed hack ×4 انمنع (<1 م بـ 2 ث)، teleport انرجع، اللاعب الطبيعي 0 مخالفات.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-10": {
-   "status": "done",
-   "note": "اللاعب اللي ينقطع أثناء اللعب: جسمه يبقى مكتوب عليه (disconnected) ومكانه محجوز 60 ث بـ token. يرجع بنفس الكلاس وبنفس مكان جسمه، وينقل تلقائياً للمشهد الحالي. الغريب ينرفض. انتهاء المهلة يشيل الجسم. timeout مال ENet صار 4-8 ث. Esc = قائمة إيقاف (Resume / Leave / Quit) توقف الحركة. انقطاع الهوست يرجعك للقائمة مع السبب وزر Rejoin. اختبار 4 عمليات (27 فحص) نجح.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-11": {
-   "status": "done",
-   "note": "NetDebug overlay (F3 أو -- --netdebug): حالة الجلسة، FPS، لكل peer: RTT + avg/max آخر 30 ث + jitter + packet loss + strikes التحقق (للهوست). الباندويث لكل قناة: voice (ch 2) من العدادات، game (ch 0) = الباقي، total من ENet. اختبار host + client نجح.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-15": {
-   "status": "done",
-   "note": "الميكروفون → Record bus (AudioEffectCapture) → mono 16kHz إطارات 20ms → codec → RPC unreliable_ordered على channel 2 → jitter buffer 60ms → AudioStreamGenerator. الـ codec حالياً IMA ADPCM مكتوب بـ GDScript (~65 kbps، SNR 35 dB) خلف واجهة VoiceCodec؛ Opus يحتاج GDExtension خارجي (twovoip) ينضاف بعد الموافقة. اختبار 3 عمليات نجح + الميكروفون الحقيقي يلتقط.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-16": {
-   "status": "done",
-   "note": "الصوت يطلع من VoiceEmitter (AudioStreamPlayer3D) براس اللاعب: تخفيت بالمسافة (unit 3م، max 35م) + كتمان إذا أكو جدار بين الاثنين (lowpass 900Hz و -8dB). Open mic بـ VAD (RMS gate + hangover) أو push-to-talk بـ Caps Lock، يتبدل من قائمة Esc. واجهة صوت: MIC/RADIO + مستوى الميكروفون + منو يحجي. يرسل voice_noise للـ AI على الهوست.",
-   "updated_at": "2026-09-17"
-  },
-  "P1-17": {
-   "status": "done",
-   "note": "راديو بزر B: VoiceRadio bus (HighPass 300 + LowPass 3400 + Distortion LOFI + Compressor)، squelch داخل/طالع مولّد بالكود (بدون ملفات)، ما يشتغل الراديو إذا المتكلم أقرب من 4م (تسمعه مباشرة). V كان مذكور بالوثيقة بس مستخدم للـ door kick عند Ali.",
-   "updated_at": "2026-09-17"
-  },
-  "P2-04": {
-   "status": "done",
-   "note": "CallDirector (host) جاهز ومسجل كـ Autoload: ساعة الشفت (00:00 إلى 06:00 بمقياس 6×، إيقاف واستئناف ومزامنة)، طابور المكالمات مع earliest_minute، ودورة حياة المكالمة الكاملة (ring/answer/missed/assessment/verdict) مع تحقق الهوست وتوثيق السجل. اختُبر بـ 6 اختبارات GUT.",
-   "updated_at": "2026-09-17"
-  },
-  "P2-05": {
-   "status": "done",
-   "note": "ملكية رمز سماعة الهاتف (Handset token) ومزامنة الحوار: تداول السماعة بين الضباط (E)، حصر اختيار خيارات الحوار بحامل السماعة (مع خيارات مشروطة بالكلاس والأدلة)، إمكانية تأشير الخيارات (choice pings) من زملاء الفريق لتظهر لحامل السماعة، ومزامنة نص وسطور الحوار لحظياً عبر الشبكة. اختُبر بـ 5 اختبارات GUT.",
-   "updated_at": "2026-09-17"
-  },
-  "P2-08": {
-   "status": "done",
-   "note": "محلل نبرة الصوت (Voice Stress Analyzer): ربط قناة Phone بـ AudioEffectSpectrumAnalyzer للترددات الحية، منحنيات الإجهاد authored (الرجفان 8-12Hz، تقلب النبرة، وتقدير نبضات القلب)، كاشف التكرار الحلقي (loop detector)، عزل أصوات الخلفية (Background Isolate)، ونظام تفاعل الوسوم (Scrub-and-Tag) للأدلة مع معاقبة الوسوم الخاطئة. اختُبر بـ 4 اختبارات GUT.",
-   "updated_at": "2026-09-17"
-  },
-  "P2-14": {
-   "status": "testing",
-   "note": "VoteManager (autoload): الهوست يفتح تصويت بمهلة، كل peer يرسل صوته والهوست يتحقق (مؤهل، خيار صحيح، rate limit) ويوزع العدّ. يسكر بالمهلة، أو لما الكل يصوت، أو مبكراً لو بالإجماع. الفوز بالأغلبية، التعادل يحسمه كلاس (Profiler للحكم، Breacher للاقتراب)، بعده default، بعده ترتيب الخيارات. تصويت الحكم مربوط بـ CallDirector (60 ث). تصويت الاقتراب: Decoy يحتاج 3 لاعبين أو Tech. المنقطع يطلع من التصويت والراجع يستلمه. 10 اختبارات GUT + اختبار 3 عمليات نجحت.",
-   "updated_at": "2026-09-17"
-  },
-  "P3-02": {
-   "status": "testing",
-   "note": "HealthComponent على الهوست ومتزامن بـ HostSync: ضرر حسب المنطقة (رأس ×2، جذع ×1، أطراف ×0.75) مع مقاومة الكلاس (Breacher 140 HP / 25%)، رجوع الصحة لأقرب 25% بس، Downed عند 0 (نزيف 45 ث، زحف 0.6 م/ث، ما يتفاعل)، إنعاش بالإمساك: Medic 4 ث أو Trauma Kit 8 ث (النزيف يوقف أثناء الإنعاش، يرجع 40%)، انتهاء النزيف = Critical. ضربة ساق/يد ≥30 ترسل trait (limping / fractured_hand). واجهة صحة وشاشة Downed. 8 اختبارات GUT + اختبار 3 عمليات (Medic يمشي ويسوي إنعاش حقيقي) نجحت.",
-   "updated_at": "2026-09-17"
-  },
-  "P3-07": {
-   "status": "testing",
-   "note": "Behavior tree runtime بـ core/bt: Selector (reactive، يقطع الفرع الأقل أولوية)، Sequence (يكمل من الابن الشغال)، Parallel، Decorator (Invert/Succeed/Repeat/Cooldown/TimeLimit)، BTCall (دوال الـ agent + تنظيف _exit عند المقاطعة)، BTCheck للـ blackboard، BTWait. الشجرة Resource مشتركة والحالة لكل agent بالـ BTBlackboard. BTRunner على الهوست 10Hz موزع. BT.sel/seq/... لبناء الشجرة بالكود. Debugger (F4، Tab يبدل) يعرض الشجرة بالألوان والـ blackboard. 12 اختبار GUT نجحت.",
-   "updated_at": "2026-09-17"
-  },
-  "P3-08": {
-   "status": "testing",
-   "note": "AIPerception (core/ai): مخروط رؤية 100° بمدى 30م بالضوء و8م بالظلام (منطقة light_zones أو كشاف اللاعب يعتبر مضيء)، فحص خط النظر بالجدران، الانحناء يقلل الرؤية، كشاف اللاعب على الـ AI ضمن 25م = كشف فوري، سماع EventBus.noise_event و voice_noise (همس 2م → صراخ 20م)، مقياس انتباه Unaware/Suspicious 0.3/Searching 0.6/Combat 1.0 مع تلاشي وذاكرة قتال، callout للفريق بعد 1.5 ث. الهوست يطلق ضوضاء خطوات لكل لاعب (مشي 4م، ركض 10م، انحناء 1.5م × noise_multiplier للكلاس). 11 اختبار GUT نجحت.",
-   "updated_at": "2026-09-17"
-  },
-  "P3-09": {
-   "status": "testing",
-   "note": "MissionNavigation (NavigationRegion3D): يسوي bake للـ navmesh من هندسة المهمة على الهوست عند التحميل (أولاد العقدة أو group)، ويولد CoverPoints تلقائياً على حافة الـ navmesh جنب الجدران (LOW للجدار الواطي، HIGH للعالي) إذا ماكو نقاط مصممة. CoverQuery: غطاء على بعد 8-20م من التهديد، محمي منه، يقدر يطل ويرمي، مو مكشوف لتهديد ثاني (flank)، مو محجوز لغيره، والتقييم بطول المسار على الـ navmesh. claim/release. 6 اختبارات GUT نجحت.",
-   "updated_at": "2026-09-17"
-  },
-  "P3-10": {
-   "status": "testing",
-   "note": "5 archetypes (data/ai/archetypes) من جدول §8.1 + HostileAgent (hostile.tscn): navigation، AIPerception، BTRunner، إطلاق hitscan على الهوست يضر Health اللاعب (دقة تقل بالمسافة والحركة والانحناء، مناطق إصابة)، ضوضاء طلقة 60م، مزامنة الموقع/الحركة/الحالة/HP للـ clients. HostileBrains تبني شجرة لكل نوع: Thug (دورية، غطاء، استسلام سهل 35)، Cultist Gunman (غطاء + التفاف)، Zealot (هجوم مباشر + IED، ما يستسلم)، Ambush Leader (يطلب تعزيز +2)، Hostage Taker (يمسك الرهينة ويعدمها 50% عند اقتحام صاخب). EnemySpawner + EnemySpawnPoint + مشهد اختبار ai_test_range.tscn. اختبار سلوك (14 فحص) + اختبار شبكة + GUT نجحت.",
-   "updated_at": "2026-09-17"
-  },
-  "P3-11": {
-   "status": "testing",
-   "note": "AISquad: callout ينقل الهدف لكل الفريق، flank tokens (نص الفريق كحد أقصى، مهلة 8ث وتبريد 10ث)، معنويات: موت حليف -15، موت القائد -30، درع/مكبر صوت/غاز (-10/-25/-20) كـ hooks، تفوق عددي +10. الاستسلام: معنويات < الحد وغير متعصب ويشوف لاعبين 2+ أو تفاوض → يرفع ايده وينتظر الاعتقال (EventBus.suspect_surrendered لـ P3-05). الهروب: HP < 25% ومعنويات < 40. 10 اختبارات GUT نجحت.",
-   "updated_at": "2026-09-17"
-  },
-  "P3-12": {
-   "status": "testing",
-   "note": "StateMachine عام (core/fsm) + Anomaly base (منطقة، لاعبين بالمنطقة، الأقل عقلاً والأكثر عزلة، أضواء، نقاط ظلام، مزامنة الحالة/الظهور/الموقع). الغريقة: Dormant → (EMF≥3 / دخول القبو / trigger) Manifest (ترمش الأضواء، تسد الأبواب، تسحب عقل 4/ث للي يشوفها) → 6ث Stalk (تنتقل بين نقاط الظلام بعيد عن النظر، تستهدف الأقل عقلاً وتهمس باسمه على الراديو، الأضواء مطفية 20ث = Manifest) → عقل<40 أو 45ث Hunt (تطارد 3.8م/ث، تطفي الأضواء والكشافات ضمن 6م، الماي يرتفع) → ≤2م Attack (تمسك اللاعب 3ث، زميل يوجه الكشاف عليها أو ملح يحرره، وإلا 60 ضرر + 40 عقل) → Retreat (30-60ث) → Stalk أو Dormant. نغمة عكسية = Retreat، خط ملح أو خروج الكل = Dormant، دفن العظام = Banished نهائي. Player صار عنده sanity أولي (P3-03 يكمله) + grab/flashlight من الهوست. 13 اختبار GUT نجحت.",
-   "updated_at": "2026-09-17"
-  },
-  "P3-13": {
-   "status": "testing",
-   "note": "TensionDirector (autoload، الهوست): توتر 0-1 من الضرر آخر 20ث + متوسط العقل + قتال الأعداء + مطاردة/ظهور الشبح + قرب آخر رعبة، بتنعيم. توتر < 0.3 لمدة 90ث = رعبة لضحية (وزن أكبر للأقل عقلاً، ما يتكرر نفس النوع ورا بعض). توتر > 0.8 = يمنع ظهور الأشباح (can_manifest) والرعبات لحد ما ينزل < 0.6. الهلوسات تنرسل rpc_id للضحية بس: همس راديو، خطوات وهمية تقرب، رنة تلفون، ظل أسود يختفي، بأصوات مولدة بالكود. الغريقة تسأل can_manifest. 8 اختبارات GUT + اختبار 3 عمليات (الضحية بس تسمع) نجحت.",
-   "updated_at": "2026-09-17"
-  }
- },
- "log": [
-  {
-   "date": "2026-09-17",
-   "tasks": [],
-   "summary": "كتابة وثائق المشروع (Architecture, Gameplay Mechanics, Roadmap, Progress) ولوحة التقدم الأولى.",
-   "files": [
-    "docs/",
-    "PROGRESS.md",
-    "index.html"
-   ],
-   "commit": "625ec30"
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [],
-   "summary": "توزيع 84 مهمة على الفريق، برومبتات لكل عضو، تسجيل تقدم تلقائي (Hook + GitHub Action)، وموقع جديد على GitHub Pages.",
-   "files": [
-    "data/",
-    "prompts/",
-    "AGENTS.md",
-    "assets/",
-    "index.html",
-    ".github/workflows/auto-progress.yml"
-   ],
-   "commit": "c2077cd"
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [],
-   "summary": "إعادة توزيع المهام: Adnan (AI، شبكات، لعب)، Ali (3D، عالم، فن، واجهات)، Mohamed (برمجة سهلة).",
-   "files": [
-    "docs/PROJECT_ROADMAP.md",
-    "data/tasks.json",
-    "data/team.json",
-    "prompts/"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [],
-   "summary": "نقل كل ملفات إدارة المشروع (الموقع، البيانات، الوثائق، البرومبتات، السكربتات) لمجلد docs/ حتى يبقى جذر المستودع لمشروع Godot.",
-   "files": [
-    "docs/"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-01"
-   ],
-   "summary": "إنشاء مشروع Godot 4.7 (Forward Plus) بجذر المستودع، ودمج .gitignore مال Godot ويا قواعد المشروع.",
-   "files": [
-    "project.godot",
-    "icon.svg",
-    ".gitattributes",
-    ".editorconfig",
-    ".gitignore"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-01"
-   ],
-   "summary": "هيكل مجلدات المشروع، autoload skeletons (EventBus, GameState, NetManager) مسجلة بـ project.godot، ومشهد main_menu مؤقت كـ main scene.",
-   "files": [
-    "autoload/",
-    "scenes/boot/",
-    "project.godot"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-01"
-   ],
-   "summary": "إغلاق P1-01: أساس المشروع اختُبر (headless boot OK) وصار جاهز للفريق يبني فوقه.",
-   "files": [
-    "docs/data/progress/adnan.json"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-12"
-   ],
-   "summary": "FPS controller: walk/sprint/crouch/lean/stamina + PlayerInput منفصل للمزامنة لاحقاً + input map + مشهد sandbox للتجربة مع HUD.",
-   "files": [
-    "scenes/shared/player/player.gd",
-    "scenes/shared/player/player_input.gd",
-    "scenes/shared/player/player.tscn",
-    "scenes/shared/player/player_sandbox.tscn",
-    "scenes/shared/player/player_debug_hud.gd",
-    "project.godot"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-12"
-   ],
-   "summary": "player_sandbox صار المشهد الرئيسي (F5 يشغّل ساحة التجربة مباشرة) ودمج الشغل على main.",
-   "files": [
-    "project.godot"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-12"
-   ],
-   "summary": "إغلاق P1-12: متحكم اللاعب اختُبر يدوياً وصار على main.",
-   "files": [
-    "docs/data/progress/adnan.json"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-13"
-   ],
-   "summary": "نظام التفاعل الشبكي: Interactable base + Toggle + Pickup، PlayerInteractor، واجهة prompt/progress، زر F، طبقة interactable، وأمثلة (مفتاح ضوء + صندوق أدلة) بالـ sandbox.",
-   "files": [
-    "scenes/shared/interactables/",
-    "scenes/shared/player/player_interactor.gd",
-    "scenes/shared/player/player.gd",
-    "scenes/shared/player/player.tscn",
-    "scenes/shared/player/player_sandbox.tscn",
-    "ui/hud/",
-    "autoload/event_bus.gd",
-    "project.godot"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-13"
-   ],
-   "summary": "إغلاق P1-13: نظام التفاعل اختُبر وصار على main.",
-   "files": [
-    "docs/data/progress/adnan.json"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-04"
-   ],
-   "summary": "NetManager host/join عبر ENet + roster sync أساسي + main menu مؤقت، واختبار شبكة حقيقي بـ host و 3 clients و lobby ممتلئ و version mismatch.",
-   "files": [
-    "autoload/net_manager.gd",
-    "scenes/boot/main_menu.gd",
-    "scenes/boot/main_menu.tscn",
-    "project.godot"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-04"
-   ],
-   "summary": "إغلاق P1-04: الاستضافة والانضمام عبر ENet اختُبرت وصارت على main.",
-   "files": [
-    "docs/data/progress/adnan.json"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-05"
-   ],
-   "summary": "Lobby: ClassData + ClassCatalog، RPCs اختيار الكلاس و ready و start بتحقق الهوست، وواجهة lobby مؤقتة. شلت C من crouch لأن Ali يستخدمه للـ door peek.",
-   "files": [
-    "autoload/net_manager.gd",
-    "autoload/game_state.gd",
-    "data/classes/",
-    "scenes/boot/main_menu.gd",
-    "scenes/boot/main_menu.tscn",
-    "project.godot"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-06"
-   ],
-   "summary": "PlayerSpawner class-aware مع handshake تحميل المشهد وفلترة visibility، وتحويل player_sandbox لـ spawn بدل لاعب ثابت. صلّحت race لما الـ client يحمّل قبل الهوست.",
-   "files": [
-    "core/net/player_spawner.gd",
-    "scenes/shared/player/player.gd",
-    "scenes/shared/player/player.tscn",
-    "scenes/shared/player/player_sandbox.tscn",
-    "scenes/shared/player/player_debug_hud.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-07",
-    "P1-08"
-   ],
-   "summary": "مزامنة اللاعب (موقع، نظر، وقفة، ميلان، كشاف) مع interpolation، تحقق الحركة على الهوست مع rollback، أدوات RpcGuard و RateLimiter، ومحاولة فتح البورت تلقائياً (UPnP) مع عرض الـ IP العام بالقائمة للعب عبر الإنترنت.",
-   "files": [
-    "scenes/shared/player/player.gd",
-    "scenes/shared/player/player.tscn",
-    "core/net/movement_validator.gd",
-    "core/net/rpc_guard.gd",
-    "core/net/rpc_rate_limiter.gd",
-    "core/net/player_spawner.gd",
-    "autoload/net_manager.gd",
-    "scenes/shared/interactables/interactable.gd",
-    "scenes/boot/main_menu.gd",
-    "scenes/boot/main_menu.tscn",
-    "project.godot"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-07"
-   ],
-   "summary": "شخصية 3D مؤقتة لكل لاعب (زي شرطة، سترة بلون الكلاس، قبعة، اسم فوق الراس، حركة مشي للأرجل والأيدي، ينضغط وقت الـ crouch) وجسمك ما يبين بكاميرتك. الانضمام يقبل host:port حتى يشتغل ويا playit.gg.",
-   "files": [
-    "scenes/shared/player/player_body.gd",
-    "scenes/shared/player/player.tscn",
-    "scenes/shared/player/player.gd",
-    "data/classes/",
-    "autoload/net_manager.gd",
-    "scenes/boot/main_menu.tscn"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [],
-   "summary": "مساعدة بـ CI (مهمة Mohamed P1-03): التصدير كان يفشل لأن setup-godot ينصّب نسخة .NET ومجلد الـ templates كان ينفك بمكان غلط. تصليح الاثنين حتى يطلع exe للأصدقاء.",
-   "files": [
-    ".github/workflows/ci.yml"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-05",
-    "P1-06",
-    "P1-07",
-    "P1-08"
-   ],
-   "summary": "إغلاق P1-05 → P1-08: اللوبي، الـ spawn، مزامنة اللاعب، وتحقق الحركة اختُبرت ونجحت وصارت على main.",
-   "files": [
-    "docs/data/progress/adnan.json"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-10"
-   ],
-   "summary": "التعامل مع الانقطاع: حجز مكان اللاعب وإعادة الاتصال بـ token، إرجاع للقائمة مع السبب، زر Rejoin، قائمة إيقاف Esc، و timeouts أقصر.",
-   "files": [
-    "autoload/net_manager.gd",
-    "autoload/game_state.gd",
-    "core/net/player_spawner.gd",
-    "scenes/shared/player/player.gd",
-    "scenes/shared/player/player.tscn",
-    "scenes/shared/player/player_input.gd",
-    "ui/hud/pause_menu.gd",
-    "ui/hud/pause_menu.tscn",
-    "scenes/boot/main_menu.gd",
-    "scenes/boot/main_menu.tscn"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-11"
-   ],
-   "summary": "شاشة debug للشبكة (F3): RTT و jitter و packet loss لكل لاعب، والباندويث لكل قناة.",
-   "files": [
-    "autoload/net_debug.gd",
-    "project.godot"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-15",
-    "P1-16",
-    "P1-17"
-   ],
-   "summary": "الصوت الكامل: التقاط الميكروفون، ضغط ADPCM، إرسال على قناة 2، صوت 3D بالمسافة والجدران، VAD و push-to-talk، راديو بفلاتر و squelch، واجهة مؤشرات الكلام، وأحداث ضوضاء للـ AI.",
-   "files": [
-    "autoload/voice_manager.gd",
-    "core/voice/",
-    "default_bus_layout.tres",
-    "ui/hud/voice_hud.gd",
-    "ui/hud/voice_hud.tscn",
-    "ui/hud/pause_menu.gd",
-    "scenes/shared/player/player.tscn",
-    "autoload/event_bus.gd",
-    "project.godot"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-10"
-   ],
-   "summary": "تصليح \"Failed to join (Can't create)\": السبب عنوان ما ينحل (خطأ بالكتابة/مسافات/http:// أو DNS). صار ينظف العنوان، يحل الاسم بـ IPv4 أولاً، ويطلع رسالة واضحة.",
-   "files": [
-    "autoload/net_manager.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P2-04",
-    "P2-05",
-    "P2-08"
-   ],
-   "summary": "محرك المكالمات والحوار والتحليل الصوتي: CallDirector (ساعة الشفت، طابور المكالمات، ودورة حياة الرنين والرد والإلغاء والتصنيف)، ملكية سماعة الهاتف ومزامنة الحوار التفاعلي وخيارات الكلاسات وتأشير الفريق، ومحلل نبرة الصوت (VSA) بترددات الطيف ومنحنيات الإجهاد وكشف التكرار وعزل الخلفية ونظام الوسوم.",
-   "files": [
-    "autoload/call_director.gd",
-    "core/dispatch/dialogue_runner.gd",
-    "core/dispatch/voice_stress_analyzer.gd",
-    "data/calls/",
-    "data/dialogue/",
-    "data/consequences/flag_condition.gd",
-    "autoload/event_bus.gd",
-    "default_bus_layout.tres",
-    "project.godot",
-    "tests/test_call_director.gd",
-    "tests/test_dialogue_replication.gd",
-    "tests/test_voice_stress_analyzer.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-10",
-    "P1-11",
-    "P1-15",
-    "P1-16",
-    "P1-17",
-    "P2-04",
-    "P2-05",
-    "P2-08"
-   ],
-   "summary": "إغلاق واكتمال مهام الشبكة والصوت وغرفة العمليات: اعتماد مهام الانقطاع (P1-10) وشاشة فحص الشبكة (P1-11) ومنظومة الصوت والراديو (P1-15..17)، واكتمال CallDirector (P2-04) وسماعة الهاتف والحوار (P2-05) ومحلل نبرة الصوت VSA (P2-08) بعد اجتياز كامل الاختبارات.",
-   "files": [
-    "autoload/call_director.gd",
-    "core/dispatch/dialogue_runner.gd",
-    "core/dispatch/voice_stress_analyzer.gd",
-    "data/calls/",
-    "data/dialogue/",
-    "data/consequences/flag_condition.gd",
-    "autoload/event_bus.gd",
-    "default_bus_layout.tres",
-    "project.godot",
-    "tests/test_call_director.gd",
-    "tests/test_dialogue_replication.gd",
-    "tests/test_voice_stress_analyzer.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P2-04",
-    "P2-08"
-   ],
-   "summary": "fix(types): replace bool(Variant) with direct boolean comparisons — P2-04, P2-08",
-   "files": [
-    "autoload/call_director.gd",
-    "core/dispatch/voice_stress_analyzer.gd",
-    "data/consequences/flag_condition.gd",
-    "tests/test_voice_stress_analyzer.gd"
-   ],
-   "commit": "a1aaf33",
-   "auto": true
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [],
-   "summary": "fix(call_director): connect to peer_left and peer_dropped signals on NetManager",
-   "files": [
-    "autoload/call_director.gd"
-   ],
-   "commit": "a8ffd7e",
-   "auto": true
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P2-04",
-    "P2-08"
-   ],
-   "summary": "fix(types): replace float(Variant)/int(Variant) constructors with as-casts — P2-04, P2-08",
-   "files": [
-    "autoload/call_director.gd",
-    "core/dispatch/voice_stress_analyzer.gd",
-    "tests/test_voice_stress_analyzer.gd"
-   ],
-   "commit": "689fadb",
-   "auto": true
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-10",
-    "P1-11",
-    "P1-15",
-    "P1-16",
-    "P1-17"
-   ],
-   "summary": "تصليح «الصوت ما ينسمع» و«التقطيع»: auto gain، بوابة صوت تكيّفية، pre-roll، اختيار المايك واختبار المايك، jitter buffer أكبر مع تعويض، وتصليح البورتال اللي كان يغير المشهد لكل لاعب لحاله. إغلاق المهام اللي تحت الاختبار.",
-   "files": [
-    "autoload/voice_manager.gd",
-    "autoload/net_manager.gd",
-    "ui/hud/pause_menu.gd",
-    "ui/hud/pause_menu.tscn",
-    "scenes/shared/interactables/interactable_scene_door.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P2-04"
-   ],
-   "summary": "تصليح crash بـ CallDirector: قطع المكالمة كان يسوي تكرار لا نهائي (hangup → stop → finished → hangup). وset_shift_time صار يفحص المكالمات المجدولة. تصليح اختبار patience (lambda تلتقط بالقيمة). كل 47 اختبار GUT تنجح.",
-   "files": [
-    "autoload/call_director.gd",
-    "core/dispatch/dialogue_runner.gd",
-    "tests/test_dialogue_replication.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P2-14"
-   ],
-   "summary": "نظام التصويت: مهلات، إجماع ينهي مبكراً، حسم التعادل بالكلاس، تصويت الحكم على المكالمة وتصويت طريقة الاقتراب.",
-   "files": [
-    "autoload/vote_manager.gd",
-    "autoload/call_director.gd",
-    "project.godot",
-    "tests/test_vote_manager.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P3-02"
-   ],
-   "summary": "الصحة: ضرر حسب مكان الإصابة، تجدد بخطوات 25%، الإسقاط والنزيف والإنعاش بالإمساك، والحالة الحرجة. Interactable صار يدعم مدة إمساك حسب اللاعب.",
-   "files": [
-    "scenes/shared/player/health_component.gd",
-    "scenes/shared/player/revive_interactable.gd",
-    "scenes/shared/player/player.gd",
-    "scenes/shared/player/player.tscn",
-    "scenes/shared/player/player_interactor.gd",
-    "scenes/shared/interactables/interactable.gd",
-    "ui/hud/health_hud.gd",
-    "ui/hud/health_hud.tscn",
-    "autoload/event_bus.gd",
-    "tests/test_health_component.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P3-07"
-   ],
-   "summary": "محرك Behavior Tree كامل مع الـ blackboard والـ decorators وأداة debugger (F4).",
-   "files": [
-    "core/bt/",
-    "autoload/bt_debugger.gd",
-    "project.godot",
-    "tests/test_behavior_tree.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P3-08"
-   ],
-   "summary": "حواس الـ AI: رؤية بمخروط وضوء وجدران، كشف الكشاف، سمع الخطوات والصوت، مقياس الانتباه، و callout.",
-   "files": [
-    "core/ai/ai_perception.gd",
-    "autoload/event_bus.gd",
-    "scenes/shared/player/player.gd",
-    "tests/test_ai_perception.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P3-09"
-   ],
-   "summary": "نظام الغطاء: bake للـ navmesh لكل مهمة، توليد نقاط غطاء تلقائي، واستعلام أفضل غطاء.",
-   "files": [
-    "core/ai/mission_navigation.gd",
-    "core/ai/cover_generator.gd",
-    "core/ai/cover_point.gd",
-    "core/ai/cover_query.gd",
-    "tests/test_cover_navigation.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P3-10",
-    "P3-11"
-   ],
-   "summary": "أعداء قابلين للعب: 5 أنواع بسلوك مختلف، إطلاق نار حقيقي، غطاء والتفاف، فرق بمعنويات واستسلام، تعزيزات، رهائن، ومشهد اختبار للـ AI. صلحت خط النظر اللي كان يمنع الغطاء.",
-   "files": [
-    "data/ai/",
-    "scenes/field/enemies/",
-    "scenes/field/test_range/ai_test_range.tscn",
-    "core/ai/ai_squad.gd",
-    "core/ai/hostile_brains.gd",
-    "core/ai/enemy_spawner.gd",
-    "core/ai/enemy_spawn_point.gd",
-    "core/ai/mission_navigation.gd",
-    "core/net/player_spawner.gd",
-    "autoload/event_bus.gd",
-    "tests/test_hostile_ai.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P3-12"
-   ],
-   "summary": "آلة حالات عامة وشبح الغريقة بكل حالاته ونقاط ضعفه.",
-   "files": [
-    "core/fsm/state_machine.gd",
-    "scenes/field/anomalies/",
-    "scenes/shared/player/player.gd",
-    "scenes/shared/player/player.tscn",
-    "autoload/event_bus.gd",
-    "tests/test_drowned_woman.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P3-13"
-   ],
-   "summary": "مدير التوتر والرعب: يحسب التوتر، يجدول رعبات للاعب واحد، يمنع الأشباح وقت التوتر العالي، وهلوسات محلية لكل لاعب.",
-   "files": [
-    "autoload/tension_director.gd",
-    "scenes/field/anomalies/hallucination.gd",
-    "scenes/shared/player/health_component.gd",
-    "autoload/event_bus.gd",
-    "project.godot",
-    "tests/test_tension_director.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [],
-   "summary": "استرجاع شغل انمسح: commit 7be8425 (مصالحة Mohamed) رجّع ملفات كثيرة لنسخة قديمة (net_manager، player، main_menu، الأبواب، ملفات التقدم…)، و74c1f7a رجّع الملفات المحذوفة بس. استرجعت النسخ من ca51a99 مع الحفاظ على محرر الحوار مال Ali وتحديث P2-02 مال Mohamed.",
-   "files": [
-    "docs/data/progress/",
-    "autoload/",
-    "scenes/",
-    "project.godot"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P2-04",
-    "P2-05"
-   ],
-   "summary": "غرفة العمليات صارت شغالة: حاسبة CAD بكل مكتب (F) تعرض حالة المكالمة، المتصل، الصبر، النص، الردود (حامل السماعة بس)، السجلات، والحكم/تصويت الفريق؛ تلفون 911 يرن بصوت وضوء ويتجاوب بـ F؛ مكالمة تجريبية (Closet Monster) ترن تلقائياً بعد 15 ث + زر «Start test call»؛ ساعة المناوبة على الحايط، شاشة حالة، كراسي. الدخول لـ Station 4 صار مرحلة DISPATCH حتى الساعة تمشي. واجهة مؤقتة لحد ما Ali يخلص P2-07/P2-12/P2-18. اختبار offline كامل + اختبار شبكة (الـ client يجاوب ويختار رد Profiler والتصويت يعطي PRANK صحيح). صلّحت اختبارين متقلبين.",
-   "files": [
-    "scenes/dispatch/dispatch_setup.tscn",
-    "scenes/dispatch/dispatch_setup.gd",
-    "scenes/dispatch/dispatch_computer.gd",
-    "scenes/dispatch/dispatch_phone.gd",
-    "ui/dispatch/dispatch_terminal.gd",
-    "scenes/dispatch/operations_room.tscn",
-    "autoload/net_manager.gd",
-    "ui/hud/pause_menu.gd",
-    "tests/test_cover_navigation.gd",
-    "tests/test_tension_director.gd"
-   ]
-  }
- ]
+  "member": "adnan",
+  "updated_at": "2026-09-17",
+  "tasks": {
+    "P1-01": {
+      "status": "done",
+      "note": "مشروع Godot 4.7 جاهز: هيكل المجلدات حسب ARCHITECTURE §2، و autoloads (EventBus, GameState, NetManager) بـ static typing ومسجلة، ومشهد boot مؤقت. اختُبر headless واشتغل بدون أخطاء.",
+      "updated_at": "2026-09-17"
+    },
+    "P1-12": {
+      "status": "done",
+      "note": "FPS controller مكتمل: walk/sprint/crouch/lean/stamina، اختُبر headless (9 اختبارات) وتجربة يدوية بـ player_sandbox. المزامنة الشبكية بـ P1-07.",
+      "updated_at": "2026-09-17"
+    },
+    "P1-13": {
+      "status": "done",
+      "note": "نظام التفاعل الشبكي مكتمل: Interactable (press/hold) مع تحقق الهوست (المسافة، مدة الـ hold، cooldown، الماسك)، PlayerInteractor بالـ raycast، واجهة prompt + progress. اختُبر offline (13) وبشبكة ENet حقيقية host+client.",
+      "updated_at": "2026-09-17"
+    },
+    "P1-04": {
+      "status": "done",
+      "note": "NetManager host/join عبر ENet مكتمل: 24911، 4 لاعبين، تحقق الهوست (نسخة البروتوكول، لوبي ممتلئ، تنظيف الاسم، مهلة تسجيل)، leave وخروج الهوست، وقائمة رئيسية مؤقتة. اختُبر بـ 7 عمليات.",
+      "updated_at": "2026-09-17"
+    },
+    "P1-05": {
+      "status": "done",
+      "note": "Lobby: اختيار الكلاس (4 كلاسات ClassData من GAMEPLAY §2.1، كل كلاس للاعب واحد)، ready-up، و Start للهوست. الهوست يتحقق من كل طلب (كلاس صالح/مو مأخوذ، ما يغيّر وهو ready، ما يصير ready بدون كلاس). رفض الانضمام بعد بدء اللعبة. واجهة lobby مؤقتة بالقائمة الرئيسية. اختبار شبكة متعدد العمليات نجح.",
+      "updated_at": "2026-09-17"
+    },
+    "P1-06": {
+      "status": "done",
+      "note": "PlayerSpawner (MultiplayerSpawner) بـ spawn_function تنقل peer_id + class_id سوية. handshake تحميل المشهد: اللاعب ينخلق عند كل peer بعد ما يحمّل المشهد فقط، وكل synchronizer مال الهوست بالمشهد (مثل الأبواب) يوصل للي حمّلوا بس. despawn عند المغادرة. يشتغل offline بالـ sandbox. 4 تشغيلات متتالية نظيفة (host + 2 clients + late + offline).",
+      "updated_at": "2026-09-17"
+    },
+    "P1-07": {
+      "status": "done",
+      "note": "ClientSync (owner → الكل، 30Hz): الموقع، yaw/pitch، الوقفة، الميلان، الركض، الكشاف (T). الـ remote يتحرك بنعومة (interpolation) ويسوي snap إذا بعيد. كل peer يرسل الـ sync بس للي حمّلوا المشهد. اختبار 4 عمليات: الحركة والـ crouch والكشاف توصل للهوست ولباقي الـ clients عبر الـ relay. PROTOCOL_VERSION صار 2.",
+      "updated_at": "2026-09-17"
+    },
+    "P1-08": {
+      "status": "done",
+      "note": "MovementValidator على الهوست: سرعة × 1.2 على نافذة 0.5 ث + slack، منع الطيران والـ teleport، rollback + تصحيح للاعب. RpcGuard (is_host, sender_id, is_from_host, is_registered, is_player_in_range) و RpcRateLimiter (token bucket) مستخدمة بـ NetManager و Interactable. اختبار: speed hack ×4 انمنع (<1 م بـ 2 ث)، teleport انرجع، اللاعب الطبيعي 0 مخالفات.",
+      "updated_at": "2026-09-17"
+    },
+    "P1-10": {
+      "status": "done",
+      "note": "اللاعب اللي ينقطع أثناء اللعب: جسمه يبقى مكتوب عليه (disconnected) ومكانه محجوز 60 ث بـ token. يرجع بنفس الكلاس وبنفس مكان جسمه، وينقل تلقائياً للمشهد الحالي. الغريب ينرفض. انتهاء المهلة يشيل الجسم. timeout مال ENet صار 4-8 ث. Esc = قائمة إيقاف (Resume / Leave / Quit) توقف الحركة. انقطاع الهوست يرجعك للقائمة مع السبب وزر Rejoin. اختبار 4 عمليات (27 فحص) نجح.",
+      "updated_at": "2026-09-17"
+    },
+    "P1-11": {
+      "status": "done",
+      "note": "NetDebug overlay (F3 أو -- --netdebug): حالة الجلسة، FPS، لكل peer: RTT + avg/max آخر 30 ث + jitter + packet loss + strikes التحقق (للهوست). الباندويث لكل قناة: voice (ch 2) من العدادات، game (ch 0) = الباقي، total من ENet. اختبار host + client نجح.",
+      "updated_at": "2026-09-17"
+    },
+    "P1-15": {
+      "status": "done",
+      "note": "الميكروفون → Record bus (AudioEffectCapture) → mono 16kHz إطارات 20ms → codec → RPC unreliable_ordered على channel 2 → jitter buffer 60ms → AudioStreamGenerator. الـ codec حالياً IMA ADPCM مكتوب بـ GDScript (~65 kbps، SNR 35 dB) خلف واجهة VoiceCodec؛ Opus يحتاج GDExtension خارجي (twovoip) ينضاف بعد الموافقة. اختبار 3 عمليات نجح + الميكروفون الحقيقي يلتقط.",
+      "updated_at": "2026-09-17"
+    },
+    "P1-16": {
+      "status": "done",
+      "note": "الصوت يطلع من VoiceEmitter (AudioStreamPlayer3D) براس اللاعب: تخفيت بالمسافة (unit 3م، max 35م) + كتمان إذا أكو جدار بين الاثنين (lowpass 900Hz و -8dB). Open mic بـ VAD (RMS gate + hangover) أو push-to-talk بـ Caps Lock، يتبدل من قائمة Esc. واجهة صوت: MIC/RADIO + مستوى الميكروفون + منو يحجي. يرسل voice_noise للـ AI على الهوست.",
+      "updated_at": "2026-09-17"
+    },
+    "P1-17": {
+      "status": "done",
+      "note": "راديو بزر B: VoiceRadio bus (HighPass 300 + LowPass 3400 + Distortion LOFI + Compressor)، squelch داخل/طالع مولّد بالكود (بدون ملفات)، ما يشتغل الراديو إذا المتكلم أقرب من 4م (تسمعه مباشرة). V كان مذكور بالوثيقة بس مستخدم للـ door kick عند Ali.",
+      "updated_at": "2026-09-17"
+    },
+    "P2-04": {
+      "status": "done",
+      "note": "CallDirector (host) جاهز ومسجل كـ Autoload: ساعة الشفت (00:00 إلى 06:00 بمقياس 6×، إيقاف واستئناف ومزامنة)، طابور المكالمات مع earliest_minute، ودورة حياة المكالمة الكاملة (ring/answer/missed/assessment/verdict) مع تحقق الهوست وتوثيق السجل. اختُبر بـ 6 اختبارات GUT.",
+      "updated_at": "2026-09-17"
+    },
+    "P2-05": {
+      "status": "done",
+      "note": "ملكية رمز سماعة الهاتف (Handset token) ومزامنة الحوار: تداول السماعة بين الضباط (E)، حصر اختيار خيارات الحوار بحامل السماعة (مع خيارات مشروطة بالكلاس والأدلة)، إمكانية تأشير الخيارات (choice pings) من زملاء الفريق لتظهر لحامل السماعة، ومزامنة نص وسطور الحوار لحظياً عبر الشبكة. اختُبر بـ 5 اختبارات GUT.",
+      "updated_at": "2026-09-17"
+    },
+    "P2-08": {
+      "status": "done",
+      "note": "محلل نبرة الصوت (Voice Stress Analyzer): ربط قناة Phone بـ AudioEffectSpectrumAnalyzer للترددات الحية، منحنيات الإجهاد authored (الرجفان 8-12Hz، تقلب النبرة، وتقدير نبضات القلب)، كاشف التكرار الحلقي (loop detector)، عزل أصوات الخلفية (Background Isolate)، ونظام تفاعل الوسوم (Scrub-and-Tag) للأدلة مع معاقبة الوسوم الخاطئة. اختُبر بـ 4 اختبارات GUT.",
+      "updated_at": "2026-09-17"
+    },
+    "P2-14": {
+      "status": "testing",
+      "note": "VoteManager (autoload): الهوست يفتح تصويت بمهلة، كل peer يرسل صوته والهوست يتحقق (مؤهل، خيار صحيح، rate limit) ويوزع العدّ. يسكر بالمهلة، أو لما الكل يصوت، أو مبكراً لو بالإجماع. الفوز بالأغلبية، التعادل يحسمه كلاس (Profiler للحكم، Breacher للاقتراب)، بعده default، بعده ترتيب الخيارات. تصويت الحكم مربوط بـ CallDirector (60 ث). تصويت الاقتراب: Decoy يحتاج 3 لاعبين أو Tech. المنقطع يطلع من التصويت والراجع يستلمه. 10 اختبارات GUT + اختبار 3 عمليات نجحت.",
+      "updated_at": "2026-09-17"
+    },
+    "P3-02": {
+      "status": "testing",
+      "note": "HealthComponent على الهوست ومتزامن بـ HostSync: ضرر حسب المنطقة (رأس ×2، جذع ×1، أطراف ×0.75) مع مقاومة الكلاس (Breacher 140 HP / 25%)، رجوع الصحة لأقرب 25% بس، Downed عند 0 (نزيف 45 ث، زحف 0.6 م/ث، ما يتفاعل)، إنعاش بالإمساك: Medic 4 ث أو Trauma Kit 8 ث (النزيف يوقف أثناء الإنعاش، يرجع 40%)، انتهاء النزيف = Critical. ضربة ساق/يد ≥30 ترسل trait (limping / fractured_hand). واجهة صحة وشاشة Downed. 8 اختبارات GUT + اختبار 3 عمليات (Medic يمشي ويسوي إنعاش حقيقي) نجحت.",
+      "updated_at": "2026-09-17"
+    },
+    "P3-07": {
+      "status": "testing",
+      "note": "Behavior tree runtime بـ core/bt: Selector (reactive، يقطع الفرع الأقل أولوية)، Sequence (يكمل من الابن الشغال)، Parallel، Decorator (Invert/Succeed/Repeat/Cooldown/TimeLimit)، BTCall (دوال الـ agent + تنظيف _exit عند المقاطعة)، BTCheck للـ blackboard، BTWait. الشجرة Resource مشتركة والحالة لكل agent بالـ BTBlackboard. BTRunner على الهوست 10Hz موزع. BT.sel/seq/... لبناء الشجرة بالكود. Debugger (F4، Tab يبدل) يعرض الشجرة بالألوان والـ blackboard. 12 اختبار GUT نجحت.",
+      "updated_at": "2026-09-17"
+    },
+    "P3-08": {
+      "status": "testing",
+      "note": "AIPerception (core/ai): مخروط رؤية 100° بمدى 30م بالضوء و8م بالظلام (منطقة light_zones أو كشاف اللاعب يعتبر مضيء)، فحص خط النظر بالجدران، الانحناء يقلل الرؤية، كشاف اللاعب على الـ AI ضمن 25م = كشف فوري، سماع EventBus.noise_event و voice_noise (همس 2م → صراخ 20م)، مقياس انتباه Unaware/Suspicious 0.3/Searching 0.6/Combat 1.0 مع تلاشي وذاكرة قتال، callout للفريق بعد 1.5 ث. الهوست يطلق ضوضاء خطوات لكل لاعب (مشي 4م، ركض 10م، انحناء 1.5م × noise_multiplier للكلاس). 11 اختبار GUT نجحت.",
+      "updated_at": "2026-09-17"
+    },
+    "P3-09": {
+      "status": "testing",
+      "note": "MissionNavigation (NavigationRegion3D): يسوي bake للـ navmesh من هندسة المهمة على الهوست عند التحميل (أولاد العقدة أو group)، ويولد CoverPoints تلقائياً على حافة الـ navmesh جنب الجدران (LOW للجدار الواطي، HIGH للعالي) إذا ماكو نقاط مصممة. CoverQuery: غطاء على بعد 8-20م من التهديد، محمي منه، يقدر يطل ويرمي، مو مكشوف لتهديد ثاني (flank)، مو محجوز لغيره، والتقييم بطول المسار على الـ navmesh. claim/release. 6 اختبارات GUT نجحت.",
+      "updated_at": "2026-09-17"
+    },
+    "P3-10": {
+      "status": "testing",
+      "note": "5 archetypes (data/ai/archetypes) من جدول §8.1 + HostileAgent (hostile.tscn): navigation، AIPerception، BTRunner، إطلاق hitscan على الهوست يضر Health اللاعب (دقة تقل بالمسافة والحركة والانحناء، مناطق إصابة)، ضوضاء طلقة 60م، مزامنة الموقع/الحركة/الحالة/HP للـ clients. HostileBrains تبني شجرة لكل نوع: Thug (دورية، غطاء، استسلام سهل 35)، Cultist Gunman (غطاء + التفاف)، Zealot (هجوم مباشر + IED، ما يستسلم)، Ambush Leader (يطلب تعزيز +2)، Hostage Taker (يمسك الرهينة ويعدمها 50% عند اقتحام صاخب). EnemySpawner + EnemySpawnPoint + مشهد اختبار ai_test_range.tscn. اختبار سلوك (14 فحص) + اختبار شبكة + GUT نجحت.",
+      "updated_at": "2026-09-17"
+    },
+    "P3-11": {
+      "status": "testing",
+      "note": "AISquad: callout ينقل الهدف لكل الفريق، flank tokens (نص الفريق كحد أقصى، مهلة 8ث وتبريد 10ث)، معنويات: موت حليف -15، موت القائد -30، درع/مكبر صوت/غاز (-10/-25/-20) كـ hooks، تفوق عددي +10. الاستسلام: معنويات < الحد وغير متعصب ويشوف لاعبين 2+ أو تفاوض → يرفع ايده وينتظر الاعتقال (EventBus.suspect_surrendered لـ P3-05). الهروب: HP < 25% ومعنويات < 40. 10 اختبارات GUT نجحت.",
+      "updated_at": "2026-09-17"
+    },
+    "P3-12": {
+      "status": "testing",
+      "note": "StateMachine عام (core/fsm) + Anomaly base (منطقة، لاعبين بالمنطقة، الأقل عقلاً والأكثر عزلة، أضواء، نقاط ظلام، مزامنة الحالة/الظهور/الموقع). الغريقة: Dormant → (EMF≥3 / دخول القبو / trigger) Manifest (ترمش الأضواء، تسد الأبواب، تسحب عقل 4/ث للي يشوفها) → 6ث Stalk (تنتقل بين نقاط الظلام بعيد عن النظر، تستهدف الأقل عقلاً وتهمس باسمه على الراديو، الأضواء مطفية 20ث = Manifest) → عقل<40 أو 45ث Hunt (تطارد 3.8م/ث، تطفي الأضواء والكشافات ضمن 6م، الماي يرتفع) → ≤2م Attack (تمسك اللاعب 3ث، زميل يوجه الكشاف عليها أو ملح يحرره، وإلا 60 ضرر + 40 عقل) → Retreat (30-60ث) → Stalk أو Dormant. نغمة عكسية = Retreat، خط ملح أو خروج الكل = Dormant، دفن العظام = Banished نهائي. Player صار عنده sanity أولي (P3-03 يكمله) + grab/flashlight من الهوست. 13 اختبار GUT نجحت.",
+      "updated_at": "2026-09-17"
+    },
+    "P3-13": {
+      "status": "testing",
+      "note": "TensionDirector (autoload، الهوست): توتر 0-1 من الضرر آخر 20ث + متوسط العقل + قتال الأعداء + مطاردة/ظهور الشبح + قرب آخر رعبة، بتنعيم. توتر < 0.3 لمدة 90ث = رعبة لضحية (وزن أكبر للأقل عقلاً، ما يتكرر نفس النوع ورا بعض). توتر > 0.8 = يمنع ظهور الأشباح (can_manifest) والرعبات لحد ما ينزل < 0.6. الهلوسات تنرسل rpc_id للضحية بس: همس راديو، خطوات وهمية تقرب، رنة تلفون، ظل أسود يختفي، بأصوات مولدة بالكود. الغريقة تسأل can_manifest. 8 اختبارات GUT + اختبار 3 عمليات (الضحية بس تسمع) نجحت.",
+      "updated_at": "2026-09-17"
+    },
+    "P3-01": {
+      "status": "testing",
+      "note": "إطار الأسلحة جاهز: hitscan + spread + recoil patterns + reload + ADS، الهوست يتحقق من كل طلقة (المالك، الذخيرة، معدل الإطلاق، موقع الفوهة، اتجاه التصويب) مع lag compensation. اختبار شبكة بلاعبين: 13/14 إصابة على هدف متحرك مقابل 4/14 بدون تعويض.",
+      "updated_at": "2026-09-17"
+    }
+  },
+  "log": [
+    {
+      "date": "2026-09-17",
+      "tasks": [],
+      "summary": "كتابة وثائق المشروع (Architecture, Gameplay Mechanics, Roadmap, Progress) ولوحة التقدم الأولى.",
+      "files": [
+        "docs/",
+        "PROGRESS.md",
+        "index.html"
+      ],
+      "commit": "625ec30"
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [],
+      "summary": "توزيع 84 مهمة على الفريق، برومبتات لكل عضو، تسجيل تقدم تلقائي (Hook + GitHub Action)، وموقع جديد على GitHub Pages.",
+      "files": [
+        "data/",
+        "prompts/",
+        "AGENTS.md",
+        "assets/",
+        "index.html",
+        ".github/workflows/auto-progress.yml"
+      ],
+      "commit": "c2077cd"
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [],
+      "summary": "إعادة توزيع المهام: Adnan (AI، شبكات، لعب)، Ali (3D، عالم، فن، واجهات)، Mohamed (برمجة سهلة).",
+      "files": [
+        "docs/PROJECT_ROADMAP.md",
+        "data/tasks.json",
+        "data/team.json",
+        "prompts/"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [],
+      "summary": "نقل كل ملفات إدارة المشروع (الموقع، البيانات، الوثائق، البرومبتات، السكربتات) لمجلد docs/ حتى يبقى جذر المستودع لمشروع Godot.",
+      "files": [
+        "docs/"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-01"
+      ],
+      "summary": "إنشاء مشروع Godot 4.7 (Forward Plus) بجذر المستودع، ودمج .gitignore مال Godot ويا قواعد المشروع.",
+      "files": [
+        "project.godot",
+        "icon.svg",
+        ".gitattributes",
+        ".editorconfig",
+        ".gitignore"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-01"
+      ],
+      "summary": "هيكل مجلدات المشروع، autoload skeletons (EventBus, GameState, NetManager) مسجلة بـ project.godot، ومشهد main_menu مؤقت كـ main scene.",
+      "files": [
+        "autoload/",
+        "scenes/boot/",
+        "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-01"
+      ],
+      "summary": "إغلاق P1-01: أساس المشروع اختُبر (headless boot OK) وصار جاهز للفريق يبني فوقه.",
+      "files": [
+        "docs/data/progress/adnan.json"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-12"
+      ],
+      "summary": "FPS controller: walk/sprint/crouch/lean/stamina + PlayerInput منفصل للمزامنة لاحقاً + input map + مشهد sandbox للتجربة مع HUD.",
+      "files": [
+        "scenes/shared/player/player.gd",
+        "scenes/shared/player/player_input.gd",
+        "scenes/shared/player/player.tscn",
+        "scenes/shared/player/player_sandbox.tscn",
+        "scenes/shared/player/player_debug_hud.gd",
+        "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-12"
+      ],
+      "summary": "player_sandbox صار المشهد الرئيسي (F5 يشغّل ساحة التجربة مباشرة) ودمج الشغل على main.",
+      "files": [
+        "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-12"
+      ],
+      "summary": "إغلاق P1-12: متحكم اللاعب اختُبر يدوياً وصار على main.",
+      "files": [
+        "docs/data/progress/adnan.json"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-13"
+      ],
+      "summary": "نظام التفاعل الشبكي: Interactable base + Toggle + Pickup، PlayerInteractor، واجهة prompt/progress، زر F، طبقة interactable، وأمثلة (مفتاح ضوء + صندوق أدلة) بالـ sandbox.",
+      "files": [
+        "scenes/shared/interactables/",
+        "scenes/shared/player/player_interactor.gd",
+        "scenes/shared/player/player.gd",
+        "scenes/shared/player/player.tscn",
+        "scenes/shared/player/player_sandbox.tscn",
+        "ui/hud/",
+        "autoload/event_bus.gd",
+        "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-13"
+      ],
+      "summary": "إغلاق P1-13: نظام التفاعل اختُبر وصار على main.",
+      "files": [
+        "docs/data/progress/adnan.json"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-04"
+      ],
+      "summary": "NetManager host/join عبر ENet + roster sync أساسي + main menu مؤقت، واختبار شبكة حقيقي بـ host و 3 clients و lobby ممتلئ و version mismatch.",
+      "files": [
+        "autoload/net_manager.gd",
+        "scenes/boot/main_menu.gd",
+        "scenes/boot/main_menu.tscn",
+        "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-04"
+      ],
+      "summary": "إغلاق P1-04: الاستضافة والانضمام عبر ENet اختُبرت وصارت على main.",
+      "files": [
+        "docs/data/progress/adnan.json"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-05"
+      ],
+      "summary": "Lobby: ClassData + ClassCatalog، RPCs اختيار الكلاس و ready و start بتحقق الهوست، وواجهة lobby مؤقتة. شلت C من crouch لأن Ali يستخدمه للـ door peek.",
+      "files": [
+        "autoload/net_manager.gd",
+        "autoload/game_state.gd",
+        "data/classes/",
+        "scenes/boot/main_menu.gd",
+        "scenes/boot/main_menu.tscn",
+        "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-06"
+      ],
+      "summary": "PlayerSpawner class-aware مع handshake تحميل المشهد وفلترة visibility، وتحويل player_sandbox لـ spawn بدل لاعب ثابت. صلّحت race لما الـ client يحمّل قبل الهوست.",
+      "files": [
+        "core/net/player_spawner.gd",
+        "scenes/shared/player/player.gd",
+        "scenes/shared/player/player.tscn",
+        "scenes/shared/player/player_sandbox.tscn",
+        "scenes/shared/player/player_debug_hud.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-07",
+        "P1-08"
+      ],
+      "summary": "مزامنة اللاعب (موقع، نظر، وقفة، ميلان، كشاف) مع interpolation، تحقق الحركة على الهوست مع rollback، أدوات RpcGuard و RateLimiter، ومحاولة فتح البورت تلقائياً (UPnP) مع عرض الـ IP العام بالقائمة للعب عبر الإنترنت.",
+      "files": [
+        "scenes/shared/player/player.gd",
+        "scenes/shared/player/player.tscn",
+        "core/net/movement_validator.gd",
+        "core/net/rpc_guard.gd",
+        "core/net/rpc_rate_limiter.gd",
+        "core/net/player_spawner.gd",
+        "autoload/net_manager.gd",
+        "scenes/shared/interactables/interactable.gd",
+        "scenes/boot/main_menu.gd",
+        "scenes/boot/main_menu.tscn",
+        "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-07"
+      ],
+      "summary": "شخصية 3D مؤقتة لكل لاعب (زي شرطة، سترة بلون الكلاس، قبعة، اسم فوق الراس، حركة مشي للأرجل والأيدي، ينضغط وقت الـ crouch) وجسمك ما يبين بكاميرتك. الانضمام يقبل host:port حتى يشتغل ويا playit.gg.",
+      "files": [
+        "scenes/shared/player/player_body.gd",
+        "scenes/shared/player/player.tscn",
+        "scenes/shared/player/player.gd",
+        "data/classes/",
+        "autoload/net_manager.gd",
+        "scenes/boot/main_menu.tscn"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [],
+      "summary": "مساعدة بـ CI (مهمة Mohamed P1-03): التصدير كان يفشل لأن setup-godot ينصّب نسخة .NET ومجلد الـ templates كان ينفك بمكان غلط. تصليح الاثنين حتى يطلع exe للأصدقاء.",
+      "files": [
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-05",
+        "P1-06",
+        "P1-07",
+        "P1-08"
+      ],
+      "summary": "إغلاق P1-05 → P1-08: اللوبي، الـ spawn، مزامنة اللاعب، وتحقق الحركة اختُبرت ونجحت وصارت على main.",
+      "files": [
+        "docs/data/progress/adnan.json"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-10"
+      ],
+      "summary": "التعامل مع الانقطاع: حجز مكان اللاعب وإعادة الاتصال بـ token، إرجاع للقائمة مع السبب، زر Rejoin، قائمة إيقاف Esc، و timeouts أقصر.",
+      "files": [
+        "autoload/net_manager.gd",
+        "autoload/game_state.gd",
+        "core/net/player_spawner.gd",
+        "scenes/shared/player/player.gd",
+        "scenes/shared/player/player.tscn",
+        "scenes/shared/player/player_input.gd",
+        "ui/hud/pause_menu.gd",
+        "ui/hud/pause_menu.tscn",
+        "scenes/boot/main_menu.gd",
+        "scenes/boot/main_menu.tscn"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-11"
+      ],
+      "summary": "شاشة debug للشبكة (F3): RTT و jitter و packet loss لكل لاعب، والباندويث لكل قناة.",
+      "files": [
+        "autoload/net_debug.gd",
+        "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-15",
+        "P1-16",
+        "P1-17"
+      ],
+      "summary": "الصوت الكامل: التقاط الميكروفون، ضغط ADPCM، إرسال على قناة 2، صوت 3D بالمسافة والجدران، VAD و push-to-talk، راديو بفلاتر و squelch، واجهة مؤشرات الكلام، وأحداث ضوضاء للـ AI.",
+      "files": [
+        "autoload/voice_manager.gd",
+        "core/voice/",
+        "default_bus_layout.tres",
+        "ui/hud/voice_hud.gd",
+        "ui/hud/voice_hud.tscn",
+        "ui/hud/pause_menu.gd",
+        "scenes/shared/player/player.tscn",
+        "autoload/event_bus.gd",
+        "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-10"
+      ],
+      "summary": "تصليح \"Failed to join (Can't create)\": السبب عنوان ما ينحل (خطأ بالكتابة/مسافات/http:// أو DNS). صار ينظف العنوان، يحل الاسم بـ IPv4 أولاً، ويطلع رسالة واضحة.",
+      "files": [
+        "autoload/net_manager.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P2-04",
+        "P2-05",
+        "P2-08"
+      ],
+      "summary": "محرك المكالمات والحوار والتحليل الصوتي: CallDirector (ساعة الشفت، طابور المكالمات، ودورة حياة الرنين والرد والإلغاء والتصنيف)، ملكية سماعة الهاتف ومزامنة الحوار التفاعلي وخيارات الكلاسات وتأشير الفريق، ومحلل نبرة الصوت (VSA) بترددات الطيف ومنحنيات الإجهاد وكشف التكرار وعزل الخلفية ونظام الوسوم.",
+      "files": [
+        "autoload/call_director.gd",
+        "core/dispatch/dialogue_runner.gd",
+        "core/dispatch/voice_stress_analyzer.gd",
+        "data/calls/",
+        "data/dialogue/",
+        "data/consequences/flag_condition.gd",
+        "autoload/event_bus.gd",
+        "default_bus_layout.tres",
+        "project.godot",
+        "tests/test_call_director.gd",
+        "tests/test_dialogue_replication.gd",
+        "tests/test_voice_stress_analyzer.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-10",
+        "P1-11",
+        "P1-15",
+        "P1-16",
+        "P1-17",
+        "P2-04",
+        "P2-05",
+        "P2-08"
+      ],
+      "summary": "إغلاق واكتمال مهام الشبكة والصوت وغرفة العمليات: اعتماد مهام الانقطاع (P1-10) وشاشة فحص الشبكة (P1-11) ومنظومة الصوت والراديو (P1-15..17)، واكتمال CallDirector (P2-04) وسماعة الهاتف والحوار (P2-05) ومحلل نبرة الصوت VSA (P2-08) بعد اجتياز كامل الاختبارات.",
+      "files": [
+        "autoload/call_director.gd",
+        "core/dispatch/dialogue_runner.gd",
+        "core/dispatch/voice_stress_analyzer.gd",
+        "data/calls/",
+        "data/dialogue/",
+        "data/consequences/flag_condition.gd",
+        "autoload/event_bus.gd",
+        "default_bus_layout.tres",
+        "project.godot",
+        "tests/test_call_director.gd",
+        "tests/test_dialogue_replication.gd",
+        "tests/test_voice_stress_analyzer.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P2-04",
+        "P2-08"
+      ],
+      "summary": "fix(types): replace bool(Variant) with direct boolean comparisons — P2-04, P2-08",
+      "files": [
+        "autoload/call_director.gd",
+        "core/dispatch/voice_stress_analyzer.gd",
+        "data/consequences/flag_condition.gd",
+        "tests/test_voice_stress_analyzer.gd"
+      ],
+      "commit": "a1aaf33",
+      "auto": true
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [],
+      "summary": "fix(call_director): connect to peer_left and peer_dropped signals on NetManager",
+      "files": [
+        "autoload/call_director.gd"
+      ],
+      "commit": "a8ffd7e",
+      "auto": true
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P2-04",
+        "P2-08"
+      ],
+      "summary": "fix(types): replace float(Variant)/int(Variant) constructors with as-casts — P2-04, P2-08",
+      "files": [
+        "autoload/call_director.gd",
+        "core/dispatch/voice_stress_analyzer.gd",
+        "tests/test_voice_stress_analyzer.gd"
+      ],
+      "commit": "689fadb",
+      "auto": true
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-10",
+        "P1-11",
+        "P1-15",
+        "P1-16",
+        "P1-17"
+      ],
+      "summary": "تصليح «الصوت ما ينسمع» و«التقطيع»: auto gain، بوابة صوت تكيّفية، pre-roll، اختيار المايك واختبار المايك، jitter buffer أكبر مع تعويض، وتصليح البورتال اللي كان يغير المشهد لكل لاعب لحاله. إغلاق المهام اللي تحت الاختبار.",
+      "files": [
+        "autoload/voice_manager.gd",
+        "autoload/net_manager.gd",
+        "ui/hud/pause_menu.gd",
+        "ui/hud/pause_menu.tscn",
+        "scenes/shared/interactables/interactable_scene_door.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P2-04"
+      ],
+      "summary": "تصليح crash بـ CallDirector: قطع المكالمة كان يسوي تكرار لا نهائي (hangup → stop → finished → hangup). وset_shift_time صار يفحص المكالمات المجدولة. تصليح اختبار patience (lambda تلتقط بالقيمة). كل 47 اختبار GUT تنجح.",
+      "files": [
+        "autoload/call_director.gd",
+        "core/dispatch/dialogue_runner.gd",
+        "tests/test_dialogue_replication.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P2-14"
+      ],
+      "summary": "نظام التصويت: مهلات، إجماع ينهي مبكراً، حسم التعادل بالكلاس، تصويت الحكم على المكالمة وتصويت طريقة الاقتراب.",
+      "files": [
+        "autoload/vote_manager.gd",
+        "autoload/call_director.gd",
+        "project.godot",
+        "tests/test_vote_manager.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-02"
+      ],
+      "summary": "الصحة: ضرر حسب مكان الإصابة، تجدد بخطوات 25%، الإسقاط والنزيف والإنعاش بالإمساك، والحالة الحرجة. Interactable صار يدعم مدة إمساك حسب اللاعب.",
+      "files": [
+        "scenes/shared/player/health_component.gd",
+        "scenes/shared/player/revive_interactable.gd",
+        "scenes/shared/player/player.gd",
+        "scenes/shared/player/player.tscn",
+        "scenes/shared/player/player_interactor.gd",
+        "scenes/shared/interactables/interactable.gd",
+        "ui/hud/health_hud.gd",
+        "ui/hud/health_hud.tscn",
+        "autoload/event_bus.gd",
+        "tests/test_health_component.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-07"
+      ],
+      "summary": "محرك Behavior Tree كامل مع الـ blackboard والـ decorators وأداة debugger (F4).",
+      "files": [
+        "core/bt/",
+        "autoload/bt_debugger.gd",
+        "project.godot",
+        "tests/test_behavior_tree.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-08"
+      ],
+      "summary": "حواس الـ AI: رؤية بمخروط وضوء وجدران، كشف الكشاف، سمع الخطوات والصوت، مقياس الانتباه، و callout.",
+      "files": [
+        "core/ai/ai_perception.gd",
+        "autoload/event_bus.gd",
+        "scenes/shared/player/player.gd",
+        "tests/test_ai_perception.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-09"
+      ],
+      "summary": "نظام الغطاء: bake للـ navmesh لكل مهمة، توليد نقاط غطاء تلقائي، واستعلام أفضل غطاء.",
+      "files": [
+        "core/ai/mission_navigation.gd",
+        "core/ai/cover_generator.gd",
+        "core/ai/cover_point.gd",
+        "core/ai/cover_query.gd",
+        "tests/test_cover_navigation.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-10",
+        "P3-11"
+      ],
+      "summary": "أعداء قابلين للعب: 5 أنواع بسلوك مختلف، إطلاق نار حقيقي، غطاء والتفاف، فرق بمعنويات واستسلام، تعزيزات، رهائن، ومشهد اختبار للـ AI. صلحت خط النظر اللي كان يمنع الغطاء.",
+      "files": [
+        "data/ai/",
+        "scenes/field/enemies/",
+        "scenes/field/test_range/ai_test_range.tscn",
+        "core/ai/ai_squad.gd",
+        "core/ai/hostile_brains.gd",
+        "core/ai/enemy_spawner.gd",
+        "core/ai/enemy_spawn_point.gd",
+        "core/ai/mission_navigation.gd",
+        "core/net/player_spawner.gd",
+        "autoload/event_bus.gd",
+        "tests/test_hostile_ai.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-12"
+      ],
+      "summary": "آلة حالات عامة وشبح الغريقة بكل حالاته ونقاط ضعفه.",
+      "files": [
+        "core/fsm/state_machine.gd",
+        "scenes/field/anomalies/",
+        "scenes/shared/player/player.gd",
+        "scenes/shared/player/player.tscn",
+        "autoload/event_bus.gd",
+        "tests/test_drowned_woman.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-13"
+      ],
+      "summary": "مدير التوتر والرعب: يحسب التوتر، يجدول رعبات للاعب واحد، يمنع الأشباح وقت التوتر العالي، وهلوسات محلية لكل لاعب.",
+      "files": [
+        "autoload/tension_director.gd",
+        "scenes/field/anomalies/hallucination.gd",
+        "scenes/shared/player/health_component.gd",
+        "autoload/event_bus.gd",
+        "project.godot",
+        "tests/test_tension_director.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [],
+      "summary": "استرجاع شغل انمسح: commit 7be8425 (مصالحة Mohamed) رجّع ملفات كثيرة لنسخة قديمة (net_manager، player، main_menu، الأبواب، ملفات التقدم…)، و74c1f7a رجّع الملفات المحذوفة بس. استرجعت النسخ من ca51a99 مع الحفاظ على محرر الحوار مال Ali وتحديث P2-02 مال Mohamed.",
+      "files": [
+        "docs/data/progress/",
+        "autoload/",
+        "scenes/",
+        "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P2-04",
+        "P2-05"
+      ],
+      "summary": "غرفة العمليات صارت شغالة: حاسبة CAD بكل مكتب (F) تعرض حالة المكالمة، المتصل، الصبر، النص، الردود (حامل السماعة بس)، السجلات، والحكم/تصويت الفريق؛ تلفون 911 يرن بصوت وضوء ويتجاوب بـ F؛ مكالمة تجريبية (Closet Monster) ترن تلقائياً بعد 15 ث + زر «Start test call»؛ ساعة المناوبة على الحايط، شاشة حالة، كراسي. الدخول لـ Station 4 صار مرحلة DISPATCH حتى الساعة تمشي. واجهة مؤقتة لحد ما Ali يخلص P2-07/P2-12/P2-18. اختبار offline كامل + اختبار شبكة (الـ client يجاوب ويختار رد Profiler والتصويت يعطي PRANK صحيح). صلّحت اختبارين متقلبين.",
+      "files": [
+        "scenes/dispatch/dispatch_setup.tscn",
+        "scenes/dispatch/dispatch_setup.gd",
+        "scenes/dispatch/dispatch_computer.gd",
+        "scenes/dispatch/dispatch_phone.gd",
+        "ui/dispatch/dispatch_terminal.gd",
+        "scenes/dispatch/operations_room.tscn",
+        "autoload/net_manager.gd",
+        "ui/hud/pause_menu.gd",
+        "tests/test_cover_navigation.gd",
+        "tests/test_tension_director.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-01"
+      ],
+      "summary": "Weapon framework: WeaponData (pistol/smg/shotgun/rifle) مع recoil patterns، WeaponHolder على اللاعب (primary/sidearm، ADS، reload، viewmodel، مؤثرات وأصوات)، تحقق الهوست من الإطلاق، LagCompensation autoload (rewind لمواقع الأعداء)، WeaponHud (crosshair ديناميكي، hit marker، الذخيرة). 19 اختبار GUT + اختبار شبكة بعمليتين.",
+      "files": [
+        "data/weapons/weapon_data.gd",
+        "data/weapons/weapon_catalog.gd",
+        "scenes/shared/weapons/weapon_holder.gd",
+        "scenes/shared/weapons/weapon_model.gd",
+        "scenes/shared/weapons/weapon_fx.gd",
+        "scenes/shared/weapons/weapon_audio.gd",
+        "core/combat/ballistics.gd",
+        "autoload/lag_compensation.gd",
+        "ui/hud/weapon_hud.gd",
+        "tests/test_weapons.gd"
+      ]
+    }
+  ]
 }

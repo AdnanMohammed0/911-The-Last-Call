@@ -6,6 +6,11 @@
    "status": "done",
    "note": "مشروع Godot 4.7 جاهز: هيكل المجلدات حسب ARCHITECTURE §2، و autoloads (EventBus, GameState, NetManager) بـ static typing ومسجلة، ومشهد boot مؤقت. اختُبر headless واشتغل بدون أخطاء.",
    "updated_at": "2026-09-17"
+  },
+  "P1-12": {
+   "status": "testing",
+   "note": "Player.tscn جاهز: walk 3.5 / sprint 4.75 / crouch 1.75 م/ث، stamina (7 ث + regen + exhaustion)، crouch مع فحص السقف، lean مع كشف الجدار، mouse look. 9 اختبارات headless نجحت. باقي تجربة يدوية بـ player_sandbox.tscn، والمزامنة الشبكية بـ P1-07.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -87,6 +92,21 @@
    "summary": "إغلاق P1-01: أساس المشروع اختُبر (headless boot OK) وصار جاهز للفريق يبني فوقه.",
    "files": [
     "docs/data/progress/adnan.json"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-12"
+   ],
+   "summary": "FPS controller: walk/sprint/crouch/lean/stamina + PlayerInput منفصل للمزامنة لاحقاً + input map + مشهد sandbox للتجربة مع HUD.",
+   "files": [
+    "scenes/shared/player/player.gd",
+    "scenes/shared/player/player_input.gd",
+    "scenes/shared/player/player.tscn",
+    "scenes/shared/player/player_sandbox.tscn",
+    "scenes/shared/player/player_debug_hud.gd",
+    "project.godot"
    ]
   }
  ]

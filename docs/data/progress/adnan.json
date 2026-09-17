@@ -471,6 +471,21 @@
    ],
    "commit": "a8ffd7e",
    "auto": true
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P2-04",
+    "P2-08"
+   ],
+   "summary": "fix(types): replace float(Variant)/int(Variant) constructors with as-casts — P2-04, P2-08",
+   "files": [
+    "autoload/call_director.gd",
+    "core/dispatch/voice_stress_analyzer.gd",
+    "tests/test_voice_stress_analyzer.gd"
+   ],
+   "commit": "689fadb",
+   "auto": true
   }
  ]
 }

@@ -15,6 +15,10 @@ signal hostile_spawned(hostile: HostileAgent)
 @export var spawn_points: Node3D
 ## Waits for this navigation before spawning (null = spawn immediately).
 @export var navigation: MissionNavigation
+## Scales hostile health, accuracy and damage (MissionDirector raises it for responses / ambushes).
+@export var difficulty: float = 1.0
+## Multiply `difficulty` by MissionDirector.difficulty when spawning.
+@export var use_mission_difficulty: bool = true
 
 var _count: int = 0
 
@@ -49,6 +53,7 @@ func spawn_hostile(archetype_path: String, at: Transform3D, squad_path: NodePath
 		"squad": squad_path,
 		"patrol": patrol_path,
 		"name": "Hostile_%d" % _count,
+		"difficulty": get_difficulty(),
 	}) as HostileAgent
 	_refresh_level_visibility()
 	return hostile
@@ -73,7 +78,9 @@ func _spawn_hostile(data: Variant) -> Node:
 	var at: Transform3D = info.get("transform", Transform3D.IDENTITY)
 	var node_name: String = info.get("name", "Hostile")
 	hostile.name = node_name
-	hostile.archetype = load(archetype_path) as ArchetypeData
+	var base: ArchetypeData = load(archetype_path) as ArchetypeData
+	var scale: float = info.get("difficulty", 1.0)
+	hostile.archetype = scaled_archetype(base, scale)
 	hostile.transform = at
 	if multiplayer.is_server():
 		var squad_path: NodePath = info.get("squad", NodePath())
@@ -87,6 +94,24 @@ func _spawn_hostile(data: Variant) -> Node:
 			if hostile.squad != null:
 				hostile.squad.register(hostile), CONNECT_ONE_SHOT)
 	return hostile
+
+
+func get_difficulty() -> float:
+	return difficulty * (MissionDirector.difficulty if use_mission_difficulty else 1.0)
+
+
+## A tougher copy of `base`: more health, sharper aim, harder hits, longer reach, faster reactions.
+static func scaled_archetype(base: ArchetypeData, scale: float) -> ArchetypeData:
+	if base == null or is_equal_approx(scale, 1.0):
+		return base
+	var tough: ArchetypeData = base.duplicate() as ArchetypeData
+	tough.max_hp = base.max_hp * scale
+	tough.accuracy = minf(base.accuracy * scale, 0.92)
+	tough.damage = base.damage * scale
+	tough.melee_damage = base.melee_damage * scale
+	tough.effective_range = base.effective_range * lerpf(1.0, scale, 0.5)
+	tough.morale = minf(base.morale * scale, 100.0)
+	return tough
 
 
 func _on_spawned(node: Node) -> void:

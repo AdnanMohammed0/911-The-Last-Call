@@ -131,6 +131,11 @@
       "status": "testing",
       "note": "إطار الأسلحة جاهز: hitscan + spread + recoil patterns + reload + ADS، الهوست يتحقق من كل طلقة (المالك، الذخيرة، معدل الإطلاق، موقع الفوهة، اتجاه التصويب) مع lag compensation. اختبار شبكة بلاعبين: 13/14 إصابة على هدف متحرك مقابل 4/14 بدون تعويض.",
       "updated_at": "2026-09-17"
+    },
+    "P3-19": {
+      "status": "testing",
+      "note": "اللوب كامل: تصنيف البلاغ genuine/ambush يفتح استجابة ← المخزن (أسلحة حسب الكلاس، دروع، ذخيرة) ← باب الكراج ينقل الفريق لماب Harbor Warehouse (9 أعداء بفرقتين، أصعب حسب نوع البلاغ) ← تطهير المنطقة ← الإخلاء عند الفان ← رجوع للمحطة مع الثقة/الميزانية. الفشل عند سقوط الفريق كله. مجرّب أوفلاين وبلاعبين على الشبكة.",
+      "updated_at": "2026-09-17"
     }
   },
   "log": [
@@ -738,6 +743,26 @@
         "autoload/lag_compensation.gd",
         "ui/hud/weapon_hud.gd",
         "tests/test_weapons.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-19"
+      ],
+      "summary": "MissionDirector (response → deploy → secured → extraction/fail) مع نقل العتاد بين المابات، ArmoryItem/DeployDoor، درع بالـHealthComponent، صعوبة الأعداء، ObjectiveHud. LevelKit لبناء المابات بخامات PBR ضوضائية وإضاءات حقيقية (ceiling panels, pendants, street lamps, floodlights) + بيئة ليلية (SDFGI/SSAO/SSIL/volumetric fog). إعادة بناء Station 4 وماب warehouse_raid جديد. (يتقاطع مع P2-15 / P4-12 / P1-18 للفريق.)",
+      "files": [
+        "autoload/mission_director.gd",
+        "scenes/shared/interactables/armory_item.gd",
+        "scenes/shared/interactables/deploy_door.gd",
+        "scenes/field/missions/mission_controller.gd",
+        "scenes/field/missions/warehouse_raid.tscn",
+        "scenes/dispatch/operations_room.tscn",
+        "tools/level_kit/level_kit.gd",
+        "tools/level_kit/build_station4.gd",
+        "tools/level_kit/build_warehouse_raid.gd",
+        "ui/hud/objective_hud.gd",
+        "tests/test_mission_loop.gd"
       ]
     }
   ]

@@ -1,0 +1,49 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_2v2lp"]
+colors = PackedColorArray(0.82, 0.82, 0.82, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ircep"]
+seed = 63609
+frequency = 0.012
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1llas"]
+noise = SubResource("FastNoiseLite_ircep")
+color_ramp = SubResource("Gradient_2v2lp")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_4thel"]
+seed = 63616
+frequency = 0.036
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1e85m"]
+noise = SubResource("FastNoiseLite_4thel")
+seamless = true
+as_normal_map = true
+bump_strength = 3.0
+
+[sub_resource type="Gradient" id="Gradient_hasit"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_k3nls"]
+seed = 63622
+frequency = 0.024
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_i0n5b"]
+noise = SubResource("FastNoiseLite_k3nls")
+color_ramp = SubResource("Gradient_hasit")
+seamless = true
+
+[resource]
+resource_name = "concrete_dark"
+albedo_color = Color(0.3, 0.3, 0.3, 1)
+albedo_texture = SubResource("NoiseTexture2D_1llas")
+roughness = 0.92
+roughness_texture = SubResource("NoiseTexture2D_i0n5b")
+normal_enabled = true
+normal_scale = 0.35
+normal_texture = SubResource("NoiseTexture2D_1e85m")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

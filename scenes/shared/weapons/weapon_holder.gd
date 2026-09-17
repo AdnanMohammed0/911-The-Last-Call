@@ -96,7 +96,11 @@ func _ready() -> void:
 	_local_shot_player.volume_db = -4.0
 	add_child(_local_shot_player)
 	if multiplayer.is_server() and primary_id == &"" and sidearm_id == &"":
-		give_loadout(WeaponCatalog.default_loadout(ClassCatalog.get_data(_player.class_id)))
+		var saved: Dictionary = MissionDirector.get_loadout(_player.peer_id)
+		if saved.is_empty():
+			give_loadout(WeaponCatalog.default_loadout(ClassCatalog.get_data(_player.class_id)))
+		else:
+			restore_loadout(saved)
 	if not has_weapon(active_slot) and has_weapon(WeaponData.Slot.PRIMARY):
 		active_slot = WeaponData.Slot.PRIMARY
 	_base_fov = _player.get_camera().fov
@@ -198,6 +202,24 @@ func set_weapon(slot: int, id: StringName) -> void:
 		sidearm_mag = mag
 		sidearm_reserve = spare
 		sidearm_id = id if data != null else &""
+
+
+## Host: re-apply a loadout saved by MissionDirector across a level change.
+func restore_loadout(saved: Dictionary) -> void:
+	if not multiplayer.is_server():
+		return
+	var primary: StringName = saved.get("primary", &"")
+	var sidearm: StringName = saved.get("sidearm", &"")
+	set_weapon(WeaponData.Slot.PRIMARY, primary)
+	set_weapon(WeaponData.Slot.SIDEARM, sidearm)
+	var primary_mag_saved: int = saved.get("primary_mag", primary_mag)
+	var primary_reserve_saved: int = saved.get("primary_reserve", primary_reserve)
+	var sidearm_mag_saved: int = saved.get("sidearm_mag", sidearm_mag)
+	var sidearm_reserve_saved: int = saved.get("sidearm_reserve", sidearm_reserve)
+	_set_ammo(WeaponData.Slot.PRIMARY, primary_mag_saved, primary_reserve_saved)
+	_set_ammo(WeaponData.Slot.SIDEARM, sidearm_mag_saved, sidearm_reserve_saved)
+	var armor: float = saved.get("armor", 0.0)
+	_player.get_health().armor = armor
 
 
 ## Host: top up reserves (ammo crates).

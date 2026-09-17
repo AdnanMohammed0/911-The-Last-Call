@@ -1,0 +1,50 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_m30e1"]
+colors = PackedColorArray(0.72, 0.72, 0.72, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ly0fi"]
+seed = 16269
+frequency = 0.03
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_sd4os"]
+noise = SubResource("FastNoiseLite_ly0fi")
+color_ramp = SubResource("Gradient_m30e1")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_t08i6"]
+seed = 16276
+frequency = 0.09
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_052xc"]
+noise = SubResource("FastNoiseLite_t08i6")
+seamless = true
+as_normal_map = true
+bump_strength = 3.0
+
+[sub_resource type="Gradient" id="Gradient_yjxuw"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_32o0r"]
+seed = 16282
+frequency = 0.06
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_pbu7h"]
+noise = SubResource("FastNoiseLite_32o0r")
+color_ramp = SubResource("Gradient_yjxuw")
+seamless = true
+
+[resource]
+resource_name = "rust_red"
+albedo_color = Color(0.42, 0.16, 0.1, 1)
+albedo_texture = SubResource("NoiseTexture2D_sd4os")
+metallic = 0.35
+roughness = 0.75
+roughness_texture = SubResource("NoiseTexture2D_pbu7h")
+normal_enabled = true
+normal_scale = 0.4
+normal_texture = SubResource("NoiseTexture2D_052xc")
+uv1_scale = Vector3(0.6, 0.6, 0.6)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

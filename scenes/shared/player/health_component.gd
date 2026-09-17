@@ -22,6 +22,9 @@ const REGEN_STEP: float = 0.25
 const REVIVE_HEALTH_RATIO: float = 0.4
 ## A single leg / arm hit this strong rolls a lingering trait (GAMEPLAY §3.4).
 const TRAIT_HIT_THRESHOLD: float = 30.0
+const MAX_ARMOR: float = 100.0
+## Share of body-shot damage a vest absorbs while it has armor left (head shots bypass it).
+const ARMOR_ABSORB: float = 0.65
 
 signal health_changed(hp: float, max_hp: float)
 signal state_changed(new_state: State)
@@ -45,6 +48,8 @@ var state: State = State.ALIVE:
 var bleed_out_remaining: float = BLEED_OUT_SEC
 ## Peer currently reviving this player (0 = nobody); bleed-out is paused meanwhile.
 var reviver_peer: int = 0
+## Ballistic vest points (armory). Replicated (HostSync).
+var armor: float = 0.0
 
 var _since_damage: float = 0.0
 var _regen_cap: float = 100.0
@@ -93,6 +98,10 @@ func apply_damage(amount: float, zone: HitZone = HitZone.TORSO, source_peer: int
 	if not multiplayer.is_server() or amount <= 0.0 or state == State.CRITICAL:
 		return 0.0
 	var taken: float = amount * ZONE_MULTIPLIERS[zone] * (1.0 - damage_resistance)
+	if armor > 0.0 and zone != HitZone.HEAD and state == State.ALIVE:
+		var absorbed: float = minf(taken * ARMOR_ABSORB, armor)
+		armor -= absorbed
+		taken -= absorbed
 	if state == State.DOWNED:
 		# Hits while downed shorten the bleed-out instead of killing outright.
 		bleed_out_remaining = maxf(bleed_out_remaining - taken * 0.2, 0.0)
@@ -110,6 +119,12 @@ func apply_damage(amount: float, zone: HitZone = HitZone.TORSO, source_peer: int
 	if hp <= 0.0:
 		_go_down()
 	return taken
+
+
+## Host: equip / top up a ballistic vest.
+func give_armor(amount: float) -> void:
+	if multiplayer.is_server():
+		armor = clampf(armor + amount, 0.0, MAX_ARMOR)
 
 
 ## Host: heal (sedatives, medkits). Does not revive a downed player.

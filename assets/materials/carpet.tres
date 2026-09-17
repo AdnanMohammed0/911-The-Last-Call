@@ -1,0 +1,47 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_y37fi"]
+colors = PackedColorArray(0.85, 0.85, 0.85, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_7y3n2"]
+seed = 28932
+frequency = 0.2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_fxxi2"]
+noise = SubResource("FastNoiseLite_7y3n2")
+color_ramp = SubResource("Gradient_y37fi")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_y1x40"]
+seed = 28939
+frequency = 0.6
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_j6pjd"]
+noise = SubResource("FastNoiseLite_y1x40")
+seamless = true
+as_normal_map = true
+bump_strength = 2.0
+
+[sub_resource type="Gradient" id="Gradient_d377d"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_yfwgc"]
+seed = 28945
+frequency = 0.4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_72w41"]
+noise = SubResource("FastNoiseLite_yfwgc")
+color_ramp = SubResource("Gradient_d377d")
+seamless = true
+
+[resource]
+resource_name = "carpet"
+albedo_color = Color(0.2, 0.22, 0.26, 1)
+albedo_texture = SubResource("NoiseTexture2D_fxxi2")
+roughness_texture = SubResource("NoiseTexture2D_72w41")
+normal_enabled = true
+normal_scale = 0.3
+normal_texture = SubResource("NoiseTexture2D_j6pjd")
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

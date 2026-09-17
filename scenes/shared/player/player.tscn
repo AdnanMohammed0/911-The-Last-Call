@@ -13,6 +13,7 @@
 [ext_resource type="Script" path="res://scenes/shared/player/revive_interactable.gd" id="10_revive"]
 [ext_resource type="PackedScene" path="res://ui/hud/health_hud.tscn" id="11_health_hud"]
 [ext_resource type="Script" path="res://scenes/shared/weapons/weapon_holder.gd" id="12_weapons"]
+[ext_resource type="Script" path="res://ui/hud/objective_hud.gd" id="13_objective"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 resource_local_to_scene = true
@@ -120,6 +121,9 @@ properties/15/replication_mode = 2
 properties/16/path = NodePath("Weapons:reloading_slot")
 properties/16/spawn = true
 properties/16/replication_mode = 2
+properties/17/path = NodePath("Health:armor")
+properties/17/spawn = true
+properties/17/replication_mode = 2
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_client"]
 properties/0/path = NodePath(".:sync_position")
@@ -298,6 +302,16 @@ interactor = NodePath("../../PlayerInteractor")
 
 [node name="HealthHud" parent="HUD" node_paths=PackedStringArray("player") instance=ExtResource("11_health_hud")]
 player = NodePath("../..")
+
+[node name="ObjectiveHud" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("13_objective")
 
 [node name="VoiceHud" parent="HUD" unique_id=806692191 instance=ExtResource("8_voice")]
 

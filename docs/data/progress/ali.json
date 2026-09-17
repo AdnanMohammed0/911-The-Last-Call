@@ -27,6 +27,7 @@
    "files": [
     "scenes/shared/door/door.gd",
     "scenes/shared/door/door.tscn",
+    "scenes/shared/door/door_sandbox.tscn",
     "scenes/shared/player/player.gd",
     "scenes/shared/player/player_input.gd",
     "scenes/shared/player/player_debug_hud.gd",

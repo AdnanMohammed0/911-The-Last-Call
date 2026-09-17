@@ -144,6 +144,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.6, -2)
 use_collision = true
 size = Vector3(1.1, 0.8, 0.3)
 
+[node name="LabelDoor1" type="Label3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.3, -1.8)
+pixel_size = 0.005
+text = "[F] OPEN / CLOSE"
+font_size = 28
+
+[node name="LabelDoor2" type="Label3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, -1.8)
+pixel_size = 0.005
+text = "[C] PEEK 15°"
+font_size = 28
+
+[node name="LabelDoor3" type="Label3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.3, -1.8)
+pixel_size = 0.005
+text = "[V] KICK (Locked)"
+font_size = 28
+
 [node name="StandardDoor" parent="Level" instance=ExtResource("5_door")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -2)
 
@@ -155,7 +173,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -2)
 is_locked = true
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.5)
 
 [node name="DebugHUD" type="Label" parent="." node_paths=PackedStringArray("player")]
 offset_left = 12.0

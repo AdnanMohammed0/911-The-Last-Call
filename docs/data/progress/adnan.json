@@ -16,6 +16,11 @@
    "status": "done",
    "note": "نظام التفاعل الشبكي مكتمل: Interactable (press/hold) مع تحقق الهوست (المسافة، مدة الـ hold، cooldown، الماسك)، PlayerInteractor بالـ raycast، واجهة prompt + progress. اختُبر offline (13) وبشبكة ENet حقيقية host+client.",
    "updated_at": "2026-09-17"
+  },
+  "P1-04": {
+   "status": "testing",
+   "note": "NetManager: host/join عبر ENet (24911، 4 لاعبين)، تسجيل اللاعب مع تحقق الهوست (نسخة البروتوكول، اللوبي ممتلئ، تنظيف الاسم، مهلة التسجيل)، مهلة اتصال 10 ث، leave، وخروج الهوست. قائمة رئيسية مؤقتة (Host/Join/Roster). اختبار شبكة بـ 7 عمليات نجح. باقي تجربة يدوية بجهازين.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -159,6 +164,19 @@
    "summary": "إغلاق P1-13: نظام التفاعل اختُبر وصار على main.",
    "files": [
     "docs/data/progress/adnan.json"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-04"
+   ],
+   "summary": "NetManager host/join عبر ENet + roster sync أساسي + main menu مؤقت، واختبار شبكة حقيقي بـ host و 3 clients و lobby ممتلئ و version mismatch.",
+   "files": [
+    "autoload/net_manager.gd",
+    "scenes/boot/main_menu.gd",
+    "scenes/boot/main_menu.tscn",
+    "project.godot"
    ]
   }
  ]

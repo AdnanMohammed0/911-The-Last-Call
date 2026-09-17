@@ -13,7 +13,7 @@
    "phase": 1,
    "group": "Project Foundation",
    "cat": "GAME",
-   "owner": "adnan",
+   "owner": "mohamed",
    "title": "Set up Git LFS, .gitignore, GUT test framework, static-typing warnings as errors"
   },
   {
@@ -21,7 +21,7 @@
    "phase": 1,
    "group": "Project Foundation",
    "cat": "GAME",
-   "owner": "adnan",
+   "owner": "mohamed",
    "title": "CI build pipeline (GitHub Actions: headless export Windows/Linux + GUT tests)"
   },
   {
@@ -93,7 +93,7 @@
    "phase": 1,
    "group": "Player Controller",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "First-person controller (walk, sprint, crouch, lean, stamina)"
   },
   {
@@ -101,7 +101,7 @@
    "phase": 1,
    "group": "Player Controller",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Interaction system (raycast, prompts, hold-to-interact, networked)"
   },
   {
@@ -141,7 +141,7 @@
    "phase": 1,
    "group": "Grey-box",
    "cat": "ART",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Grey-box Station 4 operations room + armory + parking lot"
   },
   {
@@ -149,7 +149,7 @@
    "phase": 1,
    "group": "Grey-box",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Main menu, host/join screens, lobby UI with class cards"
   },
   {
@@ -157,7 +157,7 @@
    "phase": 2,
    "group": "Data Layer",
    "cat": "GAME",
-   "owner": "adnan",
+   "owner": "mohamed",
    "title": "CallData, StressProfile, RecordEntry resources + validator tool"
   },
   {
@@ -165,7 +165,7 @@
    "phase": 2,
    "group": "Data Layer",
    "cat": "GAME",
-   "owner": "adnan",
+   "owner": "mohamed",
    "title": "DialogueGraph / DialogueNode / DialogueChoice resources"
   },
   {
@@ -173,7 +173,7 @@
    "phase": 2,
    "group": "Data Layer",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Editor plugin: visual dialogue graph editor (GraphEdit based)"
   },
   {
@@ -181,7 +181,7 @@
    "phase": 2,
    "group": "Call Director",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "CallDirector (host): shift clock, call queue, ring/answer/missed lifecycle"
   },
   {
@@ -197,7 +197,7 @@
    "phase": 2,
    "group": "Call Director",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "Caller patience timer & timer-pressure modifiers"
   },
   {
@@ -205,7 +205,7 @@
    "phase": 2,
    "group": "Dispatch Tools",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Phone/headset UI with dialogue choices & teammate choice pings"
   },
   {
@@ -213,7 +213,7 @@
    "phase": 2,
    "group": "Dispatch Tools",
    "cat": "AUDIO",
-   "owner": "mohamed",
+   "owner": "adnan",
    "title": "Voice Stress Analyzer: live spectrum + authored stress curves, loop detector, background isolate"
   },
   {
@@ -221,7 +221,7 @@
    "phase": 2,
    "group": "Dispatch Tools",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "VSA scrub-and-tag mini-game → Case Board evidence"
   },
   {
@@ -229,7 +229,7 @@
    "phase": 2,
    "group": "Dispatch Tools",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "Trace mini-game (3-tower triangulation) for Tech Operator"
   },
   {
@@ -237,7 +237,7 @@
    "phase": 2,
    "group": "Dispatch Tools",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "CCTV grid with camera hijack & feed rendering (SubViewports)"
   },
   {
@@ -245,7 +245,7 @@
    "phase": 2,
    "group": "Dispatch Tools",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Records database terminal (criminal records, property history)"
   },
   {
@@ -253,7 +253,7 @@
    "phase": 2,
    "group": "Dispatch Tools",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Case Board (evidence pins, Pattern Link for Investigator)"
   },
   {
@@ -269,7 +269,7 @@
    "phase": 2,
    "group": "Assessment & Vote",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "Loadout armory with budget, class-locked items, requisition"
   },
   {
@@ -285,7 +285,7 @@
    "phase": 2,
    "group": "Content",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "Author 5 filler calls (pranks, noise complaints, shoplifting)"
   },
   {
@@ -293,7 +293,7 @@
    "phase": 2,
    "group": "Content",
    "cat": "ART",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Operations room art pass v1 (CRT monitors, analog phones, wall map)"
   },
   {
@@ -301,7 +301,7 @@
    "phase": 3,
    "group": "Combat",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Weapon framework (hitscan, recoil patterns, reload, host-validated fire with lag compensation)"
   },
   {
@@ -309,7 +309,7 @@
    "phase": 3,
    "group": "Combat",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Health, location damage, downed/revive, bleed-out"
   },
   {
@@ -317,7 +317,7 @@
    "phase": 3,
    "group": "Combat",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Sanity system + bands + Panic audio bus driver"
   },
   {
@@ -325,7 +325,7 @@
    "phase": 3,
    "group": "Combat",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Class abilities: shield, kick, ram, drone, megaphone, tear gas, revive, sedative, salt, tone"
   },
   {
@@ -333,7 +333,7 @@
    "phase": 3,
    "group": "Combat",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "Arrest & ROE (surrender, cuffs, excessive-force events)"
   },
   {
@@ -341,7 +341,7 @@
    "phase": 3,
    "group": "Combat",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "Noise event system (footsteps, gunshots, voice loudness)"
   },
   {
@@ -349,7 +349,7 @@
    "phase": 3,
    "group": "Hostile AI",
    "cat": "AI",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Behavior tree runtime (selector, sequence, decorators, blackboard) + debugger"
   },
   {
@@ -357,7 +357,7 @@
    "phase": 3,
    "group": "Hostile AI",
    "cat": "AI",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Perception: vision cone, flashlight detection, hearing, awareness meter"
   },
   {
@@ -365,7 +365,7 @@
    "phase": 3,
    "group": "Hostile AI",
    "cat": "AI",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Cover query system & navmesh baking per mission"
   },
   {
@@ -373,7 +373,7 @@
    "phase": 3,
    "group": "Hostile AI",
    "cat": "AI",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Archetypes: Thug, Cultist Gunman, Zealot, Ambush Leader, Hostage Taker"
   },
   {
@@ -381,7 +381,7 @@
    "phase": 3,
    "group": "Hostile AI",
    "cat": "AI",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Squad tactics: flank tokens, callouts, morale & surrender"
   },
   {
@@ -389,7 +389,7 @@
    "phase": 3,
    "group": "Anomalies",
    "cat": "AI",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Anomaly FSM base + Drowned Woman (dormant→manifest→stalk→hunt→attack→retreat)"
   },
   {
@@ -397,7 +397,7 @@
    "phase": 3,
    "group": "Anomalies",
    "cat": "AI",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Tension Director + per-peer hallucinations"
   },
   {
@@ -405,7 +405,7 @@
    "phase": 3,
    "group": "Anomalies",
    "cat": "AUDIO",
-   "owner": "mohamed",
+   "owner": "adnan",
    "title": "Dead Frequency radio mimicry (teammate voice replay / reverse)"
   },
   {
@@ -413,7 +413,7 @@
    "phase": 3,
    "group": "Anomalies",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "EMF reader, banish ritual, remains-burial objective"
   },
   {
@@ -421,7 +421,7 @@
    "phase": 3,
    "group": "Missions",
    "cat": "ART",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Mission map: Farmhouse (\"Scratching Behind the Wall\")"
   },
   {
@@ -429,7 +429,7 @@
    "phase": 3,
    "group": "Missions",
    "cat": "ART",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Mission map: Flooded Lake House (\"Call From a Cut Line\") with water-rise shader"
   },
   {
@@ -437,7 +437,7 @@
    "phase": 3,
    "group": "Missions",
    "cat": "ART",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Mission map: Abandoned Highway (\"The Meat Truck\") + decoy cruiser RPG set piece"
   },
   {
@@ -445,7 +445,7 @@
    "phase": 3,
    "group": "Missions",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Mission flow: patrol drive, arrival, objectives, extraction, mission result"
   },
   {
@@ -453,7 +453,7 @@
    "phase": 3,
    "group": "Missions",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Field HUD: minimal bodycam overlay, radio indicator, sanity vignette, objective ticker"
   },
   {
@@ -461,7 +461,7 @@
    "phase": 3,
    "group": "Missions",
    "cat": "ART",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Character models: 4 officer classes + 3 hostile variants (rigged)"
   },
   {
@@ -485,7 +485,7 @@
    "phase": 4,
    "group": "Consequences",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "Trait system (Limping, Fractured Hand, PTSD, Phantom Ringing, Hardened…)"
   },
   {
@@ -493,7 +493,7 @@
    "phase": 4,
    "group": "Consequences",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "Global meters: Public Trust, Station Budget, Cult Awareness + threshold effects"
   },
   {
@@ -501,7 +501,7 @@
    "phase": 4,
    "group": "Consequences",
    "cat": "GAME",
-   "owner": "adnan",
+   "owner": "mohamed",
    "title": "Save system: versioned JSON, atomic writes, migrations, Steam Cloud"
   },
   {
@@ -509,7 +509,7 @@
    "phase": 4,
    "group": "Consequences",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Aftermath shift report (events timeline, meter deltas, traits gained, leads unlocked)"
   },
   {
@@ -517,7 +517,7 @@
    "phase": 4,
    "group": "Consequences",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Detroit-style flowchart screen showing branches taken / locked"
   },
   {
@@ -525,7 +525,7 @@
    "phase": 4,
    "group": "Consequences",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "Ending resolver + 3 endings (Whistleblowers, Station Under Siege, Lost in the Static)"
   },
   {
@@ -533,7 +533,7 @@
    "phase": 4,
    "group": "Consequences",
    "cat": "AI",
-   "owner": "ali",
+   "owner": "adnan",
    "title": "Station Siege horde-survival mode (wave spawner in operations room)"
   },
   {
@@ -541,7 +541,7 @@
    "phase": 4,
    "group": "Consequences",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "Shifts 2 & 3 content: interrogation call, cult hideout mission, diversion calls"
   },
   {
@@ -549,7 +549,7 @@
    "phase": 4,
    "group": "Polish",
    "cat": "ART",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "VHS / bodycam post-process (chromatic aberration, scanlines, timestamp overlay)"
   },
   {
@@ -557,7 +557,7 @@
    "phase": 4,
    "group": "Polish",
    "cat": "ART",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Lighting pass (volumetric fog, flashlight shadows, SDFGI/LightmapGI per map)"
   },
   {
@@ -573,7 +573,7 @@
    "phase": 4,
    "group": "Polish",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Settings: graphics, audio devices, mic test, keybinds, accessibility (subtitles, colorblind, arachnophobia-style toggles)"
   },
   {
@@ -581,7 +581,7 @@
    "phase": 4,
    "group": "Polish",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Onboarding tutorial shift (\"Training Night\")"
   },
   {
@@ -595,7 +595,7 @@
   {
    "id": "P5-01",
    "phase": 5,
-   "group": "Polish",
+   "group": "Steam Release",
    "cat": "NET",
    "owner": "adnan",
    "title": "Steamworks: achievements, rich presence, friends invites, Steam Cloud"
@@ -603,7 +603,7 @@
   {
    "id": "P5-02",
    "phase": 5,
-   "group": "Polish",
+   "group": "Steam Release",
    "cat": "NET",
    "owner": "adnan",
    "title": "NAT traversal / relay fallback validation (Steam Datagram Relay)"
@@ -611,31 +611,31 @@
   {
    "id": "P5-03",
    "phase": 5,
-   "group": "Polish",
+   "group": "Steam Release",
    "cat": "GAME",
-   "owner": "adnan",
+   "owner": "mohamed",
    "title": "Crash reporting & telemetry opt-in (anonymous KPIs)"
   },
   {
    "id": "P5-04",
    "phase": 5,
-   "group": "Polish",
+   "group": "Steam Release",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Store page assets: capsule art, screenshots, trailer, description"
   },
   {
    "id": "P5-05",
    "phase": 5,
-   "group": "Polish",
+   "group": "Steam Release",
    "cat": "ART",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Key art & trailer capture (bodycam footage style)"
   },
   {
    "id": "P5-06",
    "phase": 5,
-   "group": "Polish",
+   "group": "Steam Release",
    "cat": "GAME",
    "owner": "mohamed",
    "title": "Localization pipeline (English + Arabic with RTL UI support)"
@@ -643,33 +643,33 @@
   {
    "id": "P5-07",
    "phase": 5,
-   "group": "Polish",
+   "group": "Steam Release",
    "cat": "GAME",
-   "owner": "adnan",
+   "owner": "mohamed",
    "title": "Full QA regression: networking matrix (2/3/4 players, high latency, packet loss)"
   },
   {
    "id": "P5-08",
    "phase": 5,
-   "group": "Polish",
+   "group": "Steam Release",
    "cat": "UI",
-   "owner": "mohamed",
+   "owner": "ali",
    "title": "Steam Deck verification (controller UI, text size, performance)"
   },
   {
    "id": "P5-09",
    "phase": 5,
-   "group": "Polish",
+   "group": "Steam Release",
    "cat": "GAME",
-   "owner": "ali",
+   "owner": "mohamed",
    "title": "Steam Next Fest demo build (Training Night + Shift 1)"
   },
   {
    "id": "P5-10",
    "phase": 5,
-   "group": "Polish",
+   "group": "Steam Release",
    "cat": "GAME",
-   "owner": "adnan",
+   "owner": "mohamed",
    "title": "Release candidate, day-one patch plan, community Discord & bug report flow"
   }
  ]

@@ -10,9 +10,9 @@ It's midnight at **Station 4, Blackvale County**. Three patrols vanished and the
 
 | Member | GitHub | Focus | Tasks |
 | :--- | :--- | :--- | :---: |
-| Adnan | [@AdnanMohammed0](https://github.com/AdnanMohammed0) | Lead: networking, voice pipeline, data layer, save/flags, release | 27 |
-| Ali Imad | [@Ali-Imad-Dev](https://github.com/Ali-Imad-Dev) | Gameplay & AI: player, call director, combat, hostiles, anomalies, endings | 29 |
-| Mohamed | [@MohamedFSD](https://github.com/MohamedFSD) | UI/UX, audio & art: dispatch tools, maps, characters, VHS look, store | 28 |
+| Adnan | [@AdnanMohammed0](https://github.com/AdnanMohammed0) | AI, networking & voice, core gameplay (player, combat, call director, flags) | 37 |
+| Ali Imad | [@Ali-Imad-Dev](https://github.com/Ali-Imad-Dev) | 3D, world, art & all UI/UX | 24 |
+| Mohamed | [@MohamedFSD](https://github.com/MohamedFSD) | Light programming: data resources, tooling/CI, content, traits/meters/save, audio mix, QA & release | 23 |
 
 ## How progress tracking works (automatic)
 

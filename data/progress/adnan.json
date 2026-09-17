@@ -25,15 +25,19 @@
     "assets/",
     "index.html",
     ".github/workflows/auto-progress.yml"
-   ]
+   ],
+   "commit": "c2077cd"
   },
   {
    "date": "2026-09-17",
    "tasks": [],
-   "summary": "feat: split work across team, automatic AI progress tracking, new GitHub Pages site",
-   "files": [],
-   "commit": "c2077cd",
-   "auto": true
+   "summary": "إعادة توزيع المهام: Adnan (AI، شبكات، لعب)، Ali (3D، عالم، فن، واجهات)، Mohamed (برمجة سهلة).",
+   "files": [
+    "docs/PROJECT_ROADMAP.md",
+    "data/tasks.json",
+    "data/team.json",
+    "prompts/"
+   ]
   }
  ]
 }

@@ -16,9 +16,9 @@ Live per-member progress is on the website (**Team** tab) and in `data/progress/
 
 | Member | Tasks | Progress file |
 | :--- | :---: | :--- |
-| Adnan (`@adnan`) | 27 | [`data/progress/adnan.json`](data/progress/adnan.json) |
-| Ali Imad (`@ali`) | 29 | [`data/progress/ali.json`](data/progress/ali.json) |
-| Mohamed (`@mohamed`) | 28 | [`data/progress/mohamed.json`](data/progress/mohamed.json) |
+| Adnan (`@adnan`) | 37 | [`data/progress/adnan.json`](data/progress/adnan.json) |
+| Ali Imad (`@ali`) | 24 | [`data/progress/ali.json`](data/progress/ali.json) |
+| Mohamed (`@mohamed`) | 23 | [`data/progress/mohamed.json`](data/progress/mohamed.json) |
 | **Total** | **84** | |
 
 ---
@@ -31,10 +31,10 @@ Live per-member progress is on the website (**Team** tab) and in `data/progress/
 | ID | Task | Owner | Status | Notes |
 | :--- | :--- | :--- | :--- | :--- |
 | P1-01 | Project, folder layout, autoload skeletons | Adnan | 🟦 Todo | |
-| P1-02 | Git LFS, GUT, typing warnings | Adnan | 🟦 Todo | |
+| P1-02 | Git LFS, GUT, typing warnings | Mohamed | 🟦 Todo | |
 | P1-04 | ENet host/join | Adnan | 🟦 Todo | |
-| P1-12 | First-person controller | Ali | 🟦 Todo | |
-| P1-18 | Grey-box operations room | Mohamed | 🟦 Todo | |
+| P1-12 | First-person controller | Adnan | 🟦 Todo | |
+| P1-18 | Grey-box operations room | Ali | 🟦 Todo | |
 
 **Legend:** 🟦 Todo · 🟨 In Progress · 🟪 Testing · 🟩 Done · 🟥 Blocked
 

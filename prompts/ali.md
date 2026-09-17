@@ -1,59 +1,51 @@
 # Prompt — Ali Imad (`ali`)
 
-> **Role:** Gameplay & AI Programmer: Combat, Hostiles, Anomalies, Consequences
+> **Role:** 3D, World, Art & UI
 > **GitHub:** [@Ali-Imad-Dev](https://github.com/Ali-Imad-Dev) · **Progress file:** `data/progress/ali.json`
 
 ## هويتك بالمشروع (for the AI)
 
-تشتغل ويا **Ali Imad**، مبرمج أسلوب اللعب والذكاء الاصطناعي. هو المسؤول عن:
+تشتغل ويا **Ali Imad**، المسؤول عن **كل شي يشوفه اللاعب**:
 
-- **متحكم اللاعب** بمنظور الشخص الأول، والتفاعل، والأبواب.
-- **مدير المكالمات** (`CallDirector`): ساعة النوبة، الطابور، صبر المتصل، لعبة التتبع، والتجهيز (Loadout).
-- **القتال:** الأسلحة، الصحة، السقوط والإنعاش، الـ Sanity، قدرات الفئات، الاعتقال، والضوضاء.
-- **الذكاء الاصطناعي:** Behavior Trees، الإدراك، الغطاء، أنواع الأعداء، وتكتيكات الفرق.
-- **الكيانات الخارقة:** FSM للـ Drowned Woman، الـ Tension Director، الهلوسات.
-- **منطق العواقب بالميدان:** الصفات (Traits)، المؤشرات العامة، النهايات، طور حصار المركز، ومحتوى النوبات 2 و 3.
+- **الـ 3D والعالم:** grey-box لمركز Station 4، غرفة العمليات، خرائط المهام (Farmhouse، Flooded Lake House، Abandoned Highway)، الأبواب والـ props.
+- **الفن:** موديلات الشخصيات والأعداء، الإضاءة (Volumetric Fog، الظلال)، شكل VHS / Bodycam، الـ key art والتريلر.
+- **الواجهات (UI/UX):** القائمة واللوبي، الهاتف والحوارات، واجهة الـ VSA، الكاميرات، السجلات، لوحة القضية، HUD الميدان، تقرير النوبة، شاشة التفرعات (Flowchart)، الإعدادات، التعليم، صور متجر Steam، و Steam Deck.
+- **محرر الحوارات المرئي** (GraphEdit plugin).
 
-المجلدات الأساسية: `scenes/shared/player/`, `scenes/field/`, `core/bt/`, `core/fsm/`, `data/traits/`, `data/calls/` (المنطق).
-المرجع: `docs/GAMEPLAY_MECHANICS.md` (كلها) + `docs/ARCHITECTURE.md` §4.4 و §5.
+المجلدات: `scenes/boot/`, `scenes/dispatch/`, `scenes/field/<maps>/`, `scenes/aftermath/`, `ui/`, `art/`, `addons/dialogue_editor/`.
+المرجع: الـ GDD للجو العام (واقعي مظلم، VHS، Bodycam)، و `docs/GAMEPLAY_MECHANICS.md` §5 (أدوات غرفة العمليات) و §10 (السيناريوهات).
 
-**يعتمد على:** Adnan (P1-04/P1-06/P1-07 للشبكة، P2-01 للـ Resources، P4-01 للـ FlagSystem).
-**يعتمد عليه:** Mohamed (HUD يقرأ الصحة والـ Sanity؛ الخرائط تحتاج Mission flow).
-إذا مهمة معتمدة على شي ما خلص، ابدأ بنسخة offline (لاعب واحد)، وحط الحالة `blocked` مع note تذكر المهمة المطلوبة.
+**يعتمد على:** Adnan (player controller، signals الـ CallDirector، Health/Sanity، Mission flow)، و Mohamed (Resources الحوارات والمكالمات P2-01/P2-02).
+**نصيحة:** ابدأ بـ grey-box و placeholder UI بسرعة، لأن الكل يحتاجها للاختبار. الأصول الكبيرة ترفعها بـ Git LFS.
 
-## المهام (29)
+## المهام (24)
 
 | ID | Cat | المجموعة | المهمة |
 | :--- | :--- | :--- | :--- |
-| P1-12 | GAME | Player Controller | First-person controller (walk, sprint, crouch, lean, stamina) |
-| P1-13 | GAME | Player Controller | Networked interaction system |
-| P1-14 | GAME | Player Controller | Door system (open, peek, kick, locked) |
-| P2-04 | GAME | Call Director | CallDirector: shift clock, queue, lifecycle |
-| P2-06 | GAME | Call Director | Caller patience & timer pressure |
-| P2-10 | GAME | Dispatch Tools | Trace mini-game (3-tower triangulation) |
-| P2-15 | GAME | Assessment & Vote | Loadout armory with budget |
-| P2-17 | GAME | Content | Author 5 filler calls |
-| P3-01 | GAME | Combat | Weapon framework + lag compensation |
-| P3-02 | GAME | Combat | Health, location damage, downed/revive |
-| P3-03 | GAME | Combat | Sanity system + Panic bus driver |
-| P3-04 | GAME | Combat | Class abilities |
-| P3-05 | GAME | Combat | Arrest & ROE |
-| P3-06 | GAME | Combat | Noise event system |
-| P3-07 | AI | Hostile AI | Behavior tree runtime + debugger |
-| P3-08 | AI | Hostile AI | Perception & awareness |
-| P3-09 | AI | Hostile AI | Cover queries & navmesh |
-| P3-10 | AI | Hostile AI | Archetypes (Thug, Cultist, Zealot, Leader, Hostage Taker) |
-| P3-11 | AI | Hostile AI | Squad tactics, morale & surrender |
-| P3-12 | AI | Anomalies | Anomaly FSM + Drowned Woman |
-| P3-13 | AI | Anomalies | Tension Director + per-peer hallucinations |
-| P3-15 | GAME | Anomalies | EMF reader, banish ritual, burial objective |
-| P3-19 | GAME | Missions | Mission flow (drive, arrive, objectives, extract) |
-| P4-03 | GAME | Consequences | Trait system |
-| P4-04 | GAME | Consequences | Global meters + thresholds |
-| P4-08 | GAME | Consequences | Ending resolver + 3 endings |
-| P4-09 | AI | Consequences | Station Siege horde mode |
-| P4-10 | GAME | Consequences | Shifts 2 & 3 content |
-| P5-09 | GAME | Steam Release | Next Fest demo build |
+| P1-14 | GAME | Player Controller | Door system (open, peek, kick, locked) — replicated |
+| P1-18 | ART | Grey-box | Grey-box Station 4 ops room + armory + parking |
+| P1-19 | UI | Grey-box | Main menu, host/join, lobby with class cards |
+| P2-03 | UI | Data Layer | Visual dialogue graph editor plugin |
+| P2-07 | UI | Dispatch Tools | Phone/headset UI + choice pings |
+| P2-09 | UI | Dispatch Tools | VSA scrub-and-tag mini-game |
+| P2-11 | UI | Dispatch Tools | CCTV grid (SubViewports) |
+| P2-12 | UI | Dispatch Tools | Records database terminal |
+| P2-13 | UI | Dispatch Tools | Case Board |
+| P2-18 | ART | Content | Operations room art pass v1 |
+| P3-16 | ART | Missions | Map: Farmhouse |
+| P3-17 | ART | Missions | Map: Flooded Lake House + water shader |
+| P3-18 | ART | Missions | Map: Abandoned Highway + RPG set piece |
+| P3-20 | UI | Missions | Field HUD (bodycam overlay) |
+| P3-21 | ART | Missions | Character models (4 classes + 3 hostiles) |
+| P4-06 | UI | Consequences | Aftermath shift report |
+| P4-07 | UI | Consequences | Detroit-style flowchart screen |
+| P4-11 | ART | Polish | VHS / bodycam post-process |
+| P4-12 | ART | Polish | Lighting pass |
+| P4-14 | UI | Polish | Settings & accessibility |
+| P4-15 | UI | Polish | Onboarding tutorial ("Training Night") |
+| P5-04 | UI | Steam Release | Store page assets |
+| P5-05 | ART | Steam Release | Key art & trailer |
+| P5-08 | UI | Steam Release | Steam Deck verification |
 
 > المصدر الحي للحالات: `data/progress/ali.json` + `data/tasks.json`.
 
@@ -64,45 +56,44 @@
 ### 🟢 بداية الجلسة
 ```text
 أنا Ali. اقرأ AGENTS.md و prompts/ali.md و data/progress/ali.json.
-لخّصلي وين وصلت، وتأكد من data/progress/adnan.json إذا المهام اللي أعتمد عليها خلصت، واقترح المهمة الجاية.
+لخّصلي وين وصلت، وشوف data/progress/adnan.json و mohamed.json إذا الأنظمة اللي تحتاجها واجهاتي وخرائطي خلصت، واقترح المهمة الجاية.
 ```
 
-### 🏃 متحكم اللاعب (P1-12 → P1-14)
+### 🧱 Grey-box والأبواب والقوائم (P1-14, P1-18, P1-19)
 ```text
-أنا Ali. نفّذ <P1-12 | P1-13 | P1-14> بـ scenes/shared/player/ حسب docs/ARCHITECTURE.md §4.4
-(الحركة client-authoritative، والكاميرا تشتغل بس لصاحب الـ authority). الأبواب لازم تدعم open / peek / kick / locked وتتزامن عبر الشبكة.
-حدّث تقدمي بعد ما أجرّب بلاعبين اثنين.
+أنا Ali. سوّي grey-box لـ Station 4 (غرفة عمليات بـ 4 مكاتب dispatch، مخزن سلاح، موقف سيارات) بـ CSGCombiner3D،
+ونظام أبواب (open / peek / kick / locked) يتزامن عبر الشبكة، وقائمة رئيسية + Host/Join + لوبي بـ 4 بطاقات فئات.
+الستايل: مظلم تكتيكي، أمبر #f59e0b وسيان #06b6d4.
 ```
 
-### ☎️ مدير المكالمات والتجهيز (P2-04, P2-06, P2-10, P2-15, P2-17)
+### 🖥️ واجهات غرفة العمليات (P2-07, P2-09, P2-11 → P2-13)
 ```text
-أنا Ali. اكتب CallDirector (host فقط) حسب docs/GAMEPLAY_MECHANICS.md §5.1 و §5.5:
-ساعة النوبة 00:00→06:00، ورنين 20 ثانية ثم call_missed، وصبر المتصل مع المعدّلات. استعمل Resources اللي كتبها Adnan (P2-01).
-بعدها Trace mini-game (§5.4) والـ Armory (§6). الواجهات الرسومية مسؤولية Mohamed، فأنت وفّر signals و API واضحة.
+أنا Ali. ابني <Phone UI | VSA scrub & tag | CCTV grid | Records terminal | Case Board> بـ ui/dispatch/
+حسب docs/GAMEPLAY_MECHANICS.md §5. شكل الشاشات CRT قديم (scanlines، خط monospace). اربطها بـ signals الـ CallDirector و VSA من Adnan.
 ```
 
-### 🔫 القتال (P3-01 → P3-06)
+### ✍️ محرر الحوارات (P2-03)
 ```text
-أنا Ali. نفّذ <P3-01 ... P3-06> حسب docs/GAMEPLAY_MECHANICS.md §3 و §7 و docs/ARCHITECTURE.md §4.4
-(الـ client يرسل request_fire، والـ host يعيد الـ raycast مع lag compensation 150ms). اكتب GUT tests للضرر وحسابات الـ Sanity.
+أنا Ali. اكتب EditorPlugin بـ addons/dialogue_editor/ يعرض DialogueGraph (من Mohamed P2-02) كـ GraphEdit:
+nodes للسطور، ports للخيارات، وحقول required_class و required_evidence، مع Save/Load لملف .tres.
 ```
 
-### 🤖 الأعداء (P3-07 → P3-11)
+### 🗺️ الخرائط والشخصيات (P2-18, P3-16 → P3-18, P3-21)
 ```text
-أنا Ali. ابني Behavior Tree runtime بـ core/bt/ (Selector, Sequence, Condition, Action, Blackboard) حسب §8،
-وبعدها Cultist Gunman كامل بالشجرة المكتوبة: perception و morale و surrender و flank tokens. الـ AI يشتغل على الـ host بس، بـ 10Hz staggered.
+أنا Ali. ابني خريطة <Farmhouse | Flooded Lake House | Abandoned Highway> حسب سيناريوهات GAMEPLAY_MECHANICS §10:
+grey-box أولاً + NavigationRegion3D + نقاط اقتحام + مناطق مظلمة للكيانات، وبعدها art pass.
 ```
 
-### 👻 الكيانات والرعب (P3-12, P3-13, P3-15)
+### 🎞️ الشكل النهائي والواجهات (P3-20, P4-06, P4-07, P4-11, P4-12, P4-14, P4-15)
 ```text
-أنا Ali. نفّذ Drowned Woman FSM حسب docs/GAMEPLAY_MECHANICS.md §9.2 (DORMANT→MANIFEST→STALK→HUNT→ATTACK→RETREAT)،
-والـ Tension Director (§9.3) مع هلوسات تنرسل per-peer بـ rpc_id. أضف EMF reader وطقس الإبعاد.
+أنا Ali. نفّذ <Field HUD | Shift report | Flowchart | VHS post-process | Lighting | Settings | Tutorial>.
+الـ VHS: chromatic aberration + scanlines + noise + timestamp، ويتأثر بالـ Sanity.
+الـ Flowchart: يقرأ FlagSystem.events ويعرض الفروع المفتوحة والمقفولة مثل Detroit: Become Human.
 ```
 
-### 🦋 العواقب والنهايات (P4-03, P4-04, P4-08 → P4-10)
+### 🛒 Steam (P5-04, P5-05, P5-08)
 ```text
-أنا Ali. استخدم FlagSystem (P4-01 من Adnan) وطبّق TraitSystem (§3.4) والمؤشرات (§4) و EndingResolver (ARCHITECTURE §7.6).
-أنشئ ConsequenceRules لسيناريوهات النوبة الأولى، ومحتوى النوبتين 2 و 3.
+أنا Ali. جهّز صور متجر Steam (capsules، screenshots)، و key art بستايل bodycam، وتأكد إن الواجهات تشتغل على Steam Deck (controller + حجم الخط).
 ```
 
 ### 🔄 التسجيل والرفع (تلقائي)

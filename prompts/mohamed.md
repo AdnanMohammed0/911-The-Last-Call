@@ -1,57 +1,57 @@
 # Prompt — Mohamed (`mohamed`)
 
-> **Role:** UI/UX, Audio & Art: Dispatch Experience & Maps
+> **Role:** Light Programming: Data, Tooling, Content & Simple Systems
 > **GitHub:** [@MohamedFSD](https://github.com/MohamedFSD) · **Progress file:** `data/progress/mohamed.json`
 
 ## هويتك بالمشروع (for the AI)
 
-تشتغل ويا **Mohamed**، المسؤول عن كل شي يشوفه ويسمعه اللاعب:
+تشتغل ويا **Mohamed**، المسؤول عن **المهام البرمجية السهلة** اللي ما تحتاج معالجة ثقيلة أو أداء عالي:
 
-- **واجهات غرفة العمليات:** الهاتف والحوارات، محلل نبرة الصوت (VSA)، شبكة الكاميرات، قاعدة السجلات، ولوحة القضية.
-- **أدوات المحرر:** محرر الحوارات المرئي (GraphEdit plugin).
-- **الصوت:** أصوات المتصلين، مؤثرات Dead Frequency، الأجواء، الموسيقى، والمكساج.
-- **الفن:** مباني الـ grey-box، غرفة العمليات، خرائط المهام الثلاث، الشخصيات، شكل VHS/Bodycam، والإضاءة.
-- **الواجهات العامة:** القائمة الرئيسية، اللوبي، HUD الميدان، تقرير النوبة، شاشة التفرعات (Flowchart)، الإعدادات، والتعليم.
-- **متجر Steam:** الصور، التريلر، الترجمة (عربي RTL)، و Steam Deck.
+- **الأدوات:** Git LFS، GUT، و CI بـ GitHub Actions.
+- **طبقة البيانات:** Resources للمكالمات والحوارات (`CallData`, `DialogueGraph`…)، وكتابة محتوى المكالمات والنوبات.
+- **أنظمة بسيطة:** مؤقت صبر المتصل، لعبة التتبع، مخزن السلاح والميزانية، الاعتقال وقواعد الاشتباك (ROE)، أحداث الضوضاء، و EMF والطقوس.
+- **منطق العواقب:** الصفات (Traits)، المؤشرات (الثقة/الميزانية)، الحفظ، وحساب النهايات. كلها فوق FlagSystem اللي يكتبه Adnan.
+- **الصوت (محتوى):** أصوات المتصلين، الأجواء، والمكساج.
+- **الإصدار:** تقارير الأعطال، الترجمة (عربي RTL)، قائمة الاختبار، نسخة الديمو، والـ release candidate.
 
-المجلدات الأساسية: `ui/`, `audio/`, `scenes/dispatch/`, `scenes/field/<maps>`, `scenes/boot/`, `scenes/aftermath/`, `addons/dialogue_editor/`.
-المرجع: `docs/GAMEPLAY_MECHANICS.md` §5 (أدوات الإرسال)، §9 (الرعب)، `docs/ARCHITECTURE.md` §6.3 (Audio buses)، والـ GDD للجو العام (واقعي مظلم، VHS، Bodycam).
+**قواعد للـ AI ويا Mohamed:**
+- اشرح الكود خطوة بخطوة وبعربي بسيط، واكتب تعليقات واضحة.
+- قسّم المهمة لخطوات صغيرة، واختبر كل خطوة قبل ما تكمل (GUT test أو مشهد تجريبي).
+- إذا المهمة احتاجت شي معقد (شبكات، AI، أداء)، وقف وسجّل الحالة `blocked` مع note تذكر إنها تحتاج Adnan.
 
-**يعتمد على:** Adnan (P2-01/P2-02 Resources، P1-15 voice buses)، Ali (CallDirector signals، Health/Sanity للـ HUD، Mission flow).
-**يعتمد عليه:** الكل، لأن الخرائط والواجهات لازمة للاختبار. ابدأ بـ grey-box و placeholder UI بسرعة.
+المجلدات: `data/calls/`, `data/dialogue/`, `data/traits/`, `data/consequences/rules/`, `autoload/save_manager.gd`, `audio/`, `tests/`, `.github/workflows/`.
+المرجع: `docs/GAMEPLAY_MECHANICS.md` §3–§6 و §10–§12، و `docs/ARCHITECTURE.md` §7.4 و §8.
 
-## المهام (28)
+**يعتمد على:** Adnan (FlagSystem P4-01، CallDirector P2-04، Health و Noise hooks).
+**يعتمد عليه:** Adnan (CallData Resources P2-01)، و Ali (DialogueGraph P2-02 للمحرر).
+
+## المهام (23)
 
 | ID | Cat | المجموعة | المهمة |
 | :--- | :--- | :--- | :--- |
-| P1-18 | ART | Grey-box | Grey-box Station 4 ops room + armory + parking |
-| P1-19 | UI | Grey-box | Main menu, host/join, lobby with class cards |
-| P2-03 | UI | Data Layer | Visual dialogue graph editor plugin |
-| P2-07 | UI | Dispatch Tools | Phone/headset UI + choice pings |
-| P2-08 | AUDIO | Dispatch Tools | Voice Stress Analyzer |
-| P2-09 | UI | Dispatch Tools | VSA scrub-and-tag mini-game |
-| P2-11 | UI | Dispatch Tools | CCTV grid (SubViewports) |
-| P2-12 | UI | Dispatch Tools | Records database terminal |
-| P2-13 | UI | Dispatch Tools | Case Board |
+| P1-02 | GAME | Project Foundation | Git LFS, .gitignore, GUT, static typing warnings |
+| P1-03 | GAME | Project Foundation | CI build pipeline (GitHub Actions) |
+| P2-01 | GAME | Data Layer | CallData, StressProfile, RecordEntry resources |
+| P2-02 | GAME | Data Layer | DialogueGraph / Node / Choice resources |
+| P2-06 | GAME | Call Director | Caller patience & timer pressure |
+| P2-10 | GAME | Dispatch Tools | Trace mini-game (3-tower triangulation) |
+| P2-15 | GAME | Assessment & Vote | Loadout armory with budget |
 | P2-16 | AUDIO | Content | Caller VO for 3 slice calls |
-| P2-18 | ART | Content | Operations room art pass v1 |
-| P3-14 | AUDIO | Anomalies | Dead Frequency radio mimicry |
-| P3-16 | ART | Missions | Map: Farmhouse |
-| P3-17 | ART | Missions | Map: Flooded Lake House + water shader |
-| P3-18 | ART | Missions | Map: Abandoned Highway + RPG set piece |
-| P3-20 | UI | Missions | Field HUD (bodycam overlay) |
-| P3-21 | ART | Missions | Character models (4 classes + 3 hostiles) |
-| P4-06 | UI | Consequences | Aftermath shift report |
-| P4-07 | UI | Consequences | Detroit-style flowchart screen |
-| P4-11 | ART | Polish | VHS / bodycam post-process |
-| P4-12 | ART | Polish | Lighting pass |
+| P2-17 | GAME | Content | Author 5 filler calls |
+| P3-05 | GAME | Combat | Arrest & ROE |
+| P3-06 | GAME | Combat | Noise event system |
+| P3-15 | GAME | Anomalies | EMF reader, banish ritual, burial objective |
+| P4-03 | GAME | Consequences | Trait system |
+| P4-04 | GAME | Consequences | Global meters + thresholds |
+| P4-05 | GAME | Consequences | Versioned JSON save system |
+| P4-08 | GAME | Consequences | Ending resolver + 3 endings |
+| P4-10 | GAME | Consequences | Shifts 2 & 3 content |
 | P4-13 | AUDIO | Polish | Ambience, foley, music, mix |
-| P4-14 | UI | Polish | Settings & accessibility |
-| P4-15 | UI | Polish | Onboarding tutorial ("Training Night") |
-| P5-04 | UI | Steam Release | Store page assets |
-| P5-05 | ART | Steam Release | Key art & trailer |
+| P5-03 | GAME | Steam Release | Crash reporting & telemetry |
 | P5-06 | GAME | Steam Release | Localization (English + Arabic RTL) |
-| P5-08 | UI | Steam Release | Steam Deck verification |
+| P5-07 | GAME | Steam Release | QA regression checklist |
+| P5-09 | GAME | Steam Release | Next Fest demo build |
+| P5-10 | GAME | Steam Release | Release candidate & day-one plan |
 
 > المصدر الحي للحالات: `data/progress/mohamed.json` + `data/tasks.json`.
 
@@ -62,46 +62,42 @@
 ### 🟢 بداية الجلسة
 ```text
 أنا Mohamed. اقرأ AGENTS.md و prompts/mohamed.md و data/progress/mohamed.json.
-لخّصلي وين وصلت، وشوف data/progress/adnan.json و ali.json إذا الأنظمة اللي تحتاجها واجهاتي خلصت، واقترح المهمة الجاية.
+لخّصلي وين وصلت، وشوف data/progress/adnan.json إذا الأنظمة اللي أحتاجها خلصت، واقترح أسهل مهمة جاية أكدر أبدي بيها.
 ```
 
-### 🧱 Grey-box والقوائم (P1-18, P1-19)
+### 🛠️ الأدوات و CI (P1-02, P1-03)
 ```text
-أنا Mohamed. سوّي grey-box لـ Station 4 (غرفة عمليات فيها 4 مكاتب dispatch، مخزن سلاح، موقف سيارات) بـ CSGCombiner3D،
-وقائمة رئيسية + Host/Join + لوبي بـ 4 بطاقات فئات (Tech Operator, Profiler, Breacher, Investigator/Medic).
-استخدم NetManager.lobby_updated signal من Adnan. الستايل: مظلم تكتيكي، أمبر #f59e0b وسيان #06b6d4. حدّث تقدمي.
+أنا Mohamed. ضيف .gitattributes لـ Git LFS (png, glb, wav, ogg)، ونزّل GUT addon، وسوي GitHub Action يشغّل GUT tests بـ Godot headless.
+اشرحلي كل خطوة.
 ```
 
-### 🖥️ أدوات غرفة العمليات (P2-07 → P2-13)
+### 🗂️ طبقة البيانات (P2-01, P2-02)
 ```text
-أنا Mohamed. ابني <Phone UI | VSA | CCTV grid | Records terminal | Case Board> بـ ui/dispatch/
-حسب docs/GAMEPLAY_MECHANICS.md §5.3 و §5.6. الـ VSA يعرض AudioEffectSpectrumAnalyzer حي + منحنيات StressProfile،
-ومعاه scrub window و Tag. خلّي شكل الشاشات CRT قديم (scanlines، خط monospace). اربط بـ signals الـ CallDirector من Ali.
+أنا Mohamed. اكتب Resources: CallData, StressProfile, RecordEntry, DialogueGraph, DialogueNode, DialogueChoice
+حسب docs/GAMEPLAY_MECHANICS.md §5.2 و §5.6 (بس @export fields + validate() بسيطة). Adnan و Ali يعتمدون عليها، فخلّي الأسماء نفس الموجودة بالوثيقة.
 ```
 
-### ✍️ محرر الحوارات (P2-03)
+### ⏱️ أنظمة بسيطة (P2-06, P2-10, P2-15, P3-05, P3-06, P3-15)
 ```text
-أنا Mohamed. اكتب EditorPlugin بـ addons/dialogue_editor/ يعرض DialogueGraph (P2-02 من Adnan) كـ GraphEdit:
-nodes للسطور، ports للخيارات، وحقول required_class و required_evidence و patience_delta، مع Save/Load لملف .tres.
+أنا Mohamed. نفّذ <مؤقت صبر المتصل | لعبة التتبع | مخزن السلاح والميزانية | الاعتقال | أحداث الضوضاء | EMF reader>
+حسب GAMEPLAY_MECHANICS. خلّي المنطق بسيط وقابل للاختبار، واكتب GUT test.
 ```
 
-### 🔊 الصوت (P2-08, P2-16, P3-14, P4-13)
+### 📞 المحتوى (P2-16, P2-17, P4-10)
 ```text
-أنا Mohamed. جهّز الصوت لـ <مكالمة | Dead Frequency | الأجواء>: رتّب audio/ حسب الـ buses بـ docs/ARCHITECTURE.md §6.3.
-للـ Dead Frequency: reverse + pitch shift + bandpass على صوت زميل مسجّل، وتتفعل عن طريق Tension Director (من Ali).
+أنا Mohamed. اكتب 5 مكالمات filler (مقالب، إزعاج، سرقة) كـ CallData + DialogueGraph .tres،
+مع StressProfile لكل وحدة، وجهّز قائمة الأصوات المطلوبة (VO) مع النصوص.
 ```
 
-### 🗺️ الخرائط والشخصيات (P3-16 → P3-18, P3-21)
+### 🦋 العواقب والحفظ (P4-03, P4-04, P4-05, P4-08)
 ```text
-أنا Mohamed. ابني خريطة <Farmhouse | Flooded Lake House | Abandoned Highway> حسب سيناريوهات docs/GAMEPLAY_MECHANICS.md §10:
-grey-box أولاً + NavigationRegion3D + نقاط الاقتحام + مناطق مظلمة لنقاط الـ Anomaly. ارفع الملفات الكبيرة بـ Git LFS.
+أنا Mohamed. فوق FlagSystem (من Adnan): طبّق TraitSystem (§3.4)، والمؤشرات (§4)، و SaveManager بـ JSON (ARCHITECTURE §7.4 و §8)،
+و EndingResolver (§7.6). كلها منطق بيانات بدون أداء ثقيل، ويا GUT tests.
 ```
 
-### 🎞️ الشكل النهائي (P4-06, P4-07, P4-11 → P4-15)
+### 🚀 الصوت والإصدار (P4-13, P5-03, P5-06, P5-07, P5-09, P5-10)
 ```text
-أنا Mohamed. نفّذ <VHS post-process | Shift report | Flowchart | Settings | Tutorial>.
-الـ VHS: chromatic aberration + scanlines + noise + timestamp overlay، ويتأثر بالـ Sanity.
-الـ Flowchart: يقرأ FlagSystem.events ويعرض الفروع المفتوحة والمقفولة مثل Detroit: Become Human.
+أنا Mohamed. جهّز <مكساج الأصوات | تقارير الأعطال | الترجمة العربية | checklist الاختبار | نسخة الديمو | release candidate>.
 ```
 
 ### 🔄 التسجيل والرفع (تلقائي)

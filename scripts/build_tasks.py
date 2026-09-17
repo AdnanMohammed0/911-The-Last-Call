@@ -9,10 +9,13 @@ import json, re, pathlib
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 LINE = re.compile(r"^- \[[ x]\] `(P(\d)-\d+)` `(\w+)` `@(\w+)` (.+)$")
 GROUP = re.compile(r"^### (\d\.\d) (.+)$")
+PHASE = re.compile(r"^## Phase \d — (.+?) \(")
 
 tasks, group = [], ""
 for line in (ROOT / "docs/PROJECT_ROADMAP.md").read_text(encoding="utf-8").splitlines():
-    if m := GROUP.match(line):
+    if m := PHASE.match(line):
+        group = m.group(1)
+    elif m := GROUP.match(line):
         group = m.group(2)
     elif m := LINE.match(line):
         tasks.append({"id": m.group(1), "phase": int(m.group(2)), "group": group,

@@ -5,24 +5,40 @@
       "id": "adnan",
       "name": "Adnan",
       "github": "AdnanMohammed0",
-      "git_emails": ["70779885+AdnanMohammed0@users.noreply.github.com"],
-      "git_names": ["Adnan M.", "Adnan"],
-      "role": "المبرمج الرئيسي — الشبكات والأنظمة الأساسية والنشر",
-      "role_en": "Lead Programmer · Networking, Core Systems & Release",
+      "git_emails": [
+        "70779885+AdnanMohammed0@users.noreply.github.com"
+      ],
+      "git_names": [
+        "Adnan M.",
+        "Adnan"
+      ],
+      "role": "الذكاء الاصطناعي، الشبكات، وجزء من اللعب",
+      "role_en": "AI, Networking & Core Gameplay",
       "color": "#f59e0b",
-      "focus": ["NET", "GAME"],
+      "focus": [
+        "AI",
+        "NET",
+        "GAME"
+      ],
       "prompt_file": "prompts/adnan.md"
     },
     {
       "id": "ali",
       "name": "Ali Imad",
       "github": "Ali-Imad-Dev",
-      "git_emails": ["aliemadnajm.iq@gmail.com"],
-      "git_names": ["Ali Imad"],
-      "role": "مبرمج اللعب والذكاء الاصطناعي — القتال، الأعداء، الكيانات، العواقب",
-      "role_en": "Gameplay & AI Programmer · Combat, Hostiles, Anomalies, Consequences",
+      "git_emails": [
+        "aliemadnajm.iq@gmail.com"
+      ],
+      "git_names": [
+        "Ali Imad"
+      ],
+      "role": "الـ 3D، العالم، الفن، والواجهات",
+      "role_en": "3D, World, Art & UI",
       "color": "#06b6d4",
-      "focus": ["GAME", "AI"],
+      "focus": [
+        "ART",
+        "UI"
+      ],
       "prompt_file": "prompts/ali.md"
     },
     {
@@ -30,11 +46,17 @@
       "name": "Mohamed",
       "github": "MohamedFSD",
       "git_emails": [],
-      "git_names": ["MohamedFSD", "Mohamed"],
-      "role": "الواجهات والصوت والفن — تجربة غرفة العمليات والخرائط",
-      "role_en": "UI/UX, Audio & Art · Dispatch Experience & Maps",
+      "git_names": [
+        "MohamedFSD",
+        "Mohamed"
+      ],
+      "role": "برمجة خفيفة: البيانات، الأدوات، المحتوى، والأنظمة البسيطة",
+      "role_en": "Light Programming: Data, Tooling, Content & Simple Systems",
       "color": "#a78bfa",
-      "focus": ["UI", "AUDIO", "ART"],
+      "focus": [
+        "GAME",
+        "AUDIO"
+      ],
       "prompt_file": "prompts/mohamed.md"
     }
   ]

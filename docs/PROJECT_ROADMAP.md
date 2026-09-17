@@ -9,9 +9,9 @@
 
 | Member | Focus | Tasks |
 | :--- | :--- | :---: |
-| **Adnan** `@adnan` | Lead: networking, voice pipeline, data layer, save/flags, Steamworks, QA & release | 27 |
-| **Ali Imad** `@ali` | Gameplay & AI: player controller, call director, combat, hostile AI, anomalies, traits, endings | 29 |
-| **Mohamed** `@mohamed` | UI/UX, audio & art: dispatch tools UI, VSA, maps, characters, VHS look, menus, store assets | 28 |
+| **Adnan** `@adnan` | AI (behavior trees, anomalies, director), networking & voice, core gameplay (player, combat, call director, flags) | 37 |
+| **Ali Imad** `@ali` | 3D, world & art (grey-box, maps, characters, lighting, VHS look) and all UI/UX | 24 |
+| **Mohamed** `@mohamed` | Lighter programming: data resources, tooling/CI, content authoring, meters/traits/save logic, audio mix, QA & release chores | 23 |
 
 | Phase | Name | Weeks | Exit Criteria (Definition of Done) |
 | :--- | :--- | :--- | :--- |
@@ -29,8 +29,8 @@
 
 ### 1.1 Project Foundation
 - [ ] `P1-01` `GAME` `@adnan` Create Godot 4.x project, folder layout, autoload skeletons (`EventBus`, `GameState`, `NetManager`)
-- [ ] `P1-02` `GAME` `@adnan` Set up Git LFS, `.gitignore`, GUT test framework, static-typing warnings as errors
-- [ ] `P1-03` `GAME` `@adnan` CI build pipeline (GitHub Actions: headless export Windows/Linux + GUT tests)
+- [ ] `P1-02` `GAME` `@mohamed` Set up Git LFS, `.gitignore`, GUT test framework, static-typing warnings as errors
+- [ ] `P1-03` `GAME` `@mohamed` CI build pipeline (GitHub Actions: headless export Windows/Linux + GUT tests)
 
 ### 1.2 Networking
 - [ ] `P1-04` `NET` `@adnan` `NetManager` host/join via ENet (port 24911, 4 peers max)
@@ -43,8 +43,8 @@
 - [ ] `P1-11` `NET` `@adnan` Network debug overlay (RTT, packet loss, bandwidth per channel)
 
 ### 1.3 Player Controller
-- [ ] `P1-12` `GAME` `@ali` First-person controller (walk, sprint, crouch, lean, stamina)
-- [ ] `P1-13` `GAME` `@ali` Interaction system (raycast, prompts, hold-to-interact, networked)
+- [ ] `P1-12` `GAME` `@adnan` First-person controller (walk, sprint, crouch, lean, stamina)
+- [ ] `P1-13` `GAME` `@adnan` Interaction system (raycast, prompts, hold-to-interact, networked)
 - [ ] `P1-14` `GAME` `@ali` Door system (open, peek, kick, locked) — replicated
 
 ### 1.4 Voice Prototype
@@ -53,8 +53,8 @@
 - [ ] `P1-17` `AUDIO` `@adnan` Radio channel with bandpass/distortion bus + squelch SFX
 
 ### 1.5 Grey-box
-- [ ] `P1-18` `ART` `@mohamed` Grey-box Station 4 operations room + armory + parking lot
-- [ ] `P1-19` `UI` `@mohamed` Main menu, host/join screens, lobby UI with class cards
+- [ ] `P1-18` `ART` `@ali` Grey-box Station 4 operations room + armory + parking lot
+- [ ] `P1-19` `UI` `@ali` Main menu, host/join screens, lobby UI with class cards
 
 **Milestone M1 — "Four On The Line":** 4-player session over Steam, 30-minute soak test, no desyncs.
 
@@ -65,32 +65,32 @@
 **Goal:** the operations room is fun on its own.
 
 ### 2.1 Data Layer
-- [ ] `P2-01` `GAME` `@adnan` `CallData`, `StressProfile`, `RecordEntry` resources + validator tool
-- [ ] `P2-02` `GAME` `@adnan` `DialogueGraph` / `DialogueNode` / `DialogueChoice` resources
-- [ ] `P2-03` `UI` `@mohamed` Editor plugin: visual dialogue graph editor (GraphEdit based)
+- [ ] `P2-01` `GAME` `@mohamed` `CallData`, `StressProfile`, `RecordEntry` resources + validator tool
+- [ ] `P2-02` `GAME` `@mohamed` `DialogueGraph` / `DialogueNode` / `DialogueChoice` resources
+- [ ] `P2-03` `UI` `@ali` Editor plugin: visual dialogue graph editor (GraphEdit based)
 
 ### 2.2 Call Director
-- [ ] `P2-04` `GAME` `@ali` `CallDirector` (host): shift clock, call queue, ring/answer/missed lifecycle
+- [ ] `P2-04` `GAME` `@adnan` `CallDirector` (host): shift clock, call queue, ring/answer/missed lifecycle
 - [ ] `P2-05` `NET` `@adnan` Handset token ownership & replicated dialogue state
-- [ ] `P2-06` `GAME` `@ali` Caller patience timer & timer-pressure modifiers
+- [ ] `P2-06` `GAME` `@mohamed` Caller patience timer & timer-pressure modifiers
 
 ### 2.3 Dispatch Tools
-- [ ] `P2-07` `UI` `@mohamed` Phone/headset UI with dialogue choices & teammate choice pings
-- [ ] `P2-08` `AUDIO` `@mohamed` Voice Stress Analyzer: live spectrum + authored stress curves, loop detector, background isolate
-- [ ] `P2-09` `UI` `@mohamed` VSA scrub-and-tag mini-game → Case Board evidence
-- [ ] `P2-10` `GAME` `@ali` Trace mini-game (3-tower triangulation) for Tech Operator
-- [ ] `P2-11` `UI` `@mohamed` CCTV grid with camera hijack & feed rendering (SubViewports)
-- [ ] `P2-12` `UI` `@mohamed` Records database terminal (criminal records, property history)
-- [ ] `P2-13` `UI` `@mohamed` Case Board (evidence pins, Pattern Link for Investigator)
+- [ ] `P2-07` `UI` `@ali` Phone/headset UI with dialogue choices & teammate choice pings
+- [ ] `P2-08` `AUDIO` `@adnan` Voice Stress Analyzer: live spectrum + authored stress curves, loop detector, background isolate
+- [ ] `P2-09` `UI` `@ali` VSA scrub-and-tag mini-game → Case Board evidence
+- [ ] `P2-10` `GAME` `@mohamed` Trace mini-game (3-tower triangulation) for Tech Operator
+- [ ] `P2-11` `UI` `@ali` CCTV grid with camera hijack & feed rendering (SubViewports)
+- [ ] `P2-12` `UI` `@ali` Records database terminal (criminal records, property history)
+- [ ] `P2-13` `UI` `@ali` Case Board (evidence pins, Pattern Link for Investigator)
 
 ### 2.4 Assessment & Vote
 - [ ] `P2-14` `NET` `@adnan` Verdict & approach voting system with timeouts and tie-breakers
-- [ ] `P2-15` `GAME` `@ali` Loadout armory with budget, class-locked items, requisition
+- [ ] `P2-15` `GAME` `@mohamed` Loadout armory with budget, class-locked items, requisition
 
 ### 2.5 Content
 - [ ] `P2-16` `AUDIO` `@mohamed` Record/source caller VO for 3 slice calls (Closet Monster, Cut Line, Meat Truck)
-- [ ] `P2-17` `GAME` `@ali` Author 5 filler calls (pranks, noise complaints, shoplifting)
-- [ ] `P2-18` `ART` `@mohamed` Operations room art pass v1 (CRT monitors, analog phones, wall map)
+- [ ] `P2-17` `GAME` `@mohamed` Author 5 filler calls (pranks, noise complaints, shoplifting)
+- [ ] `P2-18` `ART` `@ali` Operations room art pass v1 (CRT monitors, analog phones, wall map)
 
 **Milestone M2 — "Is This A Prank?":** playtest where 70 % of testers correctly classify ≥ 2 of 3 slice calls and rate dispatch ≥ 4/5 fun.
 
@@ -101,33 +101,33 @@
 **Goal:** tense, readable CQB and genuine horror.
 
 ### 3.1 Combat
-- [ ] `P3-01` `GAME` `@ali` Weapon framework (hitscan, recoil patterns, reload, host-validated fire with lag compensation)
-- [ ] `P3-02` `GAME` `@ali` Health, location damage, downed/revive, bleed-out
-- [ ] `P3-03` `GAME` `@ali` Sanity system + bands + Panic audio bus driver
-- [ ] `P3-04` `GAME` `@ali` Class abilities: shield, kick, ram, drone, megaphone, tear gas, revive, sedative, salt, tone
-- [ ] `P3-05` `GAME` `@ali` Arrest & ROE (surrender, cuffs, excessive-force events)
-- [ ] `P3-06` `GAME` `@ali` Noise event system (footsteps, gunshots, voice loudness)
+- [ ] `P3-01` `GAME` `@adnan` Weapon framework (hitscan, recoil patterns, reload, host-validated fire with lag compensation)
+- [ ] `P3-02` `GAME` `@adnan` Health, location damage, downed/revive, bleed-out
+- [ ] `P3-03` `GAME` `@adnan` Sanity system + bands + Panic audio bus driver
+- [ ] `P3-04` `GAME` `@adnan` Class abilities: shield, kick, ram, drone, megaphone, tear gas, revive, sedative, salt, tone
+- [ ] `P3-05` `GAME` `@mohamed` Arrest & ROE (surrender, cuffs, excessive-force events)
+- [ ] `P3-06` `GAME` `@mohamed` Noise event system (footsteps, gunshots, voice loudness)
 
 ### 3.2 Hostile AI
-- [ ] `P3-07` `AI` `@ali` Behavior tree runtime (selector, sequence, decorators, blackboard) + debugger
-- [ ] `P3-08` `AI` `@ali` Perception: vision cone, flashlight detection, hearing, awareness meter
-- [ ] `P3-09` `AI` `@ali` Cover query system & navmesh baking per mission
-- [ ] `P3-10` `AI` `@ali` Archetypes: Thug, Cultist Gunman, Zealot, Ambush Leader, Hostage Taker
-- [ ] `P3-11` `AI` `@ali` Squad tactics: flank tokens, callouts, morale & surrender
+- [ ] `P3-07` `AI` `@adnan` Behavior tree runtime (selector, sequence, decorators, blackboard) + debugger
+- [ ] `P3-08` `AI` `@adnan` Perception: vision cone, flashlight detection, hearing, awareness meter
+- [ ] `P3-09` `AI` `@adnan` Cover query system & navmesh baking per mission
+- [ ] `P3-10` `AI` `@adnan` Archetypes: Thug, Cultist Gunman, Zealot, Ambush Leader, Hostage Taker
+- [ ] `P3-11` `AI` `@adnan` Squad tactics: flank tokens, callouts, morale & surrender
 
 ### 3.3 Anomalies
-- [ ] `P3-12` `AI` `@ali` Anomaly FSM base + Drowned Woman (dormant→manifest→stalk→hunt→attack→retreat)
-- [ ] `P3-13` `AI` `@ali` Tension Director + per-peer hallucinations
-- [ ] `P3-14` `AUDIO` `@mohamed` Dead Frequency radio mimicry (teammate voice replay / reverse)
-- [ ] `P3-15` `GAME` `@ali` EMF reader, banish ritual, remains-burial objective
+- [ ] `P3-12` `AI` `@adnan` Anomaly FSM base + Drowned Woman (dormant→manifest→stalk→hunt→attack→retreat)
+- [ ] `P3-13` `AI` `@adnan` Tension Director + per-peer hallucinations
+- [ ] `P3-14` `AUDIO` `@adnan` Dead Frequency radio mimicry (teammate voice replay / reverse)
+- [ ] `P3-15` `GAME` `@mohamed` EMF reader, banish ritual, remains-burial objective
 
 ### 3.4 Missions
-- [ ] `P3-16` `ART` `@mohamed` Mission map: Farmhouse ("Scratching Behind the Wall")
-- [ ] `P3-17` `ART` `@mohamed` Mission map: Flooded Lake House ("Call From a Cut Line") with water-rise shader
-- [ ] `P3-18` `ART` `@mohamed` Mission map: Abandoned Highway ("The Meat Truck") + decoy cruiser RPG set piece
-- [ ] `P3-19` `GAME` `@ali` Mission flow: patrol drive, arrival, objectives, extraction, mission result
-- [ ] `P3-20` `UI` `@mohamed` Field HUD: minimal bodycam overlay, radio indicator, sanity vignette, objective ticker
-- [ ] `P3-21` `ART` `@mohamed` Character models: 4 officer classes + 3 hostile variants (rigged)
+- [ ] `P3-16` `ART` `@ali` Mission map: Farmhouse ("Scratching Behind the Wall")
+- [ ] `P3-17` `ART` `@ali` Mission map: Flooded Lake House ("Call From a Cut Line") with water-rise shader
+- [ ] `P3-18` `ART` `@ali` Mission map: Abandoned Highway ("The Meat Truck") + decoy cruiser RPG set piece
+- [ ] `P3-19` `GAME` `@adnan` Mission flow: patrol drive, arrival, objectives, extraction, mission result
+- [ ] `P3-20` `UI` `@ali` Field HUD: minimal bodycam overlay, radio indicator, sanity vignette, objective ticker
+- [ ] `P3-21` `ART` `@ali` Character models: 4 officer classes + 3 hostile variants (rigged)
 
 **Milestone M3 — "Vertical Slice":** one shift with 3 calls → 3 missions playable start to finish with 4 players.
 
@@ -140,21 +140,21 @@
 ### 4.1 Consequences
 - [ ] `P4-01` `GAME` `@adnan` `FlagSystem` with events, pending rules, replication, snapshot
 - [ ] `P4-02` `GAME` `@adnan` `ConsequenceRule` / `FlagCondition` / `FlagEffect` resources + authoring of slice rules
-- [ ] `P4-03` `GAME` `@ali` Trait system (Limping, Fractured Hand, PTSD, Phantom Ringing, Hardened…)
-- [ ] `P4-04` `GAME` `@ali` Global meters: Public Trust, Station Budget, Cult Awareness + threshold effects
-- [ ] `P4-05` `GAME` `@adnan` Save system: versioned JSON, atomic writes, migrations, Steam Cloud
-- [ ] `P4-06` `UI` `@mohamed` Aftermath shift report (events timeline, meter deltas, traits gained, leads unlocked)
-- [ ] `P4-07` `UI` `@mohamed` Detroit-style flowchart screen showing branches taken / locked
-- [ ] `P4-08` `GAME` `@ali` Ending resolver + 3 endings (Whistleblowers, Station Under Siege, Lost in the Static)
-- [ ] `P4-09` `AI` `@ali` Station Siege horde-survival mode (wave spawner in operations room)
-- [ ] `P4-10` `GAME` `@ali` Shifts 2 & 3 content: interrogation call, cult hideout mission, diversion calls
+- [ ] `P4-03` `GAME` `@mohamed` Trait system (Limping, Fractured Hand, PTSD, Phantom Ringing, Hardened…)
+- [ ] `P4-04` `GAME` `@mohamed` Global meters: Public Trust, Station Budget, Cult Awareness + threshold effects
+- [ ] `P4-05` `GAME` `@mohamed` Save system: versioned JSON, atomic writes, migrations, Steam Cloud
+- [ ] `P4-06` `UI` `@ali` Aftermath shift report (events timeline, meter deltas, traits gained, leads unlocked)
+- [ ] `P4-07` `UI` `@ali` Detroit-style flowchart screen showing branches taken / locked
+- [ ] `P4-08` `GAME` `@mohamed` Ending resolver + 3 endings (Whistleblowers, Station Under Siege, Lost in the Static)
+- [ ] `P4-09` `AI` `@adnan` Station Siege horde-survival mode (wave spawner in operations room)
+- [ ] `P4-10` `GAME` `@mohamed` Shifts 2 & 3 content: interrogation call, cult hideout mission, diversion calls
 
 ### 4.2 Polish
-- [ ] `P4-11` `ART` `@mohamed` VHS / bodycam post-process (chromatic aberration, scanlines, timestamp overlay)
-- [ ] `P4-12` `ART` `@mohamed` Lighting pass (volumetric fog, flashlight shadows, SDFGI/LightmapGI per map)
+- [ ] `P4-11` `ART` `@ali` VHS / bodycam post-process (chromatic aberration, scanlines, timestamp overlay)
+- [ ] `P4-12` `ART` `@ali` Lighting pass (volumetric fog, flashlight shadows, SDFGI/LightmapGI per map)
 - [ ] `P4-13` `AUDIO` `@mohamed` Ambience, foley, music stingers, full mix pass
-- [ ] `P4-14` `UI` `@mohamed` Settings: graphics, audio devices, mic test, keybinds, accessibility (subtitles, colorblind, arachnophobia-style toggles)
-- [ ] `P4-15` `UI` `@mohamed` Onboarding tutorial shift ("Training Night")
+- [ ] `P4-14` `UI` `@ali` Settings: graphics, audio devices, mic test, keybinds, accessibility (subtitles, colorblind, arachnophobia-style toggles)
+- [ ] `P4-15` `UI` `@ali` Onboarding tutorial shift ("Training Night")
 - [ ] `P4-16` `GAME` `@adnan` Performance pass: profiling, LODs, occlusion culling, AI tick budget
 
 **Milestone M4 — "Content Complete":** 3-shift campaign with all endings reachable; external playtest (20+ groups).
@@ -165,14 +165,14 @@
 
 - [ ] `P5-01` `NET` `@adnan` Steamworks: achievements, rich presence, friends invites, Steam Cloud
 - [ ] `P5-02` `NET` `@adnan` NAT traversal / relay fallback validation (Steam Datagram Relay)
-- [ ] `P5-03` `GAME` `@adnan` Crash reporting & telemetry opt-in (anonymous KPIs)
-- [ ] `P5-04` `UI` `@mohamed` Store page assets: capsule art, screenshots, trailer, description
-- [ ] `P5-05` `ART` `@mohamed` Key art & trailer capture (bodycam footage style)
+- [ ] `P5-03` `GAME` `@mohamed` Crash reporting & telemetry opt-in (anonymous KPIs)
+- [ ] `P5-04` `UI` `@ali` Store page assets: capsule art, screenshots, trailer, description
+- [ ] `P5-05` `ART` `@ali` Key art & trailer capture (bodycam footage style)
 - [ ] `P5-06` `GAME` `@mohamed` Localization pipeline (English + Arabic with RTL UI support)
-- [ ] `P5-07` `GAME` `@adnan` Full QA regression: networking matrix (2/3/4 players, high latency, packet loss)
-- [ ] `P5-08` `UI` `@mohamed` Steam Deck verification (controller UI, text size, performance)
-- [ ] `P5-09` `GAME` `@ali` Steam Next Fest demo build (Training Night + Shift 1)
-- [ ] `P5-10` `GAME` `@adnan` Release candidate, day-one patch plan, community Discord & bug report flow
+- [ ] `P5-07` `GAME` `@mohamed` Full QA regression: networking matrix (2/3/4 players, high latency, packet loss)
+- [ ] `P5-08` `UI` `@ali` Steam Deck verification (controller UI, text size, performance)
+- [ ] `P5-09` `GAME` `@mohamed` Steam Next Fest demo build (Training Night + Shift 1)
+- [ ] `P5-10` `GAME` `@mohamed` Release candidate, day-one patch plan, community Discord & bug report flow
 
 **Milestone M5 — "The Last Call":** Early Access launch.
 

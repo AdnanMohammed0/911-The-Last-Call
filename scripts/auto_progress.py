@@ -47,6 +47,9 @@ def main() -> int:
     for c in event.get("commits", []):
         msg = c.get("message", "")
         files = c.get("added", []) + c.get("modified", []) + c.get("removed", [])
+        if not files:  # force pushes / large pushes omit file lists: ask git
+            files = subprocess.run(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", c["id"]],
+                                   cwd=ROOT, capture_output=True, text=True).stdout.split()
         if not c.get("distinct", True) or "[skip progress]" in msg or msg.startswith("progress("):
             continue
         if any(f.startswith("data/progress/") for f in files):

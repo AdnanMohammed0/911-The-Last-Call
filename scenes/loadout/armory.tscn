@@ -1,0 +1,212 @@
+[gd_scene load_steps=20 format=3 uid="uid://station4_armory_p1"]
+
+[ext_resource type="Script" path="res://core/net/player_spawner.gd" id="1_spawner"]
+[ext_resource type="Script" path="res://scenes/shared/player/player_debug_hud.gd" id="2_hud"]
+[ext_resource type="PackedScene" uid="uid://c6fdoor842p1" path="res://scenes/shared/door/door.tscn" id="3_door"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_night"]
+sky_top_color = Color(0.02, 0.04, 0.08, 1)
+sky_horizon_color = Color(0.05, 0.07, 0.12, 1)
+ground_bottom_color = Color(0.01, 0.02, 0.04, 1)
+ground_horizon_color = Color(0.04, 0.05, 0.09, 1)
+
+[sub_resource type="Sky" id="Sky_night"]
+sky_material = SubResource("ProceduralSkyMaterial_night")
+
+[sub_resource type="Environment" id="Environment_armory"]
+background_mode = 2
+sky = SubResource("Sky_night")
+ambient_light_source = 3
+ambient_light_color = Color(0.15, 0.14, 0.12, 1)
+ambient_light_energy = 0.5
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.6
+
+[sub_resource type="StandardMaterial3D" id="Mat_Floor"]
+albedo_color = Color(0.14, 0.16, 0.18, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="Mat_Wall"]
+albedo_color = Color(0.24, 0.26, 0.29, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Mat_Ceiling"]
+albedo_color = Color(0.1, 0.11, 0.13, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_Desk"]
+albedo_color = Color(0.16, 0.18, 0.22, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="Mat_ScreenCyan"]
+albedo_color = Color(0.02, 0.71, 0.83, 1)
+emission_enabled = true
+emission = Color(0.02, 0.71, 0.83, 1)
+emission_energy_multiplier = 2.5
+
+[sub_resource type="StandardMaterial3D" id="Mat_MetalCage"]
+albedo_color = Color(0.3, 0.33, 0.36, 1)
+metallic = 0.8
+roughness = 0.3
+
+[sub_resource type="StandardMaterial3D" id="Mat_Locker"]
+albedo_color = Color(0.18, 0.24, 0.22, 1)
+metallic = 0.5
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="Mat_AmmoCrate"]
+albedo_color = Color(0.28, 0.32, 0.18, 1)
+roughness = 0.7
+
+[node name="Station4_Armory" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_armory")
+
+[node name="Geometry" type="Node3D" parent="."]
+
+[node name="ArmoryCSG" type="CSGCombiner3D" parent="Geometry"]
+use_collision = true
+
+[node name="Floor" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+size = Vector3(14, 0.5, 12)
+material = SubResource("Mat_Floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.65, 0)
+size = Vector3(14, 0.3, 12)
+material = SubResource("Mat_Ceiling")
+
+[node name="WallNorth" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, -6)
+size = Vector3(14, 3.5, 0.4)
+material = SubResource("Mat_Wall")
+
+[node name="WallSouth" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 6)
+size = Vector3(14, 3.5, 0.4)
+material = SubResource("Mat_Wall")
+
+[node name="WallEast" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1.75, 0)
+size = Vector3(0.4, 3.5, 12)
+material = SubResource("Mat_Wall")
+
+[node name="WallWest_North" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 1.75, -3.5)
+size = Vector3(0.4, 3.5, 5)
+material = SubResource("Mat_Wall")
+
+[node name="WallWest_South" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 1.75, 3.5)
+size = Vector3(0.4, 3.5, 5)
+material = SubResource("Mat_Wall")
+
+[node name="WallWest_Lintel" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 2.85, 0)
+size = Vector3(0.4, 1.3, 2)
+material = SubResource("Mat_Wall")
+
+[node name="TacticalBriefingTable" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+size = Vector3(3.6, 0.9, 2.2)
+material = SubResource("Mat_Desk")
+
+[node name="TableHoloProjector" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.92, 0)
+size = Vector3(3.0, 0.05, 1.6)
+material = SubResource("Mat_ScreenCyan")
+
+[node name="RequisitionCounter" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.55, 0)
+size = Vector3(0.8, 1.1, 4.0)
+material = SubResource("Mat_Desk")
+
+[node name="RequisitionBars" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 2.3, 0)
+size = Vector3(0.1, 2.4, 4.0)
+material = SubResource("Mat_MetalCage")
+
+[node name="WeaponRackNorth1" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.2, -5.6)
+size = Vector3(2.5, 2.4, 0.4)
+material = SubResource("Mat_MetalCage")
+
+[node name="WeaponRackNorth2" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.2, -5.6)
+size = Vector3(2.5, 2.4, 0.4)
+material = SubResource("Mat_MetalCage")
+
+[node name="GearLockersEast" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.6, 1.2, 0)
+size = Vector3(0.5, 2.4, 6.0)
+material = SubResource("Mat_Locker")
+
+[node name="AmmoCratesStack" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.5, 4.2)
+size = Vector3(2.2, 1.0, 2.2)
+material = SubResource("Mat_AmmoCrate")
+
+[node name="Workbench" type="CSGBox3D" parent="Geometry/ArmoryCSG"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.45, 5.4)
+size = Vector3(3.6, 0.9, 0.8)
+material = SubResource("Mat_Desk")
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="ArmoryExitDoor" parent="Doors" instance=ExtResource("3_door")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -7, 0, 0)
+
+[node name="Lighting" type="Node3D" parent="."]
+
+[node name="BriefingSpotLight" type="SpotLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 3.4, 0)
+light_color = Color(0.96, 0.85, 0.65, 1)
+light_energy = 3.5
+spot_range = 6.0
+spot_angle = 45.0
+shadow_enabled = true
+
+[node name="ArmoryAmbientLight" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0, 0)
+light_color = Color(1, 0.88, 0.68, 1)
+light_energy = 1.2
+omni_range = 10.0
+
+[node name="Labels3D" type="Node3D" parent="."]
+
+[node name="LabelTitle" type="Label3D" parent="Labels3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, -5.7)
+text = "STATION 4 ARMORY — TACTICAL LOADOUT & REQUISITION"
+font_size = 28
+outline_size = 6
+
+[node name="Players" type="Node3D" parent="."]
+
+[node name="SpawnPoints" type="Node3D" parent="."]
+
+[node name="Spawn1" type="Marker3D" parent="SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0.05, 0)
+
+[node name="Spawn2" type="Marker3D" parent="SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.05, 0)
+
+[node name="Spawn3" type="Marker3D" parent="SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -2.0)
+
+[node name="Spawn4" type="Marker3D" parent="SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 2.0)
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="." node_paths=PackedStringArray("spawn_points")]
+spawn_path = NodePath("../Players")
+script = ExtResource("1_spawner")
+spawn_points = NodePath("../SpawnPoints")
+
+[node name="DebugHUD" type="Label" parent="."]
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 620.0
+offset_bottom = 140.0
+script = ExtResource("2_hud")

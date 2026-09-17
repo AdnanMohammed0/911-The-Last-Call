@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ArchetypeData" format=3]
+
+[ext_resource type="Script" path="res://data/ai/archetype_data.gd" id="1_j41fd"]
+
+[resource]
+script = ExtResource("1_j41fd")
+id = &"ambush_leader"
+display_name = "Ambush Leader"
+color = Color(0.15, 0.02, 0.05, 1)
+max_hp = 160.0
+morale = 85.0
+weapon_name = "Rifle"
+damage = 18.0
+effective_range = 40.0
+fire_interval = 0.2
+magazine = 30
+accuracy = 0.65
+reinforcements = 2
+arrest_intel = true

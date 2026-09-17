@@ -2,6 +2,12 @@
 class_name DialogueGraph
 extends Resource
 
+@warning_ignore_start("unsafe_call_argument")
+@warning_ignore_start("unsafe_cast")
+@warning_ignore_start("unsafe_method_access")
+@warning_ignore_start("unsafe_property_access")
+@warning_ignore_start("untyped_declaration")
+
 ## Starting node identifier when the call is answered.
 @export var initial_node_id: StringName = &"start"
 ## All nodes comprising this graph.
@@ -121,9 +127,16 @@ func validate() -> Dictionary:
 ## Compatibility helper for DialogueGraphEditor
 func validate_graph() -> Dictionary:
 	var res: Dictionary = validate()
-	var errs: PackedStringArray = res.get("errors", PackedStringArray())
+	var err_arr: Array = []
+	if res.has("errors"):
+		for e in res["errors"]:
+			err_arr.append(str(e))
+	var warn_arr: Array = []
+	if res.has("warnings"):
+		for w in res["warnings"]:
+			warn_arr.append(str(w))
 	return {
-		"valid": errs.is_empty(),
-		"errors": Array(errs),
-		"warnings": Array(res.get("warnings", PackedStringArray()))
+		"valid": err_arr.is_empty(),
+		"errors": err_arr,
+		"warnings": warn_arr,
 	}

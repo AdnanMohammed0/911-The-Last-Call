@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="GearItem" format=3]
+
+[ext_resource type="Script" path="res://data/loadout/gear_item.gd" id="1_gi"]
+
+[resource]
+script = ExtResource("1_gi")
+id = &"patrol_rifle"
+display_name = "Patrol Rifle"
+description = "Medium-range precision weapon."
+cost = 700
+slot = 1
+icon = null
+allowed_classes = []
+breacher_discount = false
+quantity_per_purchase = 1
+max_carry = 1

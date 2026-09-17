@@ -16,6 +16,9 @@ signal state_entered(state: StringName)
 ## Area3D that defines where this anomaly haunts (players inside count as "in the zone").
 @export var zone: Area3D
 
+## EMF emission level (0-5) for EMF Reader detection
+@export var emf_level: int = 0
+
 var fsm: StateMachine = StateMachine.new()
 
 # --- Replicated (Sync) ---
@@ -119,6 +122,11 @@ func is_lit_by(player: Player, max_distance: float) -> bool:
 	if offset.length() > max_distance:
 		return false
 	return rad_to_deg((-camera.global_basis.z).angle_to(offset.normalized())) <= 30.0
+
+
+## Returns the current EMF emission level for EMF Reader detection
+func get_emf_level() -> int:
+	return emf_level
 
 
 func lights_near(point: Vector3, radius: float) -> Array[Light3D]:

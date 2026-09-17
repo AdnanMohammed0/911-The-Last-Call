@@ -51,6 +51,11 @@
       "status": "done",
       "updated_at": "2026-09-18",
       "note": "Noise event system: NoiseSystem autoload with footstep (walk 4m, sprint 10m, crouch 1.5m, Breacher 1.6x), door (kick 25m, open 8m, peek 3m), gunshot (60m), voice (2-20m RMS-scaled), grenade (30m), explosion (50m), glass break (15m). Integrated with Door, WeaponHolder, VoiceManager, AIPerception. GUT tests written (9 tests)."
+    },
+    "P3-15": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "EMF Reader, banish ritual, remains-burial objective: EMFReader (EMF detection 0-5, Medic primary, 50% accuracy others), SaltCanister (30s barrier, anomaly retreat), SpectralToneEmitter (8s channel, banishes anomalies), RemainsInteraction (4s dig, sets lake_house_cleared flag), ShovelTool (4s dig, triggers on_bones_buried), GearItems for all (EMF Reader, Salt Canister, Spectral Tone Emitter, Trauma Kit, Sedatives, Ballistic Shield, Battering Ram, Recon Drone, Tear Gas, Service Pistol, Pump Shotgun, Patrol Rifle, Shovel). Drowned Woman anomaly integration with on_reverse_tone_complete, on_salt_line, on_salt_thrown, on_bones_buried. GUT tests written (14 tests)."
     }
   },
   "log": [
@@ -303,6 +308,37 @@
         "core/ai/ai_perception.gd",
         "project.godot",
         "tests/test_noise_system.gd",
+        "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P3-15"
+      ],
+      "summary": "P3-15 EMF Reader, banish ritual, remains-burial objective: EMFReader (EMF detection 0-5, Medic primary, 50% accuracy others), SaltCanister (30s barrier, anomaly retreat), SpectralToneEmitter (8s channel, banishes anomalies), RemainsInteraction (4s dig, sets lake_house_cleared flag), ShovelTool (4s dig, triggers on_bones_buried), GearItems for all (EMF Reader, Salt Canister, Spectral Tone Emitter, Trauma Kit, Sedatives, Ballistic Shield, Battering Ram, Recon Drone, Tear Gas, Service Pistol, Pump Shotgun, Patrol Rifle, Shovel). Drowned Woman anomaly integration with on_reverse_tone_complete, on_salt_line, on_salt_thrown, on_bones_buried. GUT tests written (14 tests).",
+      "files": [
+        "scenes/shared/gadgets/emf_reader.gd",
+        "scenes/shared/gadgets/salt_canister.gd",
+        "scenes/shared/gadgets/spectral_tone_emitter.gd",
+        "scenes/shared/gadgets/remains_interaction.gd",
+        "scenes/shared/gadgets/shovel_tool.gd",
+        "scenes/field/anomalies/drowned_woman.gd",
+        "scenes/field/anomalies/anomaly.gd",
+        "data/loadout/gear/emf_reader.tres",
+        "data/loadout/gear/salt_canister.tres",
+        "data/loadout/gear/spectral_tone_emitter.tres",
+        "data/loadout/gear/trauma_kit.tres",
+        "data/loadout/gear/sedatives.tres",
+        "data/loadout/gear/ballistic_shield.tres",
+        "data/loadout/gear/battering_ram.tres",
+        "data/loadout/gear/recon_drone.tres",
+        "data/loadout/gear/tear_gas.tres",
+        "data/loadout/gear/service_pistol.tres",
+        "data/loadout/gear/pump_shotgun.tres",
+        "data/loadout/gear/patrol_rifle.tres",
+        "data/loadout/gear/shovel.tres",
+        "tests/test_anomaly_tools.gd",
         "docs/data/progress/mohamed.json"
       ]
     }

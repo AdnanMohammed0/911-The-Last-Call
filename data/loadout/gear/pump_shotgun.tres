@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="GearItem" format=3]
+
+[ext_resource type="Script" path="res://data/loadout/gear_item.gd" id="1_gi"]
+
+[resource]
+script = ExtResource("1_gi")
+id = &"pump_shotgun"
+display_name = "Pump Shotgun"
+description = "Close-range powerhouse. Breacher gets 15% discount."
+cost = 400
+slot = 1
+icon = null
+allowed_classes = []
+breacher_discount = true
+quantity_per_purchase = 1
+max_carry = 1

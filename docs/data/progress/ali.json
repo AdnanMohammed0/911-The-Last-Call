@@ -60,6 +60,21 @@
    ],
    "commit": "09a090a",
    "auto": true
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-14"
+   ],
+   "summary": "feat(door): set default Open_Door audio on base Door scene — P1-14",
+   "files": [
+    "audio/Open_Door.mp3",
+    "audio/Open_Door.mp3.import",
+    "scenes/shared/door/door.tscn",
+    "scenes/shared/player/player_sandbox.tscn"
+   ],
+   "commit": "53e4a11",
+   "auto": true
   }
  ]
 }

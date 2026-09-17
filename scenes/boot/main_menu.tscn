@@ -120,23 +120,24 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Ready"
 
+[node name="Station4Button" type="Button" parent="Center/Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "► Play Station 4 (Operations Room, Armory, Parking)"
+
 [node name="StartButton" type="Button" parent="Center/Panel"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Start (host)"
-
-[node name="SandboxButton" type="Button" parent="Center/Panel"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Offline sandbox (movement + interaction)"
+text = "Start Game (Host Station 4)"
 
 [node name="DoorSandboxButton" type="Button" parent="Center/Panel"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Door test sandbox (P1-14)"
 
-[node name="Station4Button" type="Button" parent="Center/Panel"]
+[node name="SandboxButton" type="Button" parent="Center/Panel"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Station 4 Operations Room (P1-18)"
+text = "Legacy movement sandbox (old map)"
+
 

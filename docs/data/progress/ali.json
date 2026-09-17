@@ -124,6 +124,19 @@
     "core/net/player_spawner.gd",
     "scenes/dispatch/operations_room.tscn"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-18"
+   ],
+   "summary": "feat(world): link Station 4 as default start scene and add portal in legacy sandbox — P1-18",
+   "files": [
+    "scenes/boot/main_menu.gd",
+    "scenes/boot/main_menu.tscn",
+    "scenes/shared/interactables/interactable_scene_door.gd",
+    "scenes/shared/player/player_sandbox.tscn"
+   ]
   }
  ]
 }

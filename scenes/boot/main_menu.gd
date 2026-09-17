@@ -3,7 +3,8 @@
 ## Authority: LOCAL
 extends Control
 
-const FIELD_SCENE: String = "res://scenes/shared/player/player_sandbox.tscn"
+const FIELD_SCENE: String = "res://scenes/dispatch/operations_room.tscn"
+const LEGACY_SANDBOX_SCENE: String = "res://scenes/shared/player/player_sandbox.tscn"
 const DOOR_SANDBOX_SCENE: String = "res://scenes/shared/door/door_sandbox.tscn"
 const STATION4_SCENE: String = "res://scenes/dispatch/operations_room.tscn"
 
@@ -95,7 +96,7 @@ func _on_rejoin_pressed() -> void:
 
 
 func _on_sandbox_pressed() -> void:
-	get_tree().change_scene_to_file(FIELD_SCENE)
+	get_tree().change_scene_to_file(LEGACY_SANDBOX_SCENE)
 
 
 func _on_start_pressed() -> void:

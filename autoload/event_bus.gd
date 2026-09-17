@@ -45,6 +45,12 @@ signal interacted(interactable: Node, peer_id: int)
 # --- Noise / AI hearing ---
 ## Host: something made noise audible within `radius` metres (GAMEPLAY §7: walk 4, sprint 10, kick 25, gunshot 60).
 signal noise_event(position: Vector3, radius: float, source_peer: int)
+
+# --- Hostiles ---
+signal hostile_killed(hostile: Node, by_peer: int)
+## A suspect put their hands up and can be arrested (P3-05).
+signal suspect_surrendered(hostile: Node)
+signal hostage_executed(hostile: Node)
 ## Host: a player spoke (proximity or radio). Loudness 0..1 (ARCHITECTURE §6.4).
 signal voice_noise(peer_id: int, position: Vector3, loudness: float)
 

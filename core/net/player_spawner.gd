@@ -107,6 +107,10 @@ func _on_peer_left(peer_id: int) -> void:
 ## Synchronizers we own in this level (HostSync, ClientSync, doors, props…) only replicate to peers that
 ## have loaded it; a peer still in the menu or loading would otherwise get packets for missing nodes.
 ## On the host, spawn visibility follows the same rule, so players spawn on a peer right after it loads.
+func refresh_visibility() -> void:
+	_refresh_visibility()
+
+
 func _refresh_visibility() -> void:
 	var level: Node = owner if owner != null else get_parent()
 	for node: Node in level.find_children("*", "MultiplayerSynchronizer", true, false):

@@ -106,6 +106,16 @@
    "status": "testing",
    "note": "MissionNavigation (NavigationRegion3D): يسوي bake للـ navmesh من هندسة المهمة على الهوست عند التحميل (أولاد العقدة أو group)، ويولد CoverPoints تلقائياً على حافة الـ navmesh جنب الجدران (LOW للجدار الواطي، HIGH للعالي) إذا ماكو نقاط مصممة. CoverQuery: غطاء على بعد 8-20م من التهديد، محمي منه، يقدر يطل ويرمي، مو مكشوف لتهديد ثاني (flank)، مو محجوز لغيره، والتقييم بطول المسار على الـ navmesh. claim/release. 6 اختبارات GUT نجحت.",
    "updated_at": "2026-09-17"
+  },
+  "P3-10": {
+   "status": "testing",
+   "note": "5 archetypes (data/ai/archetypes) من جدول §8.1 + HostileAgent (hostile.tscn): navigation، AIPerception، BTRunner، إطلاق hitscan على الهوست يضر Health اللاعب (دقة تقل بالمسافة والحركة والانحناء، مناطق إصابة)، ضوضاء طلقة 60م، مزامنة الموقع/الحركة/الحالة/HP للـ clients. HostileBrains تبني شجرة لكل نوع: Thug (دورية، غطاء، استسلام سهل 35)، Cultist Gunman (غطاء + التفاف)، Zealot (هجوم مباشر + IED، ما يستسلم)، Ambush Leader (يطلب تعزيز +2)، Hostage Taker (يمسك الرهينة ويعدمها 50% عند اقتحام صاخب). EnemySpawner + EnemySpawnPoint + مشهد اختبار ai_test_range.tscn. اختبار سلوك (14 فحص) + اختبار شبكة + GUT نجحت.",
+   "updated_at": "2026-09-17"
+  },
+  "P3-11": {
+   "status": "testing",
+   "note": "AISquad: callout ينقل الهدف لكل الفريق، flank tokens (نص الفريق كحد أقصى، مهلة 8ث وتبريد 10ث)، معنويات: موت حليف -15، موت القائد -30، درع/مكبر صوت/غاز (-10/-25/-20) كـ hooks، تفوق عددي +10. الاستسلام: معنويات < الحد وغير متعصب ويشوف لاعبين 2+ أو تفاوض → يرفع ايده وينتظر الاعتقال (EventBus.suspect_surrendered لـ P3-05). الهروب: HP < 25% ومعنويات < 40. 10 اختبارات GUT نجحت.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -612,6 +622,27 @@
     "core/ai/cover_point.gd",
     "core/ai/cover_query.gd",
     "tests/test_cover_navigation.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P3-10",
+    "P3-11"
+   ],
+   "summary": "أعداء قابلين للعب: 5 أنواع بسلوك مختلف، إطلاق نار حقيقي، غطاء والتفاف، فرق بمعنويات واستسلام، تعزيزات، رهائن، ومشهد اختبار للـ AI. صلحت خط النظر اللي كان يمنع الغطاء.",
+   "files": [
+    "data/ai/",
+    "scenes/field/enemies/",
+    "scenes/field/test_range/ai_test_range.tscn",
+    "core/ai/ai_squad.gd",
+    "core/ai/hostile_brains.gd",
+    "core/ai/enemy_spawner.gd",
+    "core/ai/enemy_spawn_point.gd",
+    "core/ai/mission_navigation.gd",
+    "core/net/player_spawner.gd",
+    "autoload/event_bus.gd",
+    "tests/test_hostile_ai.gd"
    ]
   }
  ]

@@ -14,6 +14,8 @@ signal navigation_ready(cover_points: int)
 @export var source_group: StringName = &""
 @export var agent_radius: float = 0.4
 @export var cover_spacing: float = 1.6
+## Also parse visual meshes (only needed for geometry without collision).
+@export var parse_render_meshes: bool = false
 
 var is_ready_for_ai: bool = false
 
@@ -27,7 +29,8 @@ func _ready() -> void:
 	mesh.agent_max_climb = 0.35
 	mesh.cell_size = 0.25
 	mesh.cell_height = 0.25
-	mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_BOTH
+	# Collision shapes are enough for walkability and avoid slow runtime mesh parsing.
+	mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_BOTH if parse_render_meshes else NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
 	if source_group != &"":
 		mesh.geometry_source_geometry_mode = NavigationMesh.SOURCE_GEOMETRY_GROUPS_WITH_CHILDREN
 		mesh.geometry_source_group_name = source_group

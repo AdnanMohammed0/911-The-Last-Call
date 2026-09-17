@@ -207,6 +207,27 @@
     "project.godot",
     "tests/test_dialogue_graph_editor.gd"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P2-03"
+   ],
+   "summary": "fix(reconcile): restore deleted project files and integrate dialogue graph validation — P2-03",
+   "files": [
+    "addons/dialogue_editor/dialogue_graph_node.gd.uid",
+    "addons/dialogue_editor/dialogue_graph_view.gd.uid",
+    "addons/dialogue_editor/plugin.gd.uid",
+    "audio/Close_Door.mp3",
+    "audio/Close_Door.mp3.import",
+    "audio/Walking-2.mp3",
+    "audio/Walking-2.mp3.import",
+    "audio/Walking.mp3",
+    "audio/Walking.mp3.import",
+    "autoload/bt_debugger.gd"
+   ],
+   "commit": "74c1f7a",
+   "auto": true
   }
  ]
 }

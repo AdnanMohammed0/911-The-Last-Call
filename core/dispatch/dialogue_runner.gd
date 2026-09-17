@@ -183,5 +183,9 @@ func add_revealed_evidence(evidence_key: StringName) -> void:
 
 
 func stop(reason: StringName = &"hangup") -> void:
+	# Guard: CallDirector hangs up when the dialogue finishes, and hanging up stops the dialogue.
+	# Without this check the two call each other forever (stack overflow).
+	if not is_active:
+		return
 	is_active = false
 	dialogue_finished.emit(reason)

@@ -92,6 +92,7 @@ func set_shift_time(minutes: int) -> void:
 	shift_clock_accum_seconds = 0.0
 	if _is_server():
 		_sync_shift_clock.rpc(shift_clock_minutes)
+		_check_scheduled_calls()
 	else:
 		EventBus.shift_clock_updated.emit(shift_clock_minutes)
 
@@ -305,8 +306,9 @@ func _hangup_call(reason: StringName) -> void:
 	if phone_audio_player != null and phone_audio_player.playing:
 		phone_audio_player.stop()
 	
-	dialogue_runner.stop(reason)
+	# Leave CONNECTED before stopping the runner so its "finished" signal does not hang up again.
 	current_state = CallState.ASSESSMENT
+	dialogue_runner.stop(reason)
 	_sync_call_assessment_started.rpc(active_call_id)
 
 

@@ -93,15 +93,16 @@ func test_dialogue_runner_patience_depletion() -> void:
 	var runner: DialogueRunner = DialogueRunner.new()
 	var graph: DialogueGraph = _create_branching_dialogue()
 	
-	var finished_reason: StringName = &""
-	runner.dialogue_finished.connect(func(reason: StringName) -> void: finished_reason = reason)
+	# Lambdas capture locals by value, so collect the reason in an array (captured by reference).
+	var finished_reasons: Array[StringName] = []
+	runner.dialogue_finished.connect(func(reason: StringName) -> void: finished_reasons.append(reason))
 	
 	runner.start(graph, 10.0)
 	runner.tick(12.0)
 	
 	assert_false(runner.is_active)
 	assert_eq(runner.patience_remaining, 0.0)
-	assert_eq(finished_reason, &"patience_depleted")
+	assert_eq(finished_reasons, [&"patience_depleted"] as Array[StringName])
 
 
 func test_handset_token_ownership_lifecycle() -> void:

@@ -504,6 +504,18 @@
     "ui/hud/pause_menu.tscn",
     "scenes/shared/interactables/interactable_scene_door.gd"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P2-04"
+   ],
+   "summary": "تصليح crash بـ CallDirector: قطع المكالمة كان يسوي تكرار لا نهائي (hangup → stop → finished → hangup). وset_shift_time صار يفحص المكالمات المجدولة. تصليح اختبار patience (lambda تلتقط بالقيمة). كل 47 اختبار GUT تنجح.",
+   "files": [
+    "autoload/call_director.gd",
+    "core/dispatch/dialogue_runner.gd",
+    "tests/test_dialogue_replication.gd"
+   ]
   }
  ]
 }

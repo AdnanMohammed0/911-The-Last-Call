@@ -11,6 +11,16 @@
    "status": "testing",
    "note": "CI build pipeline جاهز: .github/workflows/ci.yml (GUT tests + headless export Windows/Linux بـ Godot 4.7.2-stable + templates + artifacts). export_presets.cfg معياريتان (Windows Desktop, Linux/X11) ورفعته من .gitignore. تم التحقق محلياً: YAML صحيح، presets تنقرأ، GUT يخرج 0/1. ينتظر تشغيل GitHub Actions.",
    "updated_at": "2026-09-17"
+  },
+  "P2-01": {
+   "status": "testing",
+   "note": "الـ Resources (CallData, StressProfile, RecordEntry) موجودة. انضاف CallValidator (يفحص id، التوقيت، الحوار، ملف VSA، السجلات، وإن المكالمة المخادعة بيها دليل) + أداة سطر أوامر tools/validate_calls.gd + خطوة بـ CI + مكالمة تجريبية call_closet_monster.tres. 11 اختبار GUT نجحت.",
+   "updated_at": "2026-09-17"
+  },
+  "P2-02": {
+   "status": "testing",
+   "note": "DialogueGraph صار عنده validate(): عقدة بداية مفقودة، ids مكررة، روابط لعقد مو موجودة، كلاس غير معروف (أخطاء)، وعقد ما توصلها (تحذير). DialogueChoice.is_available_for(class, evidence). 11 اختبار GUT نجحت.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -69,6 +79,24 @@
    ],
    "commit": "f07c636",
    "auto": true
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P2-01",
+    "P2-02"
+   ],
+   "summary": "أداة فحص المكالمات (CallValidator + tools/validate_calls.gd + CI)، فحص الحوار DialogueGraph.validate()، شرط اختيار الرد حسب الكلاس والأدلة، مكالمة Closet Monster تجريبية، و22 اختبار GUT.",
+   "files": [
+    "data/calls/call_validator.gd",
+    "tools/validate_calls.gd",
+    "data/dialogue/dialogue_graph.gd",
+    "data/dialogue/dialogue_choice.gd",
+    "data/calls/slice/call_closet_monster.tres",
+    "tests/test_call_validator.gd",
+    "tests/test_dialogue_graph.gd",
+    ".github/workflows/ci.yml"
+   ]
   }
  ]
 }

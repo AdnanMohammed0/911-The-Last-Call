@@ -31,6 +31,9 @@ jobs:
       - name: Import assets (headless)
         run: godot --headless --import
 
+      - name: Validate call data
+        run: godot --headless -s res://tools/validate_calls.gd
+
       - name: Run GUT tests
         run: godot --headless -s res://addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
 

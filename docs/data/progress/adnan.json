@@ -43,27 +43,27 @@
    "updated_at": "2026-09-17"
   },
   "P1-10": {
-   "status": "testing",
+   "status": "done",
    "note": "اللاعب اللي ينقطع أثناء اللعب: جسمه يبقى مكتوب عليه (disconnected) ومكانه محجوز 60 ث بـ token. يرجع بنفس الكلاس وبنفس مكان جسمه، وينقل تلقائياً للمشهد الحالي. الغريب ينرفض. انتهاء المهلة يشيل الجسم. timeout مال ENet صار 4-8 ث. Esc = قائمة إيقاف (Resume / Leave / Quit) توقف الحركة. انقطاع الهوست يرجعك للقائمة مع السبب وزر Rejoin. اختبار 4 عمليات (27 فحص) نجح.",
    "updated_at": "2026-09-17"
   },
   "P1-11": {
-   "status": "testing",
+   "status": "done",
    "note": "NetDebug overlay (F3 أو -- --netdebug): حالة الجلسة، FPS، لكل peer: RTT + avg/max آخر 30 ث + jitter + packet loss + strikes التحقق (للهوست). الباندويث لكل قناة: voice (ch 2) من العدادات، game (ch 0) = الباقي، total من ENet. اختبار host + client نجح.",
    "updated_at": "2026-09-17"
   },
   "P1-15": {
-   "status": "testing",
+   "status": "done",
    "note": "الميكروفون → Record bus (AudioEffectCapture) → mono 16kHz إطارات 20ms → codec → RPC unreliable_ordered على channel 2 → jitter buffer 60ms → AudioStreamGenerator. الـ codec حالياً IMA ADPCM مكتوب بـ GDScript (~65 kbps، SNR 35 dB) خلف واجهة VoiceCodec؛ Opus يحتاج GDExtension خارجي (twovoip) ينضاف بعد الموافقة. اختبار 3 عمليات نجح + الميكروفون الحقيقي يلتقط.",
    "updated_at": "2026-09-17"
   },
   "P1-16": {
-   "status": "testing",
+   "status": "done",
    "note": "الصوت يطلع من VoiceEmitter (AudioStreamPlayer3D) براس اللاعب: تخفيت بالمسافة (unit 3م، max 35م) + كتمان إذا أكو جدار بين الاثنين (lowpass 900Hz و -8dB). Open mic بـ VAD (RMS gate + hangover) أو push-to-talk بـ Caps Lock، يتبدل من قائمة Esc. واجهة صوت: MIC/RADIO + مستوى الميكروفون + منو يحجي. يرسل voice_noise للـ AI على الهوست.",
    "updated_at": "2026-09-17"
   },
   "P1-17": {
-   "status": "testing",
+   "status": "done",
    "note": "راديو بزر B: VoiceRadio bus (HighPass 300 + LowPass 3400 + Distortion LOFI + Compressor)، squelch داخل/طالع مولّد بالكود (بدون ملفات)، ما يشتغل الراديو إذا المتكلم أقرب من 4م (تسمعه مباشرة). V كان مذكور بالوثيقة بس مستخدم للـ door kick عند Ali.",
    "updated_at": "2026-09-17"
   },
@@ -403,6 +403,34 @@
     "P2-08"
    ],
    "summary": "محرك المكالمات والحوار والتحليل الصوتي: CallDirector (ساعة الشفت، طابور المكالمات، ودورة حياة الرنين والرد والإلغاء والتصنيف)، ملكية سماعة الهاتف ومزامنة الحوار التفاعلي وخيارات الكلاسات وتأشير الفريق، ومحلل نبرة الصوت (VSA) بترددات الطيف ومنحنيات الإجهاد وكشف التكرار وعزل الخلفية ونظام الوسوم.",
+   "files": [
+    "autoload/call_director.gd",
+    "core/dispatch/dialogue_runner.gd",
+    "core/dispatch/voice_stress_analyzer.gd",
+    "data/calls/",
+    "data/dialogue/",
+    "data/consequences/flag_condition.gd",
+    "autoload/event_bus.gd",
+    "default_bus_layout.tres",
+    "project.godot",
+    "tests/test_call_director.gd",
+    "tests/test_dialogue_replication.gd",
+    "tests/test_voice_stress_analyzer.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-10",
+    "P1-11",
+    "P1-15",
+    "P1-16",
+    "P1-17",
+    "P2-04",
+    "P2-05",
+    "P2-08"
+   ],
+   "summary": "إغلاق واكتمال مهام الشبكة والصوت وغرفة العمليات: اعتماد مهام الانقطاع (P1-10) وشاشة فحص الشبكة (P1-11) ومنظومة الصوت والراديو (P1-15..17)، واكتمال CallDirector (P2-04) وسماعة الهاتف والحوار (P2-05) ومحلل نبرة الصوت VSA (P2-08) بعد اجتياز كامل الاختبارات.",
    "files": [
     "autoload/call_director.gd",
     "core/dispatch/dialogue_runner.gd",

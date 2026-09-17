@@ -1,18 +1,18 @@
 {
  "member": "mohamed",
  "updated_at": "2026-09-17",
-"tasks": {
-   "P1-02": {
-    "status": "done",
-    "note": "Git LFS: .gitattributes لـ png/glb/wav/ogg (+jpg/webp/gif/tga/gltf/mp3/mp4/fbx/blend) و git-lfs 3.8.0 مثبت كمستخدم. GUT v9.6.1 كـ addon و plugin مفعّل و .gutconfig.json. static-typing warnings => errors (untyped_declaration + unsafe_*=2). التحقق: headless import نظيف، GUT 4/4، door harness 23/23. صلّحت 11 سطراً بأسلوب typed (as-casts على Variant).",
-    "updated_at": "2026-09-17"
-   },
-   "P1-03": {
-    "status": "testing",
-    "note": "CI build pipeline جاهز: .github/workflows/ci.yml (GUT tests + headless export Windows/Linux بـ Godot 4.7.2-stable + templates + artifacts). export_presets.cfg معياريتان (Windows Desktop, Linux/X11) ورفعته من .gitignore. تم التحقق محلياً: YAML صحيح، presets تنقرأ، GUT يخرج 0/1. ينتظر تشغيل GitHub Actions.",
-    "updated_at": "2026-09-17"
-   }
+ "tasks": {
+  "P1-02": {
+   "status": "done",
+   "note": "Git LFS: .gitattributes لـ png/glb/wav/ogg (+jpg/webp/gif/tga/gltf/mp3/mp4/fbx/blend) و git-lfs 3.8.0 مثبت كمستخدم. GUT v9.6.1 كـ addon و plugin مفعّل و .gutconfig.json. static-typing warnings => errors (untyped_declaration + unsafe_*=2). التحقق: headless import نظيف، GUT 4/4، door harness 23/23. صلّحت 11 سطراً بأسلوب typed (as-casts على Variant).",
+   "updated_at": "2026-09-17"
   },
+  "P1-03": {
+   "status": "testing",
+   "note": "CI build pipeline جاهز: .github/workflows/ci.yml (GUT tests + headless export Windows/Linux بـ Godot 4.7.2-stable + templates + artifacts). export_presets.cfg معياريتان (Windows Desktop, Linux/X11) ورفعته من .gitignore. تم التحقق محلياً: YAML صحيح، presets تنقرأ، GUT يخرج 0/1. ينتظر تشغيل GitHub Actions.",
+   "updated_at": "2026-09-17"
+  }
+ },
  "log": [
   {
    "date": "2026-09-17",
@@ -56,6 +56,18 @@
     "audio/Open_Door.mp3"
    ],
    "commit": "44ecd49",
+   "auto": true
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-03"
+   ],
+   "summary": "fix(ci): use python3 zipfile for template extraction + hardcode job names (env context invalid in job name) — P1-03",
+   "files": [
+    ".github/workflows/ci.yml"
+   ],
+   "commit": "f07c636",
    "auto": true
   }
  ]

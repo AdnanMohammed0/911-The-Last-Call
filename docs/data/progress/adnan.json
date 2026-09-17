@@ -1,7 +1,13 @@
 {
  "member": "adnan",
  "updated_at": "2026-09-17",
- "tasks": {},
+ "tasks": {
+  "P1-01": {
+   "status": "progress",
+   "note": "مشروع Godot 4.7 انشأ بجذر المستودع (project.godot, icon, .gitattributes). باقي هيكل المجلدات و autoload skeletons.",
+   "updated_at": "2026-09-17"
+  }
+ },
  "log": [
   {
    "date": "2026-09-17",
@@ -45,6 +51,20 @@
    "summary": "نقل كل ملفات إدارة المشروع (الموقع، البيانات، الوثائق، البرومبتات، السكربتات) لمجلد docs/ حتى يبقى جذر المستودع لمشروع Godot.",
    "files": [
     "docs/"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-01"
+   ],
+   "summary": "إنشاء مشروع Godot 4.7 (Forward Plus) بجذر المستودع، ودمج .gitignore مال Godot ويا قواعد المشروع.",
+   "files": [
+    "project.godot",
+    "icon.svg",
+    ".gitattributes",
+    ".editorconfig",
+    ".gitignore"
    ]
   }
  ]

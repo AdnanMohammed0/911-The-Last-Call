@@ -1,4 +1,8 @@
-[gd_resource type="AudioBusLayout" load_steps=10 format=3]
+[gd_resource type="AudioBusLayout" format=3 uid="uid://bo2dt1l2a8cri"]
+
+[sub_resource type="AudioEffectSpectrumAnalyzer" id="AudioEffectSpectrumAnalyzer_phone"]
+resource_name = "SpectrumAnalyzer"
+fft_size = 3
 
 [sub_resource type="AudioEffectReverb" id="AudioEffectReverb_prox"]
 room_size = 0.25
@@ -23,18 +27,11 @@ threshold = -20.0
 ratio = 6.0
 gain = 4.0
 
-[sub_resource type="AudioEffectSpectrumAnalyzer" id="AudioEffectSpectrumAnalyzer_phone"]
-resource_name = "SpectrumAnalyzer"
-buffer_length = 2.0
-tap_back_pos = 0.01
-fft_size = 3
-
 [sub_resource type="AudioEffectLowPassFilter" id="AudioEffectLowPassFilter_panic"]
 cutoff_hz = 20000.0
 
 [sub_resource type="AudioEffectReverb" id="AudioEffectReverb_panic"]
 room_size = 0.5
-damping = 0.5
 wet = 0.1
 
 [sub_resource type="AudioEffectCapture" id="AudioEffectCapture_record"]

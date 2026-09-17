@@ -10,7 +10,7 @@ const BANNER_SECONDS: float = 4.5
 var _tracker: PanelContainer
 var _tracker_title: Label
 var _tracker_text: Label
-var _banner: VBoxContainer
+var _banner: PanelContainer
 var _banner_title: Label
 var _banner_subtitle: Label
 var _banner_left: float = 0.0
@@ -48,17 +48,27 @@ func _build() -> void:
 	_tracker_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_tracker_text.custom_minimum_size = Vector2(300, 0)
 
-	_banner = VBoxContainer.new()
+	_banner = PanelContainer.new()
+	var backdrop: StyleBoxFlat = StyleBoxFlat.new()
+	backdrop.bg_color = Color(0.02, 0.025, 0.03, 0.72)
+	backdrop.border_color = ACCENT
+	backdrop.border_width_top = 2
+	backdrop.content_margin_left = 48
+	backdrop.content_margin_right = 48
+	backdrop.content_margin_top = 16
+	backdrop.content_margin_bottom = 18
+	_banner.add_theme_stylebox_override(&"panel", backdrop)
 	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_banner.alignment = BoxContainer.ALIGNMENT_CENTER
-	_banner.add_theme_constant_override(&"separation", 6)
 	add_child(_banner)
 	_banner.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	_banner.offset_top = 150
+	_banner.offset_top = 140
 	_banner.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	_banner_title = _label(_banner, 40, ACCENT)
+	var banner_column: VBoxContainer = VBoxContainer.new()
+	banner_column.add_theme_constant_override(&"separation", 4)
+	_banner.add_child(banner_column)
+	_banner_title = _label(banner_column, 36, ACCENT)
 	_banner_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_banner_subtitle = _label(_banner, 18, TEXT)
+	_banner_subtitle = _label(banner_column, 18, TEXT)
 	_banner_subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_banner.modulate.a = 0.0
 

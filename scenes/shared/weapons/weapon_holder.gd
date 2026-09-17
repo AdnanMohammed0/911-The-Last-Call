@@ -103,7 +103,11 @@ func _ready() -> void:
 			restore_loadout(saved)
 	if not has_weapon(active_slot) and has_weapon(WeaponData.Slot.PRIMARY):
 		active_slot = WeaponData.Slot.PRIMARY
-	_base_fov = _player.get_camera().fov
+	_base_fov = GameSettings.fov
+	_player.get_camera().fov = _base_fov
+	GameSettings.changed.connect(func(key: String) -> void:
+		if key == "fov":
+			_base_fov = GameSettings.fov)
 	refresh_authority()
 
 

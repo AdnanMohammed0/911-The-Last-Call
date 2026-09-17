@@ -197,9 +197,11 @@ func _process(delta: float) -> void:
 	var look: Vector2 = _input.consume_look()
 	if look == Vector2.ZERO:
 		return
-	rotate_y(-look.x * mouse_sensitivity)
+	var sensitivity: float = mouse_sensitivity * GameSettings.look_scale(get_weapons().aiming)
+	var vertical: float = -look.y if GameSettings.invert_y else look.y
+	rotate_y(-look.x * sensitivity)
 	var max_pitch: float = deg_to_rad(max_pitch_degrees)
-	_camera.rotation.x = clampf(_camera.rotation.x - look.y * mouse_sensitivity, -max_pitch, max_pitch)
+	_camera.rotation.x = clampf(_camera.rotation.x - vertical * sensitivity, -max_pitch, max_pitch)
 
 
 func _physics_process(delta: float) -> void:
@@ -415,7 +417,8 @@ func _update_flashlight() -> void:
 func _update_stance(delta: float) -> void:
 	if _input.crouch_just_pressed:
 		_crouch_toggled = not _crouch_toggled
-	var wants_crouch: bool = (_crouch_toggled if crouch_toggle else _input.crouch_held) or not _health.is_alive()
+	var toggle: bool = crouch_toggle or GameSettings.crouch_toggle
+	var wants_crouch: bool = (_crouch_toggled if toggle else _input.crouch_held) or not _health.is_alive()
 
 	if wants_crouch and stance == Stance.STAND:
 		_set_stance(Stance.CROUCH)

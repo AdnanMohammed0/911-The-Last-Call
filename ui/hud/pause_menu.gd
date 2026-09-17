@@ -15,10 +15,14 @@ extends Control
 @onready var _mic_status_label: Label = %MicStatusLabel
 @onready var _auto_gain_check: CheckBox = %AutoGainCheck
 @onready var _hear_myself_check: CheckBox = %HearMyselfCheck
+@onready var _settings_button: Button = %SettingsButton
 
 
 func _ready() -> void:
+	theme = GameSettings.ui_theme
+	_wrap_in_panel()
 	_resume_button.pressed.connect(close)
+	_settings_button.pressed.connect(_on_settings_pressed)
 	_leave_button.pressed.connect(_on_leave_pressed)
 	_quit_button.pressed.connect(_on_quit_pressed)
 	_voice_mode_button.pressed.connect(_on_voice_mode_pressed)
@@ -77,6 +81,35 @@ func close() -> void:
 	player.set_input_enabled(true)
 	if DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+## Puts the button column on a themed panel with release spacing.
+func _wrap_in_panel() -> void:
+	var column: VBoxContainer = get_node_or_null(^"Center/Panel") as VBoxContainer
+	if column == null:
+		return
+	var center: Node = column.get_parent()
+	var panel: PanelContainer = PanelContainer.new()
+	panel.custom_minimum_size = Vector2(420, 0)
+	center.add_child(panel)
+	column.reparent(panel, false)
+	column.add_theme_constant_override(&"separation", 12)
+	var title: Label = column.get_node_or_null(^"Title") as Label
+	if title != null:
+		title.add_theme_font_size_override(&"font_size", 34)
+		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_session_label.add_theme_color_override(&"font_color", GameTheme.TEXT_DIM)
+	_session_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	for button: Button in [_resume_button, _settings_button, _leave_button, _quit_button]:
+		button.custom_minimum_size = Vector2(0, 48)
+
+
+func _on_settings_pressed() -> void:
+	var menu: SettingsMenu = SettingsMenu.open_over(self)
+	visible = false
+	menu.closed.connect(func() -> void:
+		visible = true
+		_settings_button.grab_focus())
 
 
 func _on_mic_device_selected(index: int) -> void:

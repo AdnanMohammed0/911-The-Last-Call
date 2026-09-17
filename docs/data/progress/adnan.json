@@ -764,6 +764,23 @@
         "ui/hud/objective_hud.gd",
         "tests/test_mission_loop.gd"
       ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P3-01",
+        "P3-19"
+      ],
+      "summary": "واجهة بمستوى الإصدار: GameSettings (user://settings.cfg) + قائمة إعدادات كاملة (Video: وضع النافذة/V-Sync/حد FPS/جودة/Render scale FSR2/FOV/سطوع، Audio لكل bus، Voice: المايك/الوضع/Gain/اختبار، Controls: حساسية، حساسية التصويب، عكس المحور، crouch toggle، تغيير كل الأزرار مع كشف التعارض وإرجاع الافتراضي) من المنيو الرئيسي والـpause. GameTheme موحد، StatusHud (صحة/درع/تحمل + vignette ضرر)، ترتيب HUD (أهداف أعلى اليسار، مايك أعلى اليمين، ذخيرة أسفل اليمين)، Pause menu جديد. (يتقاطع مع P4-14 / P3-20 لعلي.) 170/170 اختبار.",
+      "files": [
+        "autoload/game_settings.gd",
+        "ui/settings/settings_menu.gd",
+        "ui/theme/game_theme.gd",
+        "ui/hud/status_hud.gd",
+        "ui/hud/pause_menu.gd",
+        "scenes/boot/main_menu.tscn",
+        "tests/test_settings.gd"
+      ]
     }
   ]
 }

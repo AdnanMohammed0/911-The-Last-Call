@@ -50,19 +50,23 @@ layout_mode = 2
 text = "Resume"
 
 [node name="VoiceModeButton" type="Button" parent="Center/Panel"]
+visible = false
 unique_name_in_owner = true
 layout_mode = 2
 text = "Voice: Open mic"
 
 [node name="MicTitle" type="Label" parent="Center/Panel"]
+visible = false
 layout_mode = 2
 text = "Microphone"
 
 [node name="MicDeviceOption" type="OptionButton" parent="Center/Panel"]
+visible = false
 unique_name_in_owner = true
 layout_mode = 2
 
 [node name="MicLevelBar" type="ProgressBar" parent="Center/Panel"]
+visible = false
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
@@ -70,20 +74,29 @@ max_value = 1.0
 show_percentage = false
 
 [node name="MicStatusLabel" type="Label" parent="Center/Panel"]
+visible = false
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 text = "Level"
 
 [node name="AutoGainCheck" type="CheckBox" parent="Center/Panel"]
+visible = false
 unique_name_in_owner = true
 layout_mode = 2
 text = "Automatic mic gain (for quiet microphones)"
 
 [node name="HearMyselfCheck" type="CheckBox" parent="Center/Panel"]
+visible = false
 unique_name_in_owner = true
 layout_mode = 2
 text = "Hear myself (mic test)"
+
+[node name="SettingsButton" type="Button" parent="Center/Panel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 48)
+layout_mode = 2
+text = "Settings"
 
 [node name="LeaveButton" type="Button" parent="Center/Panel"]
 unique_name_in_owner = true

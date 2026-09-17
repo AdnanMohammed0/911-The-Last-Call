@@ -23,6 +23,7 @@ var _auto_start: bool = false
 @onready var _join_nav_button: Button = %JoinNavButton
 @onready var _station4_button: Button = %Station4Button
 @onready var _rejoin_button: Button = %RejoinButton
+@onready var _settings_button: Button = %SettingsButton
 @onready var _door_sandbox_button: Button = %DoorSandboxButton
 @onready var _sandbox_button: Button = %SandboxButton
 @onready var _status_label: Label = %StatusLabel
@@ -74,6 +75,7 @@ func _ready() -> void:
 	_ready_button.toggled.connect(NetManager.set_ready)
 	_start_button.pressed.connect(_on_start_pressed)
 	_rejoin_button.pressed.connect(_on_rejoin_pressed)
+	_settings_button.pressed.connect(func() -> void: SettingsMenu.open_over(self))
 	_copy_address_button.pressed.connect(_on_copy_address_pressed)
 
 	# Connect class cards

@@ -33,6 +33,7 @@ BTDebugger="*res://autoload/bt_debugger.gd"
 TensionDirector="*res://autoload/tension_director.gd"
 LagCompensation="*res://autoload/lag_compensation.gd"
 MissionDirector="*res://autoload/mission_director.gd"
+GameSettings="*res://autoload/game_settings.gd"
 
 [display]
 

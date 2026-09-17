@@ -114,6 +114,8 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	if holder == null or not is_instance_valid(holder):
 		return
+	if Input.mouse_mode == Input.MOUSE_MODE_VISIBLE and DisplayServer.get_name() != "headless":
+		return  # a menu is open
 	var center: Vector2 = size * 0.5
 	var weapon: WeaponData = holder.get_active_weapon()
 	var shadow: Color = Color(0, 0, 0, 0.5)

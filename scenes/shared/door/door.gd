@@ -36,6 +36,14 @@ signal door_unlocked(by_peer: int)
 @export var kick_speed: float = 16.0
 @export var stun_radius: float = 2.5
 
+@export_group("Audio (Optional)")
+@export var sound_open: AudioStream
+@export var sound_close: AudioStream
+@export var sound_peek: AudioStream
+@export var sound_kick: AudioStream
+@export var sound_locked: AudioStream
+@export var sound_unlock: AudioStream
+
 # Replicated properties (MultiplayerSynchronizer)
 @export var current_state: DoorState = DoorState.CLOSED:
 	set(value):
@@ -62,7 +70,6 @@ var current_angle_deg: float = 0.0
 
 
 func _ready() -> void:
-	_setup_audio_samples()
 	_update_target_angle()
 	current_angle_deg = target_angle_deg
 	if hinge:
@@ -125,55 +132,50 @@ func _handle_toggle_open(player_global_pos: Vector3, peer_id: int) -> void:
 	if current_state != DoorState.CLOSED:
 		# If open or peeked, close it
 		_set_state(DoorState.CLOSED)
-		_play_sound(&"close")
+		_play_sound(sound_close)
 		return
 
 	if is_locked:
 		locked_interacted.emit(peer_id)
-		_play_sound(&"rattle_locked")
+		_play_sound(sound_locked)
 		return
 
 	# Calculate swing direction away from player
 	swing_direction = _calculate_swing_direction(player_global_pos)
 	_set_state(DoorState.OPEN)
-	_play_sound(&"open")
+	_play_sound(sound_open)
 
 
 func _handle_peek(player_global_pos: Vector3, peer_id: int) -> void:
 	if is_locked:
 		locked_interacted.emit(peer_id)
-		_play_sound(&"rattle_locked")
+		_play_sound(sound_locked)
 		return
 
 	if current_state == DoorState.PEEK:
 		# If already peeked, close it
 		_set_state(DoorState.CLOSED)
-		_play_sound(&"close")
+		_play_sound(sound_close)
 	elif current_state == DoorState.CLOSED:
 		swing_direction = _calculate_swing_direction(player_global_pos)
 		_set_state(DoorState.PEEK)
-		_play_sound(&"creak_peek")
+		_play_sound(sound_peek)
 	elif current_state == DoorState.OPEN:
 		# Can pull back to peek
 		_set_state(DoorState.PEEK)
-		_play_sound(&"creak_peek")
+		_play_sound(sound_peek)
 
 
 func _handle_kick(player_global_pos: Vector3, peer_id: int) -> void:
-	if not can_be_kicked:
-		_play_sound(&"kick_fail")
-		return
-
-	if is_reinforced:
-		# Reinforced doors need battering ram (GAMEPLAY_MECHANICS §2)
-		_play_sound(&"kick_fail")
+	if not can_be_kicked or is_reinforced:
+		_play_sound(sound_locked)
 		return
 
 	var was_locked := is_locked
 	is_locked = false # Kick breaks the latch
 	swing_direction = _calculate_swing_direction(player_global_pos)
 	_set_state(DoorState.KICKED)
-	_play_sound(&"kick_slam")
+	_play_sound(sound_kick)
 	_trigger_kick_stun(peer_id)
 	door_kicked.emit(peer_id, was_locked)
 
@@ -182,7 +184,7 @@ func _handle_unlock(peer_id: int) -> void:
 	if is_locked:
 		is_locked = false
 		door_unlocked.emit(peer_id)
-		_play_sound(&"unlock")
+		_play_sound(sound_unlock)
 
 
 # --- Utilities & Motion -----------------------------------------------------
@@ -242,44 +244,10 @@ func get_prompt_text() -> String:
 	return ""
 
 
-# --- Procedural Audio -------------------------------------------------------
+# --- Audio Playback ---------------------------------------------------------
 
-var _audio_streams: Dictionary = {}
-
-func _setup_audio_samples() -> void:
-	_audio_streams[&"open"] = _generate_tone_wav(180.0, 0.25, 0.4, 0.0)
-	_audio_streams[&"close"] = _generate_tone_wav(120.0, 0.2, 0.6, 0.0)
-	_audio_streams[&"creak_peek"] = _generate_tone_wav(320.0, 0.35, 0.2, 0.5)
-	_audio_streams[&"kick_slam"] = _generate_tone_wav(80.0, 0.45, 1.0, 0.8)
-	_audio_streams[&"kick_fail"] = _generate_tone_wav(95.0, 0.25, 0.7, 0.3)
-	_audio_streams[&"rattle_locked"] = _generate_tone_wav(400.0, 0.15, 0.5, 0.2)
-	_audio_streams[&"unlock"] = _generate_tone_wav(520.0, 0.12, 0.5, 0.0)
-
-
-func _play_sound(sound_name: StringName) -> void:
-	if not audio_player or not _audio_streams.has(sound_name):
+func _play_sound(stream: AudioStream) -> void:
+	if not audio_player or stream == null:
 		return
-	audio_player.stream = _audio_streams[sound_name]
+	audio_player.stream = stream
 	audio_player.play()
-
-
-func _generate_tone_wav(base_freq: float, duration: float, volume: float, noise_mix: float) -> AudioStreamWAV:
-	var sample_rate := 22050
-	var total_samples := int(sample_rate * duration)
-	var data := PackedByteArray()
-	data.resize(total_samples)
-
-	for i in range(total_samples):
-		var t := float(i) / float(sample_rate)
-		var envelope := 1.0 - (float(i) / float(total_samples))
-		var tone := sin(2.0 * PI * base_freq * t)
-		var noise := (randf() * 2.0 - 1.0) * noise_mix
-		var sample_val := clampf((tone * (1.0 - noise_mix) + noise) * volume * envelope, -1.0, 1.0)
-		# 8-bit unsigned PCM: 0..255, center 128
-		data[i] = int(clampf(sample_val * 127.0 + 128.0, 0.0, 255.0))
-
-	var wav := AudioStreamWAV.new()
-	wav.format = AudioStreamWAV.FORMAT_8_BITS
-	wav.mix_rate = sample_rate
-	wav.data = data
-	return wav

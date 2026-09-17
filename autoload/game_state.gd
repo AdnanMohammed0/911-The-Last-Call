@@ -16,6 +16,8 @@ const PHASE_SCENES: Dictionary[Phase, String] = {
 }
 
 var phase: Phase = Phase.LOBBY
+## Scene every peer should be in for the current phase (used to bring reconnecting players back).
+var current_scene_path: String = ""
 var shift_clock_minutes: int = SHIFT_START_MINUTES
 var public_trust: int = 75             # 0..100
 var station_budget: int = 10000
@@ -39,6 +41,7 @@ func phase_name(p: Phase) -> StringName:
 func change_phase(new_phase: Phase, scene_path: String = "") -> void:
 	phase = new_phase
 	var path: String = scene_path if scene_path != "" else PHASE_SCENES.get(new_phase, "")
+	current_scene_path = path
 	if path != "" and ResourceLoader.exists(path):
 		# TODO(P1-14): route through LevelLoader (threaded load + loading screen).
 		get_tree().change_scene_to_file.call_deferred(path)
@@ -47,6 +50,7 @@ func change_phase(new_phase: Phase, scene_path: String = "") -> void:
 
 func reset() -> void:
 	phase = Phase.LOBBY
+	current_scene_path = ""
 	shift_clock_minutes = SHIFT_START_MINUTES
 	public_trust = 75
 	station_budget = 10000

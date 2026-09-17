@@ -13,16 +13,17 @@ var door_peek_just_pressed: bool = false
 var door_kick_just_pressed: bool = false
 var flashlight_just_pressed: bool = false
 
+## False while a menu is open: sample() reports no input and the mouse is left alone.
+var enabled: bool = true
+
 var _look_delta: Vector2 = Vector2.ZERO
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not is_multiplayer_authority():
+	if not is_multiplayer_authority() or not enabled:
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		_look_delta += (event as InputEventMouseMotion).screen_relative
-	elif event.is_action_pressed(&"ui_cancel"):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	elif event is InputEventMouseButton and event.is_pressed() \
 			and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -30,6 +31,16 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## Called once per physics tick by the owning Player.
 func sample() -> void:
+	if not enabled:
+		move = Vector2.ZERO
+		sprint = false
+		crouch_just_pressed = false
+		lean = 0.0
+		interact_just_pressed = false
+		door_peek_just_pressed = false
+		door_kick_just_pressed = false
+		flashlight_just_pressed = false
+		return
 	move = Input.get_vector(&"move_left", &"move_right", &"move_forward", &"move_back")
 	sprint = Input.is_action_pressed(&"sprint")
 	crouch_held = Input.is_action_pressed(&"crouch")

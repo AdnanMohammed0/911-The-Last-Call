@@ -69,6 +69,13 @@ signal interaction_prompt_changed(prompt: String)
 		if is_node_ready():
 			_apply_authority()
 
+## Host-replicated (HostSync): the owner dropped; the body waits for a reconnect.
+var connection_lost: bool = false:
+	set(value):
+		connection_lost = value
+		if _name_label != null:
+			_update_name_label()
+
 ## Class this player was spawned as (see data/classes/).
 var class_id: StringName = &""
 var class_color: Color = Color(0.3, 0.8, 0.4)
@@ -118,8 +125,7 @@ func _ready() -> void:
 	_apply_height()
 	_flashlight.visible = flashlight_on
 	_body.set_class_color(class_color)
-	_name_label.text = NetManager.get_player_name(peer_id)
-	_name_label.modulate = class_color.lightened(0.3)
+	_update_name_label()
 	_publish_sync_state()
 	_apply_authority()
 
@@ -181,6 +187,17 @@ func apply_class(data: ClassData) -> void:
 	sprint_duration = data.sprint_duration
 	stamina = sprint_duration
 	# TODO(P3-02/P3-03): max_health, damage_resistance, max_sanity, sanity drain.
+
+
+## Owner: block gameplay input (pause menu, chat, cutscenes).
+func set_input_enabled(enabled: bool) -> void:
+	_input.enabled = enabled
+
+
+func _update_name_label() -> void:
+	var display_name: String = NetManager.get_player_name(peer_id)
+	_name_label.text = "%s (disconnected)" % display_name if connection_lost else display_name
+	_name_label.modulate = Color(0.6, 0.6, 0.6) if connection_lost else class_color.lightened(0.3)
 
 
 ## Fastest legitimate horizontal speed (used by the host's MovementValidator).

@@ -41,6 +41,11 @@
    "status": "done",
    "note": "MovementValidator على الهوست: سرعة × 1.2 على نافذة 0.5 ث + slack، منع الطيران والـ teleport، rollback + تصحيح للاعب. RpcGuard (is_host, sender_id, is_from_host, is_registered, is_player_in_range) و RpcRateLimiter (token bucket) مستخدمة بـ NetManager و Interactable. اختبار: speed hack ×4 انمنع (<1 م بـ 2 ث)، teleport انرجع، اللاعب الطبيعي 0 مخالفات.",
    "updated_at": "2026-09-17"
+  },
+  "P1-10": {
+   "status": "testing",
+   "note": "اللاعب اللي ينقطع أثناء اللعب: جسمه يبقى مكتوب عليه (disconnected) ومكانه محجوز 60 ث بـ token. يرجع بنفس الكلاس وبنفس مكان جسمه، وينقل تلقائياً للمشهد الحالي. الغريب ينرفض. انتهاء المهلة يشيل الجسم. timeout مال ENet صار 4-8 ث. Esc = قائمة إيقاف (Resume / Leave / Quit) توقف الحركة. انقطاع الهوست يرجعك للقائمة مع السبب وزر Rejoin. اختبار 4 عمليات (27 فحص) نجح.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -293,6 +298,25 @@
    "summary": "إغلاق P1-05 → P1-08: اللوبي، الـ spawn، مزامنة اللاعب، وتحقق الحركة اختُبرت ونجحت وصارت على main.",
    "files": [
     "docs/data/progress/adnan.json"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-10"
+   ],
+   "summary": "التعامل مع الانقطاع: حجز مكان اللاعب وإعادة الاتصال بـ token، إرجاع للقائمة مع السبب، زر Rejoin، قائمة إيقاف Esc، و timeouts أقصر.",
+   "files": [
+    "autoload/net_manager.gd",
+    "autoload/game_state.gd",
+    "core/net/player_spawner.gd",
+    "scenes/shared/player/player.gd",
+    "scenes/shared/player/player.tscn",
+    "scenes/shared/player/player_input.gd",
+    "ui/hud/pause_menu.gd",
+    "ui/hud/pause_menu.tscn",
+    "scenes/boot/main_menu.gd",
+    "scenes/boot/main_menu.tscn"
    ]
   }
  ]

@@ -23,6 +23,7 @@ var _auto_start: bool = false
 @onready var _class_option: OptionButton = %ClassOption
 @onready var _ready_button: CheckButton = %ReadyButton
 @onready var _start_button: Button = %StartButton
+@onready var _rejoin_button: Button = %RejoinButton
 @onready var _internet_row: HBoxContainer = %InternetRow
 @onready var _internet_label: Label = %InternetLabel
 @onready var _copy_address_button: Button = %CopyAddressButton
@@ -45,6 +46,7 @@ func _ready() -> void:
 	_class_option.item_selected.connect(_on_class_selected)
 	_ready_button.toggled.connect(NetManager.set_ready)
 	_start_button.pressed.connect(_on_start_pressed)
+	_rejoin_button.pressed.connect(_on_rejoin_pressed)
 	NetManager.state_changed.connect(_on_state_changed)
 	NetManager.connection_failed.connect(_on_connection_failed)
 	NetManager.session_started.connect(_on_session_started)
@@ -56,6 +58,8 @@ func _ready() -> void:
 	_name_edit.text = "Player"
 	_on_state_changed(NetManager.state)
 	_on_lobby_updated(NetManager.roster)
+	if not NetManager.last_session_end_reason.is_empty():
+		_status_label.text = "Disconnected: %s" % NetManager.last_session_end_reason
 	_apply_command_line.call_deferred()
 
 
@@ -82,6 +86,12 @@ func _on_host_pressed() -> void:
 
 func _on_join_pressed() -> void:
 	NetManager.join_game(_address_edit.text, _name_edit.text)
+
+
+func _on_rejoin_pressed() -> void:
+	var err: Error = NetManager.rejoin_last_session()
+	if err != OK:
+		_status_label.text = "Cannot rejoin: %s" % error_string(err)
 
 
 func _on_sandbox_pressed() -> void:
@@ -121,6 +131,7 @@ func _on_state_changed(new_state: NetManager.State) -> void:
 	_address_edit.editable = offline
 	_leave_button.disabled = offline
 	_sandbox_button.disabled = not offline
+	_rejoin_button.visible = offline and NetManager.has_rejoin_info()
 	_internet_row.visible = new_state == NetManager.State.HOSTING
 	if new_state != NetManager.State.HOSTING:
 		_internet_label.text = "Checking router (UPnP)…"

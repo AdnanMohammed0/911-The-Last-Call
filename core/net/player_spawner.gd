@@ -17,6 +17,8 @@ signal player_spawned(player: Player)
 @export var spawn_points: Node3D
 
 var _level_path: String = ""
+## Host: new peer id -> transform to respawn a reconnecting player where their body was.
+var _reconnect_spawns: Dictionary[int, Transform3D] = {}
 
 
 func _ready() -> void:
@@ -28,6 +30,8 @@ func _ready() -> void:
 	_refresh_visibility()
 	if multiplayer.is_server():
 		NetManager.peer_left.connect(_on_peer_left)
+		NetManager.peer_dropped.connect(_on_peer_dropped)
+		NetManager.peer_reconnected.connect(_on_peer_reconnected)
 		# Clients can finish loading before the host's own level is ready.
 		for peer_id: int in NetManager.roster:
 			if peer_id != 1 and NetManager.is_level_loaded(peer_id, _level_path):
@@ -49,13 +53,32 @@ func _on_level_loaded(peer_id: int, scene_path: String) -> void:
 		var class_id: StringName = NetManager.get_class_id(peer_id)
 		if not ClassCatalog.has(class_id):
 			class_id = FALLBACK_CLASS
-		var player: Player = spawn({
+		var data: Dictionary = {
 			"peer_id": peer_id,
 			"class_id": class_id,
 			"spawn_index": _spawn_index_for(peer_id),
-		}) as Player
+		}
+		if _reconnect_spawns.has(peer_id):
+			data["transform"] = _reconnect_spawns[peer_id]
+			_reconnect_spawns.erase(peer_id)
+		var player: Player = spawn(data) as Player
 		player_spawned.emit(player)
 	_refresh_visibility()
+
+
+## The owner dropped mid-game: keep the body (frozen, labelled) until they reconnect or the slot expires.
+func _on_peer_dropped(peer_id: int) -> void:
+	var player: Player = get_player(peer_id)
+	if player != null:
+		player.connection_lost = true
+
+
+func _on_peer_reconnected(old_peer_id: int, new_peer_id: int) -> void:
+	var body: Player = get_player(old_peer_id)
+	if body == null:
+		return
+	_reconnect_spawns[new_peer_id] = body.global_transform
+	body.queue_free()
 
 
 func _on_peer_left(peer_id: int) -> void:
@@ -98,7 +121,10 @@ func _spawn_player(data: Variant) -> Node:
 	player.name = _player_name(peer_id)
 	player.peer_id = peer_id
 	player.apply_class(ClassCatalog.get_data(class_id))
-	player.position = _spawn_position(spawn_index)
+	if info.has("transform"):
+		player.transform = info["transform"]
+	else:
+		player.position = _spawn_position(spawn_index)
 	return player
 
 

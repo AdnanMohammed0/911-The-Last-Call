@@ -1,5 +1,8 @@
 extends GutTest
 
+@warning_ignore_start("unsafe_call_argument")
+@warning_ignore_start("unsafe_cast")
+
 const CallDirectorScript := preload("res://autoload/call_director.gd")
 
 var _director: CallDirectorScript

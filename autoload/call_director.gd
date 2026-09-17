@@ -568,10 +568,12 @@ func request_vsa_tag(playback_time: float, tag_type: StringName) -> void:
 		return
 	
 	var res: Dictionary = vsa.tag_evidence(playback_time, tag_type)
+	@warning_ignore("unsafe_cast")
 	var delta_patience: float = (res.get("patience_delta", 0.0) as float)
 	if delta_patience != 0.0:
 		dialogue_runner.modify_patience(delta_patience)
 	
+	@warning_ignore("unsafe_call_argument")
 	var ev_key: StringName = StringName(res.get("evidence_key", &""))
 	if ev_key != &"":
 		dialogue_runner.add_revealed_evidence(ev_key)
@@ -611,11 +613,16 @@ func get_snapshot() -> Dictionary:
 
 
 func apply_snapshot(data: Dictionary) -> void:
+	@warning_ignore("unsafe_call_argument")
 	shift_clock_minutes = int(data.get("shift_clock_minutes", 0))
+	@warning_ignore("unsafe_call_argument")
 	current_state = CallState.values()[clampi(int(data.get("current_state", 0)), 0, CallState.size() - 1)]
+	@warning_ignore("unsafe_call_argument")
 	active_call_id = StringName(data.get("active_call_id", ""))
 	active_call = registered_calls.get(active_call_id, null)
+	@warning_ignore("unsafe_cast")
 	ring_timer = (data.get("ring_timer", 0.0) as float)
+	@warning_ignore("unsafe_call_argument")
 	handset_owner_peer_id = int(data.get("handset_owner_peer_id", 0))
 	
 	if EventBus != null:

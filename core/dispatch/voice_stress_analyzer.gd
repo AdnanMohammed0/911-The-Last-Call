@@ -78,9 +78,11 @@ func get_live_spectrum_bands() -> Dictionary:
 		emf_mag = clampf((emf_v.x + emf_v.y) * 4.0, 0.0, 1.0)
 		voice_mag = clampf((voice_v.x + voice_v.y) * 2.0, 0.0, 1.0)
 		treble_mag = clampf((treble_v.x + treble_v.y) * 2.0, 0.0, 1.0)
-	else:
+	
+	if tremor_mag == 0.0 and emf_mag == 0.0 and voice_mag == 0.0:
 		# Simulated baseline energy when audio bus is not rendering (e.g. headless tests)
 		var read: Dictionary = get_stress_readout(current_playback_time)
+		@warning_ignore("unsafe_cast")
 		tremor_mag = (read.get("tremor_level", 0.3) as float)
 		emf_mag = 0.8 if read.get("emf_detected", false) == true else 0.05
 		voice_mag = 0.1 if background_isolate_active else 0.6
@@ -129,7 +131,7 @@ func get_stress_readout(time_seconds: float = -1.0) -> Dictionary:
 				break
 	
 	# Calculated dynamic BPM estimate
-	var dynamic_bpm: int = int(round(base_bpm + (tremor_val * 35.0) + (pitch_val * 15.0)))
+	var dynamic_bpm: int = roundi(base_bpm + (tremor_val * 35.0) + (pitch_val * 15.0))
 	
 	return {
 		"time": t,
@@ -181,6 +183,7 @@ func tag_evidence(time_seconds: float, tag_type: StringName) -> Dictionary:
 				reason = "No repeated audio loop at this timestamp"
 		
 		&"tremor_flat":
+			@warning_ignore("unsafe_cast")
 			var tremor: float = (readout.get("tremor_level", 0.0) as float)
 			if tremor <= 0.25:
 				is_correct = true
@@ -190,6 +193,7 @@ func tag_evidence(time_seconds: float, tag_type: StringName) -> Dictionary:
 				reason = "Tremor is not flat (genuine stress detected)"
 		
 		&"tremor_high":
+			@warning_ignore("unsafe_cast")
 			var tremor: float = (readout.get("tremor_level", 0.0) as float)
 			if tremor >= 0.6:
 				is_correct = true

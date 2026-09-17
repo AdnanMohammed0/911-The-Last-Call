@@ -1,5 +1,8 @@
 extends GutTest
 
+@warning_ignore_start("unsafe_call_argument")
+@warning_ignore_start("unsafe_cast")
+
 func _create_test_stress_profile() -> StressProfile:
 	var profile: StressProfile = StressProfile.new()
 	

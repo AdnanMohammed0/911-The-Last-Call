@@ -42,7 +42,9 @@ signal sanity_changed(peer_id: int, value: float)
 ## Emitted on every peer after the host confirmed `peer_id` used `interactable`.
 signal interacted(interactable: Node, peer_id: int)
 
-# --- Voice / AI hearing ---
+# --- Noise / AI hearing ---
+## Host: something made noise audible within `radius` metres (GAMEPLAY §7: walk 4, sprint 10, kick 25, gunshot 60).
+signal noise_event(position: Vector3, radius: float, source_peer: int)
 ## Host: a player spoke (proximity or radio). Loudness 0..1 (ARCHITECTURE §6.4).
 signal voice_noise(peer_id: int, position: Vector3, loudness: float)
 

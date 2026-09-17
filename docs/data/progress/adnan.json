@@ -96,6 +96,11 @@
    "status": "testing",
    "note": "Behavior tree runtime بـ core/bt: Selector (reactive، يقطع الفرع الأقل أولوية)، Sequence (يكمل من الابن الشغال)، Parallel، Decorator (Invert/Succeed/Repeat/Cooldown/TimeLimit)، BTCall (دوال الـ agent + تنظيف _exit عند المقاطعة)، BTCheck للـ blackboard، BTWait. الشجرة Resource مشتركة والحالة لكل agent بالـ BTBlackboard. BTRunner على الهوست 10Hz موزع. BT.sel/seq/... لبناء الشجرة بالكود. Debugger (F4، Tab يبدل) يعرض الشجرة بالألوان والـ blackboard. 12 اختبار GUT نجحت.",
    "updated_at": "2026-09-17"
+  },
+  "P3-08": {
+   "status": "testing",
+   "note": "AIPerception (core/ai): مخروط رؤية 100° بمدى 30م بالضوء و8م بالظلام (منطقة light_zones أو كشاف اللاعب يعتبر مضيء)، فحص خط النظر بالجدران، الانحناء يقلل الرؤية، كشاف اللاعب على الـ AI ضمن 25م = كشف فوري، سماع EventBus.noise_event و voice_noise (همس 2م → صراخ 20م)، مقياس انتباه Unaware/Suspicious 0.3/Searching 0.6/Combat 1.0 مع تلاشي وذاكرة قتال، callout للفريق بعد 1.5 ث. الهوست يطلق ضوضاء خطوات لكل لاعب (مشي 4م، ركض 10م، انحناء 1.5م × noise_multiplier للكلاس). 11 اختبار GUT نجحت.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
@@ -575,6 +580,19 @@
     "autoload/bt_debugger.gd",
     "project.godot",
     "tests/test_behavior_tree.gd"
+   ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P3-08"
+   ],
+   "summary": "حواس الـ AI: رؤية بمخروط وضوء وجدران، كشف الكشاف، سمع الخطوات والصوت، مقياس الانتباه، و callout.",
+   "files": [
+    "core/ai/ai_perception.gd",
+    "autoload/event_bus.gd",
+    "scenes/shared/player/player.gd",
+    "tests/test_ai_perception.gd"
    ]
   }
  ]

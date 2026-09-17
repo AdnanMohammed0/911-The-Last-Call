@@ -9,6 +9,11 @@ enum Stance { STAND, CROUCH }
 
 ## Movement while downed (GAMEPLAY §3.1 "crawl allowed").
 const CRAWL_SPEED: float = 0.6
+## Footstep noise radii (GAMEPLAY §7), scaled by ClassData.noise_multiplier (Breacher 1.6 -> ~7 m walk).
+const FOOTSTEP_NOISE_WALK: float = 4.0
+const FOOTSTEP_NOISE_SPRINT: float = 10.0
+const FOOTSTEP_NOISE_CROUCH: float = 1.5
+const FOOTSTEP_NOISE_INTERVAL: float = 0.45
 
 const GROUP: StringName = &"players"
 
@@ -101,6 +106,9 @@ var trauma_kits: int = 0
 ## Class this player was spawned as (see data/classes/).
 var class_id: StringName = &""
 var class_color: Color = Color(0.3, 0.8, 0.4)
+var noise_multiplier: float = 1.0
+var _noise_timer: float = 0.0
+var _noise_last_position: Vector3 = Vector3.INF
 
 # --- Replicated by ClientSync (owner -> everyone) ---
 var sync_position: Vector3 = Vector3.ZERO
@@ -178,6 +186,7 @@ func _process(delta: float) -> void:
 	if not is_multiplayer_authority():
 		_update_remote(delta)
 		_update_body_pose(delta)
+		_emit_footstep_noise(delta)
 		return
 	var look: Vector2 = _input.consume_look()
 	if look == Vector2.ZERO:
@@ -189,6 +198,7 @@ func _process(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	_update_body_pose(delta)
+	_emit_footstep_noise(delta)
 	_input.sample()
 	_update_stance(delta)
 	_update_sprint_and_stamina(delta)
@@ -215,6 +225,7 @@ func apply_class(data: ClassData) -> void:
 		return
 	class_id = data.id
 	class_color = data.color
+	noise_multiplier = data.noise_multiplier
 	move_speed_multiplier = data.move_speed_multiplier
 	sprint_duration = data.sprint_duration
 	stamina = sprint_duration
@@ -277,6 +288,33 @@ func _publish_sync_state() -> void:
 	sync_position = global_position
 	sync_yaw = rotation.y
 	sync_pitch = _camera.rotation.x
+
+
+## Host: moving players make footstep noise the AI can hear. Works for remote copies too (speed comes
+## from the replicated position), so clients never report their own noise.
+func _emit_footstep_noise(delta: float) -> void:
+	if not multiplayer.is_server():
+		return
+	if _noise_last_position == Vector3.INF:
+		_noise_last_position = global_position
+		_noise_timer = 0.0
+		return
+	_noise_timer += delta
+	if _noise_timer < FOOTSTEP_NOISE_INTERVAL:
+		return
+	var here: Vector3 = global_position
+	var travelled: float = Vector2(here.x - _noise_last_position.x, here.z - _noise_last_position.z).length()
+	var speed: float = travelled / _noise_timer
+	_noise_timer = 0.0
+	_noise_last_position = here
+	if speed < 0.8 or not get_health().is_alive():
+		return
+	var radius: float = FOOTSTEP_NOISE_WALK
+	if stance == Stance.CROUCH:
+		radius = FOOTSTEP_NOISE_CROUCH
+	elif is_sprinting or speed > walk_speed * move_speed_multiplier * 1.15:
+		radius = FOOTSTEP_NOISE_SPRINT
+	EventBus.noise_event.emit(here, radius * noise_multiplier, peer_id)
 
 
 ## Downed / critical bodies lie on the floor (all peers).

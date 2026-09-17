@@ -48,6 +48,18 @@
    ],
    "commit": "46bc27d",
    "auto": true
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-14"
+   ],
+   "summary": "refactor(door): expose AudioStream slots for custom door sounds — P1-14",
+   "files": [
+    "scenes/shared/door/door.gd"
+   ],
+   "commit": "09a090a",
+   "auto": true
   }
  ]
 }

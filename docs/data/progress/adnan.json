@@ -108,6 +108,16 @@
     "scenes/shared/player/player_debug_hud.gd",
     "project.godot"
    ]
+  },
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P1-12"
+   ],
+   "summary": "player_sandbox صار المشهد الرئيسي (F5 يشغّل ساحة التجربة مباشرة) ودمج الشغل على main.",
+   "files": [
+    "project.godot"
+   ]
   }
  ]
 }

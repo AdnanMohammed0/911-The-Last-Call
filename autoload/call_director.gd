@@ -68,6 +68,7 @@ func _ready() -> void:
 	
 	if EventBus != null:
 		EventBus.phase_changed.connect(_on_phase_changed)
+		EventBus.trust_threshold_crossed.connect(_on_trust_threshold_crossed)
 	
 	VoteManager.vote_closed.connect(_on_vote_closed)
 
@@ -779,6 +780,25 @@ func _on_phase_changed(new_phase: StringName) -> void:
 	elif new_phase == &"field" or new_phase == &"loadout_vote":
 		pause_shift()
 
+func _on_trust_threshold_crossed(threshold_id: StringName, current_trust: int) -> void:
+	if not _is_server():
+		return
+	match threshold_id:
+		&"withhold_address":
+			# Callers withhold exact address, hostile tone - increase challenge difficulty
+			print("CallDirector: Trust below 40 - callers withholding addresses")
+		&"restored_address":
+			print("CallDirector: Trust restored above 40 - callers cooperative")
+		&"siege_weight_up":
+			# Fewer calls, siege ending weight up
+			print("CallDirector: Trust below 20 - reduced call frequency, siege weight increased")
+		&"siege_weight_down":
+			print("CallDirector: Trust restored above 20 - normal call frequency")
+		&"cult_tips_unlocked":
+			# Proactive tips about cult movement
+			print("CallDirector: Trust above 80 - cult movement tips enabled")
+		&"cult_tips_locked":
+			print("CallDirector: Trust dropped below 80 - cult tips disabled")
 
 func _on_player_left(peer_id: int) -> void:
 	if not _is_server():

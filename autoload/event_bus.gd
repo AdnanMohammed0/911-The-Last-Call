@@ -32,6 +32,12 @@ signal flag_changed(key: StringName, old_value: Variant, new_value: Variant)
 signal trait_applied(peer_id: int, trait_id: StringName)
 signal trait_removed(peer_id: int, trait_id: StringName)
 
+# --- Global Meters (P4-04) ---
+signal global_meter_changed(meter_id: StringName, old_value: int, new_value: int)
+signal trust_threshold_crossed(threshold_id: StringName, current_trust: int)
+signal budget_threshold_crossed(threshold_id: StringName, current_budget: int)
+signal cult_threshold_crossed(threshold_id: StringName, current_awareness: int)
+
 # --- Players ---
 ## Host: a player took damage (Tension Director, hit feedback).
 signal player_damaged(peer_id: int, amount: float)

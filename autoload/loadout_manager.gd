@@ -16,6 +16,10 @@ signal approach_selected(approach: StringName)
 ## Shared station budget (from GameState)
 var _station_budget: int = 10000
 
+## Budget threshold flags (GAMEPLAY_MECHANICS §4)
+var _half_armory_locked: bool = false
+var _no_heavy_gear: bool = false
+
 ## Per-peer loadout selections: peer_id -> {gear_id -> quantity}
 var _player_loadouts: Dictionary = {}
 
@@ -31,6 +35,8 @@ func _ready() -> void:
 	_load_gear_catalog()
 	if GameState != null:
 		_station_budget = GameState.station_budget
+	if EventBus != null:
+		EventBus.budget_threshold_crossed.connect(_on_budget_threshold_crossed)
 
 
 func _load_gear_catalog() -> void:
@@ -216,6 +222,14 @@ func purchase_gear(peer_id: int, gear_id: StringName, class_id: StringName) -> b
 	
 	if not gear.is_available_for_class(class_id):
 		push_warning("LoadoutManager: gear '%s' not available for class '%s'" % [gear_id, class_id])
+		return false
+	
+	# Check budget threshold restrictions
+	if _half_armory_locked and not _is_basic_gear(gear_id):
+		push_warning("LoadoutManager: half armory locked - only basic gear available")
+		return false
+	if _no_heavy_gear and gear.slot == GearItem.Slot.HEAVY:
+		push_warning("LoadoutManager: no heavy gear allowed at this budget level")
 		return false
 	
 	var effective_cost: int = gear.get_effective_cost(class_id)
@@ -462,9 +476,39 @@ func _find_breacher_peer() -> int:
 func _on_game_state_budget_changed(amount: int) -> void:
 	_station_budget = amount
 
+func _on_budget_threshold_crossed(threshold_id: StringName, current_budget: int) -> void:
+	if not multiplayer.is_server():
+		return
+	match threshold_id:
+		&"half_armory_locked":
+			_half_armory_locked = true
+			print("LoadoutManager: Budget below $3,000 - half armory locked (basic gear only)")
+		&"half_armory_unlocked":
+			_half_armory_locked = false
+			print("LoadoutManager: Budget restored above $3,000 - full armory available")
+		&"no_heavy_gear":
+			_no_heavy_gear = true
+			print("LoadoutManager: Budget below $1,000 - no heavy gear, limited magazines")
+		&"heavy_gear_unlocked":
+			_no_heavy_gear = false
+			print("LoadoutManager: Budget restored above $1,000 - heavy gear available")
+
+func _is_basic_gear(gear_id: StringName) -> bool:
+	# Basic gear always available: service pistol, trauma kit, basic consumables
+	var basic_gear: Array[StringName] = [
+		&"service_pistol",
+		&"trauma_kit",
+		&"sedatives",
+		&"salt_canister",
+		&"emf_reader",
+		&"spectral_tone_emitter",
+	]
+	return gear_id in basic_gear
 
 func reset() -> void:
 	_station_budget = 10000
+	_half_armory_locked = false
+	_no_heavy_gear = false
 	_player_loadouts.clear()
 	_votes.clear()
 	_active_vote_id = 0

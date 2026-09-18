@@ -53,6 +53,10 @@ var shift_number: int = 1
 var calls_handled: int = 0
 var calls_total: int = 0
 var public_trust: int = 75
+## Cult Awareness (GAMEPLAY_MECHANICS §4) - affects counter-ambush calls and siege
+var cult_awareness: int = 0
+var _counter_ambush_active: bool = false
+var _station_siege_triggered: bool = false
 ## Tests turn this off to exercise the loop without leaving the test scene.
 var scene_changes_enabled: bool = true
 
@@ -78,6 +82,12 @@ func _ready() -> void:
 			_downed += 1)
 	if NetManager.has_signal("session_ended"):
 		NetManager.session_ended.connect(func(_reason: String) -> void: reset())
+	
+	if EventBus != null:
+		EventBus.cult_threshold_crossed.connect(_on_cult_threshold_crossed)
+		# Sync cult awareness from GameState
+		if GameState != null:
+			cult_awareness = GameState.cult_awareness
 
 
 func mission_name() -> String:
@@ -452,3 +462,49 @@ func _sync_shift(shift: int, handled: int, total: int, trust: int) -> void:
 @rpc("authority", "call_local", "reliable")
 func _announce(title: String, subtitle: String) -> void:
 	announcement.emit(title, subtitle)
+
+func _on_cult_threshold_crossed(threshold_id: StringName, current_awareness: int) -> void:
+	if not multiplayer.is_server():
+		return
+	cult_awareness = current_awareness
+	match threshold_id:
+		&"counter_ambush_active":
+			_counter_ambush_active = true
+			print("MissionDirector: Cult Awareness ≥ 60 - counter-ambush calls enabled")
+		&"counter_ambush_inactive":
+			_counter_ambush_active = false
+			print("MissionDirector: Cult Awareness dropped below 60 - counter-ambush calls disabled")
+		&"station_siege_triggered":
+			_station_siege_triggered = true
+			print("MissionDirector: Cult Awareness ≥ 90 - STATION SIEGE TRIGGERED!")
+			EventBus.announcement.emit("STATION SIEGE", "The cult has found us. Defend the station!")
+
+func is_counter_ambush_active() -> bool:
+	return _counter_ambush_active
+
+func is_station_siege_triggered() -> bool:
+	return _station_siege_triggered
+
+func reset() -> void:
+	state = State.IDLE
+	mission_scene = ""
+	mission_call_id = &""
+	mission_kind = &""
+	objective_text = ""
+	difficulty = 1.0
+	hostiles_total = 0
+	hostiles_left = 0
+	shift_number = 1
+	calls_handled = 0
+	calls_total = 0
+	public_trust = 75
+	cult_awareness = 0
+	_counter_ambush_active = false
+	_station_siege_triggered = false
+	_loadouts.clear()
+	_kills = 0
+	_arrests = 0
+	_unlawful = 0
+	_downed = 0
+	_wipe_timer = 0.0
+	_return_timer = -1.0

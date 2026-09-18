@@ -42,7 +42,10 @@ var _ins_choices_container: VBoxContainer
 func _ready() -> void:
 	_setup_ui()
 	if dialogue_graph == null:
-		new_graph()
+		if FileAccess.file_exists("res://data/dialogue/sample_call_dialogue.tres"):
+			load_from_file("res://data/dialogue/sample_call_dialogue.tres")
+		else:
+			new_graph()
 
 
 func _setup_ui() -> void:

@@ -21,9 +21,27 @@
    "status": "done",
    "note": "محرر شجرة الحوارات المرئي المتكامل EditorPlugin (بـ addons/dialogue_editor/) مبني على GraphEdit. يتيح عرض وتعديل DialogueGraph و DialogueNode و DialogueChoice مع منافذ التوصيل الذكية، وتحديد متطلبات الأدوار (required_class) والأدلة (required_evidence) وفروق الصبر (patience_delta)، وتخطيط تلقائي (Auto-Layout)، وحفظ وتحميل لملفات .tres، مع فحص سلامة الشجرة وتغطية اختبارات GUT كاملة.",
    "updated_at": "2026-09-17"
+  },
+  "P2-18": {
+   "status": "done",
+   "note": "دمج مجسم مركز الشرطة الواقعي عالي الدقة (assets/3D/map.glb) في Station 4 (operations_room.tscn) مع توليد تصادمات فيزيائية تلقائية (trimesh) للأرضيات والجدران والسلالم عبر station_map.gd، وتوزيع مكاتب العمليات (DispatchSetup) ومخزن الأسلحة والكراج وباب الانتشار التكتيكي ونقاط توليد الأدوار الأربعة مع الحفاظ على التوافق التام مع اختبارات GUT.",
+   "updated_at": "2026-09-17"
   }
  },
  "log": [
+  {
+   "date": "2026-09-17",
+   "tasks": [
+    "P2-18"
+   ],
+   "summary": "دمج مجسم مركز الشرطة الواقعي map.glb كخريطة رئيسية لغرفة العمليات ومحطة Station 4 مع تصادمات تلقائية وتكامل الأنظمة التكتيكية — P2-18",
+   "files": [
+    "scenes/dispatch/station_map.gd",
+    "scenes/dispatch/station_map.tscn",
+    "scenes/dispatch/operations_room.tscn",
+    "tools/level_kit/build_station4.gd"
+   ]
+  },
   {
    "date": "2026-09-17",
    "tasks": [],

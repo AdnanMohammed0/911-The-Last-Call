@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="DialogueGraph" format=3]
+[gd_resource type="Resource" script_class="DialogueGraph" format=3 uid="uid://c3h1eaiuhowwl"]
 
-[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_cinvk"]
-[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_h5tvm"]
-[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_yra7m"]
-[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_ryggl"]
+[ext_resource type="Script" uid="uid://37jgn4c50ijw" path="res://data/dialogue/dialogue_node.gd" id="1_cinvk"]
+[ext_resource type="Script" uid="uid://d2uw6qk2n0sa7" path="res://data/dialogue/dialogue_choice.gd" id="2_h5tvm"]
+[ext_resource type="Script" uid="uid://dsqw8rb8lua0v" path="res://data/consequences/flag_condition.gd" id="3_yra7m"]
+[ext_resource type="Script" uid="uid://uir0rjcm8gmu" path="res://data/dialogue/dialogue_graph.gd" id="4_ryggl"]
 
 [sub_resource type="Resource" id="Resource_kbqew"]
 script = ExtResource("2_h5tvm")

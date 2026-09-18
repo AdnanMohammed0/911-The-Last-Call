@@ -26,11 +26,29 @@ func test_operations_room_scene_loads_and_instantiates() -> void:
 	assert_true(has_armory, "Station 4 should contain Armory geometry")
 	assert_true(has_parking, "Station 4 should contain Parking Lot geometry")
 
-	# Verify 4 player spawn points for 4 classes
-	assert_not_null(instance.get_node_or_null("SpawnPoints/Spawn1_Tech"), "Tech Operator desk spawn")
-	assert_not_null(instance.get_node_or_null("SpawnPoints/Spawn2_Profiler"), "Profiler desk spawn")
-	assert_not_null(instance.get_node_or_null("SpawnPoints/Spawn3_Breacher"), "Breacher desk spawn")
-	assert_not_null(instance.get_node_or_null("SpawnPoints/Spawn4_Medic"), "Medic desk spawn")
+	# Verify 4 player spawn points for 4 classes and their floor height
+	var s1: Node3D = instance.get_node_or_null("SpawnPoints/Spawn1_Tech") as Node3D
+	var s2: Node3D = instance.get_node_or_null("SpawnPoints/Spawn2_Profiler") as Node3D
+	var s3: Node3D = instance.get_node_or_null("SpawnPoints/Spawn3_Breacher") as Node3D
+	var s4: Node3D = instance.get_node_or_null("SpawnPoints/Spawn4_Medic") as Node3D
+	assert_not_null(s1, "Tech Operator desk spawn")
+	assert_not_null(s2, "Profiler desk spawn")
+	assert_not_null(s3, "Breacher desk spawn")
+	assert_not_null(s4, "Medic desk spawn")
+	if s1 != null:
+		assert_gt(s1.position.y, 0.25, "Spawn point Y should be above ground floor level")
+
+	# Verify offices, laptops, phones, and dramatic lights
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/DeskTech"), "DeskTech should exist")
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/DeskProfiler"), "DeskProfiler should exist")
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/DeskBreacher"), "DeskBreacher should exist")
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/DeskMedic"), "DeskMedic should exist")
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/SupervisorDesk"), "SupervisorDesk should exist")
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/LaptopTech"), "LaptopTech should exist")
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/LaptopSupervisor"), "LaptopSupervisor should exist")
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/PhoneTech"), "PhoneTech should exist")
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/PhoneSupervisor"), "PhoneSupervisor should exist")
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/Lighting"), "Dramatic Lighting should exist")
 
 	# Verify 3 interactive networked doors
 	var d1: Door = instance.get_node_or_null("Doors/Door_OpsToCorridor") as Door

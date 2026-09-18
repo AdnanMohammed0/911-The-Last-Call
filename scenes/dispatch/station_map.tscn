@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/3D/station/map3.glb" id="1_map"]
+[ext_resource type="Script" path="res://scenes/dispatch/station_map.gd" id="2_script"]
+
+[node name="StationMap" instance=ExtResource("1_map")]
+script = ExtResource("2_script")

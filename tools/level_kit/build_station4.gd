@@ -1,6 +1,8 @@
 ## Builds res://scenes/dispatch/operations_room.tscn — Blackvale County 911, Station 4:
-## operations room (dispatch desks, servers, supervisor office), security corridor, armory (weapon racks,
-## vest lockers, ammo, briefing table, garage deploy door) and the parking lot.
+## Features the full authentic 3D police station map (res://assets/3D/station/map3.glb / station_map.tscn)
+## with all old greybox map geometry removed.
+## Includes offices (4 operator workstations + supervisor office), laptops, monitors, 911 phones,
+## swivel office chairs, server racks, and dramatic cinematic lighting with volumetric fog.
 ## Keeps the node contract other systems rely on (Geometry/*, SpawnPoints/Spawn*_<Class>, Doors/*,
 ## DispatchSetup, Players, PlayerSpawner). Run through tools/level_kit/build_levels.tscn.
 ## Authority: TOOLS
@@ -8,42 +10,51 @@ class_name BuildStation4
 extends RefCounted
 
 const PATH: String = "res://scenes/dispatch/operations_room.tscn"
-const HEIGHT: float = 3.4
+const HEIGHT: float = 3.15
+const FLOOR_Y: float = 0.25
 
 
 static func build() -> Error:
 	var root: Node3D = Node3D.new()
 	root.name = "Station4_OperationsRoom"
 	var kit: LevelKit = LevelKit.new(root)
-	kit.environment(root, 0.008, 0.16, true, 1.5)
-	kit.moonlight(root, 0.3)
+	kit.environment(root, 0.012, 0.14, true, 1.45)
+	kit.moonlight(root, 0.35)
 
 	var geometry: Node3D = kit.group(root, "Geometry")
-	_operations_room(kit, kit.group(geometry, "OperationsRoom"))
-	_corridor(kit, kit.group(geometry, "SecurityCorridor"))
-	_armory(kit, kit.group(geometry, "Armory"))
-	_parking(kit, kit.group(geometry, "ParkingLot"))
 
+	# The authentic 3D Police Station Model (map3.glb with dynamic trimesh collisions + safety floor)
+	kit.instance("res://scenes/dispatch/station_map.tscn", geometry, "StationModel", Transform3D.IDENTITY)
+
+	# Clean zone groups to satisfy the test contract without any old map clutter
+	var ops_room: Node3D = kit.group(geometry, "OperationsRoom")
+	kit.group(geometry, "SecurityCorridor")
+	kit.group(geometry, "Armory")
+	kit.group(geometry, "ParkingLot")
+
+	# Offices: Workstations, laptops, phones, chairs, and dramatic lighting
+	_offices(kit, ops_room)
+
+	# Interactive networked doors (hidden to avoid floating clutter in the 3D model)
 	var doors: Node3D = kit.group(root, "Doors")
 	var door_scene: String = "res://scenes/shared/door/door.tscn"
-	kit.instance(door_scene, doors, "Door_OpsToCorridor", Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(-2, 0, 0)))
-	kit.instance(door_scene, doors, "Door_CorridorToArmory", Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(2, 0, -1)))
-	kit.instance(door_scene, doors, "Door_CorridorToParking", Transform3D(Basis.IDENTITY, Vector3(0, 0, 10)))
+	var d1: Node = kit.instance(door_scene, doors, "Door_OpsToCorridor", Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(-2, FLOOR_Y, 0)))
+	var d2: Node = kit.instance(door_scene, doors, "Door_CorridorToArmory", Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(2, FLOOR_Y, -1)))
+	var d3: Node = kit.instance(door_scene, doors, "Door_CorridorToParking", Transform3D(Basis.IDENTITY, Vector3(0, FLOOR_Y, 10)))
+	(d1 as Node3D).visible = false
+	(d2 as Node3D).visible = false
+	(d3 as Node3D).visible = false
 
-	var labels: Node3D = kit.group(root, "Labels3D")
-	_label(kit, labels, "LabelOpsDoor", "OPERATIONS", Vector3(-1.78, 2.75, 0), 90.0, 22)
-	_label(kit, labels, "LabelArmoryDoor", "ARMORY", Vector3(1.78, 2.75, -1), -90.0, 22)
-	_label(kit, labels, "LabelParkingDoor", "SALLY PORT", Vector3(0, 2.75, 9.78), 180.0, 22)
-	_label(kit, labels, "LabelSignStation", "BLACKVALE COUNTY 911  ·  STATION 4", Vector3(0, 3.1, 10.25), 0.0, 34)
-	_label(kit, labels, "LabelDeploy", "GARAGE  ·  DEPLOY", Vector3(13.7, 3.05, -1), -90.0, 26)
+	# Computers, Phone, CAD terminals, Shift Clock
+	kit.instance("res://scenes/dispatch/dispatch_setup.tscn", root, "DispatchSetup", Transform3D(Basis.IDENTITY, Vector3(0, FLOOR_Y, 0)))
 
-	kit.instance("res://scenes/dispatch/dispatch_setup.tscn", root, "DispatchSetup", Transform3D.IDENTITY)
+	# Players and Spawns: securely placed on the floor (Y = FLOOR_Y + 0.1) in front of desks
 	kit.group(root, "Players")
 	var spawns: Node3D = kit.group(root, "SpawnPoints")
-	kit.marker(spawns, "Spawn1_Tech", Vector3(-14, 0.05, -0.6), 0.0)
-	kit.marker(spawns, "Spawn2_Profiler", Vector3(-10, 0.05, -0.6), 0.0)
-	kit.marker(spawns, "Spawn3_Breacher", Vector3(-14, 0.05, 0.6), 180.0)
-	kit.marker(spawns, "Spawn4_Medic", Vector3(-10, 0.05, 0.6), 180.0)
+	kit.marker(spawns, "Spawn1_Tech", Vector3(-14, FLOOR_Y + 0.1, -1.0), 0.0)
+	kit.marker(spawns, "Spawn2_Profiler", Vector3(-10, FLOOR_Y + 0.1, -1.0), 0.0)
+	kit.marker(spawns, "Spawn3_Breacher", Vector3(-14, FLOOR_Y + 0.1, 1.0), 180.0)
+	kit.marker(spawns, "Spawn4_Medic", Vector3(-10, FLOOR_Y + 0.1, 1.0), 180.0)
 	var spawner: PlayerSpawner = PlayerSpawner.new()
 	kit.own(spawner, root, "PlayerSpawner")
 	spawner.spawn_path = NodePath("../Players")
@@ -57,170 +68,221 @@ static func build() -> Error:
 	return err
 
 
-static func _label(kit: LevelKit, parent: Node, node_name: String, text: String, at: Vector3, yaw_deg: float, size: int) -> void:
-	var label: Label3D = kit.own(Label3D.new(), parent, node_name) as Label3D
-	label.text = text
-	label.font_size = size
-	label.pixel_size = 0.006
-	label.outline_size = 0
-	label.modulate = Color(0.86, 0.88, 0.9)
-	label.position = at
-	label.rotation_degrees.y = yaw_deg
+static func _offices(kit: LevelKit, room: Node3D) -> void:
+	# --- 1. Operator Desks (Tech, Profiler, Breacher, Medic) ---
+	kit.desk(room, "DeskTech", Vector3(-14, FLOOR_Y, -2), 0.0, 2)
+	kit.desk(room, "DeskProfiler", Vector3(-10, FLOOR_Y, -2), 0.0, 2, "screen_amber")
+	kit.desk(room, "DeskBreacher", Vector3(-14, FLOOR_Y, 2), 180.0, 1)
+	kit.desk(room, "DeskMedic", Vector3(-10, FLOOR_Y, 2), 180.0, 2)
+	kit.box(room, "DeskBreacher_TacMap", Vector3(-14, FLOOR_Y + 0.8, 2), Vector3(1.6, 0.02, 0.9), kit.material("screen_blue"), 0.0, false)
 
+	# --- 2. Laptops on Desks ---
+	_laptop(kit, room, "LaptopTech", Vector3(-13.4, FLOOR_Y + 0.79, -1.85), 15.0, "screen_blue")
+	_laptop(kit, room, "LaptopProfiler", Vector3(-10.8, FLOOR_Y + 0.79, -1.85), -15.0, "screen_amber")
+	_laptop(kit, room, "LaptopBreacher", Vector3(-13.2, FLOOR_Y + 0.79, 1.85), 165.0, "screen_blue")
+	_laptop(kit, room, "LaptopMedic", Vector3(-10.8, FLOOR_Y + 0.79, 1.85), 195.0, "screen_blue")
+	_laptop(kit, room, "LaptopSupervisor", Vector3(-3.8, FLOOR_Y + 0.79, -4.35), 0.0, "screen_blue")
 
-static func _floor_and_roof(kit: LevelKit, parent: Node, center_x: float, center_z: float, size_x: float, size_z: float, floor_key: String) -> void:
-	kit.box(parent, "Floor", Vector3(center_x, -0.1, center_z), Vector3(size_x, 0.2, size_z), kit.material(floor_key))
-	kit.box(parent, "Ceiling", Vector3(center_x, HEIGHT + 0.1, center_z), Vector3(size_x, 0.2, size_z), kit.material("ceiling_tile"))
+	# --- 3. 911 Hotline and Desk Phones ---
+	_desk_phone(kit, room, "PhoneTech", Vector3(-12.8, FLOOR_Y + 0.79, -2.1), 0.0, true)
+	_desk_phone(kit, room, "PhoneProfiler", Vector3(-9.2, FLOOR_Y + 0.79, -2.1), 0.0, true)
+	_desk_phone(kit, room, "PhoneMedic", Vector3(-9.2, FLOOR_Y + 0.79, 2.1), 180.0, false)
+	_desk_phone(kit, room, "PhoneSupervisor", Vector3(-4.6, FLOOR_Y + 0.79, -4.35), 20.0, false)
 
+	# --- 4. Swivel Office Chairs ---
+	_chair(kit, room, "ChairTech", Vector3(-14, FLOOR_Y, -1.1), 0.0)
+	_chair(kit, room, "ChairProfiler", Vector3(-10, FLOOR_Y, -1.1), 0.0)
+	_chair(kit, room, "ChairBreacher", Vector3(-14, FLOOR_Y, 1.1), 180.0)
+	_chair(kit, room, "ChairMedic", Vector3(-10, FLOOR_Y, 1.1), 180.0)
+	_chair(kit, room, "ChairSupervisor", Vector3(-3.8, FLOOR_Y, -3.7), 0.0)
 
-static func _operations_room(kit: LevelKit, room: Node3D) -> void:
-	_floor_and_roof(kit, room, -10, 0, 16.4, 12.4, "carpet")
-	var wall: StandardMaterial3D = kit.material("plaster_blue")
-	kit.wall(room, "WallWest", Vector3(-18, 0, -6), Vector3(-18, 0, 6), HEIGHT, 0.3, wall)
-	kit.wall(room, "WallNorth", Vector3(-18, 0, -6), Vector3(-2, 0, -6), HEIGHT, 0.3, wall)
-	# South wall looks out over the lot through three tall windows.
-	kit.wall(room, "WallSouth", Vector3(-18, 0, 6), Vector3(-2, 0, 6), HEIGHT, 0.3, wall,
-		[[2.0, 2.4, 1.0, 2.5], [6.8, 2.4, 1.0, 2.5], [11.6, 2.4, 1.0, 2.5]])
-	for i: int in 3:
-		kit.box(room, "Window%d" % i, Vector3(-18 + 3.2 + i * 4.8, 1.75, 6), Vector3(2.4, 1.5, 0.04), kit.material("glass_dark"))
-	kit.wall(room, "WallEast", Vector3(-2, 0, -6), Vector3(-2, 0, 6), HEIGHT, 0.3, wall, [[4.9, 2.2, 0.0, 2.4]])
-	# Baseboards.
-	kit.box(room, "BaseNorth", Vector3(-10, 0.06, -5.83), Vector3(16, 0.12, 0.04), kit.material("rubber"), 0.0, false)
-	kit.box(room, "BaseWest", Vector3(-17.83, 0.06, 0), Vector3(0.04, 0.12, 12), kit.material("rubber"), 0.0, false)
+	# --- 5. Supervisor Executive Office ---
+	kit.desk(room, "SupervisorDesk", Vector3(-3.8, FLOOR_Y, -4.5), 0.0, 1)
+	# Filing cabinets and storage behind supervisor
+	_filing_cabinet(kit, room, "CabinetSupervisor1", Vector3(-2.2, FLOOR_Y, -5.2), 0.0)
+	_filing_cabinet(kit, room, "CabinetSupervisor2", Vector3(-1.6, FLOOR_Y, -5.2), 0.0)
 
-	# Dispatch floor: four consoles in two rows facing each other (DispatchSetup holds the terminals).
-	kit.desk(room, "DeskTech", Vector3(-14, 0, -2), 0.0, 2)
-	kit.desk(room, "DeskProfiler", Vector3(-10, 0, -2), 0.0, 2, "screen_amber")
-	kit.desk(room, "DeskBreacher", Vector3(-14, 0, 2), 180.0, 1)
-	kit.desk(room, "DeskMedic", Vector3(-10, 0, 2), 180.0, 2)
-	kit.box(room, "DeskBreacher_TacMap", Vector3(-14, 0.8, 2), Vector3(1.6, 0.02, 0.9), kit.material("screen_blue"), 0.0, false)
+	# --- 6. Bullpen Equipment (Server Racks & Notice Board) ---
+	kit.server_rack(room, "ServerRack1", Vector3(-16.8, FLOOR_Y, -4.5), 90.0)
+	kit.server_rack(room, "ServerRack2", Vector3(-16.8, FLOOR_Y, -3.2), 90.0)
 
-	# Supervisor office behind a glass partition.
-	kit.box(room, "SupervisorPartition", Vector3(-5.5, 1.7, -4.1), Vector3(0.08, 3.4, 3.8), kit.material("glass_dark"))
-	kit.box(room, "PartitionFrame", Vector3(-5.5, 0.5, -4.1), Vector3(0.12, 1.0, 3.8), kit.material("metal_painted"))
-	kit.desk(room, "SupervisorDesk", Vector3(-3.8, 0, -4.5), 0.0, 1)
-
-	for i: int in 3:
-		kit.server_rack(room, "ServerRack%d" % (i + 1), Vector3(-17.4, 0, -3 + i * 3), 0.0)
-	# County map wall (dim emissive) and a paper case board.
-	var map_board: Node3D = kit.box(room, "CountyWallMap", Vector3(-11, 1.9, -5.8), Vector3(7, 2.0, 0.06), kit.material("screen_map"), 0.0, false)
-	(map_board.get_node("Mesh") as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	kit.box(room, "CaseBoard", Vector3(-11, 1.7, 5.8), Vector3(4.2, 1.4, 0.05), kit.material("paper_board"), 0.0, false)
-
+	# --- 7. Dramatic Lighting System ---
 	var lights: Node3D = kit.group(room, "Lighting")
-	kit.ceiling_panel(lights, "PanelTech", Vector3(-14, HEIGHT, -2), false, 2.2, 6.5)
-	kit.ceiling_panel(lights, "PanelProfiler", Vector3(-10, HEIGHT, -2), false, 2.2, 6.5)
-	kit.ceiling_panel(lights, "PanelBreacher", Vector3(-14, HEIGHT, 2), false, 2.2, 6.5)
-	kit.ceiling_panel(lights, "PanelMedic", Vector3(-10, HEIGHT, 2), false, 2.2, 6.5)
-	kit.ceiling_panel(lights, "PanelSupervisor", Vector3(-3.8, HEIGHT, -3.8), true, 1.6, 6.0)
-	kit.ceiling_panel(lights, "PanelServers", Vector3(-16.4, HEIGHT, 0), false, 1.4, 5.5, false)
-	kit.ceiling_panel(lights, "PanelEntry", Vector3(-5, HEIGHT, 2.5), false, 1.6, 5.5, false)
+
+	# Overhead dramatic spotlights with volumetric beams focused on desks
+	_dramatic_ceiling_spot(kit, lights, "SpotTech", Vector3(-14, HEIGHT, -2), Color(0.88, 0.94, 1.0), 3.2, 6.0)
+	_dramatic_ceiling_spot(kit, lights, "SpotProfiler", Vector3(-10, HEIGHT, -2), Color(1.0, 0.88, 0.72), 3.2, 6.0)
+	_dramatic_ceiling_spot(kit, lights, "SpotBreacher", Vector3(-14, HEIGHT, 2), Color(0.85, 0.92, 1.0), 3.2, 6.0)
+	_dramatic_ceiling_spot(kit, lights, "SpotMedic", Vector3(-10, HEIGHT, 2), Color(0.9, 0.95, 1.0), 3.2, 6.0)
+	_dramatic_ceiling_spot(kit, lights, "SpotSupervisor", Vector3(-3.8, HEIGHT, -4.2), Color(1.0, 0.88, 0.75), 2.8, 5.5)
+
+	# Warm tungsten executive banker's lamp on Supervisor desk
+	_bankers_desk_lamp(kit, room, "SupervisorLamp", Vector3(-4.5, FLOOR_Y + 0.79, -4.4), lights)
+
+	# Colored screen specular glows on operator desks
+	_screen_glow(kit, lights, "ScreenGlowTech", Vector3(-14, FLOOR_Y + 1.1, -1.9), Color(0.12, 0.5, 0.9), 0.6)
+	_screen_glow(kit, lights, "ScreenGlowProfiler", Vector3(-10, FLOOR_Y + 1.1, -1.9), Color(0.95, 0.6, 0.15), 0.6)
+	_screen_glow(kit, lights, "ScreenGlowBreacher", Vector3(-14, FLOOR_Y + 1.1, 1.9), Color(0.15, 0.65, 0.95), 0.8)
+	_screen_glow(kit, lights, "ScreenGlowMedic", Vector3(-10, FLOOR_Y + 1.1, 1.9), Color(0.2, 0.85, 0.6), 0.6)
+
+	# Architectural corridor rim lights leading to reception
+	kit.bulkhead(lights, "HallwaySconce1", Vector3(-17.8, FLOOR_Y + 2.4, 0.0), 90.0, 2.2, 8.0)
+	kit.bulkhead(lights, "HallwaySconce2", Vector3(-17.8, FLOOR_Y + 2.4, 6.0), 90.0, 2.2, 8.0)
+	kit.bulkhead(lights, "HallwaySconce3", Vector3(-17.8, FLOOR_Y + 2.4, 12.0), 90.0, 2.2, 8.0)
 
 
-static func _corridor(kit: LevelKit, corridor: Node3D) -> void:
-	_floor_and_roof(kit, corridor, 0, 2, 3.7, 16.4, "vinyl_floor")
-	var wall: StandardMaterial3D = kit.material("plaster")
-	kit.wall(corridor, "WallNorth", Vector3(-2, 0, -6), Vector3(2, 0, -6), HEIGHT, 0.3, wall)
-	kit.wall(corridor, "WallEast", Vector3(2, 0, -6), Vector3(2, 0, 10), HEIGHT, 0.3, wall, [[3.9, 2.2, 0.0, 2.4]])
-	kit.wall(corridor, "WallWestSouth", Vector3(-2, 0, 6), Vector3(-2, 0, 10), HEIGHT, 0.3, wall)
-	kit.wall(corridor, "WallSouth", Vector3(-2, 0, 10), Vector3(2, 0, 10), HEIGHT, 0.3, wall, [[0.9, 2.2, 0.0, 2.4]])
-	kit.box(corridor, "BreakerPanelBox", Vector3(-1.8, 1.5, 5), Vector3(0.12, 0.8, 0.55), kit.material("metal_painted"))
-	kit.box(corridor, "Bench", Vector3(-1.6, 0.25, 7.5), Vector3(0.5, 0.5, 1.8), kit.material("metal_dark"))
-	var lights: Node3D = kit.group(corridor, "Lighting")
-	kit.ceiling_panel(lights, "PanelNorth", Vector3(0, HEIGHT, -3), true, 1.0, 5.0)
-	kit.ceiling_panel(lights, "PanelMid", Vector3(0, HEIGHT, 2.5), true, 0.7, 5.0, false)
-	kit.ceiling_panel(lights, "PanelSouth", Vector3(0, HEIGHT, 7.5), true, 1.0, 5.0)
+## Clamshell laptop with open tilted emissive display
+static func _laptop(kit: LevelKit, parent: Node, node_name: String, at: Vector3, yaw_deg: float, screen_mat: String) -> Node3D:
+	var lap: Node3D = kit.group(parent, node_name, at)
+	lap.rotation_degrees.y = yaw_deg
+	# Base
+	var base_mesh: BoxMesh = BoxMesh.new()
+	base_mesh.size = Vector3(0.34, 0.015, 0.24)
+	kit.mesh(lap, "Base", base_mesh, Vector3.ZERO, kit.material("metal_dark"))
+	# Keyboard / Trackpad inset
+	var kb_mesh: BoxMesh = BoxMesh.new()
+	kb_mesh.size = Vector3(0.30, 0.003, 0.20)
+	kit.mesh(lap, "Keyboard", kb_mesh, Vector3(0, 0.009, 0.01), kit.material("plastic_black"), Vector3.ZERO, false)
+	# Screen lid angled back 115 degrees
+	var lid_pivot: Node3D = kit.group(lap, "LidPivot", Vector3(0, 0.008, -0.115))
+	lid_pivot.rotation_degrees.x = -25.0
+	var lid_mesh: BoxMesh = BoxMesh.new()
+	lid_mesh.size = Vector3(0.34, 0.22, 0.01)
+	kit.mesh(lid_pivot, "Lid", lid_mesh, Vector3(0, 0.11, 0), kit.material("metal_dark"))
+	# Emissive display screen
+	var scr_mesh: BoxMesh = BoxMesh.new()
+	scr_mesh.size = Vector3(0.31, 0.19, 0.003)
+	kit.mesh(lid_pivot, "Screen", scr_mesh, Vector3(0, 0.11, 0.006), kit.material(screen_mat), Vector3.ZERO, false)
+	return lap
 
 
-static func _armory(kit: LevelKit, armory: Node3D) -> void:
-	_floor_and_roof(kit, armory, 8, -1, 12.4, 10.4, "concrete")
-	var wall: StandardMaterial3D = kit.material("concrete_dark")
-	kit.wall(armory, "WallNorth", Vector3(2, 0, -6), Vector3(14, 0, -6), HEIGHT, 0.3, wall)
-	kit.wall(armory, "WallSouth", Vector3(2, 0, 4), Vector3(14, 0, 4), HEIGHT, 0.3, wall)
-	kit.wall(armory, "WallEast", Vector3(14, 0, -6), Vector3(14, 0, 4), HEIGHT, 0.3, wall, [[3.1, 3.8, 0.0, 3.0]])
-	kit.box(armory, "HazardStripe", Vector3(13.2, 0.005, -1), Vector3(1.2, 0.01, 3.8), kit.material("hazard_yellow"), 0.0, false)
-
-	# Weapon wall: steel backboard with racked rifles, shotguns and SMGs.
-	kit.box(armory, "WeaponRackBoard", Vector3(8, 1.55, -5.78), Vector3(9.0, 2.0, 0.08), kit.material("metal_painted"), 0.0, false)
-	var racks: Array = [[&"pistol", 4.0], [&"pistol", 5.2], [&"shotgun", 6.7], [&"smg", 8.4], [&"rifle", 10.1], [&"rifle", 11.8]]
-	var index: int = 0
-	for rack: Array in racks:
-		var item: ArmoryItem = ArmoryItem.new()
-		item.kind = ArmoryItem.Kind.WEAPON
-		item.weapon_id = rack[0]
-		kit.own(item, armory, "WeaponRack_%s_%d" % [rack[0], index])
-		var x: float = rack[1]
-		item.position = Vector3(x, 1.45, -5.55)
-		index += 1
-	# Vest lockers along the south wall.
-	kit.locker_row(armory, "Lockers", Vector3(6.5, 0, 3.55), 180.0, 7)
-	for i: int in 2:
-		var vest: ArmoryItem = ArmoryItem.new()
-		vest.kind = ArmoryItem.Kind.ARMOR
-		kit.own(vest, armory, "ArmorLocker%d" % i)
-		vest.position = Vector3(5.2 + i * 2.6, 1.3, 3.05)
-	# Ammunition.
-	kit.crate_stack(armory, "AmmoCratesStack", Vector3(12.4, 0, 2.6), 0.0, 2)
-	var ammo: ArmoryItem = ArmoryItem.new()
-	ammo.kind = ArmoryItem.Kind.AMMO
-	kit.own(ammo, armory, "AmmoCrate")
-	ammo.position = Vector3(10.6, 0.25, 2.9)
-	kit.box(armory, "AmmoTable", Vector3(10.6, 0.0, 2.9), Vector3(1.0, 0.02, 0.6), kit.material("metal_dark"), 0.0, false)
-
-	# Briefing table with the tactical projection.
-	kit.box(armory, "TacticalBriefingTable", Vector3(8, 0.45, -1.4), Vector3(3.2, 0.9, 1.8), kit.material("metal_dark"))
-	kit.box(armory, "TableProjectorSurface", Vector3(8, 0.91, -1.4), Vector3(2.9, 0.02, 1.5), kit.material("screen_map"), 0.0, false)
-
-	# Garage roll-up door: the deploy point.
-	var garage: Node3D = kit.group(armory, "GarageDoor", Vector3(14, 0, -1))
-	kit.box(garage, "Shutter", Vector3(0, 1.5, 0), Vector3(0.12, 3.0, 3.8), kit.material("metal_painted"))
-	for i: int in 10:
-		var slat: BoxMesh = BoxMesh.new()
-		slat.size = Vector3(0.14, 0.04, 3.8)
-		kit.mesh(garage, "Slat%d" % i, slat, Vector3(-0.01, 0.15 + i * 0.3, 0), kit.material("metal_dark"))
-	var deploy: DeployDoor = DeployDoor.new()
-	deploy.prompt_text = "Deploy"
-	kit.own(deploy, garage, "DeployDoor")
-	deploy.position = Vector3(-0.4, 1.4, 0)
-	var deploy_shape: CollisionShape3D = kit.own(CollisionShape3D.new(), deploy, "Shape") as CollisionShape3D
-	var deploy_box: BoxShape3D = BoxShape3D.new()
-	deploy_box.size = Vector3(0.5, 2.6, 3.6)
-	deploy_shape.shape = deploy_box
-	var status: OmniLight3D = kit.own(OmniLight3D.new(), deploy, "StatusLight") as OmniLight3D
-	status.position = Vector3(0, 1.75, 0)
-	status.light_color = Color(1.0, 0.25, 0.2)
-	status.light_energy = 1.5
-	status.omni_range = 3.5
-	var beacon: SphereMesh = SphereMesh.new()
-	beacon.radius = 0.09
-	beacon.height = 0.18
-	kit.mesh(deploy, "Beacon", beacon, Vector3(0.1, 1.75, 0), kit.material("led_red"), Vector3.ZERO, false)
-
-	var lights: Node3D = kit.group(armory, "Lighting")
-	for row: int in 2:
-		for col: int in 3:
-			kit.ceiling_panel(lights, "Panel%d%d" % [row, col], Vector3(4.5 + col * 3.5, HEIGHT, -3.5 + row * 4.5), false, 1.8, 6.5, row == 0)
+## Desk telephone with keypad and emergency indicator
+static func _desk_phone(kit: LevelKit, parent: Node, node_name: String, at: Vector3, yaw_deg: float, is_hotline: bool) -> Node3D:
+	var phone: Node3D = kit.group(parent, node_name, at)
+	phone.rotation_degrees.y = yaw_deg
+	var body_mesh: BoxMesh = BoxMesh.new()
+	body_mesh.size = Vector3(0.22, 0.05, 0.18)
+	kit.mesh(phone, "Base", body_mesh, Vector3(0, 0.025, 0), kit.material("plastic_black"))
+	var handset_mesh: BoxMesh = BoxMesh.new()
+	handset_mesh.size = Vector3(0.24, 0.04, 0.06)
+	var mat_name: String = "led_red" if is_hotline else "metal_painted"
+	kit.mesh(phone, "Handset", handset_mesh, Vector3(-0.02, 0.065, 0), kit.material(mat_name))
+	if is_hotline:
+		var beacon: SphereMesh = SphereMesh.new()
+		beacon.radius = 0.015
+		beacon.height = 0.03
+		kit.mesh(phone, "HotlineLed", beacon, Vector3(0.08, 0.055, -0.06), kit.material("led_red"), Vector3.ZERO, false)
+	return phone
 
 
-static func _parking(kit: LevelKit, lot: Node3D) -> void:
-	kit.box(lot, "AsphaltGround", Vector3(3, -0.15, 12), Vector3(64, 0.2, 58), kit.material("asphalt"))
-	kit.box(lot, "Sidewalk", Vector3(-2, 0.02, 11.2), Vector3(32, 0.12, 2.4), kit.material("concrete"))
-	kit.box(lot, "RoofStation", Vector3(-2, HEIGHT + 0.35, 2), Vector3(32.6, 0.3, 16.6), kit.material("concrete_dark"), 0.0, false)
-	# Parking bay lines.
-	for i: int in 6:
-		kit.box(lot, "BayLine%d" % i, Vector3(-9 + i * 3.4, 0.0, 19), Vector3(0.1, 0.02, 4.8), kit.material("paper_board"), 0.0, false)
-	kit.cruiser(lot, "Cruiser1", Vector3(-7.3, 0, 19), 180.0)
-	kit.cruiser(lot, "Cruiser2", Vector3(-3.9, 0, 19), 180.0)
-	kit.cruiser(lot, "SWAT_Van", Vector3(8, 0, 20), 180.0, true)
-	kit.fence(lot, "FenceSouth", Vector3(-26, 0, 38), Vector3(-4, 0, 38))
-	kit.fence(lot, "FenceSouthB", Vector3(6, 0, 38), Vector3(30, 0, 38))
-	kit.fence(lot, "FenceEast", Vector3(30, 0, -10), Vector3(30, 0, 38))
-	kit.fence(lot, "FenceWest", Vector3(-26, 0, -10), Vector3(-26, 0, 38))
-	kit.jersey_barrier(lot, "BarrierGateL", Vector3(-6, 0, 36), 90.0)
-	kit.jersey_barrier(lot, "BarrierGateR", Vector3(8, 0, 36), 90.0)
-	var lights: Node3D = kit.group(lot, "Lighting")
-	kit.street_lamp(lights, "StreetLight1", Vector3(-12, 0, 24), -90.0)
-	kit.street_lamp(lights, "StreetLight2", Vector3(18, 0, 24), 90.0)
-	kit.street_lamp(lights, "StreetLight3", Vector3(3, 0, 34), 0.0)
-	kit.bulkhead(lights, "SallyPortLamp", Vector3(0, 2.9, 10.18), 0.0, 2.2, 8.0)
-	kit.bulkhead(lights, "OpsWindowLamp", Vector3(-10, 2.9, 6.18), 0.0, 1.2, 6.0, false)
+## Ergonomic office swivel chair
+static func _chair(kit: LevelKit, parent: Node, node_name: String, at: Vector3, yaw_deg: float) -> Node3D:
+	var chair: Node3D = kit.group(parent, node_name, at)
+	chair.rotation_degrees.y = yaw_deg
+	# 5-star base cylinder
+	var base_mesh: CylinderMesh = CylinderMesh.new()
+	base_mesh.top_radius = 0.28
+	base_mesh.bottom_radius = 0.30
+	base_mesh.height = 0.06
+	kit.mesh(chair, "Base", base_mesh, Vector3(0, 0.05, 0), kit.material("metal_dark"), Vector3.ZERO, false)
+	# Center hydraulic stem
+	var stem_mesh: CylinderMesh = CylinderMesh.new()
+	stem_mesh.top_radius = 0.025
+	stem_mesh.bottom_radius = 0.025
+	stem_mesh.height = 0.38
+	kit.mesh(chair, "Stem", stem_mesh, Vector3(0, 0.24, 0), kit.material("steel"), Vector3.ZERO, false)
+	# Padded seat
+	var seat_mesh: BoxMesh = BoxMesh.new()
+	seat_mesh.size = Vector3(0.52, 0.08, 0.50)
+	kit.mesh(chair, "Seat", seat_mesh, Vector3(0, 0.44, 0), kit.material("fabric_dark"))
+	# Backrest angled slightly
+	var back_mesh: BoxMesh = BoxMesh.new()
+	back_mesh.size = Vector3(0.48, 0.54, 0.06)
+	kit.mesh(chair, "Backrest", back_mesh, Vector3(0, 0.72, 0.22), kit.material("fabric_dark"), Vector3(-6, 0, 0))
+	return chair
+
+
+## 3-drawer metal filing cabinet
+static func _filing_cabinet(kit: LevelKit, parent: Node, node_name: String, at: Vector3, yaw_deg: float) -> Node3D:
+	var cab: Node3D = kit.box(parent, node_name, at + Vector3(0, 0.55, 0), Vector3(0.48, 1.1, 0.62), kit.material("metal_painted"), yaw_deg)
+	for i: int in 3:
+		var handle_mesh: BoxMesh = BoxMesh.new()
+		handle_mesh.size = Vector3(0.12, 0.02, 0.02)
+		kit.mesh(cab, "Handle%d" % i, handle_mesh, Vector3(0, -0.3 + i * 0.32, 0.32), kit.material("steel"), Vector3.ZERO, false)
+	return cab
+
+
+## Focused dramatic ceiling spot with volumetric fog beam
+static func _dramatic_ceiling_spot(kit: LevelKit, parent: Node, node_name: String, at: Vector3, color: Color, energy: float, spot_range: float) -> Node3D:
+	var fixture: Node3D = kit.group(parent, node_name, at)
+	# Ceiling bezel frame
+	var frame: BoxMesh = BoxMesh.new()
+	frame.size = Vector3(1.2, 0.03, 0.6)
+	kit.mesh(fixture, "Frame", frame, Vector3(0, -0.015, 0), kit.material("metal_painted"), Vector3.ZERO, false)
+	var diffuser: BoxMesh = BoxMesh.new()
+	diffuser.size = Vector3(1.12, 0.01, 0.52)
+	kit.mesh(fixture, "Diffuser", diffuser, Vector3(0, -0.03, 0), kit.material("diffuser_cool"), Vector3.ZERO, false)
+	# Main dramatic spot
+	var light: SpotLight3D = kit.own(SpotLight3D.new(), fixture, "Light") as SpotLight3D
+	light.position = Vector3(0, -0.05, 0)
+	light.rotation_degrees = Vector3(-90, 0, 0)
+	light.light_color = color
+	light.light_energy = energy
+	light.spot_range = spot_range
+	light.spot_angle = 68.0
+	light.spot_angle_attenuation = 0.7
+	light.spot_attenuation = 0.85
+	light.light_size = 0.4
+	light.shadow_enabled = true
+	light.shadow_bias = 0.04
+	light.light_volumetric_fog_energy = 0.85
+	# Ambient fill
+	var fill: OmniLight3D = kit.own(OmniLight3D.new(), fixture, "Fill") as OmniLight3D
+	fill.position = Vector3(0, -0.4, 0)
+	fill.light_color = color
+	fill.light_energy = energy * 0.15
+	fill.omni_range = spot_range * 0.55
+	fill.light_volumetric_fog_energy = 0.0
+	return fixture
+
+
+## Banker's desk lamp for Supervisor desk
+static func _bankers_desk_lamp(kit: LevelKit, room: Node3D, node_name: String, at: Vector3, lights: Node) -> Node3D:
+	var lamp: Node3D = kit.group(room, node_name, at)
+	# Base & stem
+	var base_m: CylinderMesh = CylinderMesh.new()
+	base_m.top_radius = 0.08
+	base_m.bottom_radius = 0.09
+	base_m.height = 0.025
+	kit.mesh(lamp, "Base", base_m, Vector3(0, 0.012, 0), kit.material("metal_dark"), Vector3.ZERO, false)
+	var stem_m: CylinderMesh = CylinderMesh.new()
+	stem_m.top_radius = 0.012
+	stem_m.bottom_radius = 0.012
+	stem_m.height = 0.35
+	kit.mesh(lamp, "Stem", stem_m, Vector3(0, 0.18, 0), kit.material("steel"), Vector3.ZERO, false)
+	# Shade
+	var shade_m: BoxMesh = BoxMesh.new()
+	shade_m.size = Vector3(0.20, 0.08, 0.10)
+	kit.mesh(lamp, "Shade", shade_m, Vector3(0, 0.36, 0), kit.material("metal_dark"), Vector3.ZERO, false)
+	# Warm tungsten desk glow
+	var light: OmniLight3D = kit.own(OmniLight3D.new(), lights, node_name + "_Glow") as OmniLight3D
+	light.position = at + Vector3(0, 0.34, 0)
+	light.light_color = Color(1.0, 0.82, 0.55)
+	light.light_energy = 1.8
+	light.omni_range = 3.2
+	light.omni_attenuation = 1.2
+	light.shadow_enabled = true
+	light.light_volumetric_fog_energy = 0.6
+	return lamp
+
+
+## Screen specular glow for ambient computer reflection
+static func _screen_glow(kit: LevelKit, parent: Node, node_name: String, at: Vector3, color: Color, energy: float) -> OmniLight3D:
+	var glow: OmniLight3D = kit.own(OmniLight3D.new(), parent, node_name) as OmniLight3D
+	glow.position = at
+	glow.light_color = color
+	glow.light_energy = energy
+	glow.omni_range = 1.8
+	glow.omni_attenuation = 1.6
+	glow.light_volumetric_fog_energy = 0.3
+	return glow

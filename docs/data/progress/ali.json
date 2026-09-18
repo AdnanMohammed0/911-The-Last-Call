@@ -1,6 +1,6 @@
 {
  "member": "ali",
- "updated_at": "2026-09-17",
+ "updated_at": "2026-09-18",
  "tasks": {
   "P1-14": {
    "status": "done",
@@ -245,6 +245,25 @@
     "autoload/bt_debugger.gd"
    ],
    "commit": "74c1f7a",
+   "auto": true
+  },
+  {
+   "date": "2026-09-18",
+   "tasks": [],
+   "summary": "fix(core): resolve upstream strict typing errors, autoload conflicts, and test assertions",
+   "files": [
+    "audio/vo/slice/closet_monster_01_start.wav",
+    "audio/vo/slice/closet_monster_01_start.wav.import",
+    "audio/vo/slice/closet_monster_02_location.wav",
+    "audio/vo/slice/closet_monster_02_location.wav.import",
+    "audio/vo/slice/closet_monster_03_describe.wav",
+    "audio/vo/slice/closet_monster_03_describe.wav.import",
+    "audio/vo/slice/closet_monster_04_cat.wav",
+    "audio/vo/slice/closet_monster_04_cat.wav.import",
+    "audio/vo/slice/closet_monster_05_sounds.wav",
+    "audio/vo/slice/closet_monster_05_sounds.wav.import"
+   ],
+   "commit": "0d74482",
    "auto": true
   }
  ]

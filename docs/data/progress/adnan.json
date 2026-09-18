@@ -1,6 +1,6 @@
 {
   "member": "adnan",
-  "updated_at": "2026-09-17",
+  "updated_at": "2026-09-18",
   "tasks": {
     "P1-01": {
       "status": "done",
@@ -834,6 +834,16 @@
         "scenes/field/missions/aspen_drive.tscn",
         "tests/test_career.gd",
         "tests/test_mission_loop.gd"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P1-01"
+      ],
+      "summary": "Git LFS: توسيع .gitattributes (خطوط ttf/otf، pdf، psd، exr/hdr، obj/dae، flac/aiff، zip) ونقل الخطوط وملف الـGDD لـLFS بـ --renormalize بدون إعادة كتابة التاريخ. كل ملفات LFS (136) متحققة بـ git lfs fsck، والـCI يسحب LFS.",
+      "files": [
+        ".gitattributes"
       ]
     }
   ]

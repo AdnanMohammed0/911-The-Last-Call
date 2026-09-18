@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="1_0"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="2_0"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="3_0"]
+[ext_resource type="Resource" path="res://data/calls/shift3/call_diversion_domestic_dialogue.tres" id="4_0"]
+[ext_resource type="Resource" path="res://data/calls/shift3/stress_diversion_domestic.tres" id="5_0"]
+
+[resource]
+script = ExtResource("2_0")
+id = &"call_diversion_domestic"
+title = "Diversion: Domestic Disturbance"
+truth = 4
+earliest_minute = 30
+dialogue = ExtResource("4_0")
+phone_number = "911-555-0312"
+caller_name = "Robert Wilkins"
+caller_location_name = "12 Elm Street"
+true_location = Vector2(380, 550)
+stress_profile = ExtResource("5_0")
+patience_seconds = 200.0

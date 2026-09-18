@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="StressProfile" format=3]
+
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="1_0"]
+[ext_resource type="Curve" path="res://data/calls/curves/tremor_interrogation.tres" id="2_0"]
+[ext_resource type="Curve" path="res://data/calls/curves/pitch_interrogation.tres" id="3_0"]
+
+[resource]
+script = ExtResource("1_0")
+tremor_curve = ExtResource("2_0")
+pitch_variance = ExtResource("3_0")
+loop_segments = Array[Vector2]([])
+background_tags = Array[StringName]([&"interrogation_room", &"metal_door_buzz", &"paper_shuffle"])
+baseline_heart_rate = 68

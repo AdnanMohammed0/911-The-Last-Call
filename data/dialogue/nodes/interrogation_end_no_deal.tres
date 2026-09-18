@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="DialogueNode" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+id = &"end_no_deal"
+speaker = &"caller"
+line = "No deal? Fine. Enjoy the siege. They're already watching this station. You'll hear the phones ring soon enough — and it won't be 911 on the other end. (click)"
+on_enter_events = Array[StringName]([&"cult_aware_station"])
+editor_position = Vector2(800, 100)

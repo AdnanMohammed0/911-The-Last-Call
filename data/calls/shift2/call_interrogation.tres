@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="1_0"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="2_0"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="3_0"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="4_0"]
+[ext_resource type="Resource" path="res://data/calls/shift2/call_interrogation_dialogue.tres" id="5_0"]
+[ext_resource type="Resource" path="res://data/calls/shift2/stress_interrogation.tres" id="6_0"]
+[ext_resource type="Resource" path="res://data/calls/shift2/record_entry_viktor_kolesov.tres" id="7_0"]
+[ext_resource type="Resource" path="res://data/calls/shift2/record_entry_millers_quarry.tres" id="8_0"]
+
+[resource]
+script = ExtResource("3_0")
+id = &"call_interrogation"
+title = "Interrogation: Viktor Kolesov"
+truth = 1
+earliest_minute = 0
+requires_flags = {&"ambush_leader_arrested": true}
+dialogue = ExtResource("5_0")
+phone_number = "911-555-0199"
+caller_name = "Detective Morrow"
+caller_location_name = "Station 4 — Interrogation Room"
+true_location = Vector2(400, 300)
+records = Array[ExtResource("2_0")]([ExtResource("7_0"), ExtResource("8_0")])
+stress_profile = ExtResource("6_0")
+patience_seconds = 300.0
+ring_timeout_seconds = 10.0

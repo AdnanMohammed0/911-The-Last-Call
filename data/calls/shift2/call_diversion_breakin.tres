@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="1_0"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="2_0"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="3_0"]
+[ext_resource type="Resource" path="res://data/calls/shift2/call_diversion_breakin_dialogue.tres" id="4_0"]
+[ext_resource type="Resource" path="res://data/calls/shift2/stress_diversion_breakin.tres" id="5_0"]
+
+[resource]
+script = ExtResource("2_0")
+id = &"call_diversion_breakin"
+title = "Diversion: Backyard Break-in"
+truth = 4
+earliest_minute = 45
+dialogue = ExtResource("4_0")
+phone_number = "911-555-0234"
+caller_name = "Margaret Hale"
+caller_location_name = "247 Oak Ridge Drive"
+true_location = Vector2(650, 420)
+stress_profile = ExtResource("5_0")
+patience_seconds = 180.0

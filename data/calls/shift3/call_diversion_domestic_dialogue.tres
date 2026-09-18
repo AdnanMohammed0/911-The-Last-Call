@@ -1,0 +1,105 @@
+[gd_resource type="Resource" script_class="DialogueGraph" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_0"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_0"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="3_0"]
+
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("1_0")
+id = &"start"
+speaker = &"caller"
+line = "Please, you have to help! My neighbor... I heard screaming. A woman screaming. Then a loud crash. It sounded like glass breaking."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_0"), SubResource("Choice_1"), SubResource("Choice_2")])
+
+[sub_resource type="Resource" id="Choice_0"]
+script = ExtResource("2_0")
+text = "What's the address?"
+next = &"address"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_1"]
+script = ExtResource("2_0")
+text = "Is the screaming still happening?"
+next = &"still_screaming"
+patience_delta = 5.0
+
+[sub_resource type="Resource" id="Choice_2"]
+script = ExtResource("2_0")
+text = "[Profiler] Did you hear any voices? Words?"
+next = &"voices"
+required_class = &"profiler"
+patience_delta = 10.0
+reveals = Array[StringName]([&"no_distinct_words"])
+
+[sub_resource type="Resource" id="DialogueNode_address"]
+script = ExtResource("1_0")
+id = &"address"
+speaker = &"caller"
+line = "12 Elm Street. The blue house on the corner. The Hendersons live there."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_3"), SubResource("Choice_4")])
+
+[sub_resource type="Resource" id="Choice_3"]
+script = ExtResource("2_0")
+text = "Units are on the way. Stay on the line."
+next = &"end_units"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_4"]
+script = ExtResource("2_0")
+text = "Do not go over there. Let us handle it."
+next = &"end_units"
+patience_delta = 5.0
+
+[sub_resource type="Resource" id="DialogueNode_still_screaming"]
+script = ExtResource("1_0")
+id = &"still_screaming"
+speaker = &"caller"
+line = "No... it stopped. Suddenly. Just... silence now. That's what scared me. It was loud, then nothing."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_5"), SubResource("Choice_6")])
+
+[sub_resource type="Resource" id="Choice_5"]
+script = ExtResource("2_0")
+text = "Stay where you are. We're sending officers."
+next = &"end_units"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_6"]
+script = ExtResource("2_0")
+text = "[Medic] Could it be a medical emergency?"
+next = &"medical"
+required_class = &"medic"
+patience_delta = 5.0
+reveals = Array[StringName]([&"possible_medical"])
+
+[sub_resource type="Resource" id="DialogueNode_medical"]
+script = ExtResource("1_0")
+id = &"medical"
+speaker = &"caller"
+line = "I... I don't know. Mrs. Henderson has heart problems. But the crash sounded like violence."
+auto_next = &"end_units"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="DialogueNode_voices"]
+script = ExtResource("1_0")
+id = &"voices"
+speaker = &"caller"
+line = "Just... screaming. No words I could make out. High-pitched. A woman. Then a man's voice, low, maybe shouting? It was muffled."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_7")])
+
+[sub_resource type="Resource" id="Choice_7"]
+script = ExtResource("2_0")
+text = "We're dispatching units now."
+next = &"end_units"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="DialogueNode_end_units"]
+script = ExtResource("1_0")
+id = &"end_units"
+speaker = &"caller"
+line = "Thank you. Please... just check on them. (click)"
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[resource]
+script = ExtResource("3_0")
+initial_node_id = &"start"
+nodes = Array[ExtResource("1_0")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_address"), SubResource("DialogueNode_still_screaming"), SubResource("DialogueNode_medical"), SubResource("DialogueNode_voices"), SubResource("DialogueNode_end_units")])

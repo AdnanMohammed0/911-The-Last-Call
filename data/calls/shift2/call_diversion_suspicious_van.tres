@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="1_0"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="2_0"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="3_0"]
+[ext_resource type="Resource" path="res://data/calls/shift2/call_diversion_suspicious_van_dialogue.tres" id="4_0"]
+[ext_resource type="Resource" path="res://data/calls/shift2/stress_diversion_van.tres" id="5_0"]
+
+[resource]
+script = ExtResource("2_0")
+id = &"call_diversion_suspicious_van"
+title = "Diversion: Suspicious Van on CR-9"
+truth = 4
+earliest_minute = 60
+dialogue = ExtResource("4_0")
+phone_number = "911-555-0278"
+caller_name = "Truck Driver #4421"
+caller_location_name = "County Road 9, northbound past Old Mill"
+true_location = Vector2(1100, 750)
+stress_profile = ExtResource("5_0")
+patience_seconds = 150.0

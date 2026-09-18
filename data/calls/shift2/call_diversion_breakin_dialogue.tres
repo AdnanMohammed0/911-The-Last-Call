@@ -1,0 +1,105 @@
+[gd_resource type="Resource" script_class="DialogueGraph" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_0"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_0"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="3_0"]
+
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("1_0")
+id = &"start"
+speaker = &"caller"
+line = "911? There's... there's someone in my backyard. I saw a flashlight moving around the shed. I think they're trying to break in."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_0"), SubResource("Choice_1"), SubResource("Choice_2")])
+
+[sub_resource type="Resource" id="Choice_0"]
+script = ExtResource("2_0")
+text = "What's your address?"
+next = &"address"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_1"]
+script = ExtResource("2_0")
+text = "Can you see them now? Are they armed?"
+next = &"armed"
+patience_delta = 5.0
+
+[sub_resource type="Resource" id="Choice_2"]
+script = ExtResource("2_0")
+text = "[Profiler] Are you alone in the house?"
+next = &"alone"
+required_class = &"profiler"
+patience_delta = 10.0
+reveals = Array[StringName]([&"caller_isolated"])
+
+[sub_resource type="Resource" id="DialogueNode_address"]
+script = ExtResource("1_0")
+id = &"address"
+speaker = &"caller"
+line = "247 Oak Ridge Drive. It's the white house with the blue shutters, near the old water tower."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_3"), SubResource("Choice_4")])
+
+[sub_resource type="Resource" id="Choice_3"]
+script = ExtResource("2_0")
+text = "Units are en route. Stay on the line."
+next = &"end_units"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_4"]
+script = ExtResource("2_0")
+text = "Lock your doors. Don't go outside."
+next = &"end_units"
+patience_delta = 5.0
+
+[sub_resource type="Resource" id="DialogueNode_armed"]
+script = ExtResource("1_0")
+id = &"armed"
+speaker = &"caller"
+line = "I... I can't tell. It's too dark. But I heard a noise like metal on metal. Maybe a crowbar?"
+choices = Array[ExtResource("2_0")]([SubResource("Choice_5"), SubResource("Choice_6")])
+
+[sub_resource type="Resource" id="Choice_5"]
+script = ExtResource("2_0")
+text = "Don't confront them. Police are coming."
+next = &"end_units"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_6"]
+script = ExtResource("2_0")
+text = "[Tech] I'll pull up the property cameras."
+next = &"tech_cams"
+required_class = &"tech"
+patience_delta = 5.0
+reveals = Array[StringName]([&"no_camera_coverage"])
+
+[sub_resource type="Resource" id="DialogueNode_tech_cams"]
+script = ExtResource("1_0")
+id = &"tech_cams"
+speaker = &"dispatcher"
+line = "(Property records show no exterior cameras on Oak Ridge Drive. Nearest CCTV is 0.8 miles away at the water tower.)"
+auto_next = &"end_units"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="DialogueNode_alone"]
+script = ExtResource("1_0")
+id = &"alone"
+speaker = &"caller"
+line = "Just me and my cat. My husband works nights at the mill."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_7")])
+
+[sub_resource type="Resource" id="Choice_7"]
+script = ExtResource("2_0")
+text = "Stay inside. We're sending a unit."
+next = &"end_units"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="DialogueNode_end_units"]
+script = ExtResource("1_0")
+id = &"end_units"
+speaker = &"caller"
+line = "Okay... okay. Please hurry. (heavy breathing) ...The flashlight's gone out. It's just dark now."
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[resource]
+script = ExtResource("3_0")
+initial_node_id = &"start"
+nodes = Array[ExtResource("1_0")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_address"), SubResource("DialogueNode_armed"), SubResource("DialogueNode_tech_cams"), SubResource("DialogueNode_alone"), SubResource("DialogueNode_end_units")])

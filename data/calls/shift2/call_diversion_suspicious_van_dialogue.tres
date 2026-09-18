@@ -1,0 +1,93 @@
+[gd_resource type="Resource" script_class="DialogueGraph" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_0"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_0"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="3_0"]
+
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("1_0")
+id = &"start"
+speaker = &"caller"
+line = "I'm driving on County Road 9, just past the old mill. There's a black van parked on the shoulder, engine running. Two guys in dark clothes just got out and walked into the woods. No headlights on the van."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_0"), SubResource("Choice_1"), SubResource("Choice_2")])
+
+[sub_resource type="Resource" id="Choice_0"]
+script = ExtResource("2_0")
+text = "Can you read the license plate?"
+next = &"plate"
+patience_delta = 5.0
+
+[sub_resource type="Resource" id="Choice_1"]
+script = ExtResource("2_0")
+text = "Which direction did they go? North or south?"
+next = &"direction"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_2"]
+script = ExtResource("2_0")
+text = "[Tech] I'll run the plate if you can get it."
+next = &"tech_plate"
+required_class = &"tech"
+patience_delta = 5.0
+reveals = Array[StringName]([&"van_registered_to_shell_company"])
+
+[sub_resource type="Resource" id="DialogueNode_plate"]
+script = ExtResource("1_0")
+id = &"plate"
+speaker = &"caller"
+line = "Partial... B-K-7... the rest is covered in mud. Looks deliberate."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_3")])
+
+[sub_resource type="Resource" id="Choice_3"]
+script = ExtResource("2_0")
+text = "Good catch. Which way did they go?"
+next = &"direction"
+patience_delta = 5.0
+
+[sub_resource type="Resource" id="DialogueNode_direction"]
+script = ExtResource("1_0")
+id = &"direction"
+speaker = &"caller"
+line = "North. Toward the quarry... wait, Miller's Quarry is up there, right? The abandoned mine?"
+choices = Array[ExtResource("2_0")]([SubResource("Choice_4"), SubResource("Choice_5")])
+
+[sub_resource type="Resource" id="Choice_4"]
+script = ExtResource("2_0")
+text = "Stay in your vehicle. Do not follow them."
+next = &"end_stay"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_5"]
+script = ExtResource("2_0")
+text = "[Investigator] That's near the cult hideout location from the interrogation."
+next = &"end_investigator"
+required_class = &"investigator"
+patience_delta = 15.0
+reveals = Array[StringName]([&"cult_movement_confirmed"])
+
+[sub_resource type="Resource" id="DialogueNode_tech_plate"]
+script = ExtResource("1_0")
+id = &"tech_plate"
+speaker = &"dispatcher"
+line = "(Plate BK-7xxx... registered to 'North Star Logistics LLC' — shell company, dissolved 2020. Same pattern as Blackvale Meats.)"
+auto_next = &"direction"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="DialogueNode_end_stay"]
+script = ExtResource("1_0")
+id = &"end_stay"
+speaker = &"caller"
+line = "Yeah, yeah. I'm not stopping. Just... be careful out there. (click)"
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="DialogueNode_end_investigator"]
+script = ExtResource("1_0")
+id = &"end_investigator"
+speaker = &"caller"
+line = "Cult hideout? Jesus. Okay, I'm getting out of here. You boys watch yourselves. (click)"
+on_enter_events = Array[StringName]([&"dispatch_units", &"cult_movement_tracked"])
+
+[resource]
+script = ExtResource("3_0")
+initial_node_id = &"start"
+nodes = Array[ExtResource("1_0")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_plate"), SubResource("DialogueNode_direction"), SubResource("DialogueNode_tech_plate"), SubResource("DialogueNode_end_stay"), SubResource("DialogueNode_end_investigator")])

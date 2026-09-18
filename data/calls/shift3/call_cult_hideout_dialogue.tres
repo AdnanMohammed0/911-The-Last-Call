@@ -1,0 +1,125 @@
+[gd_resource type="Resource" script_class="DialogueGraph" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_0"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_0"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="3_0"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="4_0"]
+
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("1_0")
+id = &"start"
+speaker = &"caller"
+line = "Station 4, this is Officer Chen at Miller's Quarry. We found the entrance — old mine shaft, heavy blast doors. There's... there's something wrong with the radio. It's picking up voices. Not ours."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_0"), SubResource("Choice_1"), SubResource("Choice_2")])
+
+[sub_resource type="Resource" id="Choice_0"]
+script = ExtResource("2_0")
+text = "Hold position. We're deploying backup."
+next = &"hold"
+patience_delta = 15.0
+
+[sub_resource type="Resource" id="Choice_1"]
+script = ExtResource("2_0")
+text = "[Tech] Can you trace the radio frequency?"
+next = &"trace_freq"
+required_class = &"tech"
+patience_delta = 10.0
+reveals = Array[StringName]([&"dead_frequency_relay"])
+
+[sub_resource type="Resource" id="Choice_2"]
+script = ExtResource("2_0")
+text = "Describe the voices. Are they... human?"
+next = &"describe_voices"
+patience_delta = 5.0
+reveals = Array[StringName]([&"paranormal_activity"])
+
+[sub_resource type="Resource" id="DialogueNode_hold"]
+script = ExtResource("1_0")
+id = &"hold"
+speaker = &"caller"
+line = "Copy that. We're setting up a perimeter at the main shaft. Chen out. (static) ...Wait, the radio just said my name. It knows my name."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_3"), SubResource("Choice_4")])
+
+[sub_resource type="Resource" id="Choice_3"]
+script = ExtResource("2_0")
+text = "Officer Chen, stay calm. Backup is en route."
+next = &"end_deploy"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_4"]
+script = ExtResource("2_0")
+text = "[Medic] That's the Caller anomaly. Do not answer. Maintain radio silence."
+next = &"radio_silence"
+required_class = &"medic"
+patience_delta = 20.0
+reveals = Array[StringName]([&"caller_anomaly_warning"])
+
+[sub_resource type="Resource" id="DialogueNode_trace_freq"]
+script = ExtResource("1_0")
+id = &"trace_freq"
+speaker = &"caller"
+line = "(static crackles) ...frequency locked. It's the Dead Frequency relay tower. They're broadcasting FROM the mine. The whole cult network runs through this place."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_5"), SubResource("Choice_6")])
+
+[sub_resource type="Resource" id="Choice_5"]
+script = ExtResource("2_0")
+text = "We're coming in. Secure that relay."
+next = &"end_deploy"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_6"]
+script = ExtResource("2_0")
+text = "Can you shut it down from there?"
+next = &"shutdown_relay"
+patience_delta = 5.0
+
+[sub_resource type="Resource" id="DialogueNode_shutdown_relay"]
+script = ExtResource("1_0")
+id = &"shutdown_relay"
+speaker = &"caller"
+line = "The equipment's in the server room, past the blast doors. But there's guards — zealots, not regular thugs. They don't feel pain. We need breachers."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_7")])
+
+[sub_resource type="Resource" id="Choice_7"]
+script = ExtResource("2_0")
+text = "Understood. Breach team deploying."
+next = &"end_deploy"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="DialogueNode_describe_voices"]
+script = ExtResource("1_0")
+id = &"describe_voices"
+speaker = &"caller"
+line = "Whispers... screams... and a woman crying. 'The water is so cold.' Same voice as the Cut Line call. But the radio's not even on the right frequency. It's picking it up through the... the rock itself?"
+choices = Array[ExtResource("2_0")]([SubResource("Choice_8")])
+
+[sub_resource type="Resource" id="Choice_8"]
+script = ExtResource("2_0")
+text = "Maintain position. We're coming in hot."
+next = &"end_deploy"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="DialogueNode_radio_silence"]
+script = ExtResource("1_0")
+id = &"radio_silence"
+speaker = &"caller"
+line = "Radio silence... copy. Cutting comms. (silence) ...The whispers stopped. But the lights in the tunnel just went out. All of them."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_9")])
+
+[sub_resource type="Resource" id="Choice_9"]
+script = ExtResource("2_0")
+text = "Stay in the light. Backup is minutes out."
+next = &"end_deploy"
+patience_delta = 15.0
+
+[sub_resource type="Resource" id="DialogueNode_end_deploy"]
+script = ExtResource("1_0")
+id = &"end_deploy"
+speaker = &"caller"
+line = "Station 4, we're going dark. See you on the other side. (click)"
+on_enter_events = Array[StringName]([&"dispatch_units", &"mission_cult_hideout_active"])
+
+[resource]
+script = ExtResource("3_0")
+initial_node_id = &"start"
+nodes = Array[ExtResource("1_0")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_hold"), SubResource("DialogueNode_trace_freq"), SubResource("DialogueNode_shutdown_relay"), SubResource("DialogueNode_describe_voices"), SubResource("DialogueNode_radio_silence"), SubResource("DialogueNode_end_deploy")])

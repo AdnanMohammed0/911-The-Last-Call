@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="DialogueNode" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+id = &"start"
+speaker = &"caller"
+line = "This is Detective Morrow, Blackvale PD. We have the suspect from the harbor ambush in custody. He's... willing to talk, but only to dispatch."
+editor_position = Vector2(0, 0)

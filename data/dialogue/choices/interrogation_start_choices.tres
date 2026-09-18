@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="DialogueChoice" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+text = "State your name and affiliation."
+next = &"identity"
+patience_delta = 10.0
+
+[gd_resource type="Resource" script_class="DialogueChoice" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+text = "[Profiler] Why did you join the Sons of the Dusk?"
+next = &"motive"
+required_class = &"profiler"
+patience_delta = 15.0
+reveals = Array[StringName]([&"cult_ideology"])
+
+[gd_resource type="Resource" script_class="DialogueChoice" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+text = "Where is the cult hideout?"
+next = &"hideout"
+patience_delta = -5.0

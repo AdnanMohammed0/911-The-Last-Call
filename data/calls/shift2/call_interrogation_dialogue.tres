@@ -1,0 +1,136 @@
+[gd_resource type="Resource" script_class="DialogueGraph" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_0"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_0"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="3_0"]
+
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("1_0")
+id = &"start"
+speaker = &"caller"
+line = "This is Detective Morrow, Blackvale PD. We have the suspect from the harbor ambush in custody. He's... willing to talk, but only to dispatch."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_0"), SubResource("Choice_1"), SubResource("Choice_2")])
+
+[sub_resource type="Resource" id="Choice_0"]
+script = ExtResource("2_0")
+text = "State your name and affiliation."
+next = &"identity"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_1"]
+script = ExtResource("2_0")
+text = "[Profiler] Why did you join the Sons of the Dusk?"
+next = &"motive"
+required_class = &"profiler"
+patience_delta = 15.0
+reveals = Array[StringName]([&"cult_ideology"])
+
+[sub_resource type="Resource" id="Choice_2"]
+script = ExtResource("2_0")
+text = "Where is the cult hideout?"
+next = &"hideout"
+patience_delta = -5.0
+
+[sub_resource type="Resource" id="DialogueNode_identity"]
+script = ExtResource("1_0")
+id = &"identity"
+speaker = &"caller"
+line = "Name's Viktor Kolesov. Former Spetsnaz, now muscle for the Sons of the Dusk. You boys took down my crew at the harbor. Fair play."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_3"), SubResource("Choice_4"), SubResource("Choice_5")])
+
+[sub_resource type="Resource" id="Choice_3"]
+script = ExtResource("2_0")
+text = "What else are they hiding at the quarry?"
+next = &"other_things"
+patience_delta = 5.0
+reveals = Array[StringName]([&"paranormal_weapon"])
+
+[sub_resource type="Resource" id="Choice_4"]
+script = ExtResource("2_0")
+text = "We'll verify the location. Stay on the line."
+next = &"end_deal"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_5"]
+script = ExtResource("2_0")
+text = "No deals. You're going away for a long time."
+next = &"end_no_deal"
+patience_delta = -30.0
+
+[sub_resource type="Resource" id="DialogueNode_motive"]
+script = ExtResource("1_0")
+id = &"motive"
+speaker = &"caller"
+line = "Why? Because the Dusk promised us something the station never did — order. Power. The old families, the corrupt council... they all burn. We're just the match."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_6"), SubResource("Choice_7")])
+
+[sub_resource type="Resource" id="Choice_6"]
+script = ExtResource("2_0")
+text = "What else are they hiding at the quarry?"
+next = &"other_things"
+patience_delta = 5.0
+reveals = Array[StringName]([&"paranormal_weapon"])
+
+[sub_resource type="Resource" id="Choice_7"]
+script = ExtResource("2_0")
+text = "Where exactly is this quarry?"
+next = &"hideout"
+patience_delta = -5.0
+
+[sub_resource type="Resource" id="DialogueNode_hideout"]
+script = ExtResource("1_0")
+id = &"hideout"
+speaker = &"caller"
+line = "You want the big fish? The compound's out at Miller's Quarry, north of County Road 9. Abandoned limestone mine. They've got the servers, the radio gear, the... other things. But you didn't hear it from me."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_8"), SubResource("Choice_9")])
+
+[sub_resource type="Resource" id="Choice_8"]
+script = ExtResource("2_0")
+text = "What are the 'other things'?"
+next = &"other_things"
+patience_delta = 5.0
+reveals = Array[StringName]([&"paranormal_weapon"])
+
+[sub_resource type="Resource" id="Choice_9"]
+script = ExtResource("2_0")
+text = "We'll check it out. Stay on the line."
+next = &"end_deal"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="DialogueNode_other_things"]
+script = ExtResource("1_0")
+id = &"other_things"
+speaker = &"caller"
+line = "The other things... you heard the Cut Line call, didn't you? The woman in the water. That's not a ghost story, officer. That's their weapon. They found something in that mine — something old. They're using the phone lines to wake it up."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_10"), SubResource("Choice_11")])
+
+[sub_resource type="Resource" id="Choice_10"]
+script = ExtResource("2_0")
+text = "We'll verify the location. Stay on the line."
+next = &"end_deal"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Choice_11"]
+script = ExtResource("2_0")
+text = "No deals. You're going away for a long time."
+next = &"end_no_deal"
+patience_delta = -30.0
+
+[sub_resource type="Resource" id="DialogueNode_end_deal"]
+script = ExtResource("1_0")
+id = &"end_deal"
+speaker = &"caller"
+line = "Immunity's off the table, but I'll make sure the DA knows you cooperated. Miller's Quarry. North of CR-9. Go in loud, they'll collapse the tunnels. Go in quiet, you might live long enough to find the server room. Your call."
+on_enter_events = Array[StringName]([&"dispatch_units", &"mission_unlocked_cult_hideout"])
+
+[sub_resource type="Resource" id="DialogueNode_end_no_deal"]
+script = ExtResource("1_0")
+id = &"end_no_deal"
+speaker = &"caller"
+line = "No deal? Fine. Enjoy the siege. They're already watching this station. You'll hear the phones ring soon enough — and it won't be 911 on the other end. (click)"
+on_enter_events = Array[StringName]([&"cult_aware_station"])
+
+[resource]
+script = ExtResource("3_0")
+initial_node_id = &"start"
+nodes = Array[ExtResource("1_0")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_identity"), SubResource("DialogueNode_motive"), SubResource("DialogueNode_hideout"), SubResource("DialogueNode_other_things"), SubResource("DialogueNode_end_deal"), SubResource("DialogueNode_end_no_deal")])

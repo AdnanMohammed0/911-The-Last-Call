@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+id = &"rec_millers_quarry"
+title = "Miller's Quarry — Property Record"
+content = "Abandoned limestone mine, ceased operations 1998. Owner: Miller Aggregate Co. (dissolved). Tax delinquent since 2003. Recent power draw detected on grid — industrial grade. No registered tenants. Adjacent to Dead Frequency relay tower (decommissioned 2019)."

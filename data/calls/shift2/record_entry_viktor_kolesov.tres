@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+id = &"rec_viktor_kolesov"
+title = "Viktor Kolesov — Arrest Record"
+content = "Born 1978, Russian Federation. Former GRU Spetsnaz (alleged). Entered US 2014. Associates: Sons of the Dusk cell leaders. Wanted for 3 homicides, weapons trafficking. Arrested 03:42 at Harbor Warehouse District following 'The Meat Truck' call."

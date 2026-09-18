@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="1_0"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="2_0"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="3_0"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="4_0"]
+[ext_resource type="Resource" path="res://data/calls/shift3/call_cult_hideout_dialogue.tres" id="5_0"]
+[ext_resource type="Resource" path="res://data/calls/shift3/stress_cult_hideout.tres" id="6_0"]
+[ext_resource type="Resource" path="res://data/calls/shift3/record_entry_cult_hideout_intel.tres" id="7_0"]
+
+[resource]
+script = ExtResource("3_0")
+id = &"call_cult_hideout"
+title = "Cult Hideout: Miller's Quarry"
+truth = 3
+earliest_minute = 0
+requires_flags = {&"mission_unlocked_cult_hideout": true}
+dialogue = ExtResource("5_0")
+phone_number = "911-555-0188"
+caller_name = "Officer Chen"
+caller_location_name = "Miller's Quarry — Abandoned Limestone Mine"
+true_location = Vector2(1200, 800)
+records = Array[ExtResource("2_0")]([ExtResource("7_0")])
+stress_profile = ExtResource("6_0")
+patience_seconds = 240.0
+ring_timeout_seconds = 15.0

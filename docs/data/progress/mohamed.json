@@ -71,6 +71,11 @@
       "status": "done",
       "updated_at": "2026-09-18",
       "note": "EndingResolver autoload: evaluates final ending based on Public Trust, Station Budget, Cult Awareness, flags (lake_house_cleared, cult_leaders_arrested), and shift performance. Three endings: SIEGE (Trust<20 or Cult≥90), SHADOW_WAR (Trust 20-40, Cult 60-89), RECLAMATION (Trust≥40, Cult<60, lake_house_cleared). Ending scene with title, description, stats breakdown, and unlocked content. GUT tests (10 tests)."
+    },
+    "P4-10": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Shifts 2 & 3 content authored: Interrogation call (call_interrogation) with arrested Ambush Leader Viktor Kolesov revealing Miller's Quarry cult hideout; Cult hideout mission call (call_cult_hideout) at Miller's Quarry with Dead Frequency relay, anomaly presence (EMF 5.0), 12-15 hostiles; 4 Diversion calls (break-in, suspicious van, domestic disturbance, warehouse noise complaint) with DIVERSION truth type pulling team from real threats. All calls include DialogueGraph with class-exclusive choices, StressProfiles with authored tremor/pitch curves, RecordEntries, and flag-gated triggers (ambush_leader_arrested, mission_unlocked_cult_hideout)."
     }
   },
   "log": [
@@ -409,6 +414,58 @@
         "autoload/ending_resolver.gd",
         "scenes/aftermath/ending_screen.tscn",
         "tests/test_ending_resolver.gd",
+        "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P4-10"
+      ],
+      "summary": "P4-10 Shifts 2 & 3 content: Interrogation call (Viktor Kolesov) unlocking Miller's Quarry cult hideout; Cult hideout mission at abandoned limestone mine with Dead Frequency relay and anomaly; 4 Diversion calls (break-in, suspicious van, domestic, warehouse) with DIVERSION truth. All include DialogueGraph, StressProfile, RecordEntry, flag-gated triggers.",
+      "files": [
+        "data/calls/shift2/call_interrogation.tres",
+        "data/calls/shift2/call_interrogation_dialogue.tres",
+        "data/calls/shift2/stress_interrogation.tres",
+        "data/calls/shift2/record_entry_viktor_kolesov.tres",
+        "data/calls/shift2/record_entry_millers_quarry.tres",
+        "data/calls/shift2/call_diversion_breakin.tres",
+        "data/calls/shift2/call_diversion_breakin_dialogue.tres",
+        "data/calls/shift2/stress_diversion_breakin.tres",
+        "data/calls/shift2/call_diversion_suspicious_van.tres",
+        "data/calls/shift2/call_diversion_suspicious_van_dialogue.tres",
+        "data/calls/shift2/stress_diversion_van.tres",
+        "data/calls/shift3/call_cult_hideout.tres",
+        "data/calls/shift3/call_cult_hideout_dialogue.tres",
+        "data/calls/shift3/stress_cult_hideout.tres",
+        "data/calls/shift3/record_entry_cult_hideout_intel.tres",
+        "data/calls/shift3/call_diversion_domestic.tres",
+        "data/calls/shift3/call_diversion_domestic_dialogue.tres",
+        "data/calls/shift3/stress_diversion_domestic.tres",
+        "data/calls/shift3/call_diversion_warehouse.tres",
+        "data/calls/shift3/call_diversion_warehouse_dialogue.tres",
+        "data/calls/shift3/stress_diversion_warehouse.tres",
+        "data/calls/curves/tremor_interrogation.tres",
+        "data/calls/curves/pitch_interrogation.tres",
+        "data/calls/curves/tremor_cult_hideout.tres",
+        "data/calls/curves/pitch_cult_hideout.tres",
+        "data/calls/curves/tremor_diversion_breakin.tres",
+        "data/calls/curves/pitch_diversion_breakin.tres",
+        "data/calls/curves/tremor_diversion_van.tres",
+        "data/calls/curves/pitch_diversion_van.tres",
+        "data/calls/curves/tremor_diversion_domestic.tres",
+        "data/calls/curves/pitch_diversion_domestic.tres",
+        "data/calls/curves/tremor_diversion_warehouse.tres",
+        "data/calls/curves/pitch_diversion_warehouse.tres",
+        "data/dialogue/nodes/interrogation_start.tres",
+        "data/dialogue/nodes/interrogation_identity.tres",
+        "data/dialogue/nodes/interrogation_motive.tres",
+        "data/dialogue/nodes/interrogation_hideout.tres",
+        "data/dialogue/nodes/interrogation_other_things.tres",
+        "data/dialogue/nodes/interrogation_end_deal.tres",
+        "data/dialogue/nodes/interrogation_end_no_deal.tres",
+        "data/dialogue/choices/interrogation_start_choices.tres",
+        "data/dialogue/choices/interrogation_mid_choices.tres",
         "docs/data/progress/mohamed.json"
       ]
     }

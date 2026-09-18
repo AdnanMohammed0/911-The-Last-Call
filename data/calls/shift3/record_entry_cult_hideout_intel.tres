@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="RecordEntry" format=3]
+
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+id = &"rec_cult_hideout_intel"
+title = "Miller's Quarry — Cult Hideout Intel"
+content = "Confirmed Sons of the Dusk primary command post. Server room houses Dead Frequency relay transmitter (modified amateur radio + paranormal components). Blast doors require breaching charge or ram. Estimated 12-15 hostiles: 2 Ambush Leaders, 4 Zealots, 6 Cultist Gunmen. Anomaly presence confirmed — EMF 5.0 at server room. Recommend full anomaly kit (EMF, Salt, Tone Emitter) + Breacher."

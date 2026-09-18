@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="DialogueChoice" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+text = "What else are they hiding at the quarry?"
+next = &"other_things"
+patience_delta = 5.0
+reveals = Array[StringName]([&"paranormal_weapon"])
+
+[gd_resource type="Resource" script_class="DialogueChoice" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+text = "We'll verify the location. Stay on the line."
+next = &"end_deal"
+patience_delta = 10.0
+
+[gd_resource type="Resource" script_class="DialogueChoice" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+text = "No deals. You're going away for a long time."
+next = &"end_no_deal"
+patience_delta = -30.0

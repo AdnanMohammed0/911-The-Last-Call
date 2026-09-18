@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="DialogueNode" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+id = &"hideout"
+speaker = &"caller"
+line = "You want the big fish? The compound's out at Miller's Quarry, north of County Road 9. Abandoned limestone mine. They've got the servers, the radio gear, the... other things. But you didn't hear it from me."
+editor_position = Vector2(400, 100)

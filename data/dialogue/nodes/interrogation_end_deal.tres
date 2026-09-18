@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="DialogueNode" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+id = &"end_deal"
+speaker = &"caller"
+line = "Immunity's off the table, but I'll make sure the DA knows you cooperated. Miller's Quarry. North of CR-9. Go in loud, they'll collapse the tunnels. Go in quiet, you might live long enough to find the server room. Your call."
+on_enter_events = Array[StringName]([&"dispatch_units", &"mission_unlocked_cult_hideout"])
+editor_position = Vector2(800, -100)

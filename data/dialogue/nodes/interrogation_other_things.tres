@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="DialogueNode" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+id = &"other_things"
+speaker = &"caller"
+line = "The other things... you heard the Cut Line call, didn't you? The woman in the water. That's not a ghost story, officer. That's their weapon. They found something in that mine — something old. They're using the phone lines to wake it up."
+editor_position = Vector2(600, 0)

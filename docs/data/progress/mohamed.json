@@ -76,6 +76,11 @@
       "status": "done",
       "updated_at": "2026-09-18",
       "note": "Shifts 2 & 3 content authored: Interrogation call (call_interrogation) with arrested Ambush Leader Viktor Kolesov revealing Miller's Quarry cult hideout; Cult hideout mission call (call_cult_hideout) at Miller's Quarry with Dead Frequency relay, anomaly presence (EMF 5.0), 12-15 hostiles; 4 Diversion calls (break-in, suspicious van, domestic disturbance, warehouse noise complaint) with DIVERSION truth type pulling team from real threats. All calls include DialogueGraph with class-exclusive choices, StressProfiles with authored tremor/pitch curves, RecordEntries, and flag-gated triggers (ambush_leader_arrested, mission_unlocked_cult_hideout)."
+    },
+    "P4-13": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Audio polish: 13-bus layout (Master, Music, Ambience, Foley, SFX, Phone, VoiceProximity, VoiceRadio, Record, Panic, UI, RadioChatter, VHS) with FX chains. 12 ambience tracks (station/field/horror/siege/aftermath) with layered beds + oneshots. 76 foley definitions (footsteps 7 surfaces×3 movement types, doors, equipment, weapons, interactions, environment) with class modifiers. 19 music stingers (tension low/med/high, scare subtle/major/anomaly, resolution minor/major/failure, 4 ambient drones, 3 transitions, 3 endings). AudioServer autoload for playback. MIX_PASS.md documents bus routing, loudness targets (-14 LUFS Master), sanity-driven Panic bus, Tension Director music, distance attenuation, class modifiers, integration hooks, and validation checklist."
     }
   },
   "log": [
@@ -467,6 +472,25 @@
         "data/dialogue/choices/interrogation_start_choices.tres",
         "data/dialogue/choices/interrogation_mid_choices.tres",
         "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P4-13"
+      ],
+      "summary": "P4-13 Audio polish: 13-bus layout (Master, Music, Ambience, Foley, SFX, Phone, VoiceProximity, VoiceRadio, Record, Panic, UI, RadioChatter, VHS) with FX chains. 12 ambience tracks with layered beds + oneshots. 76 foley definitions (footsteps 7 surfaces×3 movement types, doors, equipment, weapons, interactions, environment) with class modifiers. 19 music stingers (tension low/med/high, scare subtle/major/anomaly, resolution minor/major/failure, 4 ambient drones, 3 transitions, 3 endings). AudioServer autoload for playback. MIX_PASS.md documents bus routing, loudness targets (-14 LUFS Master), sanity-driven Panic bus, Tension Director music, distance attenuation, class modifiers, integration hooks, and validation checklist.",
+      "files": [
+        "audio/buses/audio_buses.cfg",
+        "core/audio/ambience_track.gd",
+        "audio/ambience/ambience_tracks.tres",
+        "core/audio/foley_definition.gd",
+        "audio/foley/foley_definitions.tres",
+        "core/audio/music_stinger.gd",
+        "audio/music/music_stingers.tres",
+        "autoload/audio_server.gd",
+        "docs/audio/MIX_PASS.md",
+        "project.godot"
       ]
     }
   ]

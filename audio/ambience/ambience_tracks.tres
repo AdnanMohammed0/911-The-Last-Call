@@ -1,0 +1,207 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://core/audio/ambience_track.gd" id="1_0"]
+
+[sub_resource type="Resource" id="StationOpsRoom"]
+script = ExtResource("1_0")
+id = &"station_ops_room"
+name = "Station 4 — Operations Room"
+description = "Constant low hum of CRT monitors, analog phone system, HVAC, distant radio chatter. The heartbeat of the dispatch phase."
+category = 0
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/station_ops_room_base.wav", "volume_db": -18.0, "loop": true, "fade_in": 2.0, "fade_out": 1.0 },
+{ "file": "res://audio/ambience/station_crt_hum.wav", "volume_db": -24.0, "loop": true, "fade_in": 1.0, "fade_out": 0.5 },
+{ "file": "res://audio/ambience/station_hvac.wav", "volume_db": -20.0, "loop": true, "fade_in": 3.0, "fade_out": 1.5 },
+{ "file": "res://audio/ambience/station_radio_chatter.wav", "volume_db": -26.0, "loop": true, "fade_in": 2.0, "fade_out": 1.0, "random_start": true },
+{ "file": "res://audio/ambience/station_typing.wav", "volume_db": -22.0, "loop": true, "fade_in": 1.0, "fade_out": 0.5, "probability": 0.3 },
+{ "file": "res://audio/ambience/station_coffee_machine.wav", "volume_db": -30.0, "loop": false, "fade_in": 0.5, "fade_out": 2.0, "probability": 0.1, "interval_range": [60.0, 180.0] }
+])
+transition_to = Array[StringName]([&"station_garage", &"station_armory", &"field_dispatch"])
+
+[sub_resource type="Resource" id="StationGarage"]
+script = ExtResource("1_0")
+id = &"station_garage"
+name = "Station 4 — Garage / Deployment"
+description = "Concrete echo, vehicle engines idling, garage door motors, equipment clatter. Transition space."
+category = 0
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/garage_concrete_echo.wav", "volume_db": -16.0, "loop": true, "fade_in": 1.5, "fade_out": 1.0 },
+{ "file": "res://audio/ambience/garage_vehicle_idle.wav", "volume_db": -22.0, "loop": true, "fade_in": 2.0, "fade_out": 1.0 },
+{ "file": "res://audio/ambience/garage_door_motor.wav", "volume_db": -18.0, "loop": false, "fade_in": 0.5, "fade_out": 1.0, "trigger": "door_open" },
+{ "file": "res://audio/ambience/garage_equipment_clatter.wav", "volume_db": -24.0, "loop": false, "fade_in": 0.3, "fade_out": 1.0, "probability": 0.2, "interval_range": [10.0, 30.0] }
+])
+transition_to = Array[StringName]([&"station_ops_room", &"field_deploy"])
+
+[sub_resource type="Resource" id="StationArmory"]
+script = ExtResource("1_0")
+id = &"station_armory"
+name = "Station 4 — Armory"
+description = "Metal locker sounds, weapon rack clicks, gear rustle, quiet tension. Close, intimate space."
+category = 0
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/armory_metal_hum.wav", "volume_db": -20.0, "loop": true, "fade_in": 1.0, "fade_out": 0.5 },
+{ "file": "res://audio/ambience/armory_locker_creak.wav", "volume_db": -26.0, "loop": false, "fade_in": 0.3, "fade_out": 1.0, "probability": 0.15, "interval_range": [15.0, 45.0] },
+{ "file": "res://audio/ambience/armory_gear_rustle.wav", "volume_db": -28.0, "loop": false, "fade_in": 0.2, "fade_out": 0.8, "probability": 0.2, "interval_range": [8.0, 25.0] },
+{ "file": "res://audio/ambience/armory_breathing.wav", "volume_db": -30.0, "loop": true, "fade_in": 2.0, "fade_out": 1.0, "condition": "player_near" }
+])
+transition_to = Array[StringName]([&"station_ops_room", &"station_garage"])
+
+[sub_resource type="Resource" id="FieldSuburban"]
+script = ExtResource("1_0")
+id = &"field_suburban"
+name = "Field — Suburban Night (Aspen Drive)"
+description = "Crickets, distant traffic, wind in trees, occasional dog bark, house AC units. Safe but uncanny."
+category = 1
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/field_suburban_crickets.wav", "volume_db": -14.0, "loop": true, "fade_in": 3.0, "fade_out": 2.0 },
+{ "file": "res://audio/ambience/field_suburban_wind_trees.wav", "volume_db": -18.0, "loop": true, "fade_in": 2.0, "fade_out": 1.5 },
+{ "file": "res://audio/ambience/field_suburban_distant_traffic.wav", "volume_db": -22.0, "loop": true, "fade_in": 3.0, "fade_out": 2.0 },
+{ "file": "res://audio/ambience/field_suburban_dog_bark.wav", "volume_db": -20.0, "loop": false, "fade_in": 0.2, "fade_out": 1.5, "probability": 0.1, "interval_range": [30.0, 120.0], "random_pitch": 0.1 },
+{ "file": "res://audio/ambience/field_suburban_ac_unit.wav", "volume_db": -26.0, "loop": true, "fade_in": 2.0, "fade_out": 1.0 },
+{ "file": "res://audio/ambience/field_suburban_porch_creak.wav", "volume_db": -28.0, "loop": false, "fade_in": 0.3, "fade_out": 1.0, "probability": 0.05, "interval_range": [40.0, 100.0] }
+])
+transition_to = Array[StringName]([&"field_suburban_tense", &"field_warehouse"])
+
+[sub_resource type="Resource" id="FieldSuburbanTense"]
+script = ExtResource("1_0")
+id = &"field_suburban_tense"
+name = "Field — Suburban Night (Tense)"
+description = "Suburban base layer with added tension: lower crickets, distant siren, heavier wind, subtle dissonant drone."
+category = 1
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/field_suburban_crickets.wav", "volume_db": -20.0, "loop": true, "fade_in": 3.0, "fade_out": 2.0 },
+{ "file": "res://audio/ambience/field_suburban_wind_trees.wav", "volume_db": -16.0, "loop": true, "fade_in": 2.0, "fade_out": 1.5 },
+{ "file": "res://audio/ambience/field_suburban_distant_traffic.wav", "volume_db": -24.0, "loop": true, "fade_in": 3.0, "fade_out": 2.0 },
+{ "file": "res://audio/ambience/field_distant_siren.wav", "volume_db": -28.0, "loop": false, "fade_in": 5.0, "fade_out": 10.0, "probability": 0.05, "interval_range": [60.0, 180.0] },
+{ "file": "res://audio/ambience/field_tension_drone_low.wav", "volume_db": -30.0, "loop": true, "fade_in": 10.0, "fade_out": 5.0 },
+{ "file": "res://audio/ambience/field_suburban_dog_bark.wav", "volume_db": -22.0, "loop": false, "fade_in": 0.2, "fade_out": 1.5, "probability": 0.15, "interval_range": [20.0, 80.0], "random_pitch": 0.15 }
+])
+transition_to = Array[StringName]([&"field_suburban", &"field_combat"])
+
+[sub_resource type="Resource" id="FieldWarehouse"]
+script = ExtResource("1_0")
+id = &"field_warehouse"
+name = "Field — Harbor Warehouse District"
+description = "Industrial: distant ship horns, water lapping, metal creaking in wind, generator hum, container echoes."
+category = 1
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/field_warehouse_water_lap.wav", "volume_db": -16.0, "loop": true, "fade_in": 3.0, "fade_out": 2.0 },
+{ "file": "res://audio/ambience/field_warehouse_ship_horn.wav", "volume_db": -20.0, "loop": false, "fade_in": 2.0, "fade_out": 8.0, "probability": 0.08, "interval_range": [45.0, 150.0] },
+{ "file": "res://audio/ambience/field_warehouse_metal_creak.wav", "volume_db": -22.0, "loop": false, "fade_in": 0.5, "fade_out": 2.0, "probability": 0.15, "interval_range": [10.0, 40.0], "random_pitch": 0.2 },
+{ "file": "res://audio/ambience/field_warehouse_generator.wav", "volume_db": -18.0, "loop": true, "fade_in": 2.0, "fade_out": 1.0 },
+{ "file": "res://audio/ambience/field_warehouse_container_echo.wav", "volume_db": -26.0, "loop": false, "fade_in": 0.3, "fade_out": 1.5, "probability": 0.1, "interval_range": [20.0, 60.0] },
+{ "file": "res://audio/ambience/field_warehouse_reefer_compressor.wav", "volume_db": -24.0, "loop": true, "fade_in": 1.5, "fade_out": 1.0 }
+])
+transition_to = Array[StringName]([&"field_warehouse_combat", &"field_highway"])
+
+[sub_resource type="Resource" id="FieldHighway"]
+script = ExtResource("1_0")
+id = &"field_highway"
+name = "Field — Abandoned Highway (Meat Truck)"
+description = "Open asphalt: wind over road, distant traffic drones, occasional truck pass, power line buzz."
+category = 1
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/field_highway_wind_asphalt.wav", "volume_db": -14.0, "loop": true, "fade_in": 2.0, "fade_out": 1.5 },
+{ "file": "res://audio/ambience/field_highway_distant_traffic.wav", "volume_db": -20.0, "loop": true, "fade_in": 3.0, "fade_out": 2.0 },
+{ "file": "res://audio/ambience/field_highway_power_line_buzz.wav", "volume_db": -26.0, "loop": true, "fade_in": 2.0, "fade_out": 1.0 },
+{ "file": "res://audio/ambience/field_highway_truck_pass.wav", "volume_db": -18.0, "loop": false, "fade_in": 1.0, "fade_out": 5.0, "probability": 0.1, "interval_range": [30.0, 90.0] },
+{ "file": "res://audio/ambience/field_highway_rebar_wind.wav", "volume_db": -28.0, "loop": false, "fade_in": 0.5, "fade_out": 2.0, "probability": 0.08, "interval_range": [15.0, 50.0] }
+])
+transition_to = Array[StringName]([&"field_warehouse", &"field_quarry"])
+
+[sub_resource type="Resource" id="FieldQuarry"]
+script = ExtResource("1_0")
+id = &"field_quarry"
+name = "Field — Miller's Quarry (Cult Hideout)"
+description = "Deep mine: dripping water, rock settling, distant chanting, EMF hum, oppressive silence between sounds."
+category = 2
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/field_quarry_water_drip.wav", "volume_db": -18.0, "loop": true, "fade_in": 2.0, "fade_out": 1.5 },
+{ "file": "res://audio/ambience/field_quarry_rock_settle.wav", "volume_db": -24.0, "loop": false, "fade_in": 0.3, "fade_out": 3.0, "probability": 0.2, "interval_range": [8.0, 30.0], "random_pitch": 0.3 },
+{ "file": "res://audio/ambience/field_quarry_distant_chanting.wav", "volume_db": -28.0, "loop": true, "fade_in": 15.0, "fade_out": 10.0 },
+{ "file": "res://audio/ambience/field_quarry_emf_hum.wav", "volume_db": -22.0, "loop": true, "fade_in": 5.0, "fade_out": 3.0 },
+{ "file": "res://audio/ambience/field_quarry_generator_deep.wav", "volume_db": -20.0, "loop": true, "fade_in": 3.0, "fade_out": 2.0 },
+{ "file": "res://audio/ambience/field_quarry_ventilation_shaft.wav", "volume_db": -26.0, "loop": true, "fade_in": 4.0, "fade_out": 2.0 },
+{ "file": "res://audio/ambience/field_quarry_silence_pressure.wav", "volume_db": -32.0, "loop": true, "fade_in": 20.0, "fade_out": 10.0 }
+])
+transition_to = Array[StringName]([&"field_quarry_ritual", &"field_highway"])
+
+[sub_resource type="Resource" id="FieldQuarryRitual"]
+script = ExtResource("1_0")
+id = &"field_quarry_ritual"
+name = "Field — Miller's Quarry (Ritual Active)"
+description = "Quarry base with ritual intensity: louder chanting, stronger EMF, anomalous frequencies, reality thinning."
+category = 2
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/field_quarry_water_drip.wav", "volume_db": -20.0, "loop": true, "fade_in": 2.0, "fade_out": 1.5 },
+{ "file": "res://audio/ambience/field_quarry_rock_settle.wav", "volume_db": -22.0, "loop": false, "fade_in": 0.3, "fade_out": 3.0, "probability": 0.3, "interval_range": [5.0, 20.0] },
+{ "file": "res://audio/ambience/field_quarry_distant_chanting.wav", "volume_db": -20.0, "loop": true, "fade_in": 10.0, "fade_out": 5.0 },
+{ "file": "res://audio/ambience/field_quarry_emf_hum.wav", "volume_db": -16.0, "loop": true, "fade_in": 3.0, "fade_out": 2.0 },
+{ "file": "res://audio/ambience/field_quarry_generator_deep.wav", "volume_db": -18.0, "loop": true, "fade_in": 2.0, "fade_out": 1.5 },
+{ "file": "res://audio/ambience/field_quarry_anomaly_frequency.wav", "volume_db": -24.0, "loop": true, "fade_in": 8.0, "fade_out": 5.0 },
+{ "file": "res://audio/ambience/field_quarry_reality_thin.wav", "volume_db": -30.0, "loop": true, "fade_in": 15.0, "fade_out": 10.0 }
+])
+transition_to = Array[StringName]([&"field_quarry", &"field_quarry_banished"])
+
+[sub_resource type="Resource" id="FieldFloodedHouse"]
+script = ExtResource("1_0")
+id = &"field_flooded_house"
+name = "Field — Flooded Lake House (Cut Line)"
+description = "Water-damaged interior: constant water movement, house settling, EMF interference, drowned woman presence."
+category = 2
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/field_flooded_water_movement.wav", "volume_db": -14.0, "loop": true, "fade_in": 2.0, "fade_out": 1.5 },
+{ "file": "res://audio/ambience/field_flooded_house_settle.wav", "volume_db": -20.0, "loop": false, "fade_in": 0.5, "fade_out": 2.0, "probability": 0.25, "interval_range": [5.0, 25.0] },
+{ "file": "res://audio/ambience/field_flooded_emf_interference.wav", "volume_db": -18.0, "loop": true, "fade_in": 3.0, "fade_out": 2.0 },
+{ "file": "res://audio/ambience/field_flooded_distant_drips.wav", "volume_db": -24.0, "loop": true, "fade_in": 2.0, "fade_out": 1.0 },
+{ "file": "res://audio/ambience/field_flooded_anomaly_whisper.wav", "volume_db": -30.0, "loop": false, "fade_in": 1.0, "fade_out": 2.0, "probability": 0.1, "interval_range": [15.0, 60.0], "condition": "sanity_low" }
+])
+transition_to = Array[StringName]([&"field_suburban", &"field_flooded_cleared"])
+
+[sub_resource type="Resource" id="StationSiege"]
+script = ExtResource("1_0")
+id = &"station_siege"
+name = "Station 4 — Siege (Ending)"
+description = "Power failing, emergency lights, generator dying, horde outside, radio static, last stand atmosphere."
+category = 3
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/station_siege_emergency_lights.wav", "volume_db": -16.0, "loop": true, "fade_in": 1.0, "fade_out": 0.5 },
+{ "file": "res://audio/ambience/station_siege_generator_dying.wav", "volume_db": -18.0, "loop": true, "fade_in": 2.0, "fade_out": 1.0 },
+{ "file": "res://audio/ambience/station_siege_horde_outside.wav", "volume_db": -20.0, "loop": true, "fade_in": 5.0, "fade_out": 3.0 },
+{ "file": "res://audio/ambience/station_siege_radio_static.wav", "volume_db": -22.0, "loop": true, "fade_in": 1.0, "fade_out": 0.5 },
+{ "file": "res://audio/ambience/station_siege_distant_impacts.wav", "volume_db": -18.0, "loop": false, "fade_in": 0.5, "fade_out": 2.0, "probability": 0.3, "interval_range": [3.0, 15.0] },
+{ "file": "res://audio/ambience/station_siege_power_fluctuation.wav", "volume_db": -24.0, "loop": false, "fade_in": 0.2, "fade_out": 1.0, "probability": 0.2, "interval_range": [5.0, 20.0] }
+])
+transition_to = Array[StringName]([])
+
+[sub_resource type="Resource" id="AftermathQuiet"]
+script = ExtResource("1_0")
+id = &"aftermath_quiet"
+name = "Aftermath — Shift Report / Quiet Station"
+description = "Post-mission calm: coffee machine, paperwork rustle, quiet radio, exhaustion. Reflective space."
+category = 4
+layers = Array[Dictionary]([
+{ "file": "res://audio/ambience/aftermath_coffee_machine.wav", "volume_db": -22.0, "loop": false, "fade_in": 0.5, "fade_out": 3.0, "probability": 0.3, "interval_range": [20.0, 60.0] },
+{ "file": "res://audio/ambience/aftermath_paperwork.wav", "volume_db": -26.0, "loop": false, "fade_in": 0.3, "fade_out": 1.0, "probability": 0.2, "interval_range": [10.0, 40.0] },
+{ "file": "res://audio/ambience/aftermath_quiet_radio.wav", "volume_db": -28.0, "loop": true, "fade_in": 3.0, "fade_out": 2.0 },
+{ "file": "res://audio/ambience/aftermath_exhausted_breathing.wav", "volume_db": -30.0, "loop": true, "fade_in": 2.0, "fade_out": 1.0, "condition": "player_near" },
+{ "file": "res://audio/ambience/aftermath_clock_tick.wav", "volume_db": -32.0, "loop": true, "fade_in": 1.0, "fade_out": 0.5 }
+])
+transition_to = Array[StringName]([&"station_ops_room"])
+
+[resource]
+script = ExtResource("1_0")
+tracks = Array[ExtResource("1_0")]([
+SubResource("StationOpsRoom"),
+SubResource("StationGarage"),
+SubResource("StationArmory"),
+SubResource("FieldSuburban"),
+SubResource("FieldSuburbanTense"),
+SubResource("FieldWarehouse"),
+SubResource("FieldHighway"),
+SubResource("FieldQuarry"),
+SubResource("FieldQuarryRitual"),
+SubResource("FieldFloodedHouse"),
+SubResource("StationSiege"),
+SubResource("AftermathQuiet")
+])

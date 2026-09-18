@@ -1,0 +1,354 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://core/audio/music_stinger.gd" id="1_0"]
+
+[sub_resource type="Resource" id="TensionLow"]
+script = ExtResource("1_0")
+id = &"tension_low"
+name = "Tension — Low"
+description = "Subtle unease. Slow pulse, sparse notes. For early investigation, quiet moments."
+category = 0
+intensity = 0.2
+file = "res://audio/music/stingers/tension_low_01.wav"
+alternates = Array[String](["res://audio/music/stingers/tension_low_02.wav", "res://audio/music/stingers/tension_low_03.wav"])
+volume_db = -12.0
+fade_in = 3.0
+fade_out = 5.0
+trigger_conditions = Array[StringName]([&"sanity_uneasy", &"call_suspicious", &"area_clear_but_watched"])
+cooldown_sec = 60.0
+priority = 1
+layerable = true
+
+[sub_resource type="Resource" id="TensionMedium"]
+script = ExtResource("1_0")
+id = &"tension_medium"
+name = "Tension — Medium"
+description = "Building pressure. Rhythmic pulse, dissonant harmony. For confirmed threats, approaching danger."
+category = 0
+intensity = 0.5
+file = "res://audio/music/stingers/tension_medium_01.wav"
+alternates = Array[String](["res://audio/music/stingers/tension_medium_02.wav", "res://audio/music/stingers/tension_medium_03.wav"])
+volume_db = -8.0
+fade_in = 2.0
+fade_out = 4.0
+trigger_conditions = Array[StringName]([&"sanity_panicked", &"hostiles_nearby", &"ambush_imminent", &"cult_awareness_high"])
+cooldown_sec = 45.0
+priority = 2
+layerable = true
+
+[sub_resource type="Resource" id="TensionHigh"]
+script = ExtResource("1_0")
+id = &"tension_high"
+name = "Tension — High"
+description = "Maximum pressure. Driving rhythm, dense harmony, harsh timbres. For combat, hunt phase, siege."
+category = 0
+intensity = 0.8
+file = "res://audio/music/stingers/tension_high_01.wav"
+alternates = Array[String](["res://audio/music/stingers/tension_high_02.wav", "res://audio/music/stingers/tension_high_03.wav"])
+volume_db = -4.0
+fade_in = 1.0
+fade_out = 3.0
+trigger_conditions = Array[StringName]([&"sanity_broken", &"combat_active", &"anomaly_hunt", &"station_siege"])
+cooldown_sec = 30.0
+priority = 3
+layerable = false
+
+[sub_resource type="Resource" id="ScareSubtle"]
+script = ExtResource("1_0")
+id = &"scare_subtle"
+name = "Scare — Subtle"
+description = "Micro-scare. Single dissonant hit, brief silence. For hallucinations, phantom sounds, false alerts."
+category = 1
+intensity = 0.3
+file = "res://audio/music/stingers/scare_subtle_01.wav"
+alternates = Array[String](["res://audio/music/stingers/scare_subtle_02.wav", "res://audio/music/stingers/scare_subtle_03.wav"])
+volume_db = -6.0
+fade_in = 0.1
+fade_out = 2.0
+trigger_conditions = Array[StringName]([&"hallucination_phantom_steps", &"hallucination_phantom_ring", &"hallucination_radio_whisper", &"false_alert"])
+cooldown_sec = 20.0
+priority = 4
+layerable = true
+
+[sub_resource type="Resource" id="ScareMajor"]
+script = ExtResource("1_0")
+id = &"scare_major"
+name = "Scare — Major"
+description = "Full jumpscare hit. Loud, broadband, followed by tension ramp. For anomaly manifestation, sudden contact."
+category = 1
+intensity = 0.9
+file = "res://audio/music/stingers/scare_major_01.wav"
+alternates = Array[String](["res://audio/music/stingers/scare_major_02.wav", "res://audio/music/stingers/scare_major_03.wav"])
+volume_db = 0.0
+fade_in = 0.05
+fade_out = 1.0
+trigger_conditions = Array[StringName]([&"anomaly_manifest", &"anomaly_attack", &"sudden_contact", &"jumpscare", &"dead_frequency_burst"])
+cooldown_sec = 40.0
+priority = 5
+layerable = false
+
+[sub_resource type="Resource" id="ScareAnomaly"]
+script = ExtResource("1_0")
+id = &"scare_anomaly"
+name = "Scare — Anomaly Specific"
+description = "Anomaly-themed. EMF-tinged, frequency-based. For Drowned Woman, The Caller, Static Shade encounters."
+category = 1
+intensity = 0.7
+file = "res://audio/music/stingers/scare_anomaly_01.wav"
+alternates = Array[String](["res://audio/music/stingers/scare_anomaly_02.wav", "res://audio/music/stingers/scare_anomaly_03.wav"])
+volume_db = -2.0
+fade_in = 0.2
+fade_out = 1.5
+trigger_conditions = Array[StringName]([&"drowned_woman_stalk", &"drowned_woman_hunt", &"caller_anomaly_ring", &"static_shade_reveal", &"listener_trigger"])
+cooldown_sec = 30.0
+priority = 4
+layerable = false
+
+[sub_resource type="Resource" id="ResolutionMinor"]
+script = ExtResource("1_0")
+id = &"resolution_minor"
+name = "Resolution — Minor"
+description = "Small relief. Warm chord, tension release. For clearing a room, securing evidence, successful arrest."
+category = 2
+intensity = -0.3
+file = "res://audio/music/stingers/resolution_minor_01.wav"
+alternates = Array[String](["res://audio/music/stingers/resolution_minor_02.wav", "res://audio/music/stingers/resolution_minor_03.wav"])
+volume_db = -10.0
+fade_in = 1.0
+fade_out = 3.0
+trigger_conditions = Array[StringName]([&"room_cleared", &"evidence_secured", &"suspect_arrested", &"call_resolved_genuine"])
+cooldown_sec = 15.0
+priority = 1
+layerable = true
+
+[sub_resource type="Resource" id="ResolutionMajor"]
+script = ExtResource("1_0")
+id = &"resolution_major"
+name = "Resolution — Major"
+description = "Major victory. Full resolution theme, emotional weight. For mission complete, anomaly banished, shift end."
+category = 2
+intensity = -0.6
+file = "res://audio/music/stingers/resolution_major_01.wav"
+alternates = Array[String](["res://audio/music/stingers/resolution_major_02.wav"])
+volume_db = -6.0
+fade_in = 2.0
+fade_out = 5.0
+trigger_conditions = Array[StringName]([&"mission_complete", &"anomaly_banished", &"shift_complete", &"ending_reclamation"])
+cooldown_sec = 0.0
+priority = 2
+layerable = false
+
+[sub_resource type="Resource" id="ResolutionFailure"]
+script = ExtResource("1_0")
+id = &"resolution_failure"
+name = "Resolution — Failure"
+description = "Hollow loss. Descending minor, fading. For mission failed, civilian lost, excessive force."
+category = 2
+intensity = -0.4
+file = "res://audio/music/stingers/resolution_failure_01.wav"
+alternates = Array[String](["res://audio/music/stingers/resolution_failure_02.wav"])
+volume_db = -8.0
+fade_in = 1.5
+fade_out = 4.0
+trigger_conditions = Array[StringName]([&"mission_failed", &"civilian_lost", &"excessive_force", &"ending_lost_in_static"])
+cooldown_sec = 0.0
+priority = 2
+layerable = false
+
+[sub_resource type="Resource" id="AmbientDroneStation"]
+script = ExtResource("1_0")
+id = &"ambient_drone_station"
+name = "Ambient Drone — Station"
+description = "Station identity. Low CRT hum, analog warmth. Persistent bed for dispatch phase."
+category = 3
+intensity = 0.1
+file = "res://audio/music/ambient/station_drone_01.wav"
+alternates = Array[String]([])
+volume_db = -18.0
+fade_in = 10.0
+fade_out = 10.0
+loop = true
+trigger_conditions = Array[StringName]([&"phase_dispatch", &"phase_assessment", &"phase_loadout"])
+cooldown_sec = 0.0
+priority = 0
+layerable = true
+
+[sub_resource type="Resource" id="AmbientDroneField"]
+script = ExtResource("1_0")
+id = &"ambient_drone_field"
+name = "Ambient Drone — Field"
+description = "Field identity. Cold, open, watchful. Persistent bed for field phase."
+category = 3
+intensity = 0.15
+file = "res://audio/music/ambient/field_drone_01.wav"
+alternates = Array[String]([])
+volume_db = -20.0
+fade_in = 8.0
+fade_out = 8.0
+loop = true
+trigger_conditions = Array[StringName]([&"phase_field"])
+cooldown_sec = 0.0
+priority = 0
+layerable = true
+
+[sub_resource type="Resource" id="AmbientDroneHorror"]
+script = ExtResource("1_0")
+id = &"ambient_drone_horror"
+name = "Ambient Drone — Horror"
+description = "Horror identity. Dissonant, unstable, EMF-tinged. Persistent bed for paranormal areas."
+category = 3
+intensity = 0.25
+file = "res://audio/music/ambient/horror_drone_01.wav"
+alternates = Array[String]([])
+volume_db = -16.0
+fade_in = 15.0
+fade_out = 10.0
+loop = true
+trigger_conditions = Array[StringName]([&"anomaly_zone", &"cult_hideout", &"sanity_broken"])
+cooldown_sec = 0.0
+priority = 1
+layerable = true
+
+[sub_resource type="Resource" id="AmbientDroneSiege"]
+script = ExtResource("1_0")
+id = &"ambient_drone_siege"
+name = "Ambient Drone — Siege"
+description = "Siege identity. Desperate, dying, urgent. Persistent bed for Station Siege ending."
+category = 3
+intensity = 0.4
+file = "res://audio/music/ambient/siege_drone_01.wav"
+alternates = Array[String]([])
+volume_db = -12.0
+fade_in = 5.0
+fade_out = 5.0
+loop = true
+trigger_conditions = Array[StringName]([&"station_siege"])
+cooldown_sec = 0.0
+priority = 2
+layerable = false
+
+[sub_resource type="Resource" id="TransitionDispatchToField"]
+script = ExtResource("1_0")
+id = &"transition_dispatch_to_field"
+name = "Transition — Dispatch to Field"
+description = "Bridge from station safety to field danger. Rising tension, vehicle start, departure."
+category = 4
+intensity = 0.4
+file = "res://audio/music/transitions/dispatch_to_field_01.wav"
+alternates = Array[String]([])
+volume_db = -6.0
+fade_in = 1.0
+fade_out = 2.0
+trigger_conditions = Array[StringName]([&"deploy_start"])
+cooldown_sec = 0.0
+priority = 3
+layerable = false
+
+[sub_resource type="Resource" id="TransitionFieldToDispatch"]
+script = ExtResource("1_0")
+id = &"transition_field_to_dispatch"
+name = "Transition — Field to Dispatch"
+description = "Bridge from field danger to station safety. Tension release, vehicle return, decompression."
+category = 4
+intensity = -0.3
+file = "res://audio/music/transitions/field_to_dispatch_01.wav"
+alternates = Array[String]([])
+volume_db = -8.0
+fade_in = 2.0
+fade_out = 3.0
+trigger_conditions = Array[StringName]([&"extract_complete", &"mission_report_start"])
+cooldown_sec = 0.0
+priority = 2
+layerable = false
+
+[sub_resource type="Resource" id="TransitionAftermath"]
+script = ExtResource("1_0")
+id = &"transition_aftermath"
+name = "Transition — Aftermath"
+description = "Shift report atmosphere. Reflective, paperwork, quiet radio. Bridge to next shift or ending."
+category = 4
+intensity = -0.2
+file = "res://audio/music/transitions/aftermath_01.wav"
+alternates = Array[String]([])
+volume_db = -10.0
+fade_in = 3.0
+fade_out = 5.0
+trigger_conditions = Array[StringName]([&"shift_report", &"aftermath_start"])
+cooldown_sec = 0.0
+priority = 1
+layerable = true
+
+[sub_resource type="Resource" id="EndingWhistleblowers"]
+script = ExtResource("1_0")
+id = &"ending_whistleblowers"
+name = "Ending — The Whistleblowers (Gold)"
+description = "Victory theme. Resolution, justice, dawn breaking. Major key, full orchestration, hopeful."
+category = 5
+intensity = -0.8
+file = "res://audio/music/endings/whistleblowers_01.wav"
+alternates = Array[String]([])
+volume_db = -4.0
+fade_in = 5.0
+fade_out = 10.0
+trigger_conditions = Array[StringName]([&"ending_whistleblowers"])
+cooldown_sec = 0.0
+priority = 5
+layerable = false
+
+[sub_resource type="Resource" id="EndingSiege"]
+script = ExtResource("1_0")
+id = &"ending_siege"
+name = "Ending — Station Under Siege"
+description = "Desperate last stand. Dying generator, horde closing, static rising. Minor, frantic, fading to noise."
+category = 5
+intensity = 0.9
+file = "res://audio/music/endings/siege_01.wav"
+alternates = Array[String]([])
+volume_db = -2.0
+fade_in = 3.0
+fade_out = 5.0
+trigger_conditions = Array[StringName]([&"ending_siege"])
+cooldown_sec = 0.0
+priority = 5
+layerable = false
+
+[sub_resource type="Resource" id="EndingLostInStatic"]
+script = ExtResource("1_0")
+id = &"ending_lost_in_static"
+name = "Ending — Lost in the Static"
+description = "Cosmic horror. White noise swallow, reverse audio, Dead Frequency takes over. No resolution."
+category = 5
+intensity = 1.0
+file = "res://audio/music/endings/lost_in_static_01.wav"
+alternates = Array[String]([])
+volume_db = 0.0
+fade_in = 2.0
+fade_out = 8.0
+trigger_conditions = Array[StringName]([&"ending_lost_in_static"])
+cooldown_sec = 0.0
+priority = 5
+layerable = false
+
+[resource]
+script = ExtResource("1_0")
+stingers = Array[ExtResource("1_0")]([
+SubResource("TensionLow"),
+SubResource("TensionMedium"),
+SubResource("TensionHigh"),
+SubResource("ScareSubtle"),
+SubResource("ScareMajor"),
+SubResource("ScareAnomaly"),
+SubResource("ResolutionMinor"),
+SubResource("ResolutionMajor"),
+SubResource("ResolutionFailure"),
+SubResource("AmbientDroneStation"),
+SubResource("AmbientDroneField"),
+SubResource("AmbientDroneHorror"),
+SubResource("AmbientDroneSiege"),
+SubResource("TransitionDispatchToField"),
+SubResource("TransitionFieldToDispatch"),
+SubResource("TransitionAftermath"),
+SubResource("EndingWhistleblowers"),
+SubResource("EndingSiege"),
+SubResource("EndingLostInStatic")
+])

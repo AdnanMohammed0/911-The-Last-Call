@@ -1,0 +1,915 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://core/audio/foley_definition.gd" id="1_0"]
+
+[sub_resource type="Resource" id="FootstepConcreteWalk"]
+script = ExtResource("1_0")
+id = &"footstep_concrete_walk"
+category = 0
+surface = 0
+movement_type = 0
+variations = Array[String](["res://audio/foley/footsteps/concrete_walk_01.wav", "res://audio/foley/footsteps/concrete_walk_02.wav", "res://audio/foley/footsteps/concrete_walk_03.wav", "res://audio/foley/footsteps/concrete_walk_04.wav"])
+volume_db = -6.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 4.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepConcreteSprint"]
+script = ExtResource("1_0")
+id = &"footstep_concrete_sprint"
+category = 0
+surface = 0
+movement_type = 1
+variations = Array[String](["res://audio/foley/footsteps/concrete_sprint_01.wav", "res://audio/foley/footsteps/concrete_sprint_02.wav", "res://audio/foley/footsteps/concrete_sprint_03.wav", "res://audio/foley/footsteps/concrete_sprint_04.wav"])
+volume_db = -3.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 10.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepConcreteCrouch"]
+script = ExtResource("1_0")
+id = &"footstep_concrete_crouch"
+category = 0
+surface = 0
+movement_type = 2
+variations = Array[String](["res://audio/foley/footsteps/concrete_crouch_01.wav", "res://audio/foley/footsteps/concrete_crouch_02.wav", "res://audio/foley/footsteps/concrete_crouch_03.wav"])
+volume_db = -12.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 1.5
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepWoodWalk"]
+script = ExtResource("1_0")
+id = &"footstep_wood_walk"
+category = 0
+surface = 1
+movement_type = 0
+variations = Array[String](["res://audio/foley/footsteps/wood_walk_01.wav", "res://audio/foley/footsteps/wood_walk_02.wav", "res://audio/foley/footsteps/wood_walk_03.wav", "res://audio/foley/footsteps/wood_walk_04.wav"])
+volume_db = -4.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 4.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepWoodSprint"]
+script = ExtResource("1_0")
+id = &"footstep_wood_sprint"
+category = 0
+surface = 1
+movement_type = 1
+variations = Array[String](["res://audio/foley/footsteps/wood_sprint_01.wav", "res://audio/foley/footsteps/wood_sprint_02.wav", "res://audio/foley/footsteps/wood_sprint_03.wav", "res://audio/foley/footsteps/wood_sprint_04.wav"])
+volume_db = -1.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 10.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepWoodCrouch"]
+script = ExtResource("1_0")
+id = &"footstep_wood_crouch"
+category = 0
+surface = 1
+movement_type = 2
+variations = Array[String](["res://audio/foley/footsteps/wood_crouch_01.wav", "res://audio/foley/footsteps/wood_crouch_02.wav", "res://audio/foley/footsteps/wood_crouch_03.wav"])
+volume_db = -10.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 1.5
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepDirtWalk"]
+script = ExtResource("1_0")
+id = &"footstep_dirt_walk"
+category = 0
+surface = 2
+movement_type = 0
+variations = Array[String](["res://audio/foley/footsteps/dirt_walk_01.wav", "res://audio/foley/footsteps/dirt_walk_02.wav", "res://audio/foley/footsteps/dirt_walk_03.wav", "res://audio/foley/footsteps/dirt_walk_04.wav"])
+volume_db = -8.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 4.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepDirtSprint"]
+script = ExtResource("1_0")
+id = &"footstep_dirt_sprint"
+category = 0
+surface = 2
+movement_type = 1
+variations = Array[String](["res://audio/foley/footsteps/dirt_sprint_01.wav", "res://audio/foley/footsteps/dirt_sprint_02.wav", "res://audio/foley/footsteps/dirt_sprint_03.wav", "res://audio/foley/footsteps/dirt_sprint_04.wav"])
+volume_db = -4.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 10.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepDirtCrouch"]
+script = ExtResource("1_0")
+id = &"footstep_dirt_crouch"
+category = 0
+surface = 2
+movement_type = 2
+variations = Array[String](["res://audio/foley/footsteps/dirt_crouch_01.wav", "res://audio/foley/footsteps/dirt_crouch_02.wav", "res://audio/foley/footsteps/dirt_crouch_03.wav"])
+volume_db = -14.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 1.5
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepMetalWalk"]
+script = ExtResource("1_0")
+id = &"footstep_metal_walk"
+category = 0
+surface = 3
+movement_type = 0
+variations = Array[String](["res://audio/foley/footsteps/metal_walk_01.wav", "res://audio/foley/footsteps/metal_walk_02.wav", "res://audio/foley/footsteps/metal_walk_03.wav", "res://audio/foley/footsteps/metal_walk_04.wav"])
+volume_db = -2.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 6.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepMetalSprint"]
+script = ExtResource("1_0")
+id = &"footstep_metal_sprint"
+category = 0
+surface = 3
+movement_type = 1
+variations = Array[String](["res://audio/foley/footsteps/metal_sprint_01.wav", "res://audio/foley/footsteps/metal_sprint_02.wav", "res://audio/foley/footsteps/metal_sprint_03.wav", "res://audio/foley/footsteps/metal_sprint_04.wav"])
+volume_db = 1.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 12.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepMetalCrouch"]
+script = ExtResource("1_0")
+id = &"footstep_metal_crouch"
+category = 0
+surface = 3
+movement_type = 2
+variations = Array[String](["res://audio/foley/footsteps/metal_crouch_01.wav", "res://audio/foley/footsteps/metal_crouch_02.wav", "res://audio/foley/footsteps/metal_crouch_03.wav"])
+volume_db = -8.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 2.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepWaterWalk"]
+script = ExtResource("1_0")
+id = &"footstep_water_walk"
+category = 0
+surface = 4
+movement_type = 0
+variations = Array[String](["res://audio/foley/footsteps/water_walk_01.wav", "res://audio/foley/footsteps/water_walk_02.wav", "res://audio/foley/footsteps/water_walk_03.wav", "res://audio/foley/footsteps/water_walk_04.wav"])
+volume_db = -5.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 5.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepWaterSprint"]
+script = ExtResource("1_0")
+id = &"footstep_water_sprint"
+category = 0
+surface = 4
+movement_type = 1
+variations = Array[String](["res://audio/foley/footsteps/water_sprint_01.wav", "res://audio/foley/footsteps/water_sprint_02.wav", "res://audio/foley/footsteps/water_sprint_03.wav", "res://audio/foley/footsteps/water_sprint_04.wav"])
+volume_db = -2.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 8.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepWaterCrouch"]
+script = ExtResource("1_0")
+id = &"footstep_water_crouch"
+category = 0
+surface = 4
+movement_type = 2
+variations = Array[String](["res://audio/foley/footsteps/water_crouch_01.wav", "res://audio/foley/footsteps/water_crouch_02.wav", "res://audio/foley/footsteps/water_crouch_03.wav"])
+volume_db = -12.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 2.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepCarpetWalk"]
+script = ExtResource("1_0")
+id = &"footstep_carpet_walk"
+category = 0
+surface = 5
+movement_type = 0
+variations = Array[String](["res://audio/foley/footsteps/carpet_walk_01.wav", "res://audio/foley/footsteps/carpet_walk_02.wav", "res://audio/foley/footsteps/carpet_walk_03.wav", "res://audio/foley/footsteps/carpet_walk_04.wav"])
+volume_db = -10.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 3.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepCarpetSprint"]
+script = ExtResource("1_0")
+id = &"footstep_carpet_sprint"
+category = 0
+surface = 5
+movement_type = 1
+variations = Array[String](["res://audio/foley/footsteps/carpet_sprint_01.wav", "res://audio/foley/footsteps/carpet_sprint_02.wav", "res://audio/foley/footsteps/carpet_sprint_03.wav", "res://audio/foley/footsteps/carpet_sprint_04.wav"])
+volume_db = -7.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 6.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepCarpetCrouch"]
+script = ExtResource("1_0")
+id = &"footstep_carpet_crouch"
+category = 0
+surface = 5
+movement_type = 2
+variations = Array[String](["res://audio/foley/footsteps/carpet_crouch_01.wav", "res://audio/foley/footsteps/carpet_crouch_02.wav", "res://audio/foley/footsteps/carpet_crouch_03.wav"])
+volume_db = -16.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 1.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepGravelWalk"]
+script = ExtResource("1_0")
+id = &"footstep_gravel_walk"
+category = 0
+surface = 6
+movement_type = 0
+variations = Array[String](["res://audio/foley/footsteps/gravel_walk_01.wav", "res://audio/foley/footsteps/gravel_walk_02.wav", "res://audio/foley/footsteps/gravel_walk_03.wav", "res://audio/foley/footsteps/gravel_walk_04.wav"])
+volume_db = -6.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 5.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepGravelSprint"]
+script = ExtResource("1_0")
+id = &"footstep_gravel_sprint"
+category = 0
+surface = 6
+movement_type = 1
+variations = Array[String](["res://audio/foley/footsteps/gravel_sprint_01.wav", "res://audio/foley/footsteps/gravel_sprint_02.wav", "res://audio/foley/footsteps/gravel_sprint_03.wav", "res://audio/foley/footsteps/gravel_sprint_04.wav"])
+volume_db = -3.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 12.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="FootstepGravelCrouch"]
+script = ExtResource("1_0")
+id = &"footstep_gravel_crouch"
+category = 0
+surface = 6
+movement_type = 2
+variations = Array[String](["res://audio/foley/footsteps/gravel_crouch_01.wav", "res://audio/foley/footsteps/gravel_crouch_02.wav", "res://audio/foley/footsteps/gravel_crouch_03.wav"])
+volume_db = -12.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 2.0
+class_modifiers = {&"breacher": 1.6, &"tech": 0.8, &"profiler": 1.0, &"medic": 0.9}
+
+[sub_resource type="Resource" id="DoorOpen"]
+script = ExtResource("1_0")
+id = &"door_open"
+category = 1
+variations = Array[String](["res://audio/foley/doors/door_open_01.wav", "res://audio/foley/doors/door_open_02.wav", "res://audio/foley/doors/door_open_03.wav"])
+volume_db = -4.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 8.0
+trigger = &"door_open"
+
+[sub_resource type="Resource" id="DoorClose"]
+script = ExtResource("1_0")
+id = &"door_close"
+category = 1
+variations = Array[String](["res://audio/foley/doors/door_close_01.wav", "res://audio/foley/doors/door_close_02.wav", "res://audio/foley/doors/door_close_03.wav"])
+volume_db = -5.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 6.0
+trigger = &"door_close"
+
+[sub_resource type="Resource" id="DoorPeek"]
+script = ExtResource("1_0")
+id = &"door_peek"
+category = 1
+variations = Array[String](["res://audio/foley/doors/door_peek_01.wav", "res://audio/foley/doors/door_peek_02.wav"])
+volume_db = -10.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 3.0
+trigger = &"door_peek"
+
+[sub_resource type="Resource" id="DoorKick"]
+script = ExtResource("1_0")
+id = &"door_kick"
+category = 1
+variations = Array[String](["res://audio/foley/doors/door_kick_01.wav", "res://audio/foley/doors/door_kick_02.wav", "res://audio/foley/doors/door_kick_03.wav"])
+volume_db = 4.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 25.0
+trigger = &"door_kick"
+
+[sub_resource type="Resource" id="DoorLocked"]
+script = ExtResource("1_0")
+id = &"door_locked"
+category = 1
+variations = Array[String](["res://audio/foley/doors/door_locked_01.wav", "res://audio/foley/doors/door_locked_02.wav"])
+volume_db = -6.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 5.0
+trigger = &"door_locked"
+
+[sub_resource type="Resource" id="DoorBreachCharge"]
+script = ExtResource("1_0")
+id = &"door_breach_charge"
+category = 1
+variations = Array[String](["res://audio/foley/doors/door_breach_charge_01.wav"])
+volume_db = 8.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 30.0
+trigger = &"door_breach"
+
+[sub_resource type="Resource" id="DoorRam"]
+script = ExtResource("1_0")
+id = &"door_ram"
+category = 1
+variations = Array[String](["res://audio/foley/doors/door_ram_01.wav", "res://audio/foley/doors/door_ram_02.wav"])
+volume_db = 6.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 20.0
+trigger = &"door_ram"
+
+[sub_resource type="Resource" id="EquipmentRadioOn"]
+script = ExtResource("1_0")
+id = &"equipment_radio_on"
+category = 2
+variations = Array[String](["res://audio/foley/equipment/radio_on_01.wav", "res://audio/foley/equipment/radio_on_02.wav"])
+volume_db = -8.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 2.0
+trigger = &"radio_on"
+
+[sub_resource type="Resource" id="EquipmentRadioOff"]
+script = ExtResource("1_0")
+id = &"equipment_radio_off"
+category = 2
+variations = Array[String](["res://audio/foley/equipment/radio_off_01.wav", "res://audio/foley/equipment/radio_off_02.wav"])
+volume_db = -8.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 2.0
+trigger = &"radio_off"
+
+[sub_resource type="Resource" id="EquipmentRadioAdjust"]
+script = ExtResource("1_0")
+id = &"equipment_radio_adjust"
+category = 2
+variations = Array[String](["res://audio/foley/equipment/radio_adjust_01.wav", "res://audio/foley/equipment/radio_adjust_02.wav", "res://audio/foley/equipment/radio_adjust_03.wav"])
+volume_db = -12.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 1.5
+trigger = &"radio_adjust"
+
+[sub_resource type="Resource" id="EquipmentFlashlightOn"]
+script = ExtResource("1_0")
+id = &"equipment_flashlight_on"
+category = 2
+variations = Array[String](["res://audio/foley/equipment/flashlight_on_01.wav", "res://audio/foley/equipment/flashlight_on_02.wav"])
+volume_db = -10.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 1.5
+trigger = &"flashlight_on"
+
+[sub_resource type="Resource" id="EquipmentFlashlightOff"]
+script = ExtResource("1_0")
+id = &"equipment_flashlight_off"
+category = 2
+variations = Array[String](["res://audio/foley/equipment/flashlight_off_01.wav", "res://audio/foley/equipment/flashlight_off_02.wav"])
+volume_db = -10.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 1.5
+trigger = &"flashlight_off"
+
+[sub_resource type="Resource" id="EquipmentBodycamOn"]
+script = ExtResource("1_0")
+id = &"equipment_bodycam_on"
+category = 2
+variations = Array[String](["res://audio/foley/equipment/bodycam_on_01.wav"])
+volume_db = -8.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 1.0
+trigger = &"bodycam_on"
+
+[sub_resource type="Resource" id="EquipmentArmorClatter"]
+script = ExtResource("1_0")
+id = &"equipment_armor_clatter"
+category = 2
+variations = Array[String](["res://audio/foley/equipment/armor_clatter_01.wav", "res://audio/foley/equipment/armor_clatter_02.wav", "res://audio/foley/equipment/armor_clatter_03.wav"])
+volume_db = -6.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 3.0
+trigger = &"armor_movement"
+
+[sub_resource type="Resource" id="EquipmentBeltRustle"]
+script = ExtResource("1_0")
+id = &"equipment_belt_rustle"
+category = 2
+variations = Array[String](["res://audio/foley/equipment/belt_rustle_01.wav", "res://audio/foley/equipment/belt_rustle_02.wav", "res://audio/foley/equipment/belt_rustle_03.wav"])
+volume_db = -12.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 2.0
+trigger = &"belt_movement"
+
+[sub_resource type="Resource" id="EquipmentMedkitOpen"]
+script = ExtResource("1_0")
+id = &"equipment_medkit_open"
+category = 2
+variations = Array[String](["res://audio/foley/equipment/medkit_open_01.wav", "res://audio/foley/equipment/medkit_open_02.wav"])
+volume_db = -8.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 2.0
+trigger = &"medkit_open"
+
+[sub_resource type="Resource" id="EquipmentMedkitUse"]
+script = ExtResource("1_0")
+id = &"equipment_medkit_use"
+category = 2
+variations = Array[String](["res://audio/foley/equipment/medkit_use_01.wav", "res://audio/foley/equipment/medkit_use_02.wav"])
+volume_db = -6.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 1.5
+trigger = &"medkit_use"
+
+[sub_resource type="Resource" id="EquipmentHandcuffs"]
+script = ExtResource("1_0")
+id = &"equipment_handcuffs"
+category = 2
+variations = Array[String](["res://audio/foley/equipment/handcuffs_01.wav", "res://audio/foley/equipment/handcuffs_02.wav", "res://audio/foley/equipment/handcuffs_03.wav"])
+volume_db = -2.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 3.0
+trigger = &"handcuffs"
+
+[sub_resource type="Resource" id="WeaponPistolDraw"]
+script = ExtResource("1_0")
+id = &"weapon_pistol_draw"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/pistol_draw_01.wav", "res://audio/foley/weapons/pistol_draw_02.wav", "res://audio/foley/weapons/pistol_draw_03.wav"])
+volume_db = -2.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 4.0
+trigger = &"weapon_draw"
+
+[sub_resource type="Resource" id="WeaponPistolHolster"]
+script = ExtResource("1_0")
+id = &"weapon_pistol_holster"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/pistol_holster_01.wav", "res://audio/foley/weapons/pistol_holster_02.wav", "res://audio/foley/weapons/pistol_holster_03.wav"])
+volume_db = -2.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 4.0
+trigger = &"weapon_holster"
+
+[sub_resource type="Resource" id="WeaponPistolReload"]
+script = ExtResource("1_0")
+id = &"weapon_pistol_reload"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/pistol_reload_01.wav", "res://audio/foley/weapons/pistol_reload_02.wav", "res://audio/foley/weapons/pistol_reload_03.wav"])
+volume_db = -1.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 5.0
+trigger = &"weapon_reload"
+
+[sub_resource type="Resource" id="WeaponPistolDryFire"]
+script = ExtResource("1_0")
+id = &"weapon_pistol_dry_fire"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/pistol_dry_01.wav", "res://audio/foley/weapons/pistol_dry_02.wav"])
+volume_db = -4.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 3.0
+trigger = &"weapon_dry"
+
+[sub_resource type="Resource" id="WeaponShotgunDraw"]
+script = ExtResource("1_0")
+id = &"weapon_shotgun_draw"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/shotgun_draw_01.wav", "res://audio/foley/weapons/shotgun_draw_02.wav"])
+volume_db = 0.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 6.0
+trigger = &"weapon_draw"
+
+[sub_resource type="Resource" id="WeaponShotgunRack"]
+script = ExtResource("1_0")
+id = &"weapon_shotgun_rack"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/shotgun_rack_01.wav", "res://audio/foley/weapons/shotgun_rack_02.wav", "res://audio/foley/weapons/shotgun_rack_03.wav"])
+volume_db = 2.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 8.0
+trigger = &"weapon_rack"
+
+[sub_resource type="Resource" id="WeaponShotgunReload"]
+script = ExtResource("1_0")
+id = &"weapon_shotgun_reload"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/shotgun_reload_01.wav", "res://audio/foley/weapons/shotgun_reload_02.wav", "res://audio/foley/weapons/shotgun_reload_03.wav", "res://audio/foley/weapons/shotgun_reload_04.wav"])
+volume_db = 1.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 6.0
+trigger = &"weapon_reload"
+
+[sub_resource type="Resource" id="WeaponRifleDraw"]
+script = ExtResource("1_0")
+id = &"weapon_rifle_draw"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/rifle_draw_01.wav", "res://audio/foley/weapons/rifle_draw_02.wav"])
+volume_db = 0.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 6.0
+trigger = &"weapon_draw"
+
+[sub_resource type="Resource" id="WeaponRifleReload"]
+script = ExtResource("1_0")
+id = &"weapon_rifle_reload"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/rifle_reload_01.wav", "res://audio/foley/weapons/rifle_reload_02.wav", "res://audio/foley/weapons/rifle_reload_03.wav"])
+volume_db = 1.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 6.0
+trigger = &"weapon_reload"
+
+[sub_resource type="Resource" id="WeaponShieldDeploy"]
+script = ExtResource("1_0")
+id = &"weapon_shield_deploy"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/shield_deploy_01.wav", "res://audio/foley/weapons/shield_deploy_02.wav"])
+volume_db = 1.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 5.0
+trigger = &"shield_deploy"
+
+[sub_resource type="Resource" id="WeaponShieldImpact"]
+script = ExtResource("1_0")
+id = &"weapon_shield_impact"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/shield_impact_01.wav", "res://audio/foley/weapons/shield_impact_02.wav", "res://audio/foley/weapons/shield_impact_03.wav"])
+volume_db = 4.0
+pitch_range = Vector2(0.9, 1.1)
+distance_attenuation = true
+max_distance = 8.0
+trigger = &"shield_impact"
+
+[sub_resource type="Resource" id="WeaponTearGasDeploy"]
+script = ExtResource("1_0")
+id = &"weapon_tear_gas_deploy"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/tear_gas_deploy_01.wav", "res://audio/foley/weapons/tear_gas_deploy_02.wav"])
+volume_db = 0.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 10.0
+trigger = &"tear_gas_deploy"
+
+[sub_resource type="Resource" id="WeaponDroneDeploy"]
+script = ExtResource("1_0")
+id = &"weapon_drone_deploy"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/drone_deploy_01.wav", "res://audio/foley/weapons/drone_deploy_02.wav"])
+volume_db = -4.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 8.0
+trigger = &"drone_deploy"
+
+[sub_resource type="Resource" id="WeaponDroneLoop"]
+script = ExtResource("1_0")
+id = &"weapon_drone_loop"
+category = 3
+variations = Array[String](["res://audio/foley/weapons/drone_loop_01.wav"])
+volume_db = -8.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 15.0
+loop = true
+trigger = &"drone_active"
+
+[sub_resource type="Resource" id="InteractionButtonPress"]
+script = ExtResource("1_0")
+id = &"interaction_button_press"
+category = 4
+variations = Array[String](["res://audio/foley/interactions/button_press_01.wav", "res://audio/foley/interactions/button_press_02.wav", "res://audio/foley/interactions/button_press_03.wav"])
+volume_db = -8.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 1.5
+trigger = &"button_press"
+
+[sub_resource type="Resource" id="InteractionKeycard"]
+script = ExtResource("1_0")
+id = &"interaction_keycard"
+category = 4
+variations = Array[String](["res://audio/foley/interactions/keycard_01.wav", "res://audio/foley/interactions/keycard_02.wav"])
+volume_db = -6.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 2.0
+trigger = &"keycard"
+
+[sub_resource type="Resource" id="InteractionKeypad"]
+script = ExtResource("1_0")
+id = &"interaction_keypad"
+category = 4
+variations = Array[String](["res://audio/foley/interactions/keypad_01.wav", "res://audio/foley/interactions/keypad_02.wav", "res://audio/foley/interactions/keypad_03.wav", "res://audio/foley/interactions/keypad_04.wav"])
+volume_db = -10.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 1.5
+trigger = &"keypad"
+
+[sub_resource type="Resource" id="InteractionPickup"]
+script = ExtResource("1_0")
+id = &"interaction_pickup"
+category = 4
+variations = Array[String](["res://audio/foley/interactions/pickup_01.wav", "res://audio/foley/interactions/pickup_02.wav", "res://audio/foley/interactions/pickup_03.wav"])
+volume_db = -6.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 2.0
+trigger = &"pickup"
+
+[sub_resource type="Resource" id="InteractionDrop"]
+script = ExtResource("1_0")
+id = &"interaction_drop"
+category = 4
+variations = Array[String](["res://audio/foley/interactions/drop_01.wav", "res://audio/foley/interactions/drop_02.wav", "res://audio/foley/interactions/drop_03.wav"])
+volume_db = -4.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 3.0
+trigger = &"drop"
+
+[sub_resource type="Resource" id="InteractionCuff"]
+script = ExtResource("1_0")
+id = &"interaction_cuff"
+category = 4
+variations = Array[String](["res://audio/foley/interactions/cuff_01.wav", "res://audio/foley/interactions/cuff_02.wav", "res://audio/foley/interactions/cuff_03.wav"])
+volume_db = -2.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 3.0
+trigger = &"cuff"
+
+[sub_resource type="Resource" id="InteractionRevive"]
+script = ExtResource("1_0")
+id = &"interaction_revive"
+category = 4
+variations = Array[String](["res://audio/foley/interactions/revive_01.wav", "res://audio/foley/interactions/revive_02.wav"])
+volume_db = -4.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 3.0
+trigger = &"revive"
+
+[sub_resource type="Resource" id="InteractionShovelDig"]
+script = ExtResource("1_0")
+id = &"interaction_shovel_dig"
+category = 4
+variations = Array[String](["res://audio/foley/interactions/shovel_dig_01.wav", "res://audio/foley/interactions/shovel_dig_02.wav", "res://audio/foley/interactions/shovel_dig_03.wav", "res://audio/foley/interactions/shovel_dig_04.wav"])
+volume_db = -3.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 6.0
+trigger = &"shovel_dig"
+
+[sub_resource type="Resource" id="InteractionSaltPour"]
+script = ExtResource("1_0")
+id = &"interaction_salt_pour"
+category = 4
+variations = Array[String](["res://audio/foley/interactions/salt_pour_01.wav", "res://audio/foley/interactions/salt_pour_02.wav"])
+volume_db = -8.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 3.0
+trigger = &"salt_pour"
+
+[sub_resource type="Resource" id="InteractionEMFReader"]
+script = ExtResource("1_0")
+id = &"interaction_emf_reader"
+category = 4
+variations = Array[String](["res://audio/foley/interactions/emf_reader_01.wav", "res://audio/foley/interactions/emf_reader_02.wav", "res://audio/foley/interactions/emf_reader_03.wav"])
+volume_db = -6.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 2.0
+trigger = &"emf_read"
+
+[sub_resource type="Resource" id="InteractionToneEmitter"]
+script = ExtResource("1_0")
+id = &"interaction_tone_emitter"
+category = 4
+variations = Array[String](["res://audio/foley/interactions/tone_emitter_01.wav"])
+volume_db = 0.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 15.0
+trigger = &"tone_emit"
+
+[sub_resource type="Resource" id="EnvironmentGlassBreak"]
+script = ExtResource("1_0")
+id = &"environment_glass_break"
+category = 5
+variations = Array[String](["res://audio/foley/environment/glass_break_01.wav", "res://audio/foley/environment/glass_break_02.wav", "res://audio/foley/environment/glass_break_03.wav"])
+volume_db = 2.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 15.0
+trigger = &"glass_break"
+
+[sub_resource type="Resource" id="EnvironmentWoodBreak"]
+script = ExtResource("1_0")
+id = &"environment_wood_break"
+category = 5
+variations = Array[String](["res://audio/foley/environment/wood_break_01.wav", "res://audio/foley/environment/wood_break_02.wav", "res://audio/foley/environment/wood_break_03.wav"])
+volume_db = 1.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 12.0
+trigger = &"wood_break"
+
+[sub_resource type="Resource" id="EnvironmentMetalImpact"]
+script = ExtResource("1_0")
+id = &"environment_metal_impact"
+category = 5
+variations = Array[String](["res://audio/foley/environment/metal_impact_01.wav", "res://audio/foley/environment/metal_impact_02.wav", "res://audio/foley/environment/metal_impact_03.wav"])
+volume_db = 3.0
+pitch_range = Vector2(0.9, 1.1)
+distance_attenuation = true
+max_distance = 15.0
+trigger = &"metal_impact"
+
+[sub_resource type="Resource" id="EnvironmentBodyFall"]
+script = ExtResource("1_0")
+id = &"environment_body_fall"
+category = 5
+variations = Array[String](["res://audio/foley/environment/body_fall_01.wav", "res://audio/foley/environment/body_fall_02.wav", "res://audio/foley/environment/body_fall_03.wav"])
+volume_db = 0.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 8.0
+trigger = &"body_fall"
+
+[sub_resource type="Resource" id="EnvironmentExplosion"]
+script = ExtResource("1_0")
+id = &"environment_explosion"
+category = 5
+variations = Array[String](["res://audio/foley/environment/explosion_01.wav", "res://audio/foley/environment/explosion_02.wav"])
+volume_db = 12.0
+pitch_range = Vector2(0.9, 1.1)
+distance_attenuation = true
+max_distance = 50.0
+trigger = &"explosion"
+
+[sub_resource type="Resource" id="EnvironmentRPGLaunch"]
+script = ExtResource("1_0")
+id = &"environment_rpg_launch"
+category = 5
+variations = Array[String](["res://audio/foley/environment/rpg_launch_01.wav"])
+volume_db = 10.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 40.0
+trigger = &"rpg_launch"
+
+[sub_resource type="Resource" id="EnvironmentGeneratorStart"]
+script = ExtResource("1_0")
+id = &"environment_generator_start"
+category = 5
+variations = Array[String](["res://audio/foley/environment/generator_start_01.wav", "res://audio/foley/environment/generator_start_02.wav"])
+volume_db = 2.0
+pitch_range = Vector2(0.98, 1.02)
+distance_attenuation = true
+max_distance = 15.0
+trigger = &"generator_start"
+
+[sub_resource type="Resource" id="EnvironmentPowerFluctuation"]
+script = ExtResource("1_0")
+id = &"environment_power_fluctuation"
+category = 5
+variations = Array[String](["res://audio/foley/environment/power_fluctuation_01.wav", "res://audio/foley/environment/power_fluctuation_02.wav", "res://audio/foley/environment/power_fluctuation_03.wav"])
+volume_db = -4.0
+pitch_range = Vector2(0.95, 1.05)
+distance_attenuation = true
+max_distance = 10.0
+trigger = &"power_fluctuation"
+
+[resource]
+script = ExtResource("1_0")
+definitions = Array[ExtResource("1_0")]([
+SubResource("FootstepConcreteWalk"),
+SubResource("FootstepConcreteSprint"),
+SubResource("FootstepConcreteCrouch"),
+SubResource("FootstepWoodWalk"),
+SubResource("FootstepWoodSprint"),
+SubResource("FootstepWoodCrouch"),
+SubResource("FootstepDirtWalk"),
+SubResource("FootstepDirtSprint"),
+SubResource("FootstepDirtCrouch"),
+SubResource("FootstepMetalWalk"),
+SubResource("FootstepMetalSprint"),
+SubResource("FootstepMetalCrouch"),
+SubResource("FootstepWaterWalk"),
+SubResource("FootstepWaterSprint"),
+SubResource("FootstepWaterCrouch"),
+SubResource("FootstepCarpetWalk"),
+SubResource("FootstepCarpetSprint"),
+SubResource("FootstepCarpetCrouch"),
+SubResource("FootstepGravelWalk"),
+SubResource("FootstepGravelSprint"),
+SubResource("FootstepGravelCrouch"),
+SubResource("DoorOpen"),
+SubResource("DoorClose"),
+SubResource("DoorPeek"),
+SubResource("DoorKick"),
+SubResource("DoorLocked"),
+SubResource("DoorBreachCharge"),
+SubResource("DoorRam"),
+SubResource("EquipmentRadioOn"),
+SubResource("EquipmentRadioOff"),
+SubResource("EquipmentRadioAdjust"),
+SubResource("EquipmentFlashlightOn"),
+SubResource("EquipmentFlashlightOff"),
+SubResource("EquipmentBodycamOn"),
+SubResource("EquipmentArmorClatter"),
+SubResource("EquipmentBeltRustle"),
+SubResource("EquipmentMedkitOpen"),
+SubResource("EquipmentMedkitUse"),
+SubResource("EquipmentHandcuffs"),
+SubResource("WeaponPistolDraw"),
+SubResource("WeaponPistolHolster"),
+SubResource("WeaponPistolReload"),
+SubResource("WeaponPistolDryFire"),
+SubResource("WeaponShotgunDraw"),
+SubResource("WeaponShotgunRack"),
+SubResource("WeaponShotgunReload"),
+SubResource("WeaponRifleDraw"),
+SubResource("WeaponRifleReload"),
+SubResource("WeaponShieldDeploy"),
+SubResource("WeaponShieldImpact"),
+SubResource("WeaponTearGasDeploy"),
+SubResource("WeaponDroneDeploy"),
+SubResource("WeaponDroneLoop"),
+SubResource("InteractionButtonPress"),
+SubResource("InteractionKeycard"),
+SubResource("InteractionKeypad"),
+SubResource("InteractionPickup"),
+SubResource("InteractionDrop"),
+SubResource("InteractionCuff"),
+SubResource("InteractionRevive"),
+SubResource("InteractionShovelDig"),
+SubResource("InteractionSaltPour"),
+SubResource("InteractionEMFReader"),
+SubResource("InteractionToneEmitter"),
+SubResource("EnvironmentGlassBreak"),
+SubResource("EnvironmentWoodBreak"),
+SubResource("EnvironmentMetalImpact"),
+SubResource("EnvironmentBodyFall"),
+SubResource("EnvironmentExplosion"),
+SubResource("EnvironmentRPGLaunch"),
+SubResource("EnvironmentGeneratorStart"),
+SubResource("EnvironmentPowerFluctuation")
+])

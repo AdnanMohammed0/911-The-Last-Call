@@ -39,6 +39,7 @@ Career="*res://autoload/career.gd"
 MissionDirector="*res://autoload/mission_director.gd"
 WorldItems="*res://autoload/world_items.gd"
 GameSettings="*res://autoload/game_settings.gd"
+AudioServer="*res://autoload/audio_server.gd"
 
 [debug]
 

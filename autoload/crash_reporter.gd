@@ -5,6 +5,9 @@
 class_name CrashReporter
 extends Node
 
+# Loosely typed telemetry / audio data (dictionaries from JSON and data resources).
+@warning_ignore_start("unsafe_call_argument", "unsafe_cast", "unsafe_method_access", "unsafe_property_access", "untyped_declaration", "inferred_declaration", "return_value_discarded")
+
 ## Singleton
 static var instance: CrashReporter = null
 
@@ -56,18 +59,15 @@ func _clean_old_dumps() -> void:
 	if dir == null:
 		return
 
-	var files: PackedStringArray = dir.get_files()
-	files.sort_custom(Callable(self, "_compare_file_time").bind(dir))
-
+	var files: Array[String] = []
+	for file: String in dir.get_files():
+		files.append(file)
+	# Newest first, so the oldest dumps are at the end and get removed.
+	files.sort_custom(func(a: String, b: String) -> bool:
+		return FileAccess.get_modified_time(CRASH_DUMP_DIR + a) > FileAccess.get_modified_time(CRASH_DUMP_DIR + b))
 	while files.size() > MAX_CRASH_DUMPS:
 		var old_file: String = files.pop_back()
-		dir.remove("%s%s" % [CRASH_DUMP_DIR, old_file])
-
-
-func _compare_file_time(a: String, b: String, dir: DirAccess) -> int:
-	var time_a: int = dir.get_file_modified_time("%s%s" % [CRASH_DUMP_DIR, a])
-	var time_b: int = dir.get_file_modified_time("%s%s" % [CRASH_DUMP_DIR, b])
-	return time_a - time_b  # Oldest first
+		dir.remove(old_file)
 
 
 # --- Public API ---
@@ -85,7 +85,7 @@ func report_native_crash(crash_type: String, crash_data: Dictionary) -> void:
 		"crash_type": crash_type,
 		"data": crash_data,
 		"timestamp": Time.get_unix_time_from_system(),
-		"session_id": TelemetryManager.instance?.settings?.session_id ?? "unknown",
+		"session_id": _session_id(),
 		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
 		"engine_version": Engine.get_version_info()["string"],
 		"platform": OS.get_name(),
@@ -101,13 +101,13 @@ func _build_crash_info(exception: String, stack_trace: String, context: Dictiona
 		"stack_trace": stack_trace,
 		"context": context,
 		"timestamp": Time.get_unix_time_from_system(),
-		"session_id": TelemetryManager.instance?.settings?.session_id ?? "unknown",
+		"session_id": _session_id(),
 		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
 		"engine_version": Engine.get_version_info()["string"],
 		"platform": OS.get_name(),
 		"is_host": multiplayer.is_server() if multiplayer.multiplayer_peer != null else true,
-		"shift": GameState.day_number,
-		"phase": GameState.Phase.keys()[GameState.phase].to_lower(),
+		"shift": MissionDirector.shift_number,
+		"phase": String(GameState.phase_name(GameState.phase)),
 		"public_trust": GameState.public_trust,
 		"station_budget": GameState.station_budget,
 		"cult_awareness": GameState.cult_awareness,
@@ -160,8 +160,11 @@ static func get_crash_dumps() -> Array[Dictionary]:
 	if dir == null:
 		return []
 
-	var files: PackedStringArray = dir.get_files()
-	files.sort_custom(Callable(CrashReporter, "_compare_file_time_static").bind(dir))
+	var files: Array[String] = []
+	for listed: String in dir.get_files():
+		files.append(listed)
+	files.sort_custom(func(a: String, b: String) -> bool:
+		return FileAccess.get_modified_time(CRASH_DUMP_DIR + a) > FileAccess.get_modified_time(CRASH_DUMP_DIR + b))
 
 	var dumps: Array[Dictionary] = []
 	for file_name in files:
@@ -203,3 +206,9 @@ static func has_unsent_crashes() -> bool:
 		if file_name.ends_with(".json") and file_name.contains("unsent"):
 			return true
 	return false
+
+## Current telemetry session id, or "unknown" before telemetry is up.
+static func _session_id() -> String:
+	if TelemetryManager.instance != null and TelemetryManager.instance.settings != null:
+		return str(TelemetryManager.instance.settings.session_id)
+	return "unknown"

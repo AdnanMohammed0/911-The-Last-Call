@@ -10,6 +10,11 @@ const CALLS_DIR: String = "res://data/calls"
 const SHIFT_MINUTES: int = 360     # 00:00 -> 06:00
 
 
+## True when the call has a written conversation (drafts with an empty graph are skipped by the shift).
+static func is_playable(call: CallData) -> bool:
+	return call != null and call.dialogue != null and not call.dialogue.nodes.is_empty()
+
+
 ## Validates one call. Errors = the call is broken; warnings = worth a second look.
 static func validate(call: CallData) -> Dictionary:
 	var errors: PackedStringArray = PackedStringArray()
@@ -39,6 +44,8 @@ static func validate(call: CallData) -> Dictionary:
 	# 3) Dialogue graph (P2-02)
 	if call.dialogue == null:
 		errors.append("dialogue graph is missing")
+	elif call.dialogue.nodes.is_empty():
+		warnings.append("draft: the dialogue has no nodes yet (the shift will not schedule this call)")
 	else:
 		var graph_result: Dictionary = call.dialogue.validate()
 		var graph_errors: PackedStringArray = graph_result["errors"]

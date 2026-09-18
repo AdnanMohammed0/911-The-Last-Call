@@ -26,7 +26,7 @@ var _shift_done: bool = false
 func _ready() -> void:
 	for path: String in CallValidator._find_resources(CallValidator.CALLS_DIR):
 		var call: CallData = load(path) as CallData
-		if call != null:
+		if CallValidator.is_playable(call):
 			CallDirector.register_call(call)
 	var terminal: DispatchTerminal = DispatchTerminal.find(get_tree())
 	if terminal == null:

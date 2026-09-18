@@ -31,8 +31,8 @@ func get_random_pitch() -> float:
 	return randf_range(pitch_range.x, pitch_range.y)
 
 
-func get_class_multiplier(class_name: StringName) -> float:
-	return class_modifiers.get(class_name, 1.0)
+func get_class_multiplier(class_id: StringName) -> float:
+	return class_modifiers.get(class_id, 1.0)
 
 
 func validate() -> Dictionary:

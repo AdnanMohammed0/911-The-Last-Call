@@ -845,6 +845,28 @@
       "files": [
         ".gitattributes"
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P1-01",
+        "P3-12",
+        "P3-19"
+      ],
+      "summary": "إصلاح main بعد آخر دمج: autoload اسمه AudioServer كان يحجب AudioServer مال Godot (صار AudioDirector)، TelemetryManager/CrashReporter تعارض اسم الـautoload مع class_name (صارت TelemetryService/CrashService) + تحويل صيغ مو GDScript (?. ?? وfor/else وnamed args)، نص الموافقة بـgame_settings، reset مكرر بـmission_director، emf_level مكرر بالـDrowned Woman، إعادة ترتيب sub_resource بملفات مكالمات Shift 2/3 حتى تنقرى، كلاس investigator غير موجود، وتضارب IDs: مكالماتي صارت call_willow_court/call_harbor_truck والمسودات الفارغة تتجاهل بالجدولة. المشروع يترجم بدون أخطاء، 244 اختبار ناجح؛ الفاشل بس بملفات اختبار محمد (telemetry/trace/anomaly_tools).",
+      "files": [
+        "autoload/audio_server.gd",
+        "autoload/telemetry_manager.gd",
+        "autoload/crash_reporter.gd",
+        "autoload/game_settings.gd",
+        "autoload/mission_director.gd",
+        "scenes/field/anomalies/drowned_woman.gd",
+        "data/calls/shift2/",
+        "data/calls/shift3/",
+        "data/calls/call_validator.gd",
+        "scenes/dispatch/dispatch_setup.gd",
+        "project.godot"
+      ]
     }
   ]
 }

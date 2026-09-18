@@ -39,9 +39,9 @@ Career="*res://autoload/career.gd"
 MissionDirector="*res://autoload/mission_director.gd"
 WorldItems="*res://autoload/world_items.gd"
 GameSettings="*res://autoload/game_settings.gd"
-AudioServer="*res://autoload/audio_server.gd"
-TelemetryManager="*res://autoload/telemetry_manager.gd"
-CrashReporter="*res://autoload/crash_reporter.gd"
+AudioDirector="*res://autoload/audio_server.gd"
+TelemetryService="*res://autoload/telemetry_manager.gd"
+CrashService="*res://autoload/crash_reporter.gd"
 
 [debug]
 

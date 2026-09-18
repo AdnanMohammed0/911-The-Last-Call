@@ -21,7 +21,7 @@ const DEFAULT_MISSION: String = WAREHOUSE
 const MISSION_NAMES: Dictionary[String, String] = {WAREHOUSE: "Harbor Warehouse", SUBURB: "Aspen Drive"}
 ## Which map each call sends the team to (unlisted calls use DEFAULT_MISSION).
 const CALL_MISSIONS: Dictionary[StringName, String] = {
-	&"call_cut_line": SUBURB, &"call_lost_child": SUBURB, &"call_domestic": SUBURB, &"call_overdose": SUBURB,
+	&"call_willow_court": SUBURB, &"call_lost_child": SUBURB, &"call_domestic": SUBURB, &"call_overdose": SUBURB,
 	&"call_home_invasion": SUBURB, &"call_school_threat": SUBURB, &"call_closet_monster": SUBURB,
 }
 const KIND_DIFFICULTY: Dictionary[StringName, float] = {&"raid": 1.25, &"ambush": 1.5, &"arrest": 1.0, &"empty": 1.0}
@@ -346,23 +346,6 @@ func get_loadout(peer_id: int) -> Dictionary:
 	return _loadouts.get(peer_id, {})
 
 
-func reset() -> void:
-	state = State.IDLE
-	mission_scene = ""
-	mission_call_id = &""
-	mission_kind = &""
-	objective_text = ""
-	difficulty = 1.0
-	hostiles_left = 0
-	hostiles_total = 0
-	shift_number = 1
-	calls_handled = 0
-	calls_total = 0
-	public_trust = 75
-	_loadouts.clear()
-	_return_timer = -1.0
-
-
 # --- Internals ---------------------------------------------------------------------------
 
 func _process(delta: float) -> void:
@@ -477,7 +460,7 @@ func _on_cult_threshold_crossed(threshold_id: StringName, current_awareness: int
 		&"station_siege_triggered":
 			_station_siege_triggered = true
 			print("MissionDirector: Cult Awareness ≥ 90 - STATION SIEGE TRIGGERED!")
-			EventBus.announcement.emit("STATION SIEGE", "The cult has found us. Defend the station!")
+			_announce.rpc("STATION SIEGE", "The cult has found us. Defend the station!")
 
 func is_counter_ambush_active() -> bool:
 	return _counter_ambush_active

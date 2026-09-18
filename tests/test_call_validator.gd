@@ -115,7 +115,7 @@ func test_slice_call_closet_monster_loads() -> void:
 func test_shift_one_has_fifteen_branching_calls() -> void:
 	var truths: Dictionary[int, int] = {}
 	var minutes: Array[int] = []
-	var ids: Array[StringName] = [&"call_highway_crash", &"call_cut_line", &"call_meat_truck", &"call_lost_child",
+	var ids: Array[StringName] = [&"call_highway_crash", &"call_willow_court", &"call_harbor_truck", &"call_lost_child",
 		&"call_drowned_voice", &"call_domestic", &"call_gas_station", &"call_church_bells", &"call_overdose",
 		&"call_deputy_down", &"call_home_invasion", &"call_school_threat", &"call_barn_fire", &"call_diner_hostage",
 		&"call_last_call"]
@@ -150,7 +150,7 @@ func test_shift_one_has_fifteen_branching_calls() -> void:
 
 
 func test_evidence_gated_question_unlocks_after_reveal() -> void:
-	var call: CallData = load("res://data/calls/shift1/call_cut_line.tres") as CallData
+	var call: CallData = load("res://data/calls/shift1/call_willow_court.tres") as CallData
 	var runner: DialogueRunner = DialogueRunner.new()
 	runner.start(call.dialogue, 150.0)
 	assert_true(_pick(runner, &"tech"))

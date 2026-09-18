@@ -3,6 +3,9 @@
 class_name TestTelemetry
 extends GutTest
 
+# Loosely typed test code (mocks and dictionaries).
+@warning_ignore_start("unsafe_call_argument", "unsafe_cast", "unsafe_method_access", "unsafe_property_access", "untyped_declaration", "inferred_declaration", "return_value_discarded")
+
 
 var _telemetry_settings: TelemetrySettings
 var _telemetry_manager: TelemetryManager
@@ -101,9 +104,9 @@ func test_telemetry_settings_request_deletion() -> void:
 
 func test_telemetry_manager_initialization() -> void:
 	assert_not_null(_telemetry_manager)
-	assert_equal(_telemetry_manager.settings, _telemetry_settings)
-	assert_equal(_telemetry_manager.session_data.session_id, _telemetry_settings.session_id)
-	assert_not_equal(_telemetry_manager.session_data.session_id, "")
+	assert_eq(_telemetry_manager.settings, _telemetry_settings)
+	assert_eq(_telemetry_manager.session_data.session_id, _telemetry_settings.session_id)
+	assert_ne(_telemetry_manager.session_data.session_id, "")
 
 
 func test_telemetry_manager_record_event_disabled() -> void:
@@ -117,11 +120,11 @@ func test_telemetry_manager_record_event_enabled() -> void:
 	_telemetry_manager.set_telemetry_enabled(true)
 
 	_telemetry_manager.record_event(&"test_event", {"key": "value"})
-	assert_equal(_telemetry_manager.event_queue.size(), 1)
+	assert_eq(_telemetry_manager.event_queue.size(), 1)
 
 	var event: Dictionary = _telemetry_manager.event_queue[0]
-	assert_equal(event.event_type, &"test_event")
-	assert_equal(event.payload.key, "value")
+	assert_eq(event.event_type, &"test_event")
+	assert_eq(event.payload.key, "value")
 	assert_true(event.has("session_id"))
 	assert_true(event.has("timestamp"))
 
@@ -131,13 +134,13 @@ func test_telemetry_manager_record_metric() -> void:
 	_telemetry_manager.set_telemetry_enabled(true)
 
 	_telemetry_manager.record_metric(&"test_metric", 42.5, {"tag": "value"})
-	assert_equal(_telemetry_manager.event_queue.size(), 1)
+	assert_eq(_telemetry_manager.event_queue.size(), 1)
 
 	var event: Dictionary = _telemetry_manager.event_queue[0]
-	assert_equal(event.event_type, &"metric")
-	assert_equal(event.metric_name, &"test_metric")
-	assert_equal(event.value, 42.5)
-	assert_equal(event.tags.tag, "value")
+	assert_eq(event.event_type, &"metric")
+	assert_eq(event.metric_name, &"test_metric")
+	assert_eq(event.value, 42.5)
+	assert_eq(event.tags.tag, "value")
 
 
 func test_telemetry_manager_record_error() -> void:
@@ -145,12 +148,12 @@ func test_telemetry_manager_record_error() -> void:
 	_telemetry_manager.set_telemetry_enabled(true)
 
 	_telemetry_manager.record_error("TestError", "Something went wrong", {"context": "test"})
-	assert_equal(_telemetry_manager.event_queue.size(), 1)
+	assert_eq(_telemetry_manager.event_queue.size(), 1)
 
 	var event: Dictionary = _telemetry_manager.event_queue[0]
-	assert_equal(event.event_type, &"error")
-	assert_equal(event.error_type, "TestError")
-	assert_equal(event.message, "Something went wrong")
+	assert_eq(event.event_type, &"error")
+	assert_eq(event.error_type, "TestError")
+	assert_eq(event.message, "Something went wrong")
 	assert_true(event.priority)  # Errors are priority
 
 
@@ -164,12 +167,12 @@ func test_telemetry_manager_record_crash() -> void:
 	}
 
 	_telemetry_manager.record_crash(crash_info)
-	assert_equal(_telemetry_manager.session_data.crashes_this_session, 1)
-	assert_equal(_telemetry_manager.event_queue.size(), 1)
+	assert_eq(_telemetry_manager.session_data.crashes_this_session, 1)
+	assert_eq(_telemetry_manager.event_queue.size(), 1)
 
 	var event: Dictionary = _telemetry_manager.event_queue[0]
-	assert_equal(event.event_type, &"crash")
-	assert_equal(event.crash_info.exception, "NullReferenceException")
+	assert_eq(event.event_type, &"crash")
+	assert_eq(event.crash_info.exception, "NullReferenceException")
 
 
 func test_telemetry_manager_batch_flush() -> void:
@@ -180,7 +183,7 @@ func test_telemetry_manager_batch_flush() -> void:
 	for i in range(5):
 		_telemetry_manager.record_event(&"batch_test", {"index": i})
 
-	assert_equal(_telemetry_manager.event_queue.size(), 5)
+	assert_eq(_telemetry_manager.event_queue.size(), 5)
 
 	# Flush
 	_telemetry_manager._flush_queue()
@@ -196,7 +199,7 @@ func test_telemetry_manager_queue_limit() -> void:
 		_telemetry_manager.record_event(&"limit_test", {"index": i})
 
 	# Should not exceed MAX_QUEUE_SIZE
-	assert_less_or_equal(_telemetry_manager.event_queue.size(), 500)
+	assert_lte(_telemetry_manager.event_queue.size(), 500)
 
 
 func test_telemetry_manager_priority_queue() -> void:
@@ -231,9 +234,9 @@ func test_telemetry_manager_session_lifecycle() -> void:
 	_telemetry_manager._on_call_classified(&"test_call", &"genuine")
 	_telemetry_manager._on_phase_changed(&"dispatch")
 
-	assert_equal(_telemetry_manager.session_data.calls_received, 1)
-	assert_equal(_telemetry_manager.session_data.calls_classified, 1)
-	assert_equal(_telemetry_manager.session_data.phase, "dispatch")
+	assert_eq(_telemetry_manager.session_data.calls_received, 1)
+	assert_eq(_telemetry_manager.session_data.calls_classified, 1)
+	assert_eq(_telemetry_manager.session_data.phase, "dispatch")
 
 	# Record shift summary
 	_telemetry_manager.record_shift_summary()
@@ -245,7 +248,7 @@ func test_telemetry_manager_ending_record() -> void:
 	_telemetry_manager.set_telemetry_enabled(true)
 
 	_telemetry_manager.record_ending(&"ending_whistleblowers")
-	assert_equal(_telemetry_manager.session_data.ending_reached, "ending_whistleblowers")
+	assert_eq(_telemetry_manager.session_data.ending_reached, "ending_whistleblowers")
 
 
 func test_telemetry_manager_trait_tracking() -> void:
@@ -268,9 +271,9 @@ func test_telemetry_manager_mission_tracking() -> void:
 	_telemetry_manager.record_mission_start(&"farmhouse")
 	_telemetry_manager.record_mission_complete(&"farmhouse", true, {"civilians_saved": 2})
 
-	assert_equal(_telemetry_manager.session_data.missions_started, 1)
-	assert_equal(_telemetry_manager.session_data.missions_completed, 1)
-	assert_equal(_telemetry_manager.session_data.missions_failed, 0)
+	assert_eq(_telemetry_manager.session_data.missions_started, 1)
+	assert_eq(_telemetry_manager.session_data.missions_completed, 1)
+	assert_eq(_telemetry_manager.session_data.missions_failed, 0)
 
 
 func test_telemetry_manager_gdpr_deletion() -> void:
@@ -284,7 +287,7 @@ func test_telemetry_manager_gdpr_deletion() -> void:
 	assert_false(_telemetry_settings.telemetry_enabled)
 	assert_false(_telemetry_settings.crash_reporting_enabled)
 	assert_true(_telemetry_manager.event_queue.is_empty())
-	assert_equal(_telemetry_manager.session_data.calls_received, 0)
+	assert_eq(_telemetry_manager.session_data.calls_received, 0)
 
 
 # --- CrashReporter Tests ---
@@ -301,12 +304,12 @@ func test_crash_reporter_report_exception() -> void:
 	_crash_reporter.report_exception("TestException", "Stack trace here", {"key": "value"})
 
 	# Should have recorded crash in telemetry
-	assert_equal(_telemetry_manager.session_data.crashes_this_session, 1)
-	assert_equal(_telemetry_manager.event_queue.size(), 1)
+	assert_eq(_telemetry_manager.session_data.crashes_this_session, 1)
+	assert_eq(_telemetry_manager.event_queue.size(), 1)
 
 	var event: Dictionary = _telemetry_manager.event_queue[0]
-	assert_equal(event.event_type, &"crash")
-	assert_equal(event.crash_info.exception, "TestException")
+	assert_eq(event.event_type, &"crash")
+	assert_eq(event.crash_info.exception, "TestException")
 
 
 func test_crash_reporter_write_dump() -> void:
@@ -322,7 +325,7 @@ func test_crash_reporter_disabled() -> void:
 	_crash_reporter.report_exception("TestException", "Stack trace")
 
 	# Should not have recorded in telemetry (crash reporting disabled)
-	assert_equal(_telemetry_manager.session_data.crashes_this_session, 0)
+	assert_eq(_telemetry_manager.session_data.crashes_this_session, 0)
 	assert_true(_telemetry_manager.event_queue.is_empty())
 
 
@@ -412,11 +415,11 @@ func test_full_consent_flow() -> void:
 
 	# 3. Telemetry records events
 	_telemetry_manager.record_event(&"test_event", {})
-	assert_equal(_telemetry_manager.event_queue.size(), 1)
+	assert_eq(_telemetry_manager.event_queue.size(), 1)
 
 	# 4. Crash occurs
 	_crash_reporter.report_exception("Crash", "Trace")
-	assert_equal(_telemetry_manager.session_data.crashes_this_session, 1)
+	assert_eq(_telemetry_manager.session_data.crashes_this_session, 1)
 
 	# 5. User disables telemetry but keeps crash reporting
 	_game_settings.set_telemetry_enabled(false)
@@ -427,11 +430,11 @@ func test_full_consent_flow() -> void:
 
 	# 6. New events not recorded, but crashes still are
 	_telemetry_manager.record_event(&"test_event_2", {})
-	assert_equal(_telemetry_manager.event_queue.size(), 1)  # Still 1 (crash event)
+	assert_eq(_telemetry_manager.event_queue.size(), 1)  # Still 1 (crash event)
 
 	_crash_reporter.report_exception("Crash2", "Trace2")
-	assert_equal(_telemetry_manager.session_data.crashes_this_session, 2)
-	assert_equal(_telemetry_manager.event_queue.size(), 2)  # Crash events added
+	assert_eq(_telemetry_manager.session_data.crashes_this_session, 2)
+	assert_eq(_telemetry_manager.event_queue.size(), 2)  # Crash events added
 
 
 func test_headless_mode_no_http() -> void:

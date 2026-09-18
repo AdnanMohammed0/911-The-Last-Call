@@ -5,6 +5,9 @@
 class_name TelemetryManager
 extends Node
 
+# Loosely typed telemetry / audio data (dictionaries from JSON and data resources).
+@warning_ignore_start("unsafe_call_argument", "unsafe_cast", "unsafe_method_access", "unsafe_property_access", "untyped_declaration", "inferred_declaration", "return_value_discarded")
+
 ## Singleton
 static var instance: TelemetryManager = null
 
@@ -89,8 +92,7 @@ func _ready() -> void:
 	EventBus.vote_finished.connect(_on_vote_finished)
 
 	# Listen for GameState changes
-	GameState.day_number_changed.connect(_on_day_changed)
-	GameState.phase_changed.connect(_on_game_state_phase_changed)
+	MissionDirector.shift_changed.connect(func() -> void: _on_day_changed(MissionDirector.shift_number))
 
 	print("[TelemetryManager] Initialized. Telemetry enabled: ", settings.telemetry_enabled)
 
@@ -122,8 +124,8 @@ func _init_session() -> void:
 	session_data.session_id = _generate_session_id()
 	settings.session_id = session_data.session_id
 	session_data.start_time = Time.get_unix_time_from_system()
-	session_data.shift_number = GameState.day_number
-	session_data.phase = GameState.Phase.keys()[GameState.phase].to_lower()
+	session_data.shift_number = MissionDirector.shift_number
+	session_data.phase = String(GameState.phase_name(GameState.phase))
 	session_data.players_max = NetManager.roster.size()
 
 
@@ -147,8 +149,8 @@ func record_event(event_type: StringName, payload: Dictionary = {}) -> void:
 		"event_type": event_type,
 		"timestamp": Time.get_unix_time_from_system(),
 		"session_id": session_data.session_id,
-		"shift": GameState.day_number,
-		"phase": GameState.Phase.keys()[GameState.phase].to_lower(),
+		"shift": MissionDirector.shift_number,
+		"phase": String(GameState.phase_name(GameState.phase)),
 		"payload": payload,
 		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
 		"engine_version": Engine.get_version_info()["string"],
@@ -172,7 +174,7 @@ func record_metric(metric_name: StringName, value: float, tags: Dictionary = {})
 		"tags": tags,
 		"timestamp": Time.get_unix_time_from_system(),
 		"session_id": session_data.session_id,
-		"shift": GameState.day_number,
+		"shift": MissionDirector.shift_number,
 		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
 	}
 
@@ -196,7 +198,7 @@ func record_error(error_type: String, message: String, context: Dictionary = {})
 		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
 	}
 
-	_enqueue_event(event, priority: true)
+	_enqueue_event(event, true)
 
 
 ## Called when a crash is caught (from CrashReporter).
@@ -211,14 +213,14 @@ func record_crash(crash_info: Dictionary) -> void:
 		"crash_info": crash_info,
 		"timestamp": Time.get_unix_time_from_system(),
 		"session_id": session_data.session_id,
-		"shift": GameState.day_number,
-		"phase": GameState.Phase.keys()[GameState.phase].to_lower(),
+		"shift": MissionDirector.shift_number,
+		"phase": String(GameState.phase_name(GameState.phase)),
 		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
 		"engine_version": Engine.get_version_info()["string"],
 		"platform": OS.get_name(),
 	}
 
-	_enqueue_event(event, priority: true)
+	_enqueue_event(event, true)
 	_flush_queue()  # Send immediately for crashes
 
 
@@ -292,11 +294,14 @@ func _clear_local_data() -> void:
 func _enqueue_event(event: Dictionary, priority: bool = false) -> void:
 	if event_queue.size() >= MAX_QUEUE_SIZE:
 		# Drop oldest non-priority event
-		for i in range(event_queue.size()):
-			if not event_queue[i].get("priority", false):
+		var dropped: bool = false
+		for i: int in range(event_queue.size()):
+			var queued: Dictionary = event_queue[i]
+			if not queued.get("priority", false):
 				event_queue.remove_at(i)
+				dropped = true
 				break
-		else:
+		if not dropped:
 			return  # Queue full of priority events, drop this one
 
 	event.priority = priority
@@ -386,7 +391,7 @@ func _on_phase_changed(new_phase: StringName) -> void:
 
 func _on_game_state_phase_changed(new_phase: int) -> void:
 	# This is the integer phase from GameState
-	var phase_name: String = GameState.Phase.keys()[new_phase].to_lower()
+	var phase_name: String = String(GameState.phase_name(new_phase))
 	session_data.phase = phase_name
 
 
@@ -459,7 +464,7 @@ func record_player_joined() -> void:
 # --- Cleanup ---
 
 func _notification(what: int) -> void:
-	if what == Node.NOTIFICATION_PREDELETE or what == Node.NOTIFICATION_WM_QUIT_REQUEST:
+	if what == Node.NOTIFICATION_PREDELETE or what == Node.NOTIFICATION_WM_CLOSE_REQUEST:
 		_on_game_quit()
 
 

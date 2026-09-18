@@ -3,6 +3,9 @@
 
 extends GutTest
 
+# Loosely typed test code (mocks and dictionaries).
+@warning_ignore_start("unsafe_call_argument", "unsafe_cast", "unsafe_method_access", "unsafe_property_access", "untyped_declaration", "inferred_declaration", "return_value_discarded")
+
 var _game_state: GameState
 var _call_director: CallDirector
 var _loadout_manager: LoadoutManager

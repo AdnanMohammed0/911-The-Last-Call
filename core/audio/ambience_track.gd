@@ -48,7 +48,7 @@ func validate() -> Dictionary:
 		var layer: Dictionary = layers[i]
 		if not layer.has("file"):
 			errors.append("layer %d: missing 'file'" % i)
-		elif not layer["file"].begins_with("res://"):
+		elif not str(layer["file"]).begins_with("res://"):
 			warnings.append("layer %d: file path should be res://" % i)
 		if not layer.has("volume_db"):
 			warnings.append("layer %d: missing 'volume_db'" % i)

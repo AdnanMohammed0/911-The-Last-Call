@@ -1,11 +1,13 @@
-## Audio Server Helper (P4-13).
+## Audio Director (P4-13). Named AudioDirector so it does not shadow Godot's built-in AudioServer singleton.
 ## Centralized playback for foley, SFX, music stingers, and ambience.
 ## Uses the bus layout from audio/buses/audio_buses.cfg
-class_name AudioServer
 extends Node
 
+# Loosely typed telemetry / audio data (dictionaries from JSON and data resources).
+@warning_ignore_start("unsafe_call_argument", "unsafe_cast", "unsafe_method_access", "unsafe_property_access", "untyped_declaration", "inferred_declaration", "return_value_discarded")
+
 ## Singleton instance
-static var instance: AudioServer = null
+static var instance: Node = null
 
 ## Foley definitions resource
 @export var foley_defs: Resource
@@ -19,7 +21,7 @@ var current_ambience_id: StringName = &""
 ## Ambience crossfade state
 var _ambience_crossfading: bool = false
 ## Active ambience players per layer
-var _ambience_players: Dictionary[StringName, Array[AudioStreamPlayer]] = {}
+var _ambience_players: Dictionary[StringName, Array] = {}
 ## Music stinger cooldowns
 var _stinger_cooldowns: Dictionary[StringName, float] = {}
 ## Active music stinger players
@@ -48,7 +50,7 @@ func _load_resources() -> void:
 
 func _init_stinger_cooldowns() -> void:
 	if music_stingers != null:
-		for stinger: MusicStinger in music_stingers.stingers:
+		for stinger: MusicStinger in _list(music_stingers, &"stingers"):
 			_stinger_cooldowns[stinger.id] = 0.0
 
 
@@ -82,14 +84,14 @@ func _cleanup_finished_players() -> void:
 
 ## Plays a foley sound at world position with class modifier.
 ## Returns the AudioStreamPlayer3D for potential further control.
-func play_foley(foley_id: StringName, position: Vector3, class_name: StringName = &"", parent: Node = null) -> AudioStreamPlayer3D:
+func play_foley(foley_id: StringName, position: Vector3, class_id: StringName = &"", parent: Node = null) -> AudioStreamPlayer3D:
 	if foley_defs == null:
-		push_error("AudioServer: foley_defs not loaded")
+		push_error("AudioDirector: foley_defs not loaded")
 		return null
 
 	var foley: FoleyDefinition = _find_foley(foley_id)
 	if foley == null:
-		push_error("AudioServer: foley '%s' not found" % foley_id)
+		push_error("AudioDirector: foley '%s' not found" % foley_id)
 		return null
 
 	var variation: String = foley.get_random_variation()
@@ -97,7 +99,7 @@ func play_foley(foley_id: StringName, position: Vector3, class_name: StringName 
 		return null
 
 	var pitch: float = foley.get_random_pitch()
-	var volume_mult: float = foley.get_class_multiplier(class_name)
+	var volume_mult: float = foley.get_class_multiplier(class_id)
 	var volume_db: float = foley.volume_db + linear_to_db(volume_mult)
 
 	var player: AudioStreamPlayer3D = AudioStreamPlayer3D.new()
@@ -107,8 +109,7 @@ func play_foley(foley_id: StringName, position: Vector3, class_name: StringName 
 	player.pitch_scale = pitch
 	player.global_position = position
 	player.max_distance = foley.max_distance
-	player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE
-	player.unit_db = 0.0
+	player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
 
 	if parent != null:
 		parent.add_child(player)
@@ -120,7 +121,7 @@ func play_foley(foley_id: StringName, position: Vector3, class_name: StringName 
 
 
 ## Plays a foley sound as 2D (for UI, local player only).
-func play_foley_2d(foley_id: StringName, class_name: StringName = &"") -> AudioStreamPlayer:
+func play_foley_2d(foley_id: StringName, class_id: StringName = &"") -> AudioStreamPlayer:
 	if foley_defs == null:
 		return null
 
@@ -133,7 +134,7 @@ func play_foley_2d(foley_id: StringName, class_name: StringName = &"") -> AudioS
 		return null
 
 	var pitch: float = foley.get_random_pitch()
-	var volume_mult: float = foley.get_class_multiplier(class_name)
+	var volume_mult: float = foley.get_class_multiplier(class_id)
 	var volume_db: float = foley.volume_db + linear_to_db(volume_mult)
 
 	var player: AudioStreamPlayer = AudioStreamPlayer.new()
@@ -148,7 +149,7 @@ func play_foley_2d(foley_id: StringName, class_name: StringName = &"") -> AudioS
 
 
 func _find_foley(id: StringName) -> FoleyDefinition:
-	for def: FoleyDefinition in foley_defs.definitions:
+	for def: FoleyDefinition in _list(foley_defs, &"definitions"):
 		if def.id == id:
 			return def
 	return null
@@ -165,7 +166,7 @@ func play_sfx(sfx_id: StringName, position: Vector3, volume_db: float = 0.0, pit
 	player.pitch_scale = pitch
 	player.global_position = position
 	player.max_distance = max_dist
-	player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE
+	player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
 
 	if parent != null:
 		parent.add_child(player)
@@ -185,7 +186,7 @@ func request_stinger(stinger_id: StringName, force: bool = false) -> bool:
 
 	var stinger: MusicStinger = _find_stinger(stinger_id)
 	if stinger == null:
-		push_warning("AudioServer: stinger '%s' not found" % stinger_id)
+		push_warning("AudioDirector: stinger '%s' not found" % stinger_id)
 		return false
 
 	# Check cooldown
@@ -251,7 +252,7 @@ func _stop_stingers_below_priority(priority: int) -> void:
 
 
 func _find_stinger(id: StringName) -> MusicStinger:
-	for stinger: MusicStinger in music_stingers.stingers:
+	for stinger: MusicStinger in _list(music_stingers, &"stingers"):
 		if stinger.id == id:
 			return stinger
 	return null
@@ -264,7 +265,7 @@ func set_ambient_drone(drone_id: StringName, force: bool = false) -> void:
 
 	var drone: MusicStinger = _find_stinger(drone_id)
 	if drone == null or drone.category != MusicStinger.Category.AMBIENT_DRONE:
-		push_warning("AudioServer: '%s' is not an ambient drone" % drone_id)
+		push_warning("AudioDirector: '%s' is not an ambient drone" % drone_id)
 		return
 
 	if _current_drone_id == drone_id and not force:
@@ -300,7 +301,7 @@ func transition_ambience(track_id: StringName, fade_time: float = 5.0) -> void:
 
 	var track: AmbienceTrack = _find_ambience_track(track_id)
 	if track == null:
-		push_warning("AudioServer: ambience track '%s' not found" % track_id)
+		push_warning("AudioDirector: ambience track '%s' not found" % track_id)
 		return
 
 	if current_ambience_id == track_id:
@@ -401,7 +402,7 @@ func _play_oneshot_layer(layer: Dictionary, track_id: StringName) -> void:
 
 
 func _find_ambience_track(id: StringName) -> AmbienceTrack:
-	for track: AmbienceTrack in ambience_tracks.tracks:
+	for track: AmbienceTrack in _list(ambience_tracks, &"tracks"):
 		if track.id == id:
 			return track
 	return null
@@ -436,3 +437,10 @@ static func set_vhs_enabled(enabled: bool) -> void:
 	var idx: int = AudioServer.get_bus_index(&"VHS")
 	if idx >= 0:
 		AudioServer.set_bus_mute(idx, not enabled)
+
+## Array property of an untyped data resource (empty when the resource is missing).
+static func _list(resource: Resource, property: StringName) -> Array:
+	if resource == null:
+		return []
+	var value: Variant = resource.get(property)
+	return value if value is Array else []

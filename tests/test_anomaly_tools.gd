@@ -2,6 +2,9 @@
 ## Run with: godot --headless -s res://addons/gut/gut_cmdln.gd -gtest=tests/test_anomaly_tools.gd
 extends GutTest
 
+# Loosely typed test code (mocks and dictionaries).
+@warning_ignore_start("unsafe_call_argument", "unsafe_cast", "unsafe_method_access", "unsafe_property_access", "untyped_declaration", "inferred_declaration", "return_value_discarded")
+
 var _emf_reader: EMFReader
 var _salt_canister: SaltCanister
 var _tone_emitter: SpectralToneEmitter

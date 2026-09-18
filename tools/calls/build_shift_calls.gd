@@ -201,7 +201,7 @@ func _highway_crash() -> CallData:
 
 func _cut_line() -> CallData:
 	return _call({
-		"id": &"call_cut_line", "title": "The Cut Line", "truth": CallData.Truth.AMBUSH, "minute": 7,
+		"id": &"call_willow_court", "title": "Willow Court Whisper", "truth": CallData.Truth.AMBUSH, "minute": 7,
 		"caller": "Unknown Caller", "phone": "911-555-0133", "location": "22 Willow Court",
 		"true_location": Vector2(300, 410), "patience": 150.0, "bpm": 64, "tremor_start": 0.1, "tremor_end": 0.12,
 		"loops": [Vector2(2.0, 5.5)], "tags": [&"steady_breathing", &"engine_idle"],
@@ -266,7 +266,7 @@ func _cut_line() -> CallData:
 
 func _meat_truck() -> CallData:
 	return _call({
-		"id": &"call_meat_truck", "title": "The Meat Truck", "truth": CallData.Truth.GENUINE, "minute": 12,
+		"id": &"call_harbor_truck", "title": "Refrigerated Truck", "truth": CallData.Truth.GENUINE, "minute": 12,
 		"caller": "Walt Hendricks", "phone": "911-555-0161", "location": "Harbor warehouse district, Pier 4",
 		"true_location": Vector2(820, 520), "patience": 220.0, "bpm": 104, "tremor_start": 0.45, "tremor_end": 0.7,
 		"tags": [&"reefer_compressor", &"harbor_wind", &"knocking"],

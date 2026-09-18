@@ -1,0 +1,285 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_hcxp7"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_7ehvf"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_xcxxt"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_paw0p"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_0cw25"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_rtrqm"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_5m6n6"]
+
+[sub_resource type="Resource" id="Resource_sq3ev"]
+script = ExtResource("2_7ehvf")
+text = "What's your address?"
+next = &"address"
+
+[sub_resource type="Resource" id="Resource_32iap"]
+script = ExtResource("2_7ehvf")
+text = "Where are you hiding?"
+next = &"hiding"
+
+[sub_resource type="Resource" id="Resource_eg0jn"]
+script = ExtResource("2_7ehvf")
+text = "[Profiler] Keep whispering. Tell me what you hear."
+next = &"listen"
+required_class = &"profiler"
+
+[sub_resource type="Resource" id="Resource_jenhf"]
+script = ExtResource("1_hcxp7")
+id = &"start"
+line = "(whispering) There's someone in my house. They're downstairs. Please."
+choices = Array[ExtResource("2_7ehvf")]([SubResource("Resource_sq3ev"), SubResource("Resource_32iap"), SubResource("Resource_eg0jn")])
+
+[sub_resource type="Resource" id="Resource_wewc5"]
+script = ExtResource("2_7ehvf")
+text = "[Tech] Checking the address on the county database."
+next = &"tech_address"
+required_class = &"tech"
+reveals = Array[StringName]([&"vacant_address"])
+
+[sub_resource type="Resource" id="Resource_a2lhr"]
+script = ExtResource("2_7ehvf")
+text = "How many people are in the house?"
+next = &"how_many"
+
+[sub_resource type="Resource" id="Resource_ag85o"]
+script = ExtResource("2_7ehvf")
+text = "Where are you hiding?"
+next = &"hiding"
+
+[sub_resource type="Resource" id="Resource_5dwjc"]
+script = ExtResource("1_hcxp7")
+id = &"address"
+line = "22 Willow Court. Please send everyone, all of them."
+choices = Array[ExtResource("2_7ehvf")]([SubResource("Resource_wewc5"), SubResource("Resource_a2lhr"), SubResource("Resource_ag85o")])
+
+[sub_resource type="Resource" id="Resource_egyup"]
+script = ExtResource("1_hcxp7")
+id = &"tech_address"
+speaker = &"dispatcher"
+line = "(County records: 22 Willow Court is bank-owned. Power cut off since March.)"
+auto_next = &"tech_after"
+auto_delay = 3.5
+
+[sub_resource type="Resource" id="Resource_ukj54"]
+script = ExtResource("2_7ehvf")
+text = "Ma'am, the power at that address was cut months ago. How is your phone charging?"
+next = &"confront_power"
+required_evidence = Array[StringName]([&"vacant_address"])
+patience_delta = -30.0
+
+[sub_resource type="Resource" id="Resource_gn123"]
+script = ExtResource("2_7ehvf")
+text = "Where are you hiding?"
+next = &"hiding"
+
+[sub_resource type="Resource" id="Resource_x8eiw"]
+script = ExtResource("1_hcxp7")
+id = &"tech_after"
+line = "(still whispering) Why aren't you saying anything? Are they coming?"
+choices = Array[ExtResource("2_7ehvf")]([SubResource("Resource_ukj54"), SubResource("Resource_gn123")])
+
+[sub_resource type="Resource" id="Resource_ygbmo"]
+script = ExtResource("2_7ehvf")
+text = "[Profiler] Your breathing hasn't changed once. You're not scared."
+next = &"profiler_calm"
+required_class = &"profiler"
+reveals = Array[StringName]([&"calm_breathing"])
+
+[sub_resource type="Resource" id="Resource_5n41k"]
+script = ExtResource("2_7ehvf")
+text = "Units are on the way."
+next = &"end_dispatch"
+
+[sub_resource type="Resource" id="Resource_p45mv"]
+script = ExtResource("1_hcxp7")
+id = &"confront_power"
+line = "(pause) ...I have a battery. Just send the units. Send all of them."
+choices = Array[ExtResource("2_7ehvf")]([SubResource("Resource_ygbmo"), SubResource("Resource_5n41k")])
+
+[sub_resource type="Resource" id="Resource_onswc"]
+script = ExtResource("1_hcxp7")
+id = &"profiler_calm"
+line = "(a man's voice in the background, close to the phone) 'She's made us. Hang up.'"
+auto_next = &"end_click"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_kdol0"]
+script = ExtResource("2_7ehvf")
+text = "Describe the house. What's across the hall?"
+next = &"house"
+
+[sub_resource type="Resource" id="Resource_uvk3x"]
+script = ExtResource("2_7ehvf")
+text = "How many people are in the house?"
+next = &"how_many"
+
+[sub_resource type="Resource" id="Resource_r7fj7"]
+script = ExtResource("1_hcxp7")
+id = &"hiding"
+line = "In the upstairs closet. I can hear them on the stairs."
+choices = Array[ExtResource("2_7ehvf")]([SubResource("Resource_kdol0"), SubResource("Resource_uvk3x")])
+
+[sub_resource type="Resource" id="Resource_p552j"]
+script = ExtResource("2_7ehvf")
+text = "You have kids? Where are they?"
+next = &"kids"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_d78kd"]
+script = ExtResource("2_7ehvf")
+text = "[Profiler] Listen for me — is anything running in the background?"
+next = &"listen"
+required_class = &"profiler"
+
+[sub_resource type="Resource" id="Resource_v0gbx"]
+script = ExtResource("1_hcxp7")
+id = &"house"
+line = "Uh... the bathroom. And the kids' room. The stairs creak... the fourth step."
+choices = Array[ExtResource("2_7ehvf")]([SubResource("Resource_p552j"), SubResource("Resource_d78kd")])
+
+[sub_resource type="Resource" id="Resource_ki8ev"]
+script = ExtResource("2_7ehvf")
+text = "Which grandmother? I can check on them too."
+next = &"grandmother"
+reveals = Array[StringName]([&"evasive_answer"])
+
+[sub_resource type="Resource" id="Resource_x33oy"]
+script = ExtResource("2_7ehvf")
+text = "Units are on the way."
+next = &"end_dispatch"
+
+[sub_resource type="Resource" id="Resource_ubjhe"]
+script = ExtResource("1_hcxp7")
+id = &"kids"
+line = "They're... at their grandmother's. Just send someone."
+choices = Array[ExtResource("2_7ehvf")]([SubResource("Resource_ki8ev"), SubResource("Resource_x33oy")])
+
+[sub_resource type="Resource" id="Resource_cj8wy"]
+script = ExtResource("1_hcxp7")
+id = &"grandmother"
+line = "It doesn't matter! Stop asking questions and send the police!"
+auto_next = &"end_dispatch"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_f2dmt"]
+script = ExtResource("2_7ehvf")
+text = "You saw rifles from inside a closet?"
+next = &"rifles"
+patience_delta = -15.0
+reveals = Array[StringName]([&"inconsistent_story"])
+
+[sub_resource type="Resource" id="Resource_b6t3s"]
+script = ExtResource("2_7ehvf")
+text = "Stay hidden. Units are coming."
+next = &"end_dispatch"
+
+[sub_resource type="Resource" id="Resource_xur66"]
+script = ExtResource("1_hcxp7")
+id = &"how_many"
+line = "Three. Maybe four. They have guns, I saw rifles."
+choices = Array[ExtResource("2_7ehvf")]([SubResource("Resource_f2dmt"), SubResource("Resource_b6t3s")])
+
+[sub_resource type="Resource" id="Resource_nqgmq"]
+script = ExtResource("2_7ehvf")
+text = "[Profiler] That sentence sounds rehearsed."
+next = &"listen"
+required_class = &"profiler"
+
+[sub_resource type="Resource" id="Resource_cmb2t"]
+script = ExtResource("2_7ehvf")
+text = "Units are on the way."
+next = &"end_dispatch"
+
+[sub_resource type="Resource" id="Resource_ovn0x"]
+script = ExtResource("1_hcxp7")
+id = &"rifles"
+line = "I— before. I saw them through the window before I hid."
+choices = Array[ExtResource("2_7ehvf")]([SubResource("Resource_nqgmq"), SubResource("Resource_cmb2t")])
+
+[sub_resource type="Resource" id="Resource_8evdh"]
+script = ExtResource("1_hcxp7")
+id = &"listen"
+speaker = &"dispatcher"
+line = "(Behind her: an idling engine, and the same whispered sentence repeating a second time.)"
+auto_next = &"listen_after"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_o0omf"]
+script = ExtResource("2_7ehvf")
+text = "That's the exact same recording. Who am I really talking to?"
+next = &"confront_loop"
+patience_delta = -40.0
+reveals = Array[StringName]([&"looped_audio"])
+
+[sub_resource type="Resource" id="Resource_6aawh"]
+script = ExtResource("2_7ehvf")
+text = "Units are on the way."
+next = &"end_dispatch"
+
+[sub_resource type="Resource" id="Resource_seyhi"]
+script = ExtResource("1_hcxp7")
+id = &"listen_after"
+line = "There's someone in my house. They're downstairs. Please."
+choices = Array[ExtResource("2_7ehvf")]([SubResource("Resource_o0omf"), SubResource("Resource_6aawh")])
+
+[sub_resource type="Resource" id="Resource_2np7g"]
+script = ExtResource("1_hcxp7")
+id = &"confront_loop"
+speaker = &"unknown"
+line = "(A man laughs softly.) 'Just send the cars, dispatcher. We're waiting.'"
+auto_next = &"end_click"
+auto_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_tqrkk"]
+script = ExtResource("1_hcxp7")
+id = &"end_click"
+speaker = &"dispatcher"
+line = "(Click. The line is cut.)"
+
+[sub_resource type="Resource" id="Resource_gqnw2"]
+script = ExtResource("1_hcxp7")
+id = &"end_dispatch"
+line = "(whispering) Thank you. Tell them to come to the front door."
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_vje5n"]
+script = ExtResource("4_paw0p")
+nodes = Array[ExtResource("1_hcxp7")]([SubResource("Resource_jenhf"), SubResource("Resource_5dwjc"), SubResource("Resource_egyup"), SubResource("Resource_x8eiw"), SubResource("Resource_p45mv"), SubResource("Resource_onswc"), SubResource("Resource_r7fj7"), SubResource("Resource_v0gbx"), SubResource("Resource_ubjhe"), SubResource("Resource_cj8wy"), SubResource("Resource_xur66"), SubResource("Resource_ovn0x"), SubResource("Resource_8evdh"), SubResource("Resource_seyhi"), SubResource("Resource_2np7g"), SubResource("Resource_tqrkk"), SubResource("Resource_gqnw2")])
+
+[sub_resource type="Resource" id="Resource_v22vg"]
+script = ExtResource("5_0cw25")
+id = &"rec_willow_22"
+title = "22 Willow Court"
+content = "Bank-owned since March. Utilities disconnected. No registered occupants."
+
+[sub_resource type="Resource" id="Resource_tie7u"]
+script = ExtResource("5_0cw25")
+id = &"rec_decoy_calls"
+title = "Decoy call pattern"
+content = "Two deputies wounded in 2019 after a fake break-in call to a vacant address."
+
+[sub_resource type="Curve" id="Curve_dfo4q"]
+_data = [Vector2(0, 0.1), 0.0, 0.0, 0, 0, Vector2(1, 0.12), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_de48t"]
+script = ExtResource("7_5m6n6")
+tremor_curve = SubResource("Curve_dfo4q")
+loop_segments = Array[Vector2]([Vector2(2, 5.5)])
+background_tags = Array[StringName]([&"steady_breathing", &"engine_idle"])
+baseline_heart_rate = 64
+
+[resource]
+script = ExtResource("6_rtrqm")
+id = &"call_willow_court"
+title = "Willow Court Whisper"
+truth = 2
+earliest_minute = 7
+dialogue = SubResource("Resource_vje5n")
+phone_number = "911-555-0133"
+caller_location_name = "22 Willow Court"
+true_location = Vector2(300, 410)
+records = Array[ExtResource("5_0cw25")]([SubResource("Resource_v22vg"), SubResource("Resource_tie7u")])
+stress_profile = SubResource("Resource_de48t")
+patience_seconds = 150.0

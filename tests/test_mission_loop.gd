@@ -290,7 +290,7 @@ func test_mission_kind_follows_the_hidden_truth() -> void:
 
 
 func test_dialogue_can_dispatch_the_team() -> void:
-	var call: CallData = load("res://data/calls/shift1/call_cut_line.tres") as CallData
+	var call: CallData = load("res://data/calls/shift1/call_willow_court.tres") as CallData
 	CallDirector.register_call(call)
 	EventBus.call_event.emit(call.id, &"dispatch_units")
 	assert_eq(MissionDirector.state, MissionDirector.State.RESPONSE, "units were dispatched from the conversation")

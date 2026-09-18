@@ -37,7 +37,6 @@ signal water_level_changed(level: float)
 var target: Player = null
 ## 0..1, rises while hunting (level designers drive a water plane from `water_level_changed`).
 var water_level: float = 0.0
-var emf_level: int = 1
 
 var _retreat_for: float = 0.0
 var _next_teleport_at: float = 0.0
@@ -47,6 +46,10 @@ var _stalk_time: float = 0.0
 
 @onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
 
+
+
+func _init() -> void:
+	emf_level = 1   # a faint reading even while dormant (field inherited from Anomaly)
 
 func _build_states() -> void:
 	fsm.add_state(DORMANT, _enter_dormant, _update_dormant)

@@ -395,20 +395,20 @@ func show_telemetry_consent_dialog() -> void:
 
 	var label: Label = Label.new()
 	label.text = (
-		"Help us improve 911: The Last Call by sharing anonymous usage data.\n\n"
-		"[b]What we collect (only if you opt in):[/b]\n"
-		"• Session length, shift progression, endings reached\n"
-		"• Call outcomes, mission success/failure rates\n"
-		"• Performance metrics (FPS, latency, crashes)\n"
-		"• Hardware info (GPU, CPU, OS) — no personal identifiers\n\n"
-		"[b]Crash Reporting:[/b]\n"
-		"Automatically send crash logs and stack traces to help us fix bugs.\n"
-		"Includes game state at time of crash (shift, phase, meters).\n\n"
-		"[b]Your Privacy:[/b]\n"
-		"• No personal data, Steam ID, IP addresses, or voice recordings\n"
-		"• Data is aggregated and anonymous\n"
-		"• You can change this anytime in Settings → Privacy\n"
-		"• Request data deletion at any time (GDPR compliant)\n\n"
+		"Help us improve 911: The Last Call by sharing anonymous usage data.\n\n" +
+		"[b]What we collect (only if you opt in):[/b]\n" +
+		"• Session length, shift progression, endings reached\n" +
+		"• Call outcomes, mission success/failure rates\n" +
+		"• Performance metrics (FPS, latency, crashes)\n" +
+		"• Hardware info (GPU, CPU, OS) — no personal identifiers\n\n" +
+		"[b]Crash Reporting:[/b]\n" +
+		"Automatically send crash logs and stack traces to help us fix bugs.\n" +
+		"Includes game state at time of crash (shift, phase, meters).\n\n" +
+		"[b]Your Privacy:[/b]\n" +
+		"• No personal data, Steam ID, IP addresses, or voice recordings\n" +
+		"• Data is aggregated and anonymous\n" +
+		"• You can change this anytime in Settings → Privacy\n" +
+		"• Request data deletion at any time (GDPR compliant)\n\n" +
 		"Do you want to help us make the game better?"
 	)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

@@ -1,15 +1,10 @@
 [gd_resource type="Resource" script_class="DialogueGraph" format=3]
 
 [ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_0"]
-[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_0"]
-[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="3_0"]
 
-[sub_resource type="Resource" id="DialogueNode_start"]
-script = ExtResource("1_0")
-id = &"start"
-speaker = &"caller"
-line = "Yeah, hi. There's a party or something at the warehouse on River Road. Loud music, people yelling. It's 3 AM, this is ridiculous."
-choices = Array[ExtResource("2_0")]([SubResource("Choice_0"), SubResource("Choice_1"), SubResource("Choice_2")])
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_0"]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="3_0"]
 
 [sub_resource type="Resource" id="Choice_0"]
 script = ExtResource("2_0")
@@ -31,6 +26,19 @@ required_class = &"profiler"
 patience_delta = 10.0
 reveals = Array[StringName]([&"chanting_not_music"])
 
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("1_0")
+id = &"start"
+speaker = &"caller"
+line = "Yeah, hi. There's a party or something at the warehouse on River Road. Loud music, people yelling. It's 3 AM, this is ridiculous."
+choices = Array[ExtResource("2_0")]([SubResource("Choice_0"), SubResource("Choice_1"), SubResource("Choice_2")])
+
+[sub_resource type="Resource" id="Choice_3"]
+script = ExtResource("2_0")
+text = "We'll send a unit to check it out."
+next = &"end_units"
+patience_delta = 10.0
+
 [sub_resource type="Resource" id="DialogueNode_which_warehouse"]
 script = ExtResource("1_0")
 id = &"which_warehouse"
@@ -38,9 +46,9 @@ speaker = &"caller"
 line = "Big gray one, set back from the road. Sign says 'Blackvale Cold Storage' but that place closed years ago."
 choices = Array[ExtResource("2_0")]([SubResource("Choice_3")])
 
-[sub_resource type="Resource" id="Choice_3"]
+[sub_resource type="Resource" id="Choice_4"]
 script = ExtResource("2_0")
-text = "We'll send a unit to check it out."
+text = "Stay back. We're dispatching officers now."
 next = &"end_units"
 patience_delta = 10.0
 
@@ -51,11 +59,11 @@ speaker = &"caller"
 line = "Hard to say... maybe 15, 20? There's trucks parked out front. Unmarked white vans mostly."
 choices = Array[ExtResource("2_0")]([SubResource("Choice_4")])
 
-[sub_resource type="Resource" id="Choice_4"]
+[sub_resource type="Resource" id="Choice_5"]
 script = ExtResource("2_0")
-text = "Stay back. We're dispatching officers now."
-next = &"end_units"
-patience_delta = 10.0
+text = "That's not a party. We're sending a full response team."
+next = &"end_full_response"
+patience_delta = 15.0
 
 [sub_resource type="Resource" id="DialogueNode_profiler_audio"]
 script = ExtResource("1_0")
@@ -63,12 +71,6 @@ id = &"profiler_audio"
 speaker = &"caller"
 line = "Now that you mention it... it's not music. It's like... chanting? Rhythmic. And there's a hum underneath it. Like a transformer, but wrong."
 choices = Array[ExtResource("2_0")]([SubResource("Choice_5")])
-
-[sub_resource type="Resource" id="Choice_5"]
-script = ExtResource("2_0")
-text = "That's not a party. We're sending a full response team."
-next = &"end_full_response"
-patience_delta = 15.0
 
 [sub_resource type="Resource" id="DialogueNode_end_units"]
 script = ExtResource("1_0")

@@ -180,6 +180,8 @@ func _ready() -> void:
 	_apply_authority()
 	if _footstep_player != null:
 		_footstep_player.finished.connect(_on_footstep_finished)
+	if multiplayer != null and multiplayer.is_server() and TraitSystem != null:
+		TraitSystem.reapply_all_modifiers(peer_id)
 
 
 func _apply_authority() -> void:
@@ -305,8 +307,8 @@ func apply_class(data: ClassData) -> void:
 	(get_node(^"Health") as HealthComponent).setup(data.max_health, data.damage_resistance)
 	# TODO(P3-03): max_sanity, sanity drain.
 	
-	# Reapply trait modifiers after class application
-	if multiplayer.is_server() and TraitSystem != null:
+	# Reapply trait modifiers after class application (if already spawned in tree)
+	if is_inside_tree() and multiplayer != null and multiplayer.is_server() and TraitSystem != null:
 		TraitSystem.reapply_all_modifiers(peer_id)
 
 

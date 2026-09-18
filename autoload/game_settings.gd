@@ -306,7 +306,7 @@ func _shadow_filter() -> RenderingServer.ShadowQuality:
 
 
 func _apply_environment(world: WorldEnvironment) -> void:
-	if world == null or world.environment == null:
+	if world == null or not is_instance_valid(world) or world.environment == null:
 		return
 	var env: Environment = world.environment
 	if not env.has_meta(&"base_exposure"):
@@ -326,10 +326,16 @@ func _apply_environment(world: WorldEnvironment) -> void:
 	env.glow_enabled = quality >= Quality.MEDIUM
 
 
+func _apply_environment_by_id(instance_id: int) -> void:
+	var obj: Object = instance_from_id(instance_id)
+	if obj != null and (obj is WorldEnvironment):
+		_apply_environment(obj as WorldEnvironment)
+
+
 func _on_node_added(node: Node) -> void:
 	var world: WorldEnvironment = node as WorldEnvironment
 	if world != null:
-		_apply_environment.call_deferred(world)
+		_apply_environment_by_id.call_deferred(world.get_instance_id())
 
 
 func _apply_fps_counter() -> void:

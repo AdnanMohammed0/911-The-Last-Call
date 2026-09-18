@@ -9,8 +9,8 @@ display_name = "Fractured Hand"
 category = 0
 duration_shifts = 2
 stat_modifiers = {
-  "&scope_sway": 0.6,
-  "&reload_speed": 0.5
+  &"scope_sway": 0.6,
+  &"reload_speed": 0.5
 }
 cure_cost = 400
 hooks = []

@@ -179,7 +179,8 @@ func _update_vote_timer(vote_id: int) -> void:
 
 func _update_vote_tally(tally: Dictionary) -> void:
 	var parts: PackedStringArray = PackedStringArray()
-	for option, count in tally:
+	for option: StringName in tally.keys():
+		var count: int = tally[option]
 		var option_name: String = String(option).to_upper()
 		parts.append("%s %d" % [option_name, count])
 	_vote_tally_label.text = "TALLY: %s" % ", ".join(parts) if not parts.is_empty() else "No votes yet"
@@ -328,7 +329,8 @@ func _refresh_my_loadout() -> void:
 		_my_loadout.add_child(empty)
 	else:
 		var total_cost: int = 0
-		for gear_id, qty in loadout:
+		for gear_id: StringName in loadout.keys():
+			var qty: int = loadout[gear_id]
 			var gear: GearItem = LoadoutManager.get_gear(gear_id)
 			if gear != null:
 				var cost_per: int = gear.get_effective_cost(_my_class)

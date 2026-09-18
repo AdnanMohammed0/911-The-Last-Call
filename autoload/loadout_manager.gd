@@ -1,6 +1,5 @@
 ## Loadout Manager — manages armory budget, gear purchases, and loadout voting (GAMEPLAY_MECHANICS §6).
 ## Authority: HOST (budget and purchases validated on host, replicated via RPC).
-class_name LoadoutManager
 extends Node
 
 signal budget_changed(new_budget: int)
@@ -18,7 +17,7 @@ signal approach_selected(approach: StringName)
 var _station_budget: int = 10000
 
 ## Per-peer loadout selections: peer_id -> {gear_id -> quantity}
-var _player_loadouts: Dictionary[int, Dictionary[StringName, int]] = {}
+var _player_loadouts: Dictionary = {}
 
 ## Active vote state
 var _active_vote_id: int = 0
@@ -32,7 +31,6 @@ func _ready() -> void:
 	_load_gear_catalog()
 	if GameState != null:
 		_station_budget = GameState.station_budget
-		GameState.budget_changed.connect(_on_game_state_budget_changed)
 
 
 func _load_gear_catalog() -> void:
@@ -91,7 +89,7 @@ func _create_default_catalog() -> void:
 	shield.display_name = "Ballistic Shield"
 	shield.cost = 900
 	shield.slot = GearItem.Slot.HEAVY
-	shield.allowed_classes = PackedStringArray(&"breacher")
+	shield.allowed_classes = PackedStringArray(["breacher"])
 	_gear_catalog[shield.id] = shield
 	
 	# Battering Ram (Breacher only)
@@ -100,7 +98,7 @@ func _create_default_catalog() -> void:
 	ram.display_name = "Battering Ram"
 	ram.cost = 300
 	ram.slot = GearItem.Slot.HEAVY
-	ram.allowed_classes = PackedStringArray(&"breacher")
+	ram.allowed_classes = PackedStringArray(["breacher"])
 	_gear_catalog[ram.id] = ram
 	
 	# Recon Drone (Tech only)
@@ -109,7 +107,7 @@ func _create_default_catalog() -> void:
 	drone.display_name = "Recon Drone"
 	drone.cost = 600
 	drone.slot = GearItem.Slot.GADGET
-	drone.allowed_classes = PackedStringArray(&"tech")
+	drone.allowed_classes = PackedStringArray(["tech"])
 	_gear_catalog[drone.id] = drone
 	
 	# Tear Gas
@@ -137,7 +135,7 @@ func _create_default_catalog() -> void:
 	sedatives.display_name = "Sedatives ×3"
 	sedatives.cost = 300
 	sedatives.slot = GearItem.Slot.CONSUMABLE
-	sedatives.allowed_classes = PackedStringArray(&"medic")
+	sedatives.allowed_classes = PackedStringArray(["medic"])
 	sedatives.quantity_per_purchase = 3
 	sedatives.max_carry = 3
 	_gear_catalog[sedatives.id] = sedatives
@@ -148,7 +146,7 @@ func _create_default_catalog() -> void:
 	emf.display_name = "EMF Reader"
 	emf.cost = 150
 	emf.slot = GearItem.Slot.GADGET
-	emf.allowed_classes = PackedStringArray(&"medic")
+	emf.allowed_classes = PackedStringArray(["medic"])
 	_gear_catalog[emf.id] = emf
 	
 	# Salt Canister
@@ -179,7 +177,7 @@ func get_gear(gear_id: StringName) -> GearItem:
 ## Gets all gear items for a specific class.
 func get_gear_for_class(class_id: StringName) -> Array[GearItem]:
 	var result: Array[GearItem] = []
-	for gear in _gear_catalog.values():
+	for gear: GearItem in _gear_catalog.values():
 		if gear.is_available_for_class(class_id):
 			result.append(gear)
 	return result
@@ -276,7 +274,8 @@ func sell_gear(peer_id: int, gear_id: StringName) -> bool:
 
 ## Gets a player's current loadout.
 func get_player_loadout(peer_id: int) -> Dictionary:
-	return _player_loadouts.get(peer_id, {}).duplicate()
+	var l_dict: Dictionary = _player_loadouts.get(peer_id, {})
+	return l_dict.duplicate()
 
 
 ## Clears a player's loadout (refunds all).
@@ -287,10 +286,11 @@ func clear_player_loadout(peer_id: int) -> void:
 	var loadout: Dictionary = _player_loadouts.get(peer_id, {})
 	var class_id: StringName = NetManager.get_class_id(peer_id)
 	
-	for gear_id, qty in loadout:
+	for gear_id: StringName in loadout.keys():
+		var qty: int = loadout[gear_id]
 		var gear: GearItem = _gear_catalog.get(gear_id, null)
 		if gear != null:
-			var refund_per: int = (gear.get_effective_cost(class_id) * gear.quantity_per_purchase) / 2
+			var refund_per: int = gear.get_effective_cost(class_id) / 2
 			var total_refund: int = refund_per * (qty / gear.quantity_per_purchase)
 			_station_budget += total_refund
 	
@@ -336,7 +336,7 @@ func open_approach_vote() -> int:
 	var timer: Timer = Timer.new()
 	timer.wait_time = loadout_vote_timeout
 	timer.one_shot = true
-	timer.timeout.connect(func(): _close_vote(_active_vote_id))
+	timer.timeout.connect(func() -> void: _close_vote(_active_vote_id))
 	add_child(timer)
 	timer.start()
 	
@@ -359,12 +359,14 @@ func cast_vote(peer_id: int, option: StringName) -> bool:
 	vote_cast.emit(peer_id, _active_vote_id, option)
 	
 	# Check for unanimous verdict (all players voted same)
-	var all_voted: bool = vote_data.votes.size() == NetManager.roster.size()
+	var votes_dict: Dictionary = vote_data.get("votes", {})
+	var all_voted: bool = votes_dict.size() == NetManager.roster.size()
 	var unanimous: bool = false
 	if all_voted:
-		var first_vote: StringName = vote_data.votes.values().front()
+		var votes_vals: Array = votes_dict.values()
+		var first_vote: StringName = votes_vals.front()
 		unanimous = true
-		for v in vote_data.votes.values():
+		for v: StringName in votes_vals:
 			if v != first_vote:
 				unanimous = false
 				break
@@ -380,7 +382,9 @@ func get_tally(vote_id: int) -> Dictionary:
 	var vote_data: Dictionary = _votes.get(vote_id, {})
 	var tally: Dictionary = {}
 	if vote_data.has("votes"):
-		for peer_id, option in vote_data.votes:
+		var v_votes: Dictionary = vote_data.get("votes", {})
+		for peer_id: int in v_votes.keys():
+			var option: StringName = v_votes[peer_id]
 			tally[option] = tally.get(option, 0) + 1
 	return tally
 
@@ -421,7 +425,8 @@ func _determine_vote_winner(tally: Dictionary) -> StringName:
 	# Find option with most votes
 	var max_votes: int = -1
 	var winners: Array[StringName] = []
-	for option, count in tally:
+	for option: StringName in tally.keys():
+		var count: int = tally[option]
 		if count > max_votes:
 			max_votes = count
 			winners = [option]
@@ -435,8 +440,9 @@ func _determine_vote_winner(tally: Dictionary) -> StringName:
 	var breacher_peer: int = _find_breacher_peer()
 	if breacher_peer > 0 and _votes.has(_active_vote_id):
 		var vote_data: Dictionary = _votes[_active_vote_id]
-		if vote_data.has("votes") and vote_data.votes.has(breacher_peer):
-			return vote_data.votes[breacher_peer]
+		var v_map: Dictionary = vote_data.get("votes", {})
+		if v_map.has(breacher_peer):
+			return v_map[breacher_peer]
 	
 	# No breacher or breacher didn't vote - pick first alphabetically
 	winners.sort()
@@ -446,7 +452,8 @@ func _determine_vote_winner(tally: Dictionary) -> StringName:
 func _find_breacher_peer() -> int:
 	if NetManager == null:
 		return 0
-	for peer_id, data in NetManager.roster:
+	for peer_id: int in NetManager.roster.keys():
+		var data: Dictionary = NetManager.roster[peer_id]
 		if data.get("class_id", &"") == &"breacher":
 			return peer_id
 	return 0

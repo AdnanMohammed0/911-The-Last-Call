@@ -11,7 +11,6 @@ title = "Prank: Fake Medical Emergency"
 truth = 0
 earliest_minute = 210
 requires_flags = {}
-caller_audio = ExtResource("audio/vo/filler/prank_fake_emergency_master.wav")
 dialogue = ExtResource("2_dialogue")
 phone_number = "911-555-0104"
 caller_name = "Unknown Male"

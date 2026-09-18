@@ -12,7 +12,6 @@ title = "Noise Complaint: Early Construction"
 truth = 1
 earliest_minute = 270
 requires_flags = {}
-caller_audio = ExtResource("audio/vo/filler/noise_construction_master.wav")
 dialogue = ExtResource("2_dialogue")
 phone_number = "911-555-0105"
 caller_name = "Eleanor Vance"

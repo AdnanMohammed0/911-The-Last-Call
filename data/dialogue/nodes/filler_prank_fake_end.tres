@@ -7,7 +7,6 @@ script = ExtResource("1_dn")
 id = &"end"
 speaker = &"system"
 line = "*dial tone*"
-audio = ExtResource("audio/vo/filler/prank_fake_04_end.wav")
 choices = []
 on_enter_events = []
 auto_next = &""

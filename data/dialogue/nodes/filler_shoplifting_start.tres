@@ -8,7 +8,6 @@ script = ExtResource("1_dn")
 id = &"start"
 speaker = &"caller"
 line = "Quick-Mart on Highway 12. We got a shoplifter. Male, 20s, grey hoodie. He's still in the store."
-audio = ExtResource("audio/vo/filler/shoplifting_01_start.wav")
 choices = [ExtResource("2_choices")]
 on_enter_events = []
 auto_next = &""

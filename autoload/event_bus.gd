@@ -30,6 +30,7 @@ signal vote_finished(topic: StringName, result: Variant)
 # --- Consequences ---
 signal flag_changed(key: StringName, old_value: Variant, new_value: Variant)
 signal trait_applied(peer_id: int, trait_id: StringName)
+signal trait_removed(peer_id: int, trait_id: StringName)
 
 # --- Players ---
 ## Host: a player took damage (Tension Director, hit feedback).

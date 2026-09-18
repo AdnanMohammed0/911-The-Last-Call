@@ -1,6 +1,5 @@
 ## Trait System — manages persistent traits for all players (GAMEPLAY_MECHANICS §3.4).
 ## Authority: HOST (trait application/removal validated on host, replicated via RPC).
-class_name TraitSystem
 extends Node
 
 signal trait_applied(peer_id: int, trait_id: StringName)
@@ -8,7 +7,7 @@ signal trait_removed(peer_id: int, trait_id: StringName)
 signal trait_progress(peer_id: int, trait_id: StringName, shifts_remaining: int)
 
 ## Per-player active traits: peer_id -> {trait_id -> {shifts_remaining: int, source_event: String}}
-var _player_traits: Dictionary[int, Dictionary[StringName, Dictionary]] = {}
+var _player_traits: Dictionary = {}
 
 ## Trait catalog (loaded from data/traits/*.tres)
 var _trait_catalog: Dictionary[StringName, TraitData] = {}
@@ -17,8 +16,7 @@ func _ready() -> void:
 	_load_trait_catalog()
 	
 	# Listen for shift transitions to decrement durations
-	if GameState != null:
-		GameState.shift_clock_updated.connect(_on_shift_updated)
+	EventBus.shift_clock_updated.connect(_on_shift_updated)
 	
 	# Listen for trait removal events (e.g., from medical leave)
 	EventBus.trait_removed.connect(_on_trait_removed_external)
@@ -35,9 +33,9 @@ func _load_trait_catalog() -> void:
 	while file_name != "":
 		if file_name.ends_with(".tres"):
 			var path: String = "res://data/traits/" + file_name
-			var trait: TraitData = load(path) as TraitData
-			if trait != null and trait.id != &"":
-				_trait_catalog[trait.id] = trait
+			var t_data: TraitData = load(path) as TraitData
+			if t_data != null and t_data.id != &"":
+				_trait_catalog[t_data.id] = t_data
 		file_name = dir.get_next()
 	dir.list_dir_end()
 
@@ -48,8 +46,8 @@ func apply(peer_id: int, trait_id: StringName, source_event: StringName = &"", s
 	if not multiplayer.is_server():
 		return false
 	
-	var trait: TraitData = _trait_catalog.get(trait_id, null)
-	if trait == null:
+	var t_data: TraitData = _trait_catalog.get(trait_id, null)
+	if t_data == null:
 		push_warning("TraitSystem: trait '%s' not found in catalog" % trait_id)
 		return false
 	
@@ -58,7 +56,7 @@ func apply(peer_id: int, trait_id: StringName, source_event: StringName = &"", s
 	# Determine duration
 	var duration: int = shifts_override
 	if duration == -1:
-		duration = trait.duration_shifts
+		duration = t_data.duration_shifts
 	
 	# Apply or refresh trait
 	var existing: Dictionary = player_traits.get(trait_id, {})
@@ -76,7 +74,7 @@ func apply(peer_id: int, trait_id: StringName, source_event: StringName = &"", s
 	_player_traits[peer_id] = player_traits
 	
 	# Apply stat modifiers to player
-	_apply_stat_modifiers(peer_id, trait, true)
+	_apply_stat_modifiers(peer_id, t_data, true)
 	
 	# Notify
 	trait_applied.emit(peer_id, trait_id)
@@ -95,9 +93,9 @@ func remove(peer_id: int, trait_id: StringName) -> bool:
 	if not player_traits.has(trait_id):
 		return false
 	
-	var trait: TraitData = _trait_catalog.get(trait_id, null)
-	if trait != null:
-		_apply_stat_modifiers(peer_id, trait, false)
+	var t_data: TraitData = _trait_catalog.get(trait_id, null)
+	if t_data != null:
+		_apply_stat_modifiers(peer_id, t_data, false)
 	
 	player_traits.erase(trait_id)
 	if player_traits.is_empty():
@@ -113,19 +111,26 @@ func remove(peer_id: int, trait_id: StringName) -> bool:
 
 ## Checks if a player has a specific trait.
 func has_trait(peer_id: int, trait_id: StringName) -> bool:
-	return _player_traits.has(peer_id) and _player_traits[peer_id].has(trait_id)
+	if not _player_traits.has(peer_id):
+		return false
+	var p_traits: Dictionary = _player_traits[peer_id]
+	return p_traits.has(trait_id)
 
 
 ## Gets all active traits for a player.
 func get_player_traits(peer_id: int) -> Dictionary:
-	return _player_traits.get(peer_id, {}).duplicate()
+	var p_traits: Dictionary = _player_traits.get(peer_id, {})
+	return p_traits.duplicate()
 
 
 ## Gets remaining shifts for a trait on a player.
 func get_shifts_remaining(peer_id: int, trait_id: StringName) -> int:
 	if not _player_traits.has(peer_id):
 		return 0
-	return _player_traits[peer_id].get(trait_id, {}).get("shifts_remaining", 0)
+	var p_traits: Dictionary = _player_traits[peer_id]
+	var t_info: Dictionary = p_traits.get(trait_id, {})
+	var rem: int = t_info.get("shifts_remaining", 0)
+	return rem
 
 
 ## Gets the trait data for a trait ID.
@@ -134,17 +139,18 @@ func get_trait(trait_id: StringName) -> TraitData:
 
 
 ## Applies or removes stat modifiers from a player.
-func _apply_stat_modifiers(peer_id: int, trait: TraitData, apply: bool) -> void:
-	if trait.stat_modifiers.is_empty():
+func _apply_stat_modifiers(peer_id: int, t_data: TraitData, apply: bool) -> void:
+	if t_data.stat_modifiers.is_empty():
 		return
 	
 	var player: Player = Player.find_by_peer(get_tree(), peer_id)
 	if player == null:
 		return
 	
-	var sign: float = 1.0 if apply else -1.0
-	for key, value in trait.stat_modifiers:
-		var modifier: float = value * sign
+	var sign_val: float = 1.0 if apply else -1.0
+	for key: StringName in t_data.stat_modifiers.keys():
+		var val_mod: float = t_data.stat_modifiers[key]
+		var modifier: float = val_mod * sign_val
 		_apply_modifier(player, key, modifier)
 
 
@@ -160,8 +166,9 @@ func _apply_modifier(player: Player, key: StringName, delta: float) -> void:
 			pass
 		&"max_health":
 			var health: HealthComponent = player.get_health()
-			health.max_health = maxi(1, health.max_health + int(delta))
-			health.health = minf(health.health, health.max_health)
+			if health != null:
+				health.max_hp = maxf(1.0, health.max_hp + delta)
+				health.hp = minf(health.hp, health.max_hp)
 		&"sanity_drain_mult":
 			# Handled by SanitySystem
 			pass
@@ -175,24 +182,23 @@ func _on_shift_updated(minutes: int) -> void:
 	if minutes % 360 != 0:
 		return
 	
-	var shift_number: int = minutes / 360
-	
-	for peer_id in _player_traits.keys():
+	for peer_id: int in _player_traits.keys():
 		var player_traits: Dictionary = _player_traits[peer_id]
 		var to_remove: Array[StringName] = []
 		
-		for trait_id, data in player_traits:
-			var shifts: int = data.shifts_remaining
+		for trait_id: StringName in player_traits.keys():
+			var data: Dictionary = player_traits[trait_id]
+			var shifts: int = data.get("shifts_remaining", 0)
 			if shifts > 0:
 				shifts -= 1
-				data.shifts_remaining = shifts
+				data["shifts_remaining"] = shifts
 				trait_progress.emit(peer_id, trait_id, shifts)
 				
 				if shifts <= 0:
 					to_remove.append(trait_id)
 			# shifts == -1 means permanent/conditional, don't decrement
 		
-		for trait_id in to_remove:
+		for trait_id: StringName in to_remove:
 			remove(peer_id, trait_id)
 
 
@@ -205,7 +211,7 @@ func _on_trait_removed_external(peer_id: int, trait_id: StringName) -> void:
 func reset_player(peer_id: int) -> void:
 	if _player_traits.has(peer_id):
 		var player_traits: Dictionary = _player_traits[peer_id]
-		for trait_id in player_traits.keys():
+		for trait_id: StringName in player_traits.keys():
 			remove(peer_id, trait_id)
 
 
@@ -223,10 +229,11 @@ func reapply_all_modifiers(peer_id: int) -> void:
 	player.noise_multiplier = 1.0
 	
 	# Reapply all traits
-	for trait_id, data in _player_traits[peer_id]:
-		var trait: TraitData = _trait_catalog.get(trait_id, null)
-		if trait != null:
-			_apply_stat_modifiers(peer_id, trait, true)
+	var p_traits: Dictionary = _player_traits[peer_id]
+	for trait_id: StringName in p_traits.keys():
+		var t_data: TraitData = _trait_catalog.get(trait_id, null)
+		if t_data != null:
+			_apply_stat_modifiers(peer_id, t_data, true)
 
 
 @rpc("authority", "call_local", "reliable")

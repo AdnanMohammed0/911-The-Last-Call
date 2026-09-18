@@ -108,11 +108,14 @@ func update(delta: float, dial_freq: float, dial_ph: float, dial_gn: float) -> b
 	var state_changed: bool = false
 	
 	# Apply noise drift to targets
-	for i in 3:
+	for i: int in 3:
 		if _tower_states[i] == TowerState.LOCKING:
-			_tower_targets[i]["frequency"] = fposmod(_tower_targets[i]["frequency"] + NOISE_DRIFT_SPEED * delta * (1.0 + randf() * 0.5), 1.0)
-			_tower_targets[i]["phase"] = fposmod(_tower_targets[i]["phase"] + NOISE_DRIFT_SPEED * delta * (1.0 + randf() * 0.5), 1.0)
-			_tower_targets[i]["gain"] = fposmod(_tower_targets[i]["gain"] + NOISE_DRIFT_SPEED * delta * (1.0 + randf() * 0.5), 1.0)
+			var f_freq: float = _tower_targets[i]["frequency"]
+			var f_phase: float = _tower_targets[i]["phase"]
+			var f_gain: float = _tower_targets[i]["gain"]
+			_tower_targets[i]["frequency"] = fposmod(f_freq + NOISE_DRIFT_SPEED * delta * (1.0 + randf() * 0.5), 1.0)
+			_tower_targets[i]["phase"] = fposmod(f_phase + NOISE_DRIFT_SPEED * delta * (1.0 + randf() * 0.5), 1.0)
+			_tower_targets[i]["gain"] = fposmod(f_gain + NOISE_DRIFT_SPEED * delta * (1.0 + randf() * 0.5), 1.0)
 	
 	# Check alignment for current tower
 	var target: Dictionary = _tower_targets[_current_tower]

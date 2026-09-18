@@ -7,7 +7,6 @@ script = ExtResource("1_dn")
 id = &"end"
 speaker = &"caller"
 line = "Thank you, officer. Finally someone listens. *yawn* I haven't slept a wink."
-audio = ExtResource("audio/vo/filler/noise_construction_03_end.wav")
 choices = []
 on_enter_events = []
 auto_next = &""

@@ -59,16 +59,20 @@ func validate() -> Dictionary:
 	if dialogue == null:
 		warnings.append("dialogue is empty")
 	else:
-		var dlg_result := dialogue.validate()
-		errors.append_array(dlg_result.errors)
-		warnings.append_array(dlg_result.warnings)
+		var dlg_result: Dictionary = dialogue.validate()
+		var dlg_errors: PackedStringArray = dlg_result.get("errors", PackedStringArray())
+		var dlg_warnings: PackedStringArray = dlg_result.get("warnings", PackedStringArray())
+		errors.append_array(dlg_errors)
+		warnings.append_array(dlg_warnings)
 
 	if stress_profile == null:
 		warnings.append("stress_profile is empty")
 	else:
-		var sp_result := stress_profile.validate()
-		errors.append_array(sp_result.errors)
-		warnings.append_array(sp_result.warnings)
+		var sp_result: Dictionary = stress_profile.validate()
+		var sp_errors: PackedStringArray = sp_result.get("errors", PackedStringArray())
+		var sp_warnings: PackedStringArray = sp_result.get("warnings", PackedStringArray())
+		errors.append_array(sp_errors)
+		warnings.append_array(sp_warnings)
 
 	if patience_seconds <= 0.0:
 		errors.append("patience_seconds must be > 0")

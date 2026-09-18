@@ -8,7 +8,6 @@ script = ExtResource("1_dn")
 id = &"reveal"
 speaker = &"caller"
 line = "*sudden tone shift* CPR? Hahaha! Got you! *laughs with friends in background* Best prank ever! *click*"
-audio = ExtResource("audio/vo/filler/prank_fake_03_reveal.wav")
 choices = [ExtResource("2_choices")]
 on_enter_events = [&"call_ended_prank"]
 auto_next = &""

@@ -8,7 +8,6 @@ script = ExtResource("1_dn")
 id = &"details"
 speaker = &"caller"
 line = "Jackhammers! Heavy trucks backing up with those beeping alarms! They've been at it since 5 AM. The vibration rattles my china cabinet. This is a residential zone!"
-audio = ExtResource("audio/vo/filler/noise_construction_02_details.wav")
 choices = [ExtResource("2_choices")]
 on_enter_events = []
 auto_next = &""

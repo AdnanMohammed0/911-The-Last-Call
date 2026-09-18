@@ -30,7 +30,7 @@ func get_pitch_variance_at(t_normalized: float) -> float:
 
 ## Checks if the given time falls within a loop segment.
 func is_in_loop(t_seconds: float) -> bool:
-	for seg in loop_segments:
+	for seg: Vector2 in loop_segments:
 		if t_seconds >= seg.x and t_seconds <= seg.y:
 			return true
 	return false
@@ -45,7 +45,8 @@ func validate() -> Dictionary:
 	if pitch_variance == null:
 		warnings.append("pitch_variance is empty")
 
-	for i, seg in loop_segments:
+	for i: int in range(loop_segments.size()):
+		var seg: Vector2 = loop_segments[i]
 		if seg.x < 0.0 or seg.y < 0.0 or seg.x >= seg.y:
 			errors.append("loop_segments[%d] invalid: start=%.2f end=%.2f" % [i, seg.x, seg.y])
 

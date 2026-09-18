@@ -1,6 +1,5 @@
 ## Noise System — centralized emission of NoiseEvents for AI hearing (GAMEPLAY_MECHANICS §7, ARCHITECTURE §6.4).
 ## Authority: HOST (emits noise_event on EventBus which AIPerception listens to).
-class_name NoiseSystem
 extends Node
 
 ## Standard noise radii (metres) per GAMEPLAY_MECHANICS §7.
@@ -41,16 +40,17 @@ func emit_footstep(position: Vector3, is_sprinting: bool, is_crouching: bool, mu
 
 
 ## Emits a door interaction noise event (host only).
-func emit_door_noise(position: Vector3, action: Door.DoorAction, source_peer: int = 1) -> void:
+## `action` corresponds to Door.DoorAction (0=TOGGLE_OPEN, 1=PEEK, 2=KICK, 3=UNLOCK).
+func emit_door_noise(position: Vector3, action: int, source_peer: int = 1) -> void:
 	if not multiplayer.is_server():
 		return
 	var radius: float = DOOR_OPEN_RADIUS
 	match action:
-		Door.DoorAction.KICK:
+		2: # DoorAction.KICK
 			radius = KICK_RADIUS
-		Door.DoorAction.TOGGLE_OPEN:
+		0, 3: # DoorAction.TOGGLE_OPEN, DoorAction.UNLOCK
 			radius = DOOR_OPEN_RADIUS
-		Door.DoorAction.PEEK:
+		1: # DoorAction.PEEK
 			radius = DOOR_PEEK_RADIUS
 		_:
 			radius = DOOR_CLOSE_RADIUS

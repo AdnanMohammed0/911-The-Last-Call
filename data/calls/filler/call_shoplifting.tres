@@ -12,7 +12,6 @@ title = "Shoplifting: Quick-Mart"
 truth = 1
 earliest_minute = 150
 requires_flags = {}
-caller_audio = ExtResource("audio/vo/filler/shoplifting_master.wav")
 dialogue = ExtResource("2_dialogue")
 phone_number = "911-555-0103"
 caller_name = "Raj Patel"

@@ -2,35 +2,27 @@
 ## Run with: godot --headless -s res://addons/gut/gut_cmdln.gd -gtest=tests/test_trait_system.gd
 extends GutTest
 
-var _trait_system: TraitSystem
-var _game_state: GameState
-var _mock_player: Player
+
+func before_each() -> void:
+	TraitSystem.reset_player(1)
 
 
-func before() -> void:
-	_trait_system = TraitSystem.new()
-	add_child_autofree(_trait_system)
-	_trait_system._ready()
-	
-	_game_state = GameState.new()
-	add_child_autofree(_game_state)
-	_game_state.reset()
-	
-	_mock_player = Player.new()
-	_mock_player.peer_id = 1
-	_mock_player.class_id = &"tech"
-	add_child_autofree(_mock_player)
+func after_each() -> void:
+	TraitSystem.reset_player(1)
 
 
-func after() -> void:
-	_trait_system = null
-	_game_state = null
-	_mock_player = null
+func _spawn_player(peer_id: int = 1) -> Player:
+	var packed: PackedScene = load("res://scenes/shared/player/player.tscn") as PackedScene
+	var player: Player = packed.instantiate() as Player
+	player.peer_id = peer_id
+	player.class_id = &"tech"
+	add_child_autofree(player)
+	return player
 
 
 ## Test: TraitData catalog loads correctly
 func test_trait_catalog_loading() -> void:
-	var catalog: Dictionary = _trait_system.get_catalog()
+	var catalog: Dictionary = TraitSystem.get_catalog()
 	assert_true(catalog.has(&"limping"))
 	assert_true(catalog.has(&"fractured_hand"))
 	assert_true(catalog.has(&"concussion"))
@@ -53,87 +45,96 @@ func test_trait_catalog_loading() -> void:
 
 ## Test: Apply trait to player
 func test_apply_trait() -> void:
-	var result: bool = _trait_system.apply(1, &"limping")
+	_spawn_player(1)
+	var result: bool = TraitSystem.apply(1, &"limping")
 	assert_true(result)
-	assert_true(_trait_system.has_trait(1, &"limping"))
+	assert_true(TraitSystem.has_trait(1, &"limping"))
 	
-	var traits: Dictionary = _trait_system.get_player_traits(1)
+	var traits: Dictionary = TraitSystem.get_player_traits(1)
 	assert_true(traits.has(&"limping"))
-	assert_eq(traits[&"limping"].shifts_remaining, 2)
-	assert_eq(traits[&"limping"].source_event, &"")
+	var limping_data: Dictionary = traits.get(&"limping", {})
+	var shifts: int = limping_data.get("shifts_remaining", 0)
+	var source: StringName = limping_data.get("source_event", &"")
+	assert_eq(shifts, 2)
+	assert_eq(source, &"")
 
 
 ## Test: Apply trait with custom duration
 func test_apply_trait_custom_duration() -> void:
-	var result: bool = _trait_system.apply(1, &"limping", &"test_event", 5)
+	_spawn_player(1)
+	var result: bool = TraitSystem.apply(1, &"limping", &"test_event", 5)
 	assert_true(result)
 	
-	var traits: Dictionary = _trait_system.get_player_traits(1)
-	assert_eq(traits[&"limping"].shifts_remaining, 5)
-	assert_eq(traits[&"limping"].source_event, &"test_event")
+	var traits: Dictionary = TraitSystem.get_player_traits(1)
+	var limping_data: Dictionary = traits.get(&"limping", {})
+	var shifts: int = limping_data.get("shifts_remaining", 0)
+	var source: StringName = limping_data.get("source_event", &"")
+	assert_eq(shifts, 5)
+	assert_eq(source, &"test_event")
 
 
 ## Test: Apply same trait twice (refreshes duration)
 func test_apply_trait_refresh() -> void:
-	_trait_system.apply(1, &"limping", &"", 2)
-	_trait_system.apply(1, &"limping", &"", 5)
+	_spawn_player(1)
+	TraitSystem.apply(1, &"limping", &"", 2)
+	TraitSystem.apply(1, &"limping", &"", 5)
 	
-	var traits: Dictionary = _trait_system.get_player_traits(1)
-	assert_eq(traits[&"limping"].shifts_remaining, 5)  # Should use longer duration
+	var traits: Dictionary = TraitSystem.get_player_traits(1)
+	var limping_data: Dictionary = traits.get(&"limping", {})
+	var shifts: int = limping_data.get("shifts_remaining", 0)
+	assert_eq(shifts, 5)  # Should use longer duration
 
 
 ## Test: Remove trait
 func test_remove_trait() -> void:
-	_trait_system.apply(1, &"limping")
-	assert_true(_trait_system.has_trait(1, &"limping"))
+	_spawn_player(1)
+	TraitSystem.apply(1, &"limping")
+	assert_true(TraitSystem.has_trait(1, &"limping"))
 	
-	var result: bool = _trait_system.remove(1, &"limping")
+	var result: bool = TraitSystem.remove(1, &"limping")
 	assert_true(result)
-	assert_false(_trait_system.has_trait(1, &"limping"))
+	assert_false(TraitSystem.has_trait(1, &"limping"))
 
 
 ## Test: Permanent trait (duration -1) doesn't expire
 func test_permanent_trait_no_expire() -> void:
-	_trait_system.apply(1, &"scarred")  # duration -1 = permanent
+	_spawn_player(1)
+	TraitSystem.apply(1, &"scarred")  # duration -1 = permanent
 	
 	# Simulate shift progression
 	for i in range(10):
-		_trait_system._on_shift_updated(360 * (i + 1))
+		TraitSystem._on_shift_updated(360 * (i + 1))
 	
-	assert_true(_trait_system.has_trait(1, &"scarred"))
-	var traits: Dictionary = _trait_system.get_player_traits(1)
-	assert_eq(traits[&"scarred"].shifts_remaining, -1)
+	assert_true(TraitSystem.has_trait(1, &"scarred"))
+	var traits: Dictionary = TraitSystem.get_player_traits(1)
+	var scarred_data: Dictionary = traits.get(&"scarred", {})
+	var shifts: int = scarred_data.get("shifts_remaining", 0)
+	assert_eq(shifts, -1)
 
 
 ## Test: Trait expires after duration shifts
 func test_trait_expires() -> void:
-	_trait_system.apply(1, &"limping")  # 2 shifts
+	_spawn_player(1)
+	TraitSystem.apply(1, &"limping")  # 2 shifts
 	
 	# First shift
-	_trait_system._on_shift_updated(360)
-	assert_true(_trait_system.has_trait(1, &"limping"))
-	assert_eq(_trait_system.get_shifts_remaining(1, &"limping"), 1)
+	TraitSystem._on_shift_updated(360)
+	assert_true(TraitSystem.has_trait(1, &"limping"))
+	assert_eq(TraitSystem.get_shifts_remaining(1, &"limping"), 1)
 	
-	# Second shift
-	_trait_system._on_shift_updated(720)
-	assert_true(_trait_system.has_trait(1, &"limping"))
-	assert_eq(_trait_system.get_shifts_remaining(1, &"limping"), 0)
-	
-	# Third shift - should be removed
-	_trait_system._on_shift_updated(1080)
-	assert_false(_trait_system.has_trait(1, &"limping"))
+	# Second shift (duration 2 expires)
+	TraitSystem._on_shift_updated(720)
+	assert_false(TraitSystem.has_trait(1, &"limping"))
 
 
 ## Test: Trait stat modifiers applied to player
 func test_trait_stat_modifiers() -> void:
-	var player: Player = Player.new()
-	player.peer_id = 1
+	var player: Player = _spawn_player(1)
 	player.move_speed_multiplier = 1.0
 	player.noise_multiplier = 1.0
-	add_child_autofree(player)
 	
 	# Apply limping trait
-	_trait_system.apply(1, &"limping")
+	TraitSystem.apply(1, &"limping")
 	
 	# Check modifiers applied
 	assert_almost_eq(player.move_speed_multiplier, 0.7, 0.01)  # 1.0 - 0.3
@@ -142,83 +143,73 @@ func test_trait_stat_modifiers() -> void:
 
 ## Test: Trait stat modifiers removed when trait removed
 func test_trait_stat_modifiers_removed() -> void:
-	var player: Player = Player.new()
-	player.peer_id = 1
+	var player: Player = _spawn_player(1)
 	player.move_speed_multiplier = 1.0
 	player.noise_multiplier = 1.0
-	add_child_autofree(player)
 	
-	_trait_system.apply(1, &"limping")
+	TraitSystem.apply(1, &"limping")
 	assert_almost_eq(player.move_speed_multiplier, 0.7, 0.01)
 	
-	_trait_system.remove(1, &"limping")
+	TraitSystem.remove(1, &"limping")
 	assert_almost_eq(player.move_speed_multiplier, 1.0, 0.01)
 	assert_almost_eq(player.noise_multiplier, 1.0, 0.01)
 
 
 ## Test: PTSD sanity drain multiplier
 func test_ptsd_sanity_drain() -> void:
-	var player: Player = Player.new()
-	player.peer_id = 1
-	add_child_autofree(player)
-	
-	_trait_system.apply(1, &"ptsd")
-	
-	# Verify trait is active
-	assert_true(_trait_system.has_trait(1, &"ptsd"))
-	assert_true(_trait_system.has_trait(1, &"ptsd"))
+	_spawn_player(1)
+	TraitSystem.apply(1, &"ptsd")
+	assert_true(TraitSystem.has_trait(1, &"ptsd"))
 
 
 ## Test: Trait hook handling
 func test_trait_hook_handling() -> void:
-	var player: Player = Player.new()
-	player.peer_id = 1
-	add_child_autofree(player)
-	
-	_trait_system.apply(1, &"phantom_ringing")
-	
-	# Test hook handling
+	var player: Player = _spawn_player(1)
+	TraitSystem.apply(1, &"phantom_ringing")
 	var result: bool = player.handle_trait_hook(&"phantom_ringing")
 	assert_true(result)
 
 
 ## Test: Apply trait from Player method
 func test_player_apply_trait() -> void:
-	var player: Player = Player.new()
-	player.peer_id = 1
-	add_child_autofree(player)
-	
+	var player: Player = _spawn_player(1)
 	var result: bool = player.apply_trait(&"limping", &"test_source")
 	assert_true(result)
 	assert_true(player.has_trait(&"limping"))
 	
 	var traits: Dictionary = player.get_active_traits()
 	assert_true(traits.has(&"limping"))
-	assert_eq(traits[&"limping"].source_event, &"test_source")
+	var limping_data: Dictionary = traits.get(&"limping", {})
+	var source: StringName = limping_data.get("source_event", &"")
+	assert_eq(source, &"test_source")
 
 
 ## Test: TraitSystem reset_player
 func test_reset_player() -> void:
-	_trait_system.apply(1, &"limping")
-	_trait_system.apply(1, &"ptsd")
+	_spawn_player(1)
+	TraitSystem.apply(1, &"limping")
+	TraitSystem.apply(1, &"ptsd")
 	
-	assert_true(_trait_system.has_trait(1, &"limping"))
-	assert_true(_trait_system.has_trait(1, &"ptsd"))
+	assert_true(TraitSystem.has_trait(1, &"limping"))
+	assert_true(TraitSystem.has_trait(1, &"ptsd"))
 	
-	_trait_system.reset_player(1)
+	TraitSystem.reset_player(1)
 	
-	assert_false(_trait_system.has_trait(1, &"limping"))
-	assert_false(_trait_system.has_trait(1, &"ptsd"))
+	assert_false(TraitSystem.has_trait(1, &"limping"))
+	assert_false(TraitSystem.has_trait(1, &"ptsd"))
 
 
 ## Test: TraitData validation
 func test_trait_data_validation() -> void:
-	var limping: TraitData = _trait_system.get_catalog()[&"limping"]
+	var catalog: Dictionary = TraitSystem.get_catalog()
+	var limping: TraitData = catalog[&"limping"]
 	var result: Dictionary = limping.validate()
-	assert_true(result.errors.is_empty())
+	var errs: PackedStringArray = result.get("errors", PackedStringArray())
+	assert_true(errs.is_empty())
 	
 	# Test invalid trait
 	var bad_trait: TraitData = TraitData.new()
 	bad_trait.id = &""
 	var bad_result: Dictionary = bad_trait.validate()
-	assert_false(bad_result.errors.is_empty())
+	var bad_errs: PackedStringArray = bad_result.get("errors", PackedStringArray())
+	assert_false(bad_errs.is_empty())

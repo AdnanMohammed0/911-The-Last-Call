@@ -7,7 +7,6 @@ script = ExtResource("1_dn")
 id = &"hangup"
 speaker = &"system"
 line = "*dial tone*"
-audio = ExtResource("audio/vo/filler/prank_kids_03_hangup.wav")
 choices = []
 on_enter_events = []
 auto_next = &""

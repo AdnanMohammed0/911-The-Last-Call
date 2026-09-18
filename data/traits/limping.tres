@@ -9,8 +9,8 @@ display_name = "Limping"
 category = 0
 duration_shifts = 2
 stat_modifiers = {
-  "&move_speed": -0.3,
-  "&noise": 0.4
+  &"move_speed": -0.3,
+  &"noise": 0.4
 }
 cure_cost = 0
 hooks = []

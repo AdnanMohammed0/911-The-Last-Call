@@ -21,7 +21,7 @@ var _tower_indicators: Array[TextureRect] = []
 var _status_label: Label = null
 var _progress_bar: ProgressBar = null
 var _tower_label: Label = null
-var _result_label: Label = null
+var _result_label: RichTextLabel = null
 var _close_button: Button = null
 var _lock_button: Button = null
 
@@ -173,7 +173,7 @@ func _refresh_status() -> void:
 	var current: int = _trace_console.get_current_tower()
 	var progress: float = _trace_console.get_lock_progress()
 	
-	_status_label.text = "LOCKING TOWER %d — %d/3 LOCKED" % (current + 1, locked)
+	_status_label.text = "LOCKING TOWER %d — %d/3 LOCKED" % [current + 1, locked]
 	_status_label.add_theme_color_override("font_color", Color(1.0, 0.7, 0.2))
 	
 	_progress_bar.visible = true
@@ -244,14 +244,14 @@ func _build() -> void:
 	towers_box.alignment = HBoxContainer.ALIGNMENT_CENTER
 	root.add_child(towers_box)
 	
-	for i in 3:
+	for i: int in 3:
 		var tower_box: VBoxContainer = VBoxContainer.new()
 		tower_box.add_theme_constant_override("separation", 5)
 		towers_box.add_child(tower_box)
 		
 		var icon: TextureRect = TextureRect.new()
 		icon.custom_minimum_size = Vector2(TOWER_ICON_SIZE, TOWER_ICON_SIZE)
-		icon.expand_mode = TextureRect.EXPAND_KEEP_SIZE_CENTERED
+		icon.expand_mode = TextureRect.EXPAND_KEEP_SIZE
 		# Create a simple tower icon
 		var img: Image = Image.create(TOWER_ICON_SIZE, TOWER_ICON_SIZE, false, Image.FORMAT_RGBA8)
 		img.fill(Color(0, 0, 0, 0))
@@ -262,7 +262,7 @@ func _build() -> void:
 		tower_box.add_child(icon)
 		_tower_indicators.append(icon)
 		
-		var num: Label = _label("TOWER %d" % (i + 1), 12, Color(0.7, 0.8, 0.9))
+		var num: Label = _label("TOWER %d" % [i + 1], 12, Color(0.7, 0.8, 0.9))
 		num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		tower_box.add_child(num)
 	
@@ -310,7 +310,7 @@ func _build() -> void:
 	root.add_child(_result_label)
 	
 	# Lock button (for manual lock attempt)
-	_lock_button = _button("Hold Alignment", func() -> void:)
+	_lock_button = _button("Hold Alignment", func() -> void: pass)
 	_lock_button.disabled = true  # Auto-locks when aligned
 	root.add_child(_lock_button)
 	
@@ -350,7 +350,7 @@ class TraceDial extends Control:
 	var _on_changed: Callable
 	var _size: int = DIAL_SIZE
 	
-	func _init(name: String, on_changed: Callable) -> void:
+	func _init(dial_name: String, on_changed: Callable) -> void:
 		_on_changed = on_changed
 		set_process_input(true)
 	
@@ -358,15 +358,17 @@ class TraceDial extends Control:
 		custom_minimum_size = Vector2(_size, _size)
 	
 	func _gui_input(event: InputEvent) -> void:
-		if event is InputEventMouseButton:
-			if event.button_index == MOUSE_BUTTON_LEFT:
-				if event.pressed:
+		var mb: InputEventMouseButton = event as InputEventMouseButton
+		var mm: InputEventMouseMotion = event as InputEventMouseMotion
+		if mb != null:
+			if mb.button_index == MOUSE_BUTTON_LEFT:
+				if mb.pressed:
 					_dragging = true
-					_update_from_mouse(event.position)
+					_update_from_mouse(mb.position)
 				else:
 					_dragging = false
-		elif event is InputEventMouseMotion and _dragging:
-			_update_from_mouse(event.position)
+		elif mm != null and _dragging:
+			_update_from_mouse(mm.position)
 	
 	func _update_from_mouse(mouse_pos: Vector2) -> void:
 		var center: Vector2 = Vector2(_size * 0.5, _size * 0.5)
@@ -394,7 +396,7 @@ class TraceDial extends Control:
 		draw_circle(target_pos, 6, Color(1.0, 0.9, 0.5), false, 2)
 		
 		# Tick marks
-		for i in 12:
+		for i: int in 12:
 			var tick_angle: float = (i / 12.0) * 2.0 * PI - PI
 			var inner: Vector2 = center + Vector2(cos(tick_angle), sin(tick_angle)) * (radius - 15)
 			var outer: Vector2 = center + Vector2(cos(tick_angle), sin(tick_angle)) * radius
@@ -408,7 +410,7 @@ class TraceDial extends Control:
 		draw_circle(knob_pos, 10, Color(0.2, 0.5, 0.8), false, 2)
 		
 		# Value text
-		var value_text: String = "%.0f%%" % (_value * 100)
+		var value_text: String = "%.0f%%" % [_value * 100]
 		draw_string(get_theme_font("font"), center - Vector2(30, 0), value_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 18, Color(0.8, 0.9, 1.0))
 	
 	func set_value(val: float) -> void:
@@ -416,6 +418,7 @@ class TraceDial extends Control:
 		_knob_angle = (_value * 2.0 * PI) - PI
 		queue_redraw()
 	
-	func set_target(val: float) -> void:
-		_target = clampf(val, 0.0, 1.0)
+	func set_target(val: Variant) -> void:
+		var f: float = val
+		_target = clampf(f, 0.0, 1.0)
 		queue_redraw()

@@ -10,5 +10,5 @@ category = 1
 duration_shifts = -1
 stat_modifiers = {}
 cure_cost = 0
-hooks = ["phantom_ringing"]
+hooks = [&"phantom_ringing"]
 description = "Hears nonexistent phones in field. Triggered by Guilt ≥ 50. Ends when Guilt < 30 or related case resolved."

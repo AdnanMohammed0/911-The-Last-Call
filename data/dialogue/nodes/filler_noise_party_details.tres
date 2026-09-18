@@ -8,7 +8,6 @@ script = ExtResource("1_dn")
 id = &"details"
 speaker = &"caller"
 line = "Loud music. Bass shaking my windows. People shouting. It's 2 AM! I have work at 6."
-audio = ExtResource("audio/vo/filler/noise_party_02_details.wav")
 choices = [ExtResource("2_choices")]
 on_enter_events = []
 auto_next = &""

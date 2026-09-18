@@ -9,7 +9,7 @@ display_name = "Scarred"
 category = 0
 duration_shifts = -1
 stat_modifiers = {
-  "&max_health": -10
+  &"max_health": -10
 }
 cure_cost = 0
 hooks = []

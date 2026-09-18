@@ -3,7 +3,9 @@
 [ext_resource type="Script" path="res://data/calls/call_data.gd" id="1_call"]
 [ext_resource type="Resource" path="res://data/calls/slice/call_meat_truck_dialogue.tres" id="2_dialogue"]
 [ext_resource type="Resource" path="res://data/calls/slice/stress_meat_truck.tres" id="3_stress"]
+[ext_resource type="AudioStream" path="res://audio/vo/slice/meat_truck_master.wav" id="6_audio"]
 [ext_resource type="Resource" path="res://data/loadout/gear/record_entry_meat_truck_01.tres" id="4_record1"]
+[ext_resource type="AudioStream" path="res://audio/vo/slice/meat_truck_master.wav" id="6_audio"]
 [ext_resource type="Resource" path="res://data/loadout/gear/record_entry_meat_truck_02.tres" id="5_record2"]
 
 [resource]
@@ -13,7 +15,7 @@ title = "The Meat Truck"
 truth = 2
 earliest_minute = 200
 requires_flags = {}
-caller_audio = ExtResource("audio/vo/slice/meat_truck_master.wav")
+caller_audio = ExtResource("6_audio")
 dialogue = ExtResource("2_dialogue")
 phone_number = "911-555-0388"
 caller_name = "Mike 'Big Rig' Torres"

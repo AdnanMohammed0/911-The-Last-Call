@@ -10,5 +10,5 @@ category = 0
 duration_shifts = 1
 stat_modifiers = {}
 cure_cost = 0
-hooks = ["periodic_blur", "ui_flicker"]
+hooks = [&"periodic_blur", &"ui_flicker"]
 description = "Periodic blur, UI flicker. Caused by explosion within 5m. Cured by rest (1 shift)."

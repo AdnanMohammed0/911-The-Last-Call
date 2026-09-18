@@ -10,7 +10,7 @@
 [ext_resource type="Material" path="res://assets/materials/screen_amber.tres" id="7_ulxke"]
 [ext_resource type="Material" path="res://assets/materials/led_red.tres" id="8_7ukr3"]
 [ext_resource type="Material" uid="uid://cyg4t6g85ae4e" path="res://assets/materials/steel.tres" id="9_hee0e"]
-[ext_resource type="Material" uid="uid://cvhfjxa5rfej5" path="res://assets/materials/fabric_dark.tres" id="10_2mulj"]
+[ext_resource type="Material" path="res://assets/materials/fabric_dark.tres" id="10_2mulj"]
 [ext_resource type="Material" path="res://assets/materials/led_blue.tres" id="11_bk34g"]
 [ext_resource type="Material" path="res://assets/materials/led_green.tres" id="12_i5s62"]
 [ext_resource type="Material" path="res://assets/materials/diffuser_cool.tres" id="13_cjou6"]

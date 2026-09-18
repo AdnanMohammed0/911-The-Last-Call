@@ -3,7 +3,9 @@
 [ext_resource type="Script" path="res://data/calls/call_data.gd" id="1_call"]
 [ext_resource type="Resource" path="res://data/calls/slice/call_cut_line_dialogue.tres" id="2_dialogue"]
 [ext_resource type="Resource" path="res://data/calls/slice/stress_cut_line.tres" id="3_stress"]
+[ext_resource type="AudioStream" path="res://audio/vo/slice/cut_line_master.wav" id="6_audio"]
 [ext_resource type="Resource" path="res://data/loadout/gear/record_entry_cut_line_01.tres" id="4_record1"]
+[ext_resource type="AudioStream" path="res://audio/vo/slice/cut_line_master.wav" id="6_audio"]
 [ext_resource type="Resource" path="res://data/loadout/gear/record_entry_cut_line_02.tres" id="5_record2"]
 
 [resource]
@@ -13,7 +15,7 @@ title = "Call From a Cut Line"
 truth = 3
 earliest_minute = 120
 requires_flags = {}
-caller_audio = ExtResource("audio/vo/slice/cut_line_master.wav")
+caller_audio = ExtResource("6_audio")
 dialogue = ExtResource("2_dialogue")
 phone_number = "911-555-0291"
 caller_name = "Unknown Female"

@@ -8,7 +8,6 @@ script = ExtResource("1_dn")
 id = &"details"
 speaker = &"caller"
 line = "We're at... *pause* the old mill. By the river. He fell off the roof. I think he's dead. *sniff* No... he's not breathing."
-audio = ExtResource("audio/vo/filler/prank_fake_02_details.wav")
 choices = [ExtResource("2_choices")]
 on_enter_events = []
 auto_next = &""

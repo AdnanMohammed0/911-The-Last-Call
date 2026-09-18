@@ -9,7 +9,7 @@ display_name = "Hardened"
 category = 2
 duration_shifts = -1
 stat_modifiers = {
-  "&sanity_drain_mult": -0.15
+  &"sanity_drain_mult": -0.15
 }
 cure_cost = 0
 hooks = []

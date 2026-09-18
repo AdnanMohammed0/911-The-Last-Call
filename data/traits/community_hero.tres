@@ -10,5 +10,5 @@ category = 2
 duration_shifts = -1
 stat_modifiers = {}
 cure_cost = 0
-hooks = ["community_hero_intel"]
+hooks = [&"community_hero_intel"]
 description = "Callers give +1 free intel line. Gained by saving 5 civilians. Active while Public Trust ≥ 60."

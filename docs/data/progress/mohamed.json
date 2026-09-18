@@ -81,6 +81,11 @@
       "status": "done",
       "updated_at": "2026-09-18",
       "note": "Audio polish: 13-bus layout (Master, Music, Ambience, Foley, SFX, Phone, VoiceProximity, VoiceRadio, Record, Panic, UI, RadioChatter, VHS) with FX chains. 12 ambience tracks (station/field/horror/siege/aftermath) with layered beds + oneshots. 76 foley definitions (footsteps 7 surfaces×3 movement types, doors, equipment, weapons, interactions, environment) with class modifiers. 19 music stingers (tension low/med/high, scare subtle/major/anomaly, resolution minor/major/failure, 4 ambient drones, 3 transitions, 3 endings). AudioServer autoload for playback. MIX_PASS.md documents bus routing, loudness targets (-14 LUFS Master), sanity-driven Panic bus, Tension Director music, distance attenuation, class modifiers, integration hooks, and validation checklist."
+    },
+    "P5-03": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Crash reporting & telemetry opt-in: TelemetrySettings resource (consent, opt-in/opt-out, GDPR deletion), TelemetryManager autoload (anonymous KPIs: session length, shift progression, call outcomes, mission results, endings, traits, performance metrics, hardware info), CrashReporter autoload (script exception capture, crash dump writing, Steam crash reporting placeholder). GameSettings integration with privacy tab (consent dialog with three options: full telemetry, crash reports only, decline), settings persistence, GDPR data deletion request. GUT tests written (35 tests covering settings, manager, reporter, GameSettings integration, and full consent flow)."
     }
   },
   "log": [
@@ -491,6 +496,22 @@
         "autoload/audio_server.gd",
         "docs/audio/MIX_PASS.md",
         "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P5-03"
+      ],
+      "summary": "P5-03 Crash reporting & telemetry opt-in: TelemetrySettings resource (consent, opt-in/opt-out, GDPR deletion), TelemetryManager autoload (anonymous KPIs: session length, shift progression, call outcomes, mission results, endings, traits, performance metrics, hardware info), CrashReporter autoload (script exception capture, crash dump writing, Steam crash reporting placeholder). GameSettings integration with privacy tab (consent dialog with three options: full telemetry, crash reports only, decline), settings persistence, GDPR data deletion request. GUT tests written (35 tests covering settings, manager, reporter, GameSettings integration, and full consent flow).",
+      "files": [
+        "data/telemetry/telemetry_settings.gd",
+        "autoload/telemetry_manager.gd",
+        "autoload/crash_reporter.gd",
+        "autoload/game_settings.gd",
+        "project.godot",
+        "tests/test_telemetry.gd",
+        "docs/data/progress/mohamed.json"
       ]
     }
   ]

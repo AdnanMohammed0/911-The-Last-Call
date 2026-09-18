@@ -1,7 +1,7 @@
 ## Player-facing settings saved to user://settings.cfg: video (window mode, V-Sync, FPS cap, quality preset,
 ## render scale, FOV, brightness), audio bus volumes, controls (sensitivity, ADS sensitivity, invert Y,
-## crouch toggle, key bindings) and voice. Applies graphics quality to every WorldEnvironment that enters
-## the tree, and installs the shared UI theme on the root window.
+## crouch toggle, key bindings), voice, and privacy (telemetry/crash reporting opt-in).
+## Applies graphics quality to every WorldEnvironment that enters the tree, and installs the shared UI theme on the root window.
 ## Authority: LOCAL
 extends Node
 
@@ -24,6 +24,11 @@ const ACTIONS: Array[Array] = [
 	[&"weapon_primary", "Primary weapon"], [&"weapon_sidearm", "Sidearm"], [&"weapon_swap", "Swap weapon"], [&"drop_weapon", "Drop weapon"],
 	[&"voice_ptt", "Push to talk"], [&"radio_ptt", "Radio"],
 ]
+
+## Privacy settings (synced with TelemetrySettings)
+var telemetry_enabled: bool = false
+var crash_reporting_enabled: bool = false
+var telemetry_consent_given: bool = false
 
 signal changed(key: String)
 
@@ -108,6 +113,18 @@ func load_settings() -> void:
 		if push_to_talk != (VoiceManager.mode != VoiceManager.Mode.VOICE_ACTIVITY):
 			VoiceManager.toggle_mode()
 
+	if config.has_section("privacy"):
+		telemetry_enabled = config.get_value("privacy", "telemetry_enabled", false)
+		crash_reporting_enabled = config.get_value("privacy", "crash_reporting_enabled", false)
+		telemetry_consent_given = config.get_value("privacy", "consent_given", false)
+
+	# Sync with TelemetrySettings if available
+	if TelemetryManager.instance != null and TelemetryManager.instance.settings != null:
+		var ts: TelemetrySettings = TelemetryManager.instance.settings
+		ts.has_consented = telemetry_consent_given
+		ts.telemetry_enabled = telemetry_enabled
+		ts.crash_reporting_enabled = crash_reporting_enabled
+
 
 func save_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
@@ -132,6 +149,9 @@ func save_settings() -> void:
 	config.set_value("voice", "input_device", VoiceManager.get_input_device())
 	config.set_value("voice", "auto_gain", VoiceManager.auto_gain)
 	config.set_value("voice", "push_to_talk", VoiceManager.mode != VoiceManager.Mode.VOICE_ACTIVITY)
+	config.set_value("privacy", "telemetry_enabled", telemetry_enabled)
+	config.set_value("privacy", "crash_reporting_enabled", crash_reporting_enabled)
+	config.set_value("privacy", "consent_given", telemetry_consent_given)
 	config.save(PATH)
 
 
@@ -357,3 +377,110 @@ func _apply_fps_counter() -> void:
 func _process(_delta: float) -> void:
 	if _fps_label != null and show_fps:
 		_fps_label.text = "%d FPS" % Engine.get_frames_per_second()
+
+
+# --- Privacy / Telemetry Consent ----------------------------------------------------------------
+
+## Show the telemetry consent dialog (call from main menu on first launch).
+func show_telemetry_consent_dialog() -> void:
+	if telemetry_consent_given:
+		return  # Already consented (or declined)
+
+	var dialog: ConfirmationDialog = ConfirmationDialog.new()
+	dialog.title = "Privacy & Telemetry"
+	dialog.min_size = Vector2(500, 350)
+
+	var vbox: VBoxContainer = VBoxContainer.new()
+	dialog.add_child(vbox)
+
+	var label: Label = Label.new()
+	label.text = (
+		"Help us improve 911: The Last Call by sharing anonymous usage data.\n\n"
+		"[b]What we collect (only if you opt in):[/b]\n"
+		"• Session length, shift progression, endings reached\n"
+		"• Call outcomes, mission success/failure rates\n"
+		"• Performance metrics (FPS, latency, crashes)\n"
+		"• Hardware info (GPU, CPU, OS) — no personal identifiers\n\n"
+		"[b]Crash Reporting:[/b]\n"
+		"Automatically send crash logs and stack traces to help us fix bugs.\n"
+		"Includes game state at time of crash (shift, phase, meters).\n\n"
+		"[b]Your Privacy:[/b]\n"
+		"• No personal data, Steam ID, IP addresses, or voice recordings\n"
+		"• Data is aggregated and anonymous\n"
+		"• You can change this anytime in Settings → Privacy\n"
+		"• Request data deletion at any time (GDPR compliant)\n\n"
+		"Do you want to help us make the game better?"
+	)
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	vbox.add_child(label)
+
+	var hbox: HBoxContainer = HBoxContainer.new()
+	vbox.add_child(hbox)
+
+	var opt_in_btn: Button = Button.new()
+	opt_in_btn.text = "Yes, Send Anonymous Data"
+	opt_in_btn.custom_minimum_size = Vector2(0, 40)
+	opt_in_btn.pressed.connect(Callable(self, "_on_telemetry_consent").bind(true, true))
+	hbox.add_child(opt_in_btn)
+
+	var opt_in_crashes_only: Button = Button.new()
+	opt_in_crashes_only.text = "Crash Reports Only"
+	opt_in_crashes_only.custom_minimum_size = Vector2(0, 40)
+	opt_in_crashes_only.pressed.connect(Callable(self, "_on_telemetry_consent").bind(false, true))
+	hbox.add_child(opt_in_crashes_only)
+
+	var opt_out_btn: Button = Button.new()
+	opt_out_btn.text = "No Thanks"
+	opt_out_btn.custom_minimum_size = Vector2(0, 40)
+	opt_out_btn.pressed.connect(Callable(self, "_on_telemetry_consent").bind(false, false))
+	hbox.add_child(opt_out_btn)
+
+	dialog.popup_centered()
+
+
+func _on_telemetry_consent(telemetry: bool, crashes: bool) -> void:
+	telemetry_consent_given = true
+	telemetry_enabled = telemetry
+	crash_reporting_enabled = crashes
+
+	# Apply to TelemetryManager
+	if TelemetryManager.instance != null:
+		TelemetryManager.instance.set_telemetry_enabled(telemetry)
+		TelemetryManager.instance.set_crash_reporting_enabled(crashes)
+
+	save_settings()
+
+
+## Toggle telemetry from Settings menu.
+func set_telemetry_enabled(enabled: bool) -> void:
+	if not telemetry_consent_given:
+		show_telemetry_consent_dialog()
+		return
+	telemetry_enabled = enabled
+	if TelemetryManager.instance != null:
+		TelemetryManager.instance.set_telemetry_enabled(enabled)
+	save_settings()
+	changed.emit("telemetry")
+
+
+## Toggle crash reporting from Settings menu.
+func set_crash_reporting_enabled(enabled: bool) -> void:
+	if not telemetry_consent_given:
+		show_telemetry_consent_dialog()
+		return
+	crash_reporting_enabled = enabled
+	if TelemetryManager.instance != null:
+		TelemetryManager.instance.set_crash_reporting_enabled(enabled)
+	save_settings()
+	changed.emit("crash_reporting")
+
+
+## Request data deletion (GDPR).
+func request_data_deletion() -> void:
+	if TelemetryManager.instance != null:
+		TelemetryManager.instance.request_data_deletion()
+	telemetry_enabled = false
+	crash_reporting_enabled = false
+	telemetry_consent_given = false
+	save_settings()

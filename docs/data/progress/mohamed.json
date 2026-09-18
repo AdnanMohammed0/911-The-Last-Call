@@ -1,398 +1,416 @@
 {
- "member": "mohamed",
- "updated_at": "2026-09-18",
- "tasks": {
-  "P1-02": {
-   "status": "done",
-   "note": "Git LFS: .gitattributes لـ png/glb/wav/ogg (+jpg/webp/gif/tga/gltf/mp3/mp4/fbx/blend) و git-lfs 3.8.0 مثبت كمستخدم. GUT v9.6.1 كـ addon و plugin مفعّل و .gutconfig.json. static-typing warnings => errors (untyped_declaration + unsafe_*=2). التحقق: headless import نظيف، GUT 4/4، door harness 23/23. صلّحت 11 سطراً بأسلوب typed (as-casts على Variant).",
-   "updated_at": "2026-09-17"
+  "member": "mohamed",
+  "updated_at": "2026-09-18",
+  "tasks": {
+    "P1-02": {
+      "status": "done",
+      "note": "Git LFS: .gitattributes لـ png/glb/wav/ogg (+jpg/webp/gif/tga/gltf/mp3/mp4/fbx/blend) و git-lfs 3.8.0 مثبت كمستخدم. GUT v9.6.1 كـ addon و plugin مفعّل و .gutconfig.json. static-typing warnings => errors (untyped_declaration + unsafe_*=2). التحقق: headless import نظيف، GUT 4/4، door harness 23/23. صلّحت 11 سطراً بأسلوب typed (as-casts على Variant).",
+      "updated_at": "2026-09-17"
+    },
+    "P1-03": {
+      "status": "testing",
+      "note": "CI build pipeline جاهز: .github/workflows/ci.yml (GUT tests + headless export Windows/Linux بـ Godot 4.7.2-stable + templates + artifacts). export_presets.cfg معياريتان (Windows Desktop, Linux/X11) ورفعته من .gitignore. تم التحقق محلياً: YAML صحيح، presets تنقرأ، GUT يخرج 0/1. ينتظر تشغيل GitHub Actions.",
+      "updated_at": "2026-09-17"
+    },
+    "P2-01": {
+      "status": "testing",
+      "note": "الـ Resources (CallData, StressProfile, RecordEntry) موجودة. انضاف CallValidator (يفحص id، التوقيت، الحوار، ملف VSA، السجلات، وإن المكالمة المخادعة بيها دليل) + أداة سطر أوامر tools/validate_calls.gd + خطوة بـ CI + مكالمة تجريبية call_closet_monster.tres. 11 اختبار GUT نجحت.",
+      "updated_at": "2026-09-17"
+    },
+    "P2-02": {
+      "status": "done",
+      "note": "P2-02 done — اعتماد نسخة origin/main: تبيّن أن زميلي Adnan أنجز نفس الـ resources (data/dialogue/dialogue_node|choice|graph.gd + tests/test_dialogue_graph.gd) على نفس المسارات بالتوازي. بموجب قاعدة 'لا يُدمج عمل زميل ولا يُمحى ولا يُحل تعارض بِنسخة هجينة'، اعتمدت محتوى origin/main كحرفي نهائي للملفات (verify: hash مطابق لـ origin/main) وسجّلت العملية في هذا الـ log. فحص GUT محلياً على نفس خط CI: 9/9 أخضر.",
+      "updated_at": "2026-09-17"
+    },
+    "P2-06": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Caller patience timer & timer-pressure modifiers implemented: StressProfile, CallData, RecordEntry, MissionData resources + CallDirector autoload with patience timer (180s base), Rapport (+30s once), Wrong Challenge (-60s stacks), Low Trust <40 (-25%), choice patience_delta, low/last_chance warnings, call timeout handling. GUT tests written (18 tests total including 7 new for modifiers). CI runs tests."
+    },
+    "P2-10": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Trace mini-game (3-tower triangulation) for Tech Operator: TraceConsole resource with dial alignment logic (frequency/phase/gain), noise drift, 6-10s per tower lock, radius calculation (1=2km, 2=400m, 3=50m), Dead Frequency impossible locations. TraceMiniGame UI with three interactive dials. Integrated into DispatchTerminal for Tech Operator class. GUT tests written (10 tests)."
+    },
+    "P2-15": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Loadout armory with budget, class-locked items, requisition: GearItem resource with cost/slot/class restrictions, LoadoutManager autoload with budget tracking, Breacher discount, approach voting (Code 3/Silent/On foot/Decoy with Breacher tie-breaker), LoadoutUI for armory scene. GUT tests written (19 tests)."
+    },
+    "P2-16": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Caller VO for 3 slice calls: Closet Monster (STAGED_HOSTAGE), Cut Line (PARANORMAL), Meat Truck (AMBUSH). VO scripts written (39 segments), CallData .tres with StressProfiles, RecordEntries (6), placeholder audio structure. VSA tells documented per GAMEPLAY_MECHANICS §5.3/§10."
+    },
+    "P2-17": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Authored 5 filler calls: Prank (kids laughing), Noise Complaint (loud party), Shoplifting (Quick-Mart), Prank (fake medical emergency), Noise Complaint (early construction). Each with CallData, DialogueGraph, StressProfile, RecordEntries. Total 15 new DialogueNodes, 14 DialogueChoices, 5 StressProfiles, 3 RecordEntries."
+    },
+    "P3-06": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Noise event system: NoiseSystem autoload with footstep (walk 4m, sprint 10m, crouch 1.5m, Breacher 1.6x), door (kick 25m, open 8m, peek 3m), gunshot (60m), voice (2-20m RMS-scaled), grenade (30m), explosion (50m), glass break (15m). Integrated with Door, WeaponHolder, VoiceManager, AIPerception. GUT tests written (9 tests)."
+    },
+    "P3-15": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "EMF Reader, banish ritual, remains-burial objective: EMFReader (EMF detection 0-5, Medic primary, 50% accuracy others), SaltCanister (30s barrier, anomaly retreat), SpectralToneEmitter (8s channel, banishes anomalies), RemainsInteraction (4s dig, sets lake_house_cleared flag), ShovelTool (4s dig, triggers on_bones_buried), GearItems for all (EMF Reader, Salt Canister, Spectral Tone Emitter, Trauma Kit, Sedatives, Ballistic Shield, Battering Ram, Recon Drone, Tear Gas, Service Pistol, Pump Shotgun, Patrol Rifle, Shovel). Drowned Woman anomaly integration with on_reverse_tone_complete, on_salt_line, on_salt_thrown, on_bones_buried. GUT tests written (14 tests)."
+    },
+    "P4-03": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Trait system: TraitData resource + TraitSystem autoload with 10 traits (Limping, Fractured Hand, Concussion, Scarred, PTSD, Phantom Ringing, Nyctophobia, Hardened, Community Hero, Marked by Dusk). Stat modifiers (move_speed, noise, sanity_drain_mult, max_health), hooks (phantom_ringing, flashback_audio, etc.), duration in shifts, cure costs. Player integration with apply/remove/has_trait, hook handling (phantom_ringing, flashback_audio, gunfire_sanity_drain, etc.). GUT tests written (15 tests)."
+    },
+    "P4-04": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "Global Meters: Public Trust (0-100, start 75), Station Budget ($, start 10000), Cult Awareness (0-100, start 0) in GameState. Thresholds: Trust<40 withhold address, Trust<20 siege weight, Trust≥80 cult tips; Budget<3000 half armory locked, Budget<1000 no heavy gear; Cult≥60 counter-ambush, Cult≥90 Station Siege. Integrated with CallDirector, LoadoutManager, MissionDirector. GUT tests (22 tests)."
+    },
+    "P4-08": {
+      "status": "done",
+      "updated_at": "2026-09-18",
+      "note": "EndingResolver autoload: evaluates final ending based on Public Trust, Station Budget, Cult Awareness, flags (lake_house_cleared, cult_leaders_arrested), and shift performance. Three endings: SIEGE (Trust<20 or Cult≥90), SHADOW_WAR (Trust 20-40, Cult 60-89), RECLAMATION (Trust≥40, Cult<60, lake_house_cleared). Ending scene with title, description, stats breakdown, and unlocked content. GUT tests (10 tests)."
+    }
   },
-  "P1-03": {
-   "status": "testing",
-   "note": "CI build pipeline جاهز: .github/workflows/ci.yml (GUT tests + headless export Windows/Linux بـ Godot 4.7.2-stable + templates + artifacts). export_presets.cfg معياريتان (Windows Desktop, Linux/X11) ورفعته من .gitignore. تم التحقق محلياً: YAML صحيح، presets تنقرأ، GUT يخرج 0/1. ينتظر تشغيل GitHub Actions.",
-   "updated_at": "2026-09-17"
-  },
-  "P2-01": {
-   "status": "testing",
-   "note": "الـ Resources (CallData, StressProfile, RecordEntry) موجودة. انضاف CallValidator (يفحص id، التوقيت، الحوار، ملف VSA، السجلات، وإن المكالمة المخادعة بيها دليل) + أداة سطر أوامر tools/validate_calls.gd + خطوة بـ CI + مكالمة تجريبية call_closet_monster.tres. 11 اختبار GUT نجحت.",
-   "updated_at": "2026-09-17"
-  },
-  "P2-02": {
-   "status": "done",
-   "note": "P2-02 done — اعتماد نسخة origin/main: تبيّن أن زميلي Adnan أنجز نفس الـ resources (data/dialogue/dialogue_node|choice|graph.gd + tests/test_dialogue_graph.gd) على نفس المسارات بالتوازي. بموجب قاعدة 'لا يُدمج عمل زميل ولا يُمحى ولا يُحل تعارض بِنسخة هجينة'، اعتمدت محتوى origin/main كحرفي نهائي للملفات (verify: hash مطابق لـ origin/main) وسجّلت العملية في هذا الـ log. فحص GUT محلياً على نفس خط CI: 9/9 أخضر.",
-   "updated_at": "2026-09-17"
-  },
-  "P2-06": {
-   "status": "done",
-   "updated_at": "2026-09-18",
-   "note": "Caller patience timer & timer-pressure modifiers implemented: StressProfile, CallData, RecordEntry, MissionData resources + CallDirector autoload with patience timer (180s base), Rapport (+30s once), Wrong Challenge (-60s stacks), Low Trust <40 (-25%), choice patience_delta, low/last_chance warnings, call timeout handling. GUT tests written (18 tests total including 7 new for modifiers). CI runs tests."
-  },
-  "P2-10": {
-   "status": "done",
-   "updated_at": "2026-09-18",
-   "note": "Trace mini-game (3-tower triangulation) for Tech Operator: TraceConsole resource with dial alignment logic (frequency/phase/gain), noise drift, 6-10s per tower lock, radius calculation (1=2km, 2=400m, 3=50m), Dead Frequency impossible locations. TraceMiniGame UI with three interactive dials. Integrated into DispatchTerminal for Tech Operator class. GUT tests written (10 tests)."
-  },
-  "P2-15": {
-   "status": "done",
-   "updated_at": "2026-09-18",
-   "note": "Loadout armory with budget, class-locked items, requisition: GearItem resource with cost/slot/class restrictions, LoadoutManager autoload with budget tracking, Breacher discount, approach voting (Code 3/Silent/On foot/Decoy with Breacher tie-breaker), LoadoutUI for armory scene. GUT tests written (19 tests)."
-  },
-  "P2-16": {
-   "status": "done",
-   "updated_at": "2026-09-18",
-   "note": "Caller VO for 3 slice calls: Closet Monster (STAGED_HOSTAGE), Cut Line (PARANORMAL), Meat Truck (AMBUSH). VO scripts written (39 segments), CallData .tres with StressProfiles, RecordEntries (6), placeholder audio structure. VSA tells documented per GAMEPLAY_MECHANICS §5.3/§10."
-  },
-  "P2-17": {
-   "status": "done",
-   "updated_at": "2026-09-18",
-   "note": "Authored 5 filler calls: Prank (kids laughing), Noise Complaint (loud party), Shoplifting (Quick-Mart), Prank (fake medical emergency), Noise Complaint (early construction). Each with CallData, DialogueGraph, StressProfile, RecordEntries. Total 15 new DialogueNodes, 14 DialogueChoices, 5 StressProfiles, 3 RecordEntries."
-  },
-  "P3-06": {
-   "status": "done",
-   "updated_at": "2026-09-18",
-   "note": "Noise event system: NoiseSystem autoload with footstep (walk 4m, sprint 10m, crouch 1.5m, Breacher 1.6x), door (kick 25m, open 8m, peek 3m), gunshot (60m), voice (2-20m RMS-scaled), grenade (30m), explosion (50m), glass break (15m). Integrated with Door, WeaponHolder, VoiceManager, AIPerception. GUT tests written (9 tests)."
-  },
-  "P3-15": {
-   "status": "done",
-   "updated_at": "2026-09-18",
-   "note": "EMF Reader, banish ritual, remains-burial objective: EMFReader (EMF detection 0-5, Medic primary, 50% accuracy others), SaltCanister (30s barrier, anomaly retreat), SpectralToneEmitter (8s channel, banishes anomalies), RemainsInteraction (4s dig, sets lake_house_cleared flag), ShovelTool (4s dig, triggers on_bones_buried), GearItems for all (EMF Reader, Salt Canister, Spectral Tone Emitter, Trauma Kit, Sedatives, Ballistic Shield, Battering Ram, Recon Drone, Tear Gas, Service Pistol, Pump Shotgun, Patrol Rifle, Shovel). Drowned Woman anomaly integration with on_reverse_tone_complete, on_salt_line, on_salt_thrown, on_bones_buried. GUT tests written (14 tests)."
-  },
-  "P4-03": {
-   "status": "done",
-   "updated_at": "2026-09-18",
-   "note": "Trait system: TraitData resource + TraitSystem autoload with 10 traits (Limping, Fractured Hand, Concussion, Scarred, PTSD, Phantom Ringing, Nyctophobia, Hardened, Community Hero, Marked by Dusk). Stat modifiers (move_speed, noise, sanity_drain_mult, max_health), hooks (phantom_ringing, flashback_audio, etc.), duration in shifts, cure costs. Player integration with apply/remove/has_trait, hook handling (phantom_ringing, flashback_audio, gunfire_sanity_drain, etc.). GUT tests written (15 tests)."
-  },
-  "P4-04": {
-   "status": "progress",
-   "updated_at": "2026-09-18",
-   "note": "feat(consequence): Global meters (Trust, Budget, Cult Awareness) + thresholds — P4-04"
-  }
- },
- "log": [
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-02"
-   ],
-   "summary": "تأسيس الأدوات: Git LFS, .gitignore, GUT v9.6.1, static-typing warnings-as-errors.",
-   "files": [
-    ".gitattributes",
-    ".gitignore",
-    "project.godot",
-    ".gutconfig.json",
-    "addons/gut/",
-    "tests/test_game_state.gd",
-    "autoload/game_state.gd",
-    "autoload/net_manager.gd",
-    "scenes/shared/player/player.gd",
-    "scenes/shared/player/player_interactor.gd",
-    "tests/test_door.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-03"
-   ],
-   "summary": "CI build pipeline: GitHub Actions workflow (GUT + headless export Windows/Linux 4.7.2).",
-   "files": [
-    ".github/workflows/ci.yml",
-    "export_presets.cfg",
-    ".gitignore"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-02"
-   ],
-   "summary": "chore(lfs): track audio/Open_Door.mp3 via Git LFS — P1-02",
-   "files": [
-    "audio/Open_Door.mp3"
-   ],
-   "commit": "44ecd49",
-   "auto": true
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P1-03"
-   ],
-   "summary": "fix(ci): use python3 zipfile for template extraction + hardcode job names (env context invalid in job name) — P1-03",
-   "files": [
-    ".github/workflows/ci.yml"
-   ],
-   "commit": "f07c636",
-   "auto": true
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P2-01",
-    "P2-02"
-   ],
-   "summary": "أداة فحص المكالمات (CallValidator + tools/validate_calls.gd + CI)، فحص الحوار DialogueGraph.validate()، شرط اختيار الرد حسب الكلاس والأدلة، مكالمة Closet Monster تجريبية، و22 اختبار GUT.",
-   "files": [
-    "data/calls/call_validator.gd",
-    "tools/validate_calls.gd",
-    "data/dialogue/dialogue_graph.gd",
-    "data/dialogue/dialogue_choice.gd",
-    "data/calls/slice/call_closet_monster.tres",
-    "tests/test_call_validator.gd",
-    "tests/test_dialogue_graph.gd",
-    ".github/workflows/ci.yml"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P2-02"
-   ],
-   "summary": "DialogueGraph/DialogueNode/DialogueChoice resource classes (data/dialogue/) مطابقة §5.6 — + tests/test_dialogue_graph.gd، GUT headless 9/9 أخضر.",
-   "files": [
-    "data/dialogue/dialogue_node.gd",
-    "data/dialogue/dialogue_choice.gd",
-    "data/dialogue/dialogue_graph.gd",
-    "tests/test_dialogue_graph.gd"
-   ]
-  },
-  {
-   "date": "2026-09-17",
-   "tasks": [
-    "P2-02"
-   ],
-   "summary": "P2-02 done (تسوية صراع git): croتبيّن أن Adnan نفّذ نفس ملفات data/dialogue/ (node/choice/graph + test) بالتوازي على origin/main. بلا دمج هجين، اعتمدت إصدار origin/main كحرفي للملفات (hash مطابق)، وسجّلت الصلاحية بـ docs/data/progress/mohamed.json. GUT headless (معاملات CI): 9/9 أخضر.",
-   "files": [
-    "data/dialogue/dialogue_node.gd",
-    "data/dialogue/dialogue_choice.gd",
-    "data/dialogue/dialogue_graph.gd",
-    "tests/test_dialogue_graph.gd",
-    "docs/data/progress/mohamed.json"
-   ]
-  },
-  {
-   "date": "2026-09-18",
-   "tasks": [
-    "P2-06"
-   ],
-   "summary": "P2-06 Caller patience timer & timer-pressure modifiers: StressProfile, CallData, RecordEntry, MissionData resources + CallDirector autoload with patience timer (180s base), Rapport (+30s once), Wrong Challenge (-60s stacks), Low Trust <40 (-25%), choice patience_delta, low/last_chance warnings, call timeout handling. GUT tests written (18 tests).",
-   "files": [
-    "data/calls/stress_profile.gd",
-    "data/calls/call_data.gd",
-    "data/calls/record_entry.gd",
-    "data/calls/mission_data.gd",
-    "autoload/call_director.gd",
-    "tests/test_call_director.gd",
-    "project.godot",
-    "docs/data/progress/mohamed.json"
-   ],
-   "commit": "430256e",
-   "auto": true
-  },
-  {
-   "date": "2026-09-18",
-   "tasks": [
-    "P2-10"
-   ],
-   "summary": "P2-10 Trace mini-game (3-tower triangulation) for Tech Operator: TraceConsole resource with dial alignment logic (frequency/phase/gain), noise drift, 6-10s per tower lock, radius calculation (1=2km, 2=400m, 3=50m), Dead Frequency impossible locations. TraceMiniGame UI with three interactive dials. Integrated into DispatchTerminal for Tech Operator class. GUT tests written (10 tests).",
-   "files": [
-    "data/dispatch/tools/trace_console.gd",
-    "ui/dispatch/tools/trace_minigame.gd",
-    "ui/dispatch/dispatch_terminal.gd",
-    "autoload/call_director.gd",
-    "tests/test_trace_minigame.gd",
-    "docs/data/progress/mohamed.json"
-   ],
-   "commit": "e1bc483",
-   "auto": true
-  },
-  {
-   "date": "2026-09-18",
-   "tasks": [
-    "P2-15"
-   ],
-   "summary": "P2-15 Loadout armory with budget, class-locked items, requisition: GearItem resource with cost/slot/class restrictions, LoadoutManager autoload with budget tracking, Breacher discount, approach voting (Code 3/Silent/On foot/Decoy with Breacher tie-breaker), LoadoutUI for armory scene. GUT tests written (19 tests).",
-   "files": [
-    "data/loadout/gear_item.gd",
-    "autoload/loadout_manager.gd",
-    "ui/loadout/loadout_ui.gd",
-    "project.godot",
-    "tests/test_loadout.gd",
-    "docs/data/progress/mohamed.json"
-   ],
-   "commit": "ea2299a",
-   "auto": true
-  },
-  {
-   "date": "2026-09-18",
-   "tasks": [
-    "P2-16"
-   ],
-   "summary": "P2-16 Caller VO for 3 slice calls: Closet Monster (STAGED_HOSTAGE), Cut Line (PARANORMAL), Meat Truck (AMBUSH). VO scripts written (39 segments), CallData .tres with StressProfiles, RecordEntries (6), placeholder audio structure. VSA tells documented per GAMEPLAY_MECHANICS §5.3/§10.",
-   "files": [
-    "audio/vo/slice/closet_monster_script.md",
-    "audio/vo/slice/cut_line_script.md",
-    "audio/vo/slice/meat_truck_script.md",
-    "audio/vo/slice/VO_TRACKING.md",
-    "data/calls/slice/call_closet_monster.tres",
-    "data/calls/slice/call_cut_line.tres",
-    "data/calls/slice/call_meat_truck.tres",
-    "data/calls/slice/stress_closet_monster.tres",
-    "data/calls/slice/stress_cut_line.tres",
-    "data/calls/slice/stress_meat_truck.tres",
-    "data/loadout/gear/record_entry_closet_monster_01.tres",
-    "data/loadout/gear/record_entry_closet_monster_02.tres",
-    "data/loadout/gear/record_entry_cut_line_01.tres",
-    "data/loadout/gear/record_entry_cut_line_02.tres",
-    "data/loadout/gear/record_entry_meat_truck_01.tres",
-    "data/loadout/gear/record_entry_meat_truck_02.tres",
-    "docs/data/progress/mohamed.json"
-   ]
-  },
-  {
-   "date": "2026-09-18",
-   "tasks": [
-    "P2-17"
-   ],
-   "summary": "P2-17 Authored 5 filler calls: Prank (kids laughing), Noise Complaint (loud party), Shoplifting (Quick-Mart), Prank (fake medical emergency), Noise Complaint (early construction). Each with CallData, DialogueGraph, StressProfile, RecordEntries. Total 15 new DialogueNodes, 14 DialogueChoices, 5 StressProfiles, 3 RecordEntries.",
-   "files": [
-    "data/calls/filler/call_prank_kids.tres",
-    "data/calls/filler/call_noise_party.tres",
-    "data/calls/filler/call_shoplifting.tres",
-    "data/calls/filler/call_prank_fake_emergency.tres",
-    "data/calls/filler/call_noise_construction.tres",
-    "data/calls/filler/stress_prank_kids.tres",
-    "data/calls/filler/stress_noise_party.tres",
-    "data/calls/filler/stress_shoplifting.tres",
-    "data/calls/filler/stress_prank_fake_emergency.tres",
-    "data/calls/filler/stress_noise_construction.tres",
-    "data/calls/filler/call_prank_kids_dialogue.tres",
-    "data/calls/filler/call_noise_party_dialogue.tres",
-    "data/calls/filler/call_shoplifting_dialogue.tres",
-    "data/calls/filler/call_prank_fake_emergency_dialogue.tres",
-    "data/calls/filler/call_noise_construction_dialogue.tres",
-    "data/dialogue/nodes/filler_prank_kids_start.tres",
-    "data/dialogue/nodes/filler_prank_kids_laugh.tres",
-    "data/dialogue/nodes/filler_prank_kids_hangup.tres",
-    "data/dialogue/nodes/filler_noise_party_start.tres",
-    "data/dialogue/nodes/filler_noise_party_details.tres",
-    "data/dialogue/nodes/filler_noise_party_end.tres",
-    "data/dialogue/nodes/filler_shoplifting_start.tres",
-    "data/dialogue/nodes/filler_shoplifting_details.tres",
-    "data/dialogue/nodes/filler_shoplifting_end.tres",
-    "data/dialogue/nodes/filler_prank_fake_start.tres",
-    "data/dialogue/nodes/filler_prank_fake_details.tres",
-    "data/dialogue/nodes/filler_prank_fake_reveal.tres",
-    "data/dialogue/nodes/filler_prank_fake_end.tres",
-    "data/dialogue/nodes/filler_noise_construction_start.tres",
-    "data/dialogue/nodes/filler_noise_construction_details.tres",
-    "data/dialogue/nodes/filler_noise_construction_end.tres",
-    "data/dialogue/choices/filler_prank_kids_start_choices.tres",
-    "data/dialogue/choices/filler_prank_kids_laugh_choices.tres",
-    "data/dialogue/choices/filler_noise_party_start_choices.tres",
-    "data/dialogue/choices/filler_noise_party_details_choices.tres",
-    "data/dialogue/choices/filler_shoplifting_start_choices.tres",
-    "data/dialogue/choices/filler_shoplifting_details_choices.tres",
-    "data/dialogue/choices/filler_prank_fake_start_choices.tres",
-    "data/dialogue/choices/filler_prank_fake_details_choices.tres",
-    "data/dialogue/choices/filler_prank_fake_reveal_choices.tres",
-    "data/dialogue/choices/filler_noise_construction_start_choices.tres",
-    "data/dialogue/choices/filler_noise_construction_details_choices.tres",
-    "data/loadout/gear/record_entry_noise_party_01.tres",
-    "data/loadout/gear/record_entry_shoplifting_01.tres",
-    "data/loadout/gear/record_entry_noise_construction_01.tres",
-    "docs/data/progress/mohamed.json"
-   ]
-  },
-  {
-   "date": "2026-09-18",
-   "tasks": [
-    "P3-06"
-   ],
-   "summary": "P3-06 Noise event system: NoiseSystem autoload with footstep (walk 4m, sprint 10m, crouch 1.5m, Breacher 1.6x), door (kick 25m, open 8m, peek 3m), gunshot (60m), voice (2-20m RMS-scaled), grenade (30m), explosion (50m), glass break (15m). Integrated with Door, WeaponHolder, VoiceManager, AIPerception. GUT tests written (9 tests).",
-   "files": [
-    "autoload/noise_system.gd",
-    "scenes/shared/door/door.gd",
-    "scenes/shared/weapons/weapon_holder.gd",
-    "autoload/voice_manager.gd",
-    "core/ai/ai_perception.gd",
-    "project.godot",
-    "tests/test_noise_system.gd",
-    "docs/data/progress/mohamed.json"
-   ]
-  },
-  {
-   "date": "2026-09-18",
-   "tasks": [
-    "P3-15"
-   ],
-   "summary": "P3-15 EMF Reader, banish ritual, remains-burial objective: EMFReader (EMF detection 0-5, Medic primary, 50% accuracy others), SaltCanister (30s barrier, anomaly retreat), SpectralToneEmitter (8s channel, banishes anomalies), RemainsInteraction (4s dig, sets lake_house_cleared flag), ShovelTool (4s dig, triggers on_bones_buried), GearItems for all (EMF Reader, Salt Canister, Spectral Tone Emitter, Trauma Kit, Sedatives, Ballistic Shield, Battering Ram, Recon Drone, Tear Gas, Service Pistol, Pump Shotgun, Patrol Rifle, Shovel). Drowned Woman anomaly integration with on_reverse_tone_complete, on_salt_line, on_salt_thrown, on_bones_buried. GUT tests written (14 tests).",
-   "files": [
-    "scenes/shared/gadgets/emf_reader.gd",
-    "scenes/shared/gadgets/salt_canister.gd",
-    "scenes/shared/gadgets/spectral_tone_emitter.gd",
-    "scenes/shared/gadgets/remains_interaction.gd",
-    "scenes/shared/gadgets/shovel_tool.gd",
-    "scenes/field/anomalies/drowned_woman.gd",
-    "scenes/field/anomalies/anomaly.gd",
-    "data/loadout/gear/emf_reader.tres",
-    "data/loadout/gear/salt_canister.tres",
-    "data/loadout/gear/spectral_tone_emitter.tres",
-    "data/loadout/gear/trauma_kit.tres",
-    "data/loadout/gear/sedatives.tres",
-    "data/loadout/gear/ballistic_shield.tres",
-    "data/loadout/gear/battering_ram.tres",
-    "data/loadout/gear/recon_drone.tres",
-    "data/loadout/gear/tear_gas.tres",
-    "data/loadout/gear/service_pistol.tres",
-    "data/loadout/gear/pump_shotgun.tres",
-    "data/loadout/gear/patrol_rifle.tres",
-    "data/loadout/gear/shovel.tres",
-    "tests/test_anomaly_tools.gd",
-    "docs/data/progress/mohamed.json"
-   ]
-  },
-  {
-   "date": "2026-09-18",
-   "tasks": [
-    "P4-03"
-   ],
-   "summary": "P4-03 Trait system: TraitData resource + TraitSystem autoload with 10 traits (Limping, Fractured Hand, Concussion, Scarred, PTSD, Phantom Ringing, Nyctophobia, Hardened, Community Hero, Marked by Dusk). Stat modifiers (move_speed, noise, sanity_drain_mult, max_health), hooks (phantom_ringing, flashback_audio, etc.), duration in shifts, cure costs. Player integration with apply/remove/has_trait, hook handling (phantom_ringing, flashback_audio, gunfire_sanity_drain, etc.). GUT tests written (15 tests).",
-   "files": [
-    "data/traits/trait_data.gd",
-    "autoload/trait_system.gd",
-    "data/traits/limping.tres",
-    "data/traits/fractured_hand.tres",
-    "data/traits/concussion.tres",
-    "data/traits/scarred.tres",
-    "data/traits/ptsd.tres",
-    "data/traits/phantom_ringing.tres",
-    "data/traits/nyctophobia.tres",
-    "data/traits/hardened.tres",
-    "data/traits/community_hero.tres",
-    "data/traits/marked_by_dusk.tres",
-    "scenes/shared/player/player.gd",
-    "project.godot",
-    "tests/test_trait_system.gd",
-    "docs/data/progress/mohamed.json"
-   ]
-  },
-  {
-   "date": "2026-09-18",
-   "tasks": [
-    "P4-04"
-   ],
-   "summary": "feat(consequence): Global meters (Trust, Budget, Cult Awareness) + thresholds — P4-04",
-   "files": [
-    "autoload/call_director.gd",
-    "autoload/event_bus.gd",
-    "autoload/game_state.gd",
-    "autoload/loadout_manager.gd",
-    "autoload/mission_director.gd",
-    "tests/test_global_meters.gd"
-   ],
-   "commit": "c019163",
-   "auto": true
-  }
- ]
+  "log": [
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-02"
+      ],
+      "summary": "تأسيس الأدوات: Git LFS, .gitignore, GUT v9.6.1, static-typing warnings-as-errors.",
+      "files": [
+        ".gitattributes",
+        ".gitignore",
+        "project.godot",
+        ".gutconfig.json",
+        "addons/gut/",
+        "tests/test_game_state.gd",
+        "autoload/game_state.gd",
+        "autoload/net_manager.gd",
+        "scenes/shared/player/player.gd",
+        "scenes/shared/player/player_interactor.gd",
+        "tests/test_door.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-03"
+      ],
+      "summary": "CI build pipeline: GitHub Actions workflow (GUT + headless export Windows/Linux 4.7.2).",
+      "files": [
+        ".github/workflows/ci.yml",
+        "export_presets.cfg",
+        ".gitignore"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-02"
+      ],
+      "summary": "chore(lfs): track audio/Open_Door.mp3 via Git LFS — P1-02",
+      "files": [
+        "audio/Open_Door.mp3"
+      ],
+      "commit": "44ecd49",
+      "auto": true
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P1-03"
+      ],
+      "summary": "fix(ci): use python3 zipfile for template extraction + hardcode job names (env context invalid in job name) — P1-03",
+      "files": [
+        ".github/workflows/ci.yml"
+      ],
+      "commit": "f07c636",
+      "auto": true
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P2-01",
+        "P2-02"
+      ],
+      "summary": "أداة فحص المكالمات (CallValidator + tools/validate_calls.gd + CI)، فحص الحوار DialogueGraph.validate()، شرط اختيار الرد حسب الكلاس والأدلة، مكالمة Closet Monster تجريبية، و22 اختبار GUT.",
+      "files": [
+        "data/calls/call_validator.gd",
+        "tools/validate_calls.gd",
+        "data/dialogue/dialogue_graph.gd",
+        "data/dialogue/dialogue_choice.gd",
+        "data/calls/slice/call_closet_monster.tres",
+        "tests/test_call_validator.gd",
+        "tests/test_dialogue_graph.gd",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P2-02"
+      ],
+      "summary": "DialogueGraph/DialogueNode/DialogueChoice resource classes (data/dialogue/) مطابقة §5.6 — + tests/test_dialogue_graph.gd، GUT headless 9/9 أخضر.",
+      "files": [
+        "data/dialogue/dialogue_node.gd",
+        "data/dialogue/dialogue_choice.gd",
+        "data/dialogue/dialogue_graph.gd",
+        "tests/test_dialogue_graph.gd"
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "tasks": [
+        "P2-02"
+      ],
+      "summary": "P2-02 done (تسوية صراع git): تبيّن أن Adnan نفّذ نفس ملفات data/dialogue/ (node/choice/graph + test) بالتوازي على origin/main. بلا دمج هجين، اعتمدت إصدار origin/main كحرفي للملفات (hash مطابق)، وسجّلت الصلاحية بـ docs/data/progress/mohamed.json. GUT headless (معاملات CI): 9/9 أخضر.",
+      "files": [
+        "data/dialogue/dialogue_node.gd",
+        "data/dialogue/dialogue_choice.gd",
+        "data/dialogue/dialogue_graph.gd",
+        "tests/test_dialogue_graph.gd",
+        "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P2-06"
+      ],
+      "summary": "P2-06 Caller patience timer & timer-pressure modifiers: StressProfile, CallData, RecordEntry, MissionData resources + CallDirector autoload with patience timer (180s base), Rapport (+30s once), Wrong Challenge (-60s stacks), Low Trust <40 (-25%), choice patience_delta, low/last_chance warnings, call timeout handling. GUT tests written (18 tests).",
+      "files": [
+        "data/calls/stress_profile.gd",
+        "data/calls/call_data.gd",
+        "data/calls/record_entry.gd",
+        "data/calls/mission_data.gd",
+        "autoload/call_director.gd",
+        "tests/test_call_director.gd",
+        "project.godot",
+        "docs/data/progress/mohamed.json"
+      ],
+      "commit": "430256e",
+      "auto": true
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P2-10"
+      ],
+      "summary": "P2-10 Trace mini-game (3-tower triangulation) for Tech Operator: TraceConsole resource with dial alignment logic (frequency/phase/gain), noise drift, 6-10s per tower lock, radius calculation (1=2km, 2=400m, 3=50m), Dead Frequency impossible locations. TraceMiniGame UI with three interactive dials. Integrated into DispatchTerminal for Tech Operator class. GUT tests written (10 tests).",
+      "files": [
+        "data/dispatch/tools/trace_console.gd",
+        "ui/dispatch/tools/trace_minigame.gd",
+        "ui/dispatch/dispatch_terminal.gd",
+        "autoload/call_director.gd",
+        "tests/test_trace_minigame.gd",
+        "docs/data/progress/mohamed.json"
+      ],
+      "commit": "e1bc483",
+      "auto": true
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P2-15"
+      ],
+      "summary": "P2-15 Loadout armory with budget, class-locked items, requisition: GearItem resource with cost/slot/class restrictions, LoadoutManager autoload with budget tracking, Breacher discount, approach voting (Code 3/Silent/On foot/Decoy with Breacher tie-breaker), LoadoutUI for armory scene. GUT tests written (19 tests).",
+      "files": [
+        "data/loadout/gear_item.gd",
+        "autoload/loadout_manager.gd",
+        "ui/loadout/loadout_ui.gd",
+        "project.godot",
+        "tests/test_loadout.gd",
+        "docs/data/progress/mohamed.json"
+      ],
+      "commit": "ea2299a",
+      "auto": true
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P2-16"
+      ],
+      "summary": "P2-16 Caller VO for 3 slice calls: Closet Monster (STAGED_HOSTAGE), Cut Line (PARANORMAL), Meat Truck (AMBUSH). VO scripts written (39 segments), CallData .tres with StressProfiles, RecordEntries (6), placeholder audio structure. VSA tells documented per GAMEPLAY_MECHANICS §5.3/§10.",
+      "files": [
+        "audio/vo/slice/closet_monster_script.md",
+        "audio/vo/slice/cut_line_script.md",
+        "audio/vo/slice/meat_truck_script.md",
+        "audio/vo/slice/VO_TRACKING.md",
+        "data/calls/slice/call_closet_monster.tres",
+        "data/calls/slice/call_cut_line.tres",
+        "data/calls/slice/call_meat_truck.tres",
+        "data/calls/slice/stress_closet_monster.tres",
+        "data/calls/slice/stress_cut_line.tres",
+        "data/calls/slice/stress_meat_truck.tres",
+        "data/loadout/gear/record_entry_closet_monster_01.tres",
+        "data/loadout/gear/record_entry_closet_monster_02.tres",
+        "data/loadout/gear/record_entry_cut_line_01.tres",
+        "data/loadout/gear/record_entry_cut_line_02.tres",
+        "data/loadout/gear/record_entry_meat_truck_01.tres",
+        "data/loadout/gear/record_entry_meat_truck_02.tres",
+        "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P2-17"
+      ],
+      "summary": "P2-17 Authored 5 filler calls: Prank (kids laughing), Noise Complaint (loud party), Shoplifting (Quick-Mart), Prank (fake medical emergency), Noise Complaint (early construction). Each with CallData, DialogueGraph, StressProfile, RecordEntries. Total 15 new DialogueNodes, 14 DialogueChoices, 5 StressProfiles, 3 RecordEntries.",
+      "files": [
+        "data/calls/filler/call_prank_kids.tres",
+        "data/calls/filler/call_noise_party.tres",
+        "data/calls/filler/call_shoplifting.tres",
+        "data/calls/filler/call_prank_fake_emergency.tres",
+        "data/calls/filler/call_noise_construction.tres",
+        "data/calls/filler/stress_prank_kids.tres",
+        "data/calls/filler/stress_noise_party.tres",
+        "data/calls/filler/stress_shoplifting.tres",
+        "data/calls/filler/stress_prank_fake_emergency.tres",
+        "data/calls/filler/stress_noise_construction.tres",
+        "data/calls/filler/call_prank_kids_dialogue.tres",
+        "data/calls/filler/call_noise_party_dialogue.tres",
+        "data/calls/filler/call_shoplifting_dialogue.tres",
+        "data/calls/filler/call_prank_fake_emergency_dialogue.tres",
+        "data/calls/filler/call_noise_construction_dialogue.tres",
+        "data/dialogue/nodes/filler_prank_kids_start.tres",
+        "data/dialogue/nodes/filler_prank_kids_laugh.tres",
+        "data/dialogue/nodes/filler_prank_kids_hangup.tres",
+        "data/dialogue/nodes/filler_noise_party_start.tres",
+        "data/dialogue/nodes/filler_noise_party_details.tres",
+        "data/dialogue/nodes/filler_noise_party_end.tres",
+        "data/dialogue/nodes/filler_shoplifting_start.tres",
+        "data/dialogue/nodes/filler_shoplifting_details.tres",
+        "data/dialogue/nodes/filler_shoplifting_end.tres",
+        "data/dialogue/nodes/filler_prank_fake_start.tres",
+        "data/dialogue/nodes/filler_prank_fake_details.tres",
+        "data/dialogue/nodes/filler_prank_fake_reveal.tres",
+        "data/dialogue/nodes/filler_prank_fake_end.tres",
+        "data/dialogue/nodes/filler_noise_construction_start.tres",
+        "data/dialogue/nodes/filler_noise_construction_details.tres",
+        "data/dialogue/nodes/filler_noise_construction_end.tres",
+        "data/dialogue/choices/filler_prank_kids_start_choices.tres",
+        "data/dialogue/choices/filler_prank_kids_laugh_choices.tres",
+        "data/dialogue/choices/filler_noise_party_start_choices.tres",
+        "data/dialogue/choices/filler_noise_party_details_choices.tres",
+        "data/dialogue/choices/filler_shoplifting_start_choices.tres",
+        "data/dialogue/choices/filler_shoplifting_details_choices.tres",
+        "data/dialogue/choices/filler_prank_fake_start_choices.tres",
+        "data/dialogue/choices/filler_prank_fake_details_choices.tres",
+        "data/dialogue/choices/filler_prank_fake_reveal_choices.tres",
+        "data/dialogue/choices/filler_noise_construction_start_choices.tres",
+        "data/dialogue/choices/filler_noise_construction_details_choices.tres",
+        "data/loadout/gear/record_entry_noise_party_01.tres",
+        "data/loadout/gear/record_entry_shoplifting_01.tres",
+        "data/loadout/gear/record_entry_noise_construction_01.tres",
+        "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P3-06"
+      ],
+      "summary": "P3-06 Noise event system: NoiseSystem autoload with footstep (walk 4m, sprint 10m, crouch 1.5m, Breacher 1.6x), door (kick 25m, open 8m, peek 3m), gunshot (60m), voice (2-20m RMS-scaled), grenade (30m), explosion (50m), glass break (15m). Integrated with Door, WeaponHolder, VoiceManager, AIPerception. GUT tests written (9 tests).",
+      "files": [
+        "autoload/noise_system.gd",
+        "scenes/shared/door/door.gd",
+        "scenes/shared/weapons/weapon_holder.gd",
+        "autoload/voice_manager.gd",
+        "core/ai/ai_perception.gd",
+        "project.godot",
+        "tests/test_noise_system.gd",
+        "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P3-15"
+      ],
+      "summary": "P3-15 EMF Reader, banish ritual, remains-burial objective: EMFReader (EMF detection 0-5, Medic primary, 50% accuracy others), SaltCanister (30s barrier, anomaly retreat), SpectralToneEmitter (8s channel, banishes anomalies), RemainsInteraction (4s dig, sets lake_house_cleared flag), ShovelTool (4s dig, triggers on_bones_buried), GearItems for all (EMF Reader, Salt Canister, Spectral Tone Emitter, Trauma Kit, Sedatives, Ballistic Shield, Battering Ram, Recon Drone, Tear Gas, Service Pistol, Pump Shotgun, Patrol Rifle, Shovel). Drowned Woman anomaly integration with on_reverse_tone_complete, on_salt_line, on_salt_thrown, on_bones_buried. GUT tests written (14 tests).",
+      "files": [
+        "scenes/shared/gadgets/emf_reader.gd",
+        "scenes/shared/gadgets/salt_canister.gd",
+        "scenes/shared/gadgets/spectral_tone_emitter.gd",
+        "scenes/shared/gadgets/remains_interaction.gd",
+        "scenes/shared/gadgets/shovel_tool.gd",
+        "scenes/field/anomalies/drowned_woman.gd",
+        "scenes/field/anomalies/anomaly.gd",
+        "data/loadout/gear/emf_reader.tres",
+        "data/loadout/gear/salt_canister.tres",
+        "data/loadout/gear/spectral_tone_emitter.tres",
+        "data/loadout/gear/trauma_kit.tres",
+        "data/loadout/gear/sedatives.tres",
+        "data/loadout/gear/ballistic_shield.tres",
+        "data/loadout/gear/battering_ram.tres",
+        "data/loadout/gear/recon_drone.tres",
+        "data/loadout/gear/tear_gas.tres",
+        "data/loadout/gear/service_pistol.tres",
+        "data/loadout/gear/pump_shotgun.tres",
+        "data/loadout/gear/patrol_rifle.tres",
+        "data/loadout/gear/shovel.tres",
+        "tests/test_anomaly_tools.gd",
+        "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P4-03"
+      ],
+      "summary": "P4-03 Trait system: TraitData resource + TraitSystem autoload with 10 traits (Limping, Fractured Hand, Concussion, Scarred, PTSD, Phantom Ringing, Nyctophobia, Hardened, Community Hero, Marked by Dusk). Stat modifiers (move_speed, noise, sanity_drain_mult, max_health), hooks (phantom_ringing, flashback_audio, etc.), duration in shifts, cure costs. Player integration with apply/remove/has_trait, hook handling (phantom_ringing, flashback_audio, gunfire_sanity_drain, etc.). GUT tests written (15 tests).",
+      "files": [
+        "data/traits/trait_data.gd",
+        "autoload/trait_system.gd",
+        "data/traits/limping.tres",
+        "data/traits/fractured_hand.tres",
+        "data/traits/concussion.tres",
+        "data/traits/scarred.tres",
+        "data/traits/ptsd.tres",
+        "data/traits/phantom_ringing.tres",
+        "data/traits/nyctophobia.tres",
+        "data/traits/hardened.tres",
+        "data/traits/community_hero.tres",
+        "data/traits/marked_by_dusk.tres",
+        "scenes/shared/player/player.gd",
+        "project.godot",
+        "tests/test_trait_system.gd",
+        "docs/data/progress/mohamed.json"
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P4-04"
+      ],
+      "summary": "feat(consequence): Global meters (Trust, Budget, Cult Awareness) + thresholds — P4-04",
+      "files": [
+        "autoload/call_director.gd",
+        "autoload/event_bus.gd",
+        "autoload/game_state.gd",
+        "autoload/loadout_manager.gd",
+        "autoload/mission_director.gd",
+        "tests/test_global_meters.gd"
+      ],
+      "commit": "c019163",
+      "auto": true
+    },
+    {
+      "date": "2026-09-18",
+      "tasks": [
+        "P4-08"
+      ],
+      "summary": "P4-08 EndingResolver: evaluates 3 endings (SIEGE, SHADOW_WAR, RECLAMATION) based on Public Trust, Station Budget, Cult Awareness, flags, and shift performance. Ending scene with stats breakdown. GUT tests (10 tests).",
+      "files": [
+        "autoload/ending_resolver.gd",
+        "scenes/aftermath/ending_screen.tscn",
+        "tests/test_ending_resolver.gd",
+        "docs/data/progress/mohamed.json"
+      ]
+    }
+  ]
 }

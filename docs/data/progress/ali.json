@@ -265,6 +265,17 @@
    ],
    "commit": "0d74482",
    "auto": true
+  },
+  {
+   "date": "2026-09-18",
+   "tasks": [],
+   "summary": "fix(player): guard multiplayer check when apply_class runs before entering scene tree",
+   "files": [
+    "autoload/game_settings.gd",
+    "scenes/shared/player/player.gd"
+   ],
+   "commit": "149dd01",
+   "auto": true
   }
  ]
 }

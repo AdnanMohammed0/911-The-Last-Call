@@ -276,6 +276,17 @@
    ],
    "commit": "149dd01",
    "auto": true
+  },
+  {
+   "date": "2026-09-18",
+   "tasks": [],
+   "summary": "feat(dispatch): update operations room layout and vegetation details",
+   "files": [
+    "assets/materials/fabric_dark.tres",
+    "scenes/dispatch/operations_room.tscn"
+   ],
+   "commit": "12e3fc1",
+   "auto": true
   }
  ]
 }

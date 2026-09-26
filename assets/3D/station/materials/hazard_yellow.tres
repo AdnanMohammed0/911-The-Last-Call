@@ -1,0 +1,48 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_55kru"]
+colors = PackedColorArray(0.8, 0.8, 0.8, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_cuu0a"]
+seed = 59866
+frequency = 0.08
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0cxw5"]
+noise = SubResource("FastNoiseLite_cuu0a")
+color_ramp = SubResource("Gradient_55kru")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_b6m3m"]
+seed = 59873
+frequency = 0.24
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_lu841"]
+noise = SubResource("FastNoiseLite_b6m3m")
+seamless = true
+as_normal_map = true
+bump_strength = 2.0
+
+[sub_resource type="Gradient" id="Gradient_ldnwe"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_nt52h"]
+seed = 59879
+frequency = 0.16
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_csc80"]
+noise = SubResource("FastNoiseLite_nt52h")
+color_ramp = SubResource("Gradient_ldnwe")
+seamless = true
+
+[resource]
+resource_name = "hazard_yellow"
+albedo_color = Color(0.85, 0.65, 0.08, 1)
+albedo_texture = SubResource("NoiseTexture2D_0cxw5")
+roughness = 0.6
+roughness_texture = SubResource("NoiseTexture2D_csc80")
+normal_enabled = true
+normal_scale = 0.6
+normal_texture = SubResource("NoiseTexture2D_lu841")
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

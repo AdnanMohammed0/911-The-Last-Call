@@ -1,0 +1,49 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_wkxlq"]
+colors = PackedColorArray(0.7, 0.7, 0.7, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_a7rts"]
+seed = 45200
+frequency = 0.08
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1eubl"]
+noise = SubResource("FastNoiseLite_a7rts")
+color_ramp = SubResource("Gradient_wkxlq")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_43o2f"]
+seed = 45207
+frequency = 0.24
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ddewn"]
+noise = SubResource("FastNoiseLite_43o2f")
+seamless = true
+as_normal_map = true
+bump_strength = 5.0
+
+[sub_resource type="Gradient" id="Gradient_2gd1s"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_npo2f"]
+seed = 45213
+frequency = 0.16
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2okn5"]
+noise = SubResource("FastNoiseLite_npo2f")
+color_ramp = SubResource("Gradient_2gd1s")
+seamless = true
+
+[resource]
+resource_name = "brick"
+albedo_color = Color(0.36, 0.18, 0.13, 1)
+albedo_texture = SubResource("NoiseTexture2D_1eubl")
+roughness = 0.9
+roughness_texture = SubResource("NoiseTexture2D_2okn5")
+normal_enabled = true
+normal_scale = 0.5
+normal_texture = SubResource("NoiseTexture2D_ddewn")
+uv1_scale = Vector3(0.7, 0.7, 0.7)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

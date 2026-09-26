@@ -1,0 +1,48 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_5df62"]
+colors = PackedColorArray(0.8, 0.8, 0.8, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_svyq8"]
+seed = 48967
+frequency = 0.2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6jof4"]
+noise = SubResource("FastNoiseLite_svyq8")
+color_ramp = SubResource("Gradient_5df62")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ar84w"]
+seed = 48974
+frequency = 0.6
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wd8gc"]
+noise = SubResource("FastNoiseLite_ar84w")
+seamless = true
+as_normal_map = true
+bump_strength = 1.5
+
+[sub_resource type="Gradient" id="Gradient_4e42y"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_yxthp"]
+seed = 48980
+frequency = 0.4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_5kglt"]
+noise = SubResource("FastNoiseLite_yxthp")
+color_ramp = SubResource("Gradient_4e42y")
+seamless = true
+
+[resource]
+resource_name = "cardboard"
+albedo_color = Color(0.55, 0.42, 0.27, 1)
+albedo_texture = SubResource("NoiseTexture2D_6jof4")
+roughness = 0.95
+roughness_texture = SubResource("NoiseTexture2D_5kglt")
+normal_enabled = true
+normal_scale = 0.6
+normal_texture = SubResource("NoiseTexture2D_wd8gc")
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

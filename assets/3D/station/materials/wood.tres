@@ -1,0 +1,49 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_ab415"]
+colors = PackedColorArray(0.7, 0.7, 0.7, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_7x6pw"]
+seed = 14206
+frequency = 0.12
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_qxrbt"]
+noise = SubResource("FastNoiseLite_7x6pw")
+color_ramp = SubResource("Gradient_ab415")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_x5d8h"]
+seed = 14213
+frequency = 0.36
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_a3w1p"]
+noise = SubResource("FastNoiseLite_x5d8h")
+seamless = true
+as_normal_map = true
+bump_strength = 3.0
+
+[sub_resource type="Gradient" id="Gradient_x2lso"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_vjybf"]
+seed = 14219
+frequency = 0.24
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hi84l"]
+noise = SubResource("FastNoiseLite_vjybf")
+color_ramp = SubResource("Gradient_x2lso")
+seamless = true
+
+[resource]
+resource_name = "wood"
+albedo_color = Color(0.42, 0.3, 0.19, 1)
+albedo_texture = SubResource("NoiseTexture2D_qxrbt")
+roughness = 0.8
+roughness_texture = SubResource("NoiseTexture2D_hi84l")
+normal_enabled = true
+normal_scale = 0.6
+normal_texture = SubResource("NoiseTexture2D_a3w1p")
+uv1_scale = Vector3(1.2, 1.2, 1.2)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

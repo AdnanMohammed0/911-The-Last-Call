@@ -6,7 +6,11 @@ extends Node3D
 
 const COLLISION_KEYWORDS: Array[String] = [
 	"floor", "wall", "road", "sidewalk", "ground", "stair", "ramp", "pillar", "entrance", "reception",
-	"cell", "block", "roof", "trim", "door"
+	"cell", "block", "roof", "trim", "door", "partition", "corridor", "operations", "briefing",
+	"armory", "break", "bathroom", "evidence", "lobby", "garage", "circulation", "facade", "portal",
+	"parapet", "curb", "apron", "deck", "paving", "plaster", "concrete", "cut", "s1", "s2", "d1", "d2",
+	"d3", "d4", "d5", "d6", "d7", "w-", "window", "site", "drive", "parking", "foundation", "entry",
+	"step", "canopy", "jamb", "header", "threshold", "fascia", "fin", "curtain"
 ]
 
 
@@ -48,9 +52,9 @@ func _ensure_safety_floor() -> void:
 	var col: CollisionShape3D = CollisionShape3D.new()
 	col.name = "Shape"
 	var box_shape: BoxShape3D = BoxShape3D.new()
-	box_shape.size = Vector3(140.0, 0.2, 140.0)
+	box_shape.size = Vector3(160.0, 0.2, 160.0)
 	col.shape = box_shape
-	col.position = Vector3(0, 0.15, 0)
+	col.position = Vector3(30.0, -0.15, -19.0)
 	sb.add_child(col)
 	add_child(sb)
 

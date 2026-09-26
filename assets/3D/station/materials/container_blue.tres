@@ -1,0 +1,50 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_nc6f8"]
+colors = PackedColorArray(0.7, 0.7, 0.7, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1e3rj"]
+seed = 12911
+frequency = 0.05
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hmt2w"]
+noise = SubResource("FastNoiseLite_1e3rj")
+color_ramp = SubResource("Gradient_nc6f8")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_3qtdf"]
+seed = 12918
+frequency = 0.15
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_q11d8"]
+noise = SubResource("FastNoiseLite_3qtdf")
+seamless = true
+as_normal_map = true
+bump_strength = 3.0
+
+[sub_resource type="Gradient" id="Gradient_1nffy"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_k345u"]
+seed = 12924
+frequency = 0.1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_7qtej"]
+noise = SubResource("FastNoiseLite_k345u")
+color_ramp = SubResource("Gradient_1nffy")
+seamless = true
+
+[resource]
+resource_name = "container_blue"
+albedo_color = Color(0.1, 0.24, 0.4, 1)
+albedo_texture = SubResource("NoiseTexture2D_hmt2w")
+metallic = 0.45
+roughness = 0.6
+roughness_texture = SubResource("NoiseTexture2D_7qtej")
+normal_enabled = true
+normal_scale = 0.6
+normal_texture = SubResource("NoiseTexture2D_q11d8")
+uv1_scale = Vector3(0.6, 0.6, 0.6)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

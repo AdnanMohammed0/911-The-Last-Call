@@ -1,15 +1,13 @@
 [gd_scene format=3 uid="uid://bwiscymspulk3"]
 
-[ext_resource type="Script" path="res://core/net/player_spawner.gd" id="1_spawner"]
+[ext_resource type="Script" uid="uid://dkhtknkofw6eu" path="res://core/net/player_spawner.gd" id="1_spawner"]
 [ext_resource type="Script" uid="uid://bo825c5b40qb2" path="res://scenes/shared/player/player_debug_hud.gd" id="2_hud"]
 [ext_resource type="Script" uid="uid://3gqspep5s0n5" path="res://scenes/shared/interactables/interactable_toggle.gd" id="3_toggle"]
 [ext_resource type="Script" uid="uid://cpbik534difst" path="res://scenes/shared/interactables/interactable_pickup.gd" id="4_pickup"]
 [ext_resource type="PackedScene" uid="uid://c6fdoor842p1" path="res://scenes/shared/door/door.tscn" id="5_door"]
-[ext_resource type="Script" path="res://scenes/shared/interactables/interactable_scene_door.gd" id="6_scenedoor"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_portal"]
-size = Vector3(1.5, 2.2, 1.2)
-
+[ext_resource type="Script" uid="uid://66mx1stmddxh" path="res://scenes/shared/interactables/interactable_scene_door.gd" id="6_scenedoor"]
+[ext_resource type="PackedScene" uid="uid://cbbqnhxevk457" path="res://assets/3D/grass/Grass Vegitation mix.fbx" id="7_vxuur"]
+[ext_resource type="PackedScene" path="res://assets/3D/station/map_v12.glb" id="8_vxuur"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 
@@ -33,6 +31,9 @@ albedo_color = Color(0.9, 0.7, 0.2, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_crate"]
 size = Vector3(0.9, 0.9, 0.9)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_portal"]
+size = Vector3(1.5, 2.2, 1.2)
+
 [node name="PlayerSandbox" type="Node3D" unique_id=336275074]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1013992296]
@@ -45,9 +46,9 @@ shadow_enabled = true
 [node name="Level" type="Node3D" parent="." unique_id=1987669778]
 
 [node name="Floor" type="CSGBox3D" parent="Level" unique_id=805866230]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.331055, -0.5116596, -34.510254)
 use_collision = true
-size = Vector3(40, 1, 40)
+size = Vector3(80.72656, 1, 109.02051)
 
 [node name="CrouchTunnelRoof" type="CSGBox3D" parent="Level" unique_id=1159448668]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -8)
@@ -176,11 +177,10 @@ shape = SubResource("BoxShape3D_portal")
 
 [node name="PortalLabel" type="Label3D" parent="Level" unique_id=991827366]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.7, -1.8)
+modulate = Color(0.1, 0.85, 0.95, 1)
 text = "► WALK THROUGH DOOR TO ENTER STATION 4 ►"
 font_size = 22
 outline_size = 6
-modulate = Color(0.1, 0.85, 0.95, 1)
-
 
 [node name="PeekableDoor" parent="Level" unique_id=291815522 instance=ExtResource("5_door")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
@@ -188,30 +188,36 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 [node name="LockedDoor" parent="Level" unique_id=923462921 instance=ExtResource("5_door")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -2)
 
-[node name="Players" type="Node3D" parent="."]
+[node name="Players" type="Node3D" parent="." unique_id=2128988627]
 
-[node name="SpawnPoints" type="Node3D" parent="."]
+[node name="SpawnPoints" type="Node3D" parent="." unique_id=1183054936]
 
-[node name="Spawn1" type="Marker3D" parent="SpawnPoints"]
+[node name="Spawn1" type="Marker3D" parent="SpawnPoints" unique_id=1698647879]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.5)
 
-[node name="Spawn2" type="Marker3D" parent="SpawnPoints"]
+[node name="Spawn2" type="Marker3D" parent="SpawnPoints" unique_id=1174845109]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.05, 1.5)
 
-[node name="Spawn3" type="Marker3D" parent="SpawnPoints"]
+[node name="Spawn3" type="Marker3D" parent="SpawnPoints" unique_id=1874596106]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.05, 1.5)
 
-[node name="Spawn4" type="Marker3D" parent="SpawnPoints"]
+[node name="Spawn4" type="Marker3D" parent="SpawnPoints" unique_id=1213973107]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 3)
 
-[node name="PlayerSpawner" type="MultiplayerSpawner" parent="." node_paths=PackedStringArray("spawn_points")]
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="." unique_id=1292098493 node_paths=PackedStringArray("spawn_points")]
 spawn_path = NodePath("../Players")
 script = ExtResource("1_spawner")
 spawn_points = NodePath("../SpawnPoints")
 
-[node name="DebugHUD" type="Label" parent="."]
+[node name="DebugHUD" type="Label" parent="." unique_id=628404920]
 offset_left = 12.0
 offset_top = 12.0
 offset_right = 620.0
 offset_bottom = 140.0
 script = ExtResource("2_hud")
+
+[node name="Grass Vegitation mix" parent="." unique_id=503554642 instance=ExtResource("7_vxuur")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.18273, 0.34496093, -37.500328)
+
+[node name="00 | COMPLETE BUILDING - Exterior" parent="." unique_id=1199464313 instance=ExtResource("8_vxuur")]
+transform = Transform3D(-0.9998732, 0, -0.015927076, 0, 1, 0, 0.015927076, 0, -0.9998732, 38.78409, 0.6589366, -73.730385)

@@ -1,5 +1,5 @@
 ## Builds res://scenes/dispatch/operations_room.tscn — Blackvale County 911, Station 4:
-## Features the full authentic 3D police station map (res://assets/3D/station/map3.glb / station_map.tscn)
+## Features the full authentic 3D police station map (res://assets/3D/station/map_v12.glb / station_map.tscn)
 ## with all old greybox map geometry removed.
 ## Includes offices (4 operator workstations + supervisor office), laptops, monitors, 911 phones,
 ## swivel office chairs, server racks, and dramatic cinematic lighting with volumetric fog.
@@ -23,7 +23,7 @@ static func build() -> Error:
 
 	var geometry: Node3D = kit.group(root, "Geometry")
 
-	# The authentic 3D Police Station Model (map3.glb with dynamic trimesh collisions + safety floor)
+	# The authentic 3D Police Station Model (map_v12.glb with dynamic trimesh collisions + safety floor)
 	kit.instance("res://scenes/dispatch/station_map.tscn", geometry, "StationModel", Transform3D.IDENTITY)
 
 	# Clean zone groups to satisfy the test contract without any old map clutter

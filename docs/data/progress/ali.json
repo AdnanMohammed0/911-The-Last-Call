@@ -325,6 +325,16 @@
    ],
    "commit": "d4dfd5f",
    "auto": true
+  },
+  {
+   "date": "2026-09-27",
+   "tasks": [],
+   "summary": "fix(dispatch): serialize MultiMesh float buffer with all 6000 grass instances",
+   "files": [
+    "scenes/dispatch/station_grass.tscn"
+   ],
+   "commit": "69d0836",
+   "auto": true
   }
  ]
 }

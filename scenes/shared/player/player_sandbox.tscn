@@ -217,6 +217,7 @@ offset_bottom = 140.0
 script = ExtResource("2_hud")
 
 [node name="StationGrass" parent="." unique_id=503554642 instance=ExtResource("7_grass")]
+transform = Transform3D(-0.9998732, 0, -0.015927076, 0, 1, 0, 0.015927076, 0, -0.9998732, 38.78409, 0.6589366, -73.730385)
 
 [node name="00 | COMPLETE BUILDING - Exterior" parent="." unique_id=1199464313 instance=ExtResource("8_vxuur")]
 transform = Transform3D(-0.9998732, 0, -0.015927076, 0, 1, 0, 0.015927076, 0, -0.9998732, 38.78409, 0.6589366, -73.730385)

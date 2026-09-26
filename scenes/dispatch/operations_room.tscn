@@ -1792,4 +1792,5 @@ spawn_path = NodePath("../Players")
 script = ExtResource("17_cfby5")
 spawn_points = NodePath("../SpawnPoints")
 
-[node name="StationGrass" parent="." instance=ExtResource("3_grass")]
+[node name="StationGrass" parent="Geometry" instance=ExtResource("3_grass")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21841288, 0.81708956, 0.06298447)

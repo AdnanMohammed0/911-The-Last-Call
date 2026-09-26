@@ -10,8 +10,8 @@ class_name BuildStation4
 extends RefCounted
 
 const PATH: String = "res://scenes/dispatch/operations_room.tscn"
-const HEIGHT: float = 3.15
-const FLOOR_Y: float = 0.25
+const HEIGHT: float = 3.8
+const FLOOR_Y: float = 0.85
 
 
 static func build() -> Error:
@@ -24,7 +24,7 @@ static func build() -> Error:
 	var geometry: Node3D = kit.group(root, "Geometry")
 
 	# The authentic 3D Police Station Model (map_v13.glb with dynamic trimesh collisions + safety floor)
-	kit.instance("res://scenes/dispatch/station_map.tscn", geometry, "StationModel", Transform3D.IDENTITY)
+	kit.instance("res://scenes/dispatch/station_map.tscn", geometry, "StationModel", Transform3D(Basis.IDENTITY, Vector3(-0.21841288, 0.81708956, 0.06298447)))
 
 	# Clean zone groups to satisfy the test contract without any old map clutter
 	var ops_room: Node3D = kit.group(geometry, "OperationsRoom")
@@ -32,29 +32,29 @@ static func build() -> Error:
 	kit.group(geometry, "Armory")
 	kit.group(geometry, "ParkingLot")
 
-	# Offices: Workstations, laptops, phones, chairs, and dramatic lighting
+	# Offices: Workstations, laptops, phones, chairs, and dramatic lighting inside Briefing Room
 	_offices(kit, ops_room)
 
 	# Interactive networked doors (hidden to avoid floating clutter in the 3D model)
 	var doors: Node3D = kit.group(root, "Doors")
 	var door_scene: String = "res://scenes/shared/door/door.tscn"
-	var d1: Node = kit.instance(door_scene, doors, "Door_OpsToCorridor", Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(-2, FLOOR_Y, 0)))
-	var d2: Node = kit.instance(door_scene, doors, "Door_CorridorToArmory", Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(2, FLOOR_Y, -1)))
-	var d3: Node = kit.instance(door_scene, doors, "Door_CorridorToParking", Transform3D(Basis.IDENTITY, Vector3(0, FLOOR_Y, 10)))
+	var d1: Node = kit.instance(door_scene, doors, "Door_OpsToCorridor", Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(16, FLOOR_Y, -22.5)))
+	var d2: Node = kit.instance(door_scene, doors, "Door_CorridorToArmory", Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(22, FLOOR_Y, -15.0)))
+	var d3: Node = kit.instance(door_scene, doors, "Door_CorridorToParking", Transform3D(Basis.IDENTITY, Vector3(38, FLOOR_Y, -14.0)))
 	(d1 as Node3D).visible = false
 	(d2 as Node3D).visible = false
 	(d3 as Node3D).visible = false
 
 	# Computers, Phone, CAD terminals, Shift Clock
-	kit.instance("res://scenes/dispatch/dispatch_setup.tscn", root, "DispatchSetup", Transform3D(Basis.IDENTITY, Vector3(0, FLOOR_Y, 0)))
+	kit.instance("res://scenes/dispatch/dispatch_setup.tscn", root, "DispatchSetup", Transform3D(Basis.IDENTITY, Vector3(8.0, FLOOR_Y, -26.8)))
 
 	# Players and Spawns: securely placed on the floor (Y = FLOOR_Y + 0.1) in front of desks
 	kit.group(root, "Players")
 	var spawns: Node3D = kit.group(root, "SpawnPoints")
-	kit.marker(spawns, "Spawn1_Tech", Vector3(-14, FLOOR_Y + 0.1, -1.0), 0.0)
-	kit.marker(spawns, "Spawn2_Profiler", Vector3(-10, FLOOR_Y + 0.1, -1.0), 0.0)
-	kit.marker(spawns, "Spawn3_Breacher", Vector3(-14, FLOOR_Y + 0.1, 1.0), 180.0)
-	kit.marker(spawns, "Spawn4_Medic", Vector3(-10, FLOOR_Y + 0.1, 1.0), 180.0)
+	kit.marker(spawns, "Spawn1_Tech", Vector3(6.0, FLOOR_Y + 0.1, -23.0), 0.0)
+	kit.marker(spawns, "Spawn2_Profiler", Vector3(10.0, FLOOR_Y + 0.1, -23.0), 0.0)
+	kit.marker(spawns, "Spawn3_Breacher", Vector3(6.0, FLOOR_Y + 0.1, -22.0), 180.0)
+	kit.marker(spawns, "Spawn4_Medic", Vector3(10.0, FLOOR_Y + 0.1, -22.0), 180.0)
 	var spawner: PlayerSpawner = PlayerSpawner.new()
 	kit.own(spawner, root, "PlayerSpawner")
 	spawner.spawn_path = NodePath("../Players")
@@ -70,65 +70,65 @@ static func build() -> Error:
 
 static func _offices(kit: LevelKit, room: Node3D) -> void:
 	# --- 1. Operator Desks (Tech, Profiler, Breacher, Medic) ---
-	kit.desk(room, "DeskTech", Vector3(-14, FLOOR_Y, -2), 0.0, 2)
-	kit.desk(room, "DeskProfiler", Vector3(-10, FLOOR_Y, -2), 0.0, 2, "screen_amber")
-	kit.desk(room, "DeskBreacher", Vector3(-14, FLOOR_Y, 2), 180.0, 1)
-	kit.desk(room, "DeskMedic", Vector3(-10, FLOOR_Y, 2), 180.0, 2)
-	kit.box(room, "DeskBreacher_TacMap", Vector3(-14, FLOOR_Y + 0.8, 2), Vector3(1.6, 0.02, 0.9), kit.material("screen_blue"), 0.0, false)
+	kit.desk(room, "DeskTech", Vector3(6.0, FLOOR_Y, -24.2), 0.0, 2)
+	kit.desk(room, "DeskProfiler", Vector3(10.0, FLOOR_Y, -24.2), 0.0, 2, "screen_amber")
+	kit.desk(room, "DeskBreacher", Vector3(6.0, FLOOR_Y, -20.8), 180.0, 1)
+	kit.desk(room, "DeskMedic", Vector3(10.0, FLOOR_Y, -20.8), 180.0, 2)
+	kit.box(room, "DeskBreacher_TacMap", Vector3(6.0, FLOOR_Y + 0.8, -20.8), Vector3(1.6, 0.02, 0.9), kit.material("screen_blue"), 0.0, false)
 
 	# --- 2. Laptops on Desks ---
-	_laptop(kit, room, "LaptopTech", Vector3(-13.4, FLOOR_Y + 0.79, -1.85), 15.0, "screen_blue")
-	_laptop(kit, room, "LaptopProfiler", Vector3(-10.8, FLOOR_Y + 0.79, -1.85), -15.0, "screen_amber")
-	_laptop(kit, room, "LaptopBreacher", Vector3(-13.2, FLOOR_Y + 0.79, 1.85), 165.0, "screen_blue")
-	_laptop(kit, room, "LaptopMedic", Vector3(-10.8, FLOOR_Y + 0.79, 1.85), 195.0, "screen_blue")
-	_laptop(kit, room, "LaptopSupervisor", Vector3(-3.8, FLOOR_Y + 0.79, -4.35), 0.0, "screen_blue")
+	_laptop(kit, room, "LaptopTech", Vector3(6.6, FLOOR_Y + 0.79, -24.05), 15.0, "screen_blue")
+	_laptop(kit, room, "LaptopProfiler", Vector3(9.2, FLOOR_Y + 0.79, -24.05), -15.0, "screen_amber")
+	_laptop(kit, room, "LaptopBreacher", Vector3(6.8, FLOOR_Y + 0.79, -20.95), 165.0, "screen_blue")
+	_laptop(kit, room, "LaptopMedic", Vector3(9.2, FLOOR_Y + 0.79, -20.95), 195.0, "screen_blue")
+	_laptop(kit, room, "LaptopSupervisor", Vector3(3.0, FLOOR_Y + 0.79, -22.35), 0.0, "screen_blue")
 
 	# --- 3. 911 Hotline and Desk Phones ---
-	_desk_phone(kit, room, "PhoneTech", Vector3(-12.8, FLOOR_Y + 0.79, -2.1), 0.0, true)
-	_desk_phone(kit, room, "PhoneProfiler", Vector3(-9.2, FLOOR_Y + 0.79, -2.1), 0.0, true)
-	_desk_phone(kit, room, "PhoneMedic", Vector3(-9.2, FLOOR_Y + 0.79, 2.1), 180.0, false)
-	_desk_phone(kit, room, "PhoneSupervisor", Vector3(-4.6, FLOOR_Y + 0.79, -4.35), 20.0, false)
+	_desk_phone(kit, room, "PhoneTech", Vector3(7.2, FLOOR_Y + 0.79, -24.3), 0.0, true)
+	_desk_phone(kit, room, "PhoneProfiler", Vector3(10.8, FLOOR_Y + 0.79, -24.3), 0.0, true)
+	_desk_phone(kit, room, "PhoneMedic", Vector3(10.8, FLOOR_Y + 0.79, -20.7), 180.0, false)
+	_desk_phone(kit, room, "PhoneSupervisor", Vector3(2.2, FLOOR_Y + 0.79, -22.35), 20.0, false)
 
 	# --- 4. Swivel Office Chairs ---
-	_chair(kit, room, "ChairTech", Vector3(-14, FLOOR_Y, -1.1), 0.0)
-	_chair(kit, room, "ChairProfiler", Vector3(-10, FLOOR_Y, -1.1), 0.0)
-	_chair(kit, room, "ChairBreacher", Vector3(-14, FLOOR_Y, 1.1), 180.0)
-	_chair(kit, room, "ChairMedic", Vector3(-10, FLOOR_Y, 1.1), 180.0)
-	_chair(kit, room, "ChairSupervisor", Vector3(-3.8, FLOOR_Y, -3.7), 0.0)
+	_chair(kit, room, "ChairTech", Vector3(6.0, FLOOR_Y, -23.3), 0.0)
+	_chair(kit, room, "ChairProfiler", Vector3(10.0, FLOOR_Y, -23.3), 0.0)
+	_chair(kit, room, "ChairBreacher", Vector3(6.0, FLOOR_Y, -21.7), 180.0)
+	_chair(kit, room, "ChairMedic", Vector3(10.0, FLOOR_Y, -21.7), 180.0)
+	_chair(kit, room, "ChairSupervisor", Vector3(3.0, FLOOR_Y, -21.7), 0.0)
 
 	# --- 5. Supervisor Executive Office ---
-	kit.desk(room, "SupervisorDesk", Vector3(-3.8, FLOOR_Y, -4.5), 0.0, 1)
+	kit.desk(room, "SupervisorDesk", Vector3(3.0, FLOOR_Y, -22.5), 0.0, 1)
 	# Filing cabinets and storage behind supervisor
-	_filing_cabinet(kit, room, "CabinetSupervisor1", Vector3(-2.2, FLOOR_Y, -5.2), 0.0)
-	_filing_cabinet(kit, room, "CabinetSupervisor2", Vector3(-1.6, FLOOR_Y, -5.2), 0.0)
+	_filing_cabinet(kit, room, "CabinetSupervisor1", Vector3(1.2, FLOOR_Y, -23.2), 0.0)
+	_filing_cabinet(kit, room, "CabinetSupervisor2", Vector3(1.2, FLOOR_Y, -21.8), 0.0)
 
 	# --- 6. Bullpen Equipment (Server Racks & Notice Board) ---
-	kit.server_rack(room, "ServerRack1", Vector3(-16.8, FLOOR_Y, -4.5), 90.0)
-	kit.server_rack(room, "ServerRack2", Vector3(-16.8, FLOOR_Y, -3.2), 90.0)
+	kit.server_rack(room, "ServerRack1", Vector3(1.2, FLOOR_Y + 1.05, -25.5), 90.0)
+	kit.server_rack(room, "ServerRack2", Vector3(1.2, FLOOR_Y + 1.05, -24.2), 90.0)
 
 	# --- 7. Dramatic Lighting System ---
 	var lights: Node3D = kit.group(room, "Lighting")
 
 	# Overhead dramatic spotlights with volumetric beams focused on desks
-	_dramatic_ceiling_spot(kit, lights, "SpotTech", Vector3(-14, HEIGHT, -2), Color(0.88, 0.94, 1.0), 3.2, 6.0)
-	_dramatic_ceiling_spot(kit, lights, "SpotProfiler", Vector3(-10, HEIGHT, -2), Color(1.0, 0.88, 0.72), 3.2, 6.0)
-	_dramatic_ceiling_spot(kit, lights, "SpotBreacher", Vector3(-14, HEIGHT, 2), Color(0.85, 0.92, 1.0), 3.2, 6.0)
-	_dramatic_ceiling_spot(kit, lights, "SpotMedic", Vector3(-10, HEIGHT, 2), Color(0.9, 0.95, 1.0), 3.2, 6.0)
-	_dramatic_ceiling_spot(kit, lights, "SpotSupervisor", Vector3(-3.8, HEIGHT, -4.2), Color(1.0, 0.88, 0.75), 2.8, 5.5)
+	_dramatic_ceiling_spot(kit, lights, "SpotTech", Vector3(6.0, HEIGHT, -24.2), Color(0.88, 0.94, 1.0), 3.2, 6.0)
+	_dramatic_ceiling_spot(kit, lights, "SpotProfiler", Vector3(10.0, HEIGHT, -24.2), Color(1.0, 0.88, 0.72), 3.2, 6.0)
+	_dramatic_ceiling_spot(kit, lights, "SpotBreacher", Vector3(6.0, HEIGHT, -20.8), Color(0.85, 0.92, 1.0), 3.2, 6.0)
+	_dramatic_ceiling_spot(kit, lights, "SpotMedic", Vector3(10.0, HEIGHT, -20.8), Color(0.9, 0.95, 1.0), 3.2, 6.0)
+	_dramatic_ceiling_spot(kit, lights, "SpotSupervisor", Vector3(3.0, HEIGHT, -22.5), Color(1.0, 0.88, 0.75), 2.8, 5.5)
 
 	# Warm tungsten executive banker's lamp on Supervisor desk
-	_bankers_desk_lamp(kit, room, "SupervisorLamp", Vector3(-4.5, FLOOR_Y + 0.79, -4.4), lights)
+	_bankers_desk_lamp(kit, room, "SupervisorLamp", Vector3(2.3, FLOOR_Y + 0.79, -22.4), lights)
 
 	# Colored screen specular glows on operator desks
-	_screen_glow(kit, lights, "ScreenGlowTech", Vector3(-14, FLOOR_Y + 1.1, -1.9), Color(0.12, 0.5, 0.9), 0.6)
-	_screen_glow(kit, lights, "ScreenGlowProfiler", Vector3(-10, FLOOR_Y + 1.1, -1.9), Color(0.95, 0.6, 0.15), 0.6)
-	_screen_glow(kit, lights, "ScreenGlowBreacher", Vector3(-14, FLOOR_Y + 1.1, 1.9), Color(0.15, 0.65, 0.95), 0.8)
-	_screen_glow(kit, lights, "ScreenGlowMedic", Vector3(-10, FLOOR_Y + 1.1, 1.9), Color(0.2, 0.85, 0.6), 0.6)
+	_screen_glow(kit, lights, "ScreenGlowTech", Vector3(6.0, FLOOR_Y + 1.1, -24.1), Color(0.12, 0.5, 0.9), 0.6)
+	_screen_glow(kit, lights, "ScreenGlowProfiler", Vector3(10.0, FLOOR_Y + 1.1, -24.1), Color(0.95, 0.6, 0.15), 0.6)
+	_screen_glow(kit, lights, "ScreenGlowBreacher", Vector3(6.0, FLOOR_Y + 1.1, -20.9), Color(0.15, 0.65, 0.95), 0.8)
+	_screen_glow(kit, lights, "ScreenGlowMedic", Vector3(10.0, FLOOR_Y + 1.1, -20.9), Color(0.2, 0.85, 0.6), 0.6)
 
 	# Architectural corridor rim lights leading to reception
-	kit.bulkhead(lights, "HallwaySconce1", Vector3(-17.8, FLOOR_Y + 2.4, 0.0), 90.0, 2.2, 8.0)
-	kit.bulkhead(lights, "HallwaySconce2", Vector3(-17.8, FLOOR_Y + 2.4, 6.0), 90.0, 2.2, 8.0)
-	kit.bulkhead(lights, "HallwaySconce3", Vector3(-17.8, FLOOR_Y + 2.4, 12.0), 90.0, 2.2, 8.0)
+	kit.bulkhead(lights, "HallwaySconce1", Vector3(16.0, FLOOR_Y + 2.35, -26.0), 90.0, 2.2, 8.0)
+	kit.bulkhead(lights, "HallwaySconce2", Vector3(16.0, FLOOR_Y + 2.35, -22.5), 90.0, 2.2, 8.0)
+	kit.bulkhead(lights, "HallwaySconce3", Vector3(16.0, FLOOR_Y + 2.35, -19.0), 90.0, 2.2, 8.0)
 
 
 ## Clamshell laptop with open tilted emissive display

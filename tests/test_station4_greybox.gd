@@ -37,6 +37,15 @@ func test_operations_room_scene_loads_and_instantiates() -> void:
 	assert_not_null(s4, "Medic desk spawn")
 	if s1 != null:
 		assert_gt(s1.position.y, 0.25, "Spawn point Y should be above ground floor level")
+		assert_gte(s1.position.y, 0.85, "Spawn point Y should be at or above station floor level")
+		assert_gt(s1.position.x, 0.0, "Spawn point X should be inside the building")
+		assert_lt(s1.position.z, -17.0, "Spawn point Z should be inside the Briefing room")
+
+	# Verify dedicated floor collision exists to prevent player from falling
+	var floor_col: StaticBody3D = instance.get_node_or_null("Geometry/OperationsRoom/OperationsRoomFloor") as StaticBody3D
+	assert_not_null(floor_col, "Dedicated operations room floor collider should exist to prevent falling")
+	var wing_floor: StaticBody3D = instance.get_node_or_null("Geometry/WingSafetyFloor") as StaticBody3D
+	assert_not_null(wing_floor, "Station wing safety floor collider should exist")
 
 	# Verify offices, laptops, phones, and dramatic lights
 	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/DeskTech"), "DeskTech should exist")

@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://c6fdoor842p1" path="res://scenes/shared/door/door.tscn" id="5_door"]
 [ext_resource type="Script" uid="uid://66mx1stmddxh" path="res://scenes/shared/interactables/interactable_scene_door.gd" id="6_scenedoor"]
 [ext_resource type="PackedScene" path="res://scenes/dispatch/station_grass.tscn" id="7_grass"]
-[ext_resource type="PackedScene" path="res://assets/3D/station/map_v13.glb" id="8_vxuur"]
+[ext_resource type="PackedScene" uid="uid://dh2fl70vpps8o" path="res://assets/3D/station/map_v13.glb" id="8_vxuur"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 

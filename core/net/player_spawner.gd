@@ -146,6 +146,10 @@ func _spawn_player(data: Variant) -> Node:
 		player.transform = info["transform"]
 	else:
 		player.position = _spawn_position(spawn_index)
+		if spawn_points != null and spawn_points.get_child_count() > 0:
+			var pt: Node3D = spawn_points.get_child(spawn_index % spawn_points.get_child_count()) as Node3D
+			if pt != null:
+				player.rotation.y = pt.global_rotation.y if pt.is_inside_tree() else pt.rotation.y
 	return player
 
 
@@ -158,9 +162,11 @@ func _on_spawned(node: Node) -> void:
 
 func _spawn_position(index: int) -> Vector3:
 	if spawn_points == null or spawn_points.get_child_count() == 0:
-		return Vector3(index * 1.5, 0.05, 0.0)
+		return Vector3(6.0 + index * 2.0, 0.95, -23.0)
 	var point: Node3D = spawn_points.get_child(index % spawn_points.get_child_count()) as Node3D
-	return point.position if point != null else Vector3.ZERO
+	if point == null:
+		return Vector3(8.0, 0.95, -22.5)
+	return point.global_position if point.is_inside_tree() else point.position
 
 
 static func _player_name(peer_id: int) -> String:

@@ -2,8 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://chdfhm66qepyu" path="res://scenes/dispatch/citrus_orchard_road_puresky_4k.exr" id="1_dih32"]
 [ext_resource type="Material" uid="uid://bjf0jtmiglbei" path="res://assets/materials/desk_laminate.tres" id="2_20w1g"]
-[ext_resource type="PackedScene" path="res://scenes/dispatch/station_grass.tscn" id="3_grass"]
 [ext_resource type="Material" uid="uid://docw0a4akl008" path="res://assets/materials/metal_dark.tres" id="3_dih32"]
+[ext_resource type="PackedScene" path="res://scenes/dispatch/station_grass.tscn" id="3_grass"]
 [ext_resource type="Material" uid="uid://ctws1rrpw2bfe" path="res://assets/materials/metal_painted.tres" id="4_2gys5"]
 [ext_resource type="Material" path="res://assets/3D/station/materials/plastic_black.tres" id="5_004x1"]
 [ext_resource type="Material" path="res://assets/3D/station/materials/screen_blue.tres" id="6_rgo0w"]
@@ -19,6 +19,13 @@
 [ext_resource type="PackedScene" uid="uid://dh2fl70vpps8o" path="res://assets/3D/station/map_v13.glb" id="15_dih32"]
 [ext_resource type="PackedScene" path="res://scenes/dispatch/dispatch_setup.tscn" id="16_opcu1"]
 [ext_resource type="Script" uid="uid://dkhtknkofw6eu" path="res://core/net/player_spawner.gd" id="17_cfby5"]
+
+[ext_resource type="Script" path="res://scenes/dispatch/station_map.gd" id="station_map_script"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_briefing_floor"]
+size = Vector3(18, 0.4, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wing_safety"]
+size = Vector3(50, 0.4, 50)
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_36oms"]
 panorama = ExtResource("1_dih32")
@@ -579,7 +586,7 @@ shadow_blur = 1.99
 [node name="OperationsRoom" type="Node3D" parent="Geometry" unique_id=1098839124]
 
 [node name="DeskTech" type="Node3D" parent="Geometry/OperationsRoom" unique_id=1652872937]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.25, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.85, -24.2)
 
 [node name="Top" type="StaticBody3D" parent="Geometry/OperationsRoom/DeskTech" unique_id=1020593508]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, 0)
@@ -650,7 +657,7 @@ material_override = ExtResource("5_004x1")
 mesh = SubResource("BoxMesh_he4v7")
 
 [node name="DeskProfiler" type="Node3D" parent="Geometry/OperationsRoom" unique_id=5820346]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.25, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.85, -24.2)
 
 [node name="Top" type="StaticBody3D" parent="Geometry/OperationsRoom/DeskProfiler" unique_id=2067911381]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, 0)
@@ -721,7 +728,7 @@ material_override = ExtResource("5_004x1")
 mesh = SubResource("BoxMesh_kmv1h")
 
 [node name="DeskBreacher" type="Node3D" parent="Geometry/OperationsRoom" unique_id=716352843]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -14, 0.25, 2)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 6, 0.85, -20.8)
 
 [node name="Top" type="StaticBody3D" parent="Geometry/OperationsRoom/DeskBreacher" unique_id=1152004636]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, 0)
@@ -776,7 +783,7 @@ material_override = ExtResource("5_004x1")
 mesh = SubResource("BoxMesh_gy8xw")
 
 [node name="DeskMedic" type="Node3D" parent="Geometry/OperationsRoom" unique_id=797256445]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -10, 0.25, 2)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 10, 0.85, -20.8)
 
 [node name="Top" type="StaticBody3D" parent="Geometry/OperationsRoom/DeskMedic" unique_id=234153480]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, 0)
@@ -847,14 +854,14 @@ material_override = ExtResource("5_004x1")
 mesh = SubResource("BoxMesh_tucj3")
 
 [node name="DeskBreacher_TacMap" type="Node3D" parent="Geometry/OperationsRoom" unique_id=2131025847]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 1.05, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.65, -20.8)
 
 [node name="Mesh" type="MeshInstance3D" parent="Geometry/OperationsRoom/DeskBreacher_TacMap" unique_id=808201155]
 material_override = ExtResource("6_rgo0w")
 mesh = SubResource("BoxMesh_pvdgy")
 
 [node name="LaptopTech" type="Node3D" parent="Geometry/OperationsRoom" unique_id=644227366]
-transform = Transform3D(0.9659258, 0, 0.25881904, 0, 1, 0, -0.25881904, 0, 0.9659258, -13.4, 1.04, -1.85)
+transform = Transform3D(0.9659258, 0, 0.25881904, 0, 1, 0, -0.25881904, 0, 0.9659258, 6.6, 1.64, -24.05)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/LaptopTech" unique_id=1602224249]
 material_override = ExtResource("3_dih32")
@@ -881,7 +888,7 @@ cast_shadow = 0
 mesh = SubResource("BoxMesh_vfsti")
 
 [node name="LaptopProfiler" type="Node3D" parent="Geometry/OperationsRoom" unique_id=436603183]
-transform = Transform3D(0.9659258, 0, -0.25881904, 0, 1, 0, 0.25881904, 0, 0.9659258, -10.8, 1.04, -1.85)
+transform = Transform3D(0.9659258, 0, -0.25881904, 0, 1, 0, 0.25881904, 0, 0.9659258, 9.2, 1.64, -24.05)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/LaptopProfiler" unique_id=937116798]
 material_override = ExtResource("3_dih32")
@@ -908,7 +915,7 @@ cast_shadow = 0
 mesh = SubResource("BoxMesh_nkcmt")
 
 [node name="LaptopBreacher" type="Node3D" parent="Geometry/OperationsRoom" unique_id=646122812]
-transform = Transform3D(-0.9659258, 0, 0.25881913, 0, 1, 0, -0.25881913, 0, -0.9659258, -13.2, 1.04, 1.85)
+transform = Transform3D(-0.9659258, 0, 0.25881913, 0, 1, 0, -0.25881913, 0, -0.9659258, 6.8, 1.64, -20.95)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/LaptopBreacher" unique_id=1278553949]
 material_override = ExtResource("3_dih32")
@@ -935,7 +942,7 @@ cast_shadow = 0
 mesh = SubResource("BoxMesh_x86ni")
 
 [node name="LaptopMedic" type="Node3D" parent="Geometry/OperationsRoom" unique_id=733647067]
-transform = Transform3D(-0.9659258, 0, -0.25881907, 0, 1, 0, 0.25881907, 0, -0.9659258, -10.8, 1.04, 1.85)
+transform = Transform3D(-0.9659258, 0, -0.25881907, 0, 1, 0, 0.25881907, 0, -0.9659258, 9.2, 1.64, -20.95)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/LaptopMedic" unique_id=1185940820]
 material_override = ExtResource("3_dih32")
@@ -962,7 +969,7 @@ cast_shadow = 0
 mesh = SubResource("BoxMesh_i7w0s")
 
 [node name="LaptopSupervisor" type="Node3D" parent="Geometry/OperationsRoom" unique_id=273415301]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 1.04, -4.35)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1.64, -22.35)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/LaptopSupervisor" unique_id=146909080]
 material_override = ExtResource("3_dih32")
@@ -989,7 +996,7 @@ cast_shadow = 0
 mesh = SubResource("BoxMesh_kc6um")
 
 [node name="PhoneTech" type="Node3D" parent="Geometry/OperationsRoom" unique_id=283086910]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.8, 1.04, -2.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2, 1.64, -24.3)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/PhoneTech" unique_id=293191524]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0)
@@ -1008,7 +1015,7 @@ cast_shadow = 0
 mesh = SubResource("SphereMesh_6rysk")
 
 [node name="PhoneProfiler" type="Node3D" parent="Geometry/OperationsRoom" unique_id=28204930]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.2, 1.04, -2.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8, 1.64, -24.3)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/PhoneProfiler" unique_id=188539511]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0)
@@ -1027,7 +1034,7 @@ cast_shadow = 0
 mesh = SubResource("SphereMesh_tgi85")
 
 [node name="PhoneMedic" type="Node3D" parent="Geometry/OperationsRoom" unique_id=375900993]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -9.2, 1.04, 2.1)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 10.8, 1.64, -20.7)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/PhoneMedic" unique_id=1517350341]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0)
@@ -1040,7 +1047,7 @@ material_override = ExtResource("4_2gys5")
 mesh = SubResource("BoxMesh_tmop0")
 
 [node name="PhoneSupervisor" type="Node3D" parent="Geometry/OperationsRoom" unique_id=995122054]
-transform = Transform3D(0.9396926, 0, 0.34202012, 0, 1, 0, -0.34202012, 0, 0.9396926, -4.6, 1.04, -4.35)
+transform = Transform3D(0.9396926, 0, 0.34202012, 0, 1, 0, -0.34202012, 0, 0.9396926, 2.2, 1.64, -22.35)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/PhoneSupervisor" unique_id=1354632502]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0)
@@ -1053,7 +1060,7 @@ material_override = ExtResource("4_2gys5")
 mesh = SubResource("BoxMesh_xtqid")
 
 [node name="ChairTech" type="Node3D" parent="Geometry/OperationsRoom" unique_id=374640926]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.25, -1.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.85, -23.3)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/ChairTech" unique_id=2147027773]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
@@ -1078,7 +1085,7 @@ material_override = ExtResource("10_2mulj")
 mesh = SubResource("BoxMesh_p0vvf")
 
 [node name="ChairProfiler" type="Node3D" parent="Geometry/OperationsRoom" unique_id=1279532066]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.25, -1.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.85, -23.3)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/ChairProfiler" unique_id=1560543622]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
@@ -1103,7 +1110,7 @@ material_override = ExtResource("10_2mulj")
 mesh = SubResource("BoxMesh_u5w0f")
 
 [node name="ChairBreacher" type="Node3D" parent="Geometry/OperationsRoom" unique_id=2137678325]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -14, 0.25, 1.1)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 6, 0.85, -21.7)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/ChairBreacher" unique_id=1222083714]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
@@ -1128,7 +1135,7 @@ material_override = ExtResource("10_2mulj")
 mesh = SubResource("BoxMesh_i51ae")
 
 [node name="ChairMedic" type="Node3D" parent="Geometry/OperationsRoom" unique_id=685778724]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -10, 0.25, 1.1)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 10, 0.85, -21.7)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/ChairMedic" unique_id=341481969]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
@@ -1153,7 +1160,7 @@ material_override = ExtResource("10_2mulj")
 mesh = SubResource("BoxMesh_6o4tn")
 
 [node name="ChairSupervisor" type="Node3D" parent="Geometry/OperationsRoom" unique_id=1418133278]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0.25, -3.7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.85, -21.7)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/ChairSupervisor" unique_id=198621486]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
@@ -1178,7 +1185,7 @@ material_override = ExtResource("10_2mulj")
 mesh = SubResource("BoxMesh_j2vb8")
 
 [node name="SupervisorDesk" type="Node3D" parent="Geometry/OperationsRoom" unique_id=261245499]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0.25, -4.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.85, -22.5)
 
 [node name="Top" type="StaticBody3D" parent="Geometry/OperationsRoom/SupervisorDesk" unique_id=1376483796]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, 0)
@@ -1233,7 +1240,7 @@ material_override = ExtResource("5_004x1")
 mesh = SubResource("BoxMesh_0pua4")
 
 [node name="CabinetSupervisor1" type="StaticBody3D" parent="Geometry/OperationsRoom" unique_id=459668798]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 0.8, -5.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0.85, -23.2)
 
 [node name="Shape" type="CollisionShape3D" parent="Geometry/OperationsRoom/CabinetSupervisor1" unique_id=987315784]
 shape = SubResource("BoxShape3D_8wwmr")
@@ -1261,7 +1268,7 @@ cast_shadow = 0
 mesh = SubResource("BoxMesh_vwk6d")
 
 [node name="CabinetSupervisor2" type="StaticBody3D" parent="Geometry/OperationsRoom" unique_id=1686788005]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 0.8, -5.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0.85, -21.8)
 
 [node name="Shape" type="CollisionShape3D" parent="Geometry/OperationsRoom/CabinetSupervisor2" unique_id=1229991541]
 shape = SubResource("BoxShape3D_ssqht")
@@ -1289,7 +1296,7 @@ cast_shadow = 0
 mesh = SubResource("BoxMesh_btwlh")
 
 [node name="ServerRack1" type="StaticBody3D" parent="Geometry/OperationsRoom" unique_id=561412193]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -16.8, 1.3, -4.5)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.2, 1.9, -25.5)
 
 [node name="Shape" type="CollisionShape3D" parent="Geometry/OperationsRoom/ServerRack1" unique_id=627217552]
 shape = SubResource("BoxShape3D_bi7c2")
@@ -1341,7 +1348,7 @@ cast_shadow = 0
 mesh = SubResource("BoxMesh_gx5lb")
 
 [node name="ServerRack2" type="StaticBody3D" parent="Geometry/OperationsRoom" unique_id=197394560]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -16.8, 1.3, -3.2)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.2, 1.9, -24.2)
 
 [node name="Shape" type="CollisionShape3D" parent="Geometry/OperationsRoom/ServerRack2" unique_id=1085983225]
 shape = SubResource("BoxShape3D_s2ybh")
@@ -1395,7 +1402,7 @@ mesh = SubResource("BoxMesh_5miat")
 [node name="Lighting" type="Node3D" parent="Geometry/OperationsRoom" unique_id=855048439]
 
 [node name="SpotTech" type="Node3D" parent="Geometry/OperationsRoom/Lighting" unique_id=1898131919]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 3.15, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 3.8, -24.2)
 
 [node name="Frame" type="MeshInstance3D" parent="Geometry/OperationsRoom/Lighting/SpotTech" unique_id=2037867157]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.015, 0)
@@ -1430,7 +1437,7 @@ light_volumetric_fog_energy = 0.0
 omni_range = 3.3
 
 [node name="SpotProfiler" type="Node3D" parent="Geometry/OperationsRoom/Lighting" unique_id=1053944206]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3.15, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 3.8, -24.2)
 
 [node name="Frame" type="MeshInstance3D" parent="Geometry/OperationsRoom/Lighting/SpotProfiler" unique_id=869696768]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.015, 0)
@@ -1504,7 +1511,7 @@ light_volumetric_fog_energy = 0.0
 omni_range = 3.3
 
 [node name="SpotBreacher" type="Node3D" parent="Geometry/OperationsRoom/Lighting" unique_id=668002452]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 3.15, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 3.8, -20.8)
 
 [node name="Frame" type="MeshInstance3D" parent="Geometry/OperationsRoom/Lighting/SpotBreacher" unique_id=426631134]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.015, 0)
@@ -1539,7 +1546,7 @@ light_volumetric_fog_energy = 0.0
 omni_range = 3.3
 
 [node name="SpotMedic" type="Node3D" parent="Geometry/OperationsRoom/Lighting" unique_id=1940083076]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3.15, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 3.8, -20.8)
 
 [node name="Frame" type="MeshInstance3D" parent="Geometry/OperationsRoom/Lighting/SpotMedic" unique_id=88544076]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.015, 0)
@@ -1574,7 +1581,7 @@ light_volumetric_fog_energy = 0.0
 omni_range = 3.3
 
 [node name="SpotSupervisor" type="Node3D" parent="Geometry/OperationsRoom/Lighting" unique_id=2108536317]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 3.15, -4.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3.8, -22.5)
 
 [node name="Frame" type="MeshInstance3D" parent="Geometry/OperationsRoom/Lighting/SpotSupervisor" unique_id=1859420798]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.015, 0)
@@ -1615,7 +1622,7 @@ light_volumetric_fog_energy = 0.0
 omni_range = 3.025
 
 [node name="SupervisorLamp_Glow" type="OmniLight3D" parent="Geometry/OperationsRoom/Lighting" unique_id=1635543237]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1.38, -4.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 1.98, -22.4)
 light_color = Color(1, 0.82, 0.55, 1)
 light_energy = 1.8
 light_volumetric_fog_energy = 0.6
@@ -1624,7 +1631,7 @@ omni_range = 3.2
 omni_attenuation = 1.2
 
 [node name="ScreenGlowTech" type="OmniLight3D" parent="Geometry/OperationsRoom/Lighting" unique_id=1501484279]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 1.35, -1.9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.95, -24.1)
 light_color = Color(0.12, 0.5, 0.9, 1)
 light_energy = 0.6
 light_volumetric_fog_energy = 0.3
@@ -1632,7 +1639,7 @@ omni_range = 1.8
 omni_attenuation = 1.6
 
 [node name="ScreenGlowProfiler" type="OmniLight3D" parent="Geometry/OperationsRoom/Lighting" unique_id=569364384]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.35, -1.9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.95, -24.1)
 light_color = Color(0.95, 0.6, 0.15, 1)
 light_energy = 0.6
 light_volumetric_fog_energy = 0.3
@@ -1640,7 +1647,7 @@ omni_range = 1.8
 omni_attenuation = 1.6
 
 [node name="ScreenGlowBreacher" type="OmniLight3D" parent="Geometry/OperationsRoom/Lighting" unique_id=2008547189]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 1.35, 1.9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.95, -20.9)
 light_color = Color(0.15, 0.65, 0.95, 1)
 light_energy = 0.8
 light_volumetric_fog_energy = 0.3
@@ -1648,7 +1655,7 @@ omni_range = 1.8
 omni_attenuation = 1.6
 
 [node name="ScreenGlowMedic" type="OmniLight3D" parent="Geometry/OperationsRoom/Lighting" unique_id=819139282]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.35, 1.9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.95, -20.9)
 light_color = Color(0.2, 0.85, 0.6, 1)
 light_energy = 0.6
 light_volumetric_fog_energy = 0.3
@@ -1656,7 +1663,7 @@ omni_range = 1.8
 omni_attenuation = 1.6
 
 [node name="HallwaySconce1" type="Node3D" parent="Geometry/OperationsRoom/Lighting" unique_id=1909857594]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -17.8, 2.65, 0)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 16, 3.2, -26)
 
 [node name="Body" type="MeshInstance3D" parent="Geometry/OperationsRoom/Lighting/HallwaySconce1" unique_id=932751661]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0.05)
@@ -1679,7 +1686,7 @@ omni_range = 8.0
 omni_attenuation = 1.4
 
 [node name="HallwaySconce2" type="Node3D" parent="Geometry/OperationsRoom/Lighting" unique_id=143396009]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -17.8, 2.65, 6)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 16, 3.2, -22.5)
 
 [node name="Body" type="MeshInstance3D" parent="Geometry/OperationsRoom/Lighting/HallwaySconce2" unique_id=365329340]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0.05)
@@ -1702,7 +1709,7 @@ omni_range = 8.0
 omni_attenuation = 1.4
 
 [node name="HallwaySconce3" type="Node3D" parent="Geometry/OperationsRoom/Lighting" unique_id=746482621]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -17.8, 2.65, 12)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 16, 3.2, -19)
 
 [node name="Body" type="MeshInstance3D" parent="Geometry/OperationsRoom/Lighting/HallwaySconce3" unique_id=1592359862]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0.05)
@@ -1725,7 +1732,7 @@ omni_range = 8.0
 omni_attenuation = 1.4
 
 [node name="SupervisorLamp" type="Node3D" parent="Geometry/OperationsRoom" unique_id=2018243241]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1.04, -4.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 1.64, -22.4)
 
 [node name="Base" type="MeshInstance3D" parent="Geometry/OperationsRoom/SupervisorLamp" unique_id=160897106]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.012, 0)
@@ -1745,6 +1752,19 @@ material_override = ExtResource("3_dih32")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_qbpjj")
 
+
+[node name="OperationsRoomFloor" type="StaticBody3D" parent="Geometry/OperationsRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.65, -22.5)
+
+[node name="FloorShape" type="CollisionShape3D" parent="Geometry/OperationsRoom/OperationsRoomFloor"]
+shape = SubResource("BoxShape3D_briefing_floor")
+
+[node name="WingSafetyFloor" type="StaticBody3D" parent="Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.6, -18)
+
+[node name="WingSafetyShape" type="CollisionShape3D" parent="Geometry/WingSafetyFloor"]
+shape = SubResource("BoxShape3D_wing_safety")
+
 [node name="SecurityCorridor" type="Node3D" parent="Geometry" unique_id=1311352850]
 
 [node name="Armory" type="Node3D" parent="Geometry" unique_id=785728201]
@@ -1752,6 +1772,10 @@ mesh = SubResource("BoxMesh_qbpjj")
 [node name="ParkingLot" type="Node3D" parent="Geometry" unique_id=367314458]
 
 [node name="00 | COMPLETE BUILDING - Exterior" parent="Geometry" unique_id=101245122 instance=ExtResource("15_dih32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21841288, 0.81708956, 0.06298447)
+script = ExtResource("station_map_script")
+
+[node name="StationGrass" parent="Geometry" unique_id=402694544 instance=ExtResource("3_grass")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21841288, 0.81708956, 0.06298447)
 
 [node name="Doors" type="Node3D" parent="." unique_id=2130240825]
@@ -1769,28 +1793,25 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 10)
 visible = false
 
 [node name="DispatchSetup" parent="." unique_id=358313605 instance=ExtResource("16_opcu1")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.352451, 0.25, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.85, -26.8)
 
 [node name="Players" type="Node3D" parent="." unique_id=133976686]
 
 [node name="SpawnPoints" type="Node3D" parent="." unique_id=1020473453]
 
 [node name="Spawn1_Tech" type="Marker3D" parent="SpawnPoints" unique_id=635336782]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.35, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.95, -23)
 
 [node name="Spawn2_Profiler" type="Marker3D" parent="SpawnPoints" unique_id=887665076]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.35, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.95, -23)
 
 [node name="Spawn3_Breacher" type="Marker3D" parent="SpawnPoints" unique_id=862468492]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -14, 0.35, 1)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 6, 0.95, -22)
 
 [node name="Spawn4_Medic" type="Marker3D" parent="SpawnPoints" unique_id=1792475722]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -10, 0.35, 1)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 10, 0.95, -22)
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="." unique_id=880338878 node_paths=PackedStringArray("spawn_points")]
 spawn_path = NodePath("../Players")
 script = ExtResource("17_cfby5")
 spawn_points = NodePath("../SpawnPoints")
-
-[node name="StationGrass" parent="Geometry" instance=ExtResource("3_grass")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21841288, 0.81708956, 0.06298447)

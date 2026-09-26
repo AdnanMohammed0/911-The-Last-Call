@@ -346,6 +346,21 @@
    ],
    "commit": "ad0f1f0",
    "auto": true
+  },
+  {
+   "date": "2026-09-27",
+   "tasks": [],
+   "summary": "fix(dispatch): reposition spawn points inside briefing room with solid floor collisions",
+   "files": [
+    "autoload/telemetry_manager.gd",
+    "core/net/player_spawner.gd",
+    "scenes/dispatch/operations_room.tscn",
+    "scenes/shared/player/player_sandbox.tscn",
+    "tests/test_station4_greybox.gd",
+    "tools/level_kit/build_station4.gd"
+   ],
+   "commit": "b1e9919",
+   "auto": true
   }
  ]
 }

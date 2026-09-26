@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dt4k3xpjidxkt"
-path.s3tc="res://.godot/imported/Grass Vegitation mix_1.png-415de4bf047d91ea2827a7b54a22b41a.s3tc.ctex"
+uid="uid://bafg26ca4rj8r"
+path.s3tc="res://.godot/imported/map_v13_Paving 23_Normal.jpg-6790c91d7038768058c511e791de0546.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "28ce7cc887bfe30f60f2795d510d2243"
+"md5": "bb655976be7969c59ac44385a1c0148b"
 }
 
 [deps]
 
-source_file="res://assets/3D/grass/Grass Vegitation mix_1.png"
-dest_files=["res://.godot/imported/Grass Vegitation mix_1.png-415de4bf047d91ea2827a7b54a22b41a.s3tc.ctex"]
+source_file="res://assets/3D/station/map_v13_Paving 23_Normal.jpg"
+dest_files=["res://.godot/imported/map_v13_Paving 23_Normal.jpg-6790c91d7038768058c511e791de0546.s3tc.ctex"]
 
 [params]
 
@@ -25,12 +25,12 @@ compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=0
+compress/normal_map=1
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
-roughness/mode=0
-roughness/src_normal=""
+roughness/mode=1
+roughness/src_normal="res://assets/3D/station/map_v13_Paving 23_Normal.jpg"
 process/channel_remap/red=0
 process/channel_remap/green=1
 process/channel_remap/blue=2

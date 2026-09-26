@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgis0watvp3qp"
-path.s3tc="res://.godot/imported/Grass Vegitation mix_0.png-dd2428d9e5f3b0b889219ad3d20c729f.s3tc.ctex"
+uid="uid://bi8yq0fama440"
+path.s3tc="res://.godot/imported/map_v13_grass with leafes diffuse.jpg-53b3b56cd55015595959663eccce9ffe.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "264af0b086e2b568b4e14599ce804511"
+"md5": "6b37589573d68dfd7590e067b39fa06c"
 }
 
 [deps]
 
-source_file="res://assets/3D/grass/Grass Vegitation mix_0.png"
-dest_files=["res://.godot/imported/Grass Vegitation mix_0.png-dd2428d9e5f3b0b889219ad3d20c729f.s3tc.ctex"]
+source_file="res://assets/3D/station/map_v13_grass with leafes diffuse.jpg"
+dest_files=["res://.godot/imported/map_v13_grass with leafes diffuse.jpg-53b3b56cd55015595959663eccce9ffe.s3tc.ctex"]
 
 [params]
 

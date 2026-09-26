@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://tln4aa2ew3ex"
-path.s3tc="res://.godot/imported/Grass Vegitation mix_3.png-ee6409a9d9f2ce5cd2d8ebe83fd71a0d.s3tc.ctex"
+uid="uid://bdxvg55w54ibp"
+path.s3tc="res://.godot/imported/map_v13_grass with leafes rough.png-58e864c58d1d3cc6ec93ceea6c89ef98.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "7bf47cf3a03e1b56582342d5046b6ab8"
+"md5": "16792043b3f91e7c87a423c9a3589f11"
 }
 
 [deps]
 
-source_file="res://assets/3D/grass/Grass Vegitation mix_3.png"
-dest_files=["res://.godot/imported/Grass Vegitation mix_3.png-ee6409a9d9f2ce5cd2d8ebe83fd71a0d.s3tc.ctex"]
+source_file="res://assets/3D/station/map_v13_grass with leafes rough.png"
+dest_files=["res://.godot/imported/map_v13_grass with leafes rough.png-58e864c58d1d3cc6ec93ceea6c89ef98.s3tc.ctex"]
 
 [params]
 

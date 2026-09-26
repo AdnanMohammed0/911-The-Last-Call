@@ -6,8 +6,8 @@
 [ext_resource type="Script" uid="uid://cpbik534difst" path="res://scenes/shared/interactables/interactable_pickup.gd" id="4_pickup"]
 [ext_resource type="PackedScene" uid="uid://c6fdoor842p1" path="res://scenes/shared/door/door.tscn" id="5_door"]
 [ext_resource type="Script" uid="uid://66mx1stmddxh" path="res://scenes/shared/interactables/interactable_scene_door.gd" id="6_scenedoor"]
-[ext_resource type="PackedScene" uid="uid://cbbqnhxevk457" path="res://assets/3D/grass/Grass Vegitation mix.fbx" id="7_vxuur"]
-[ext_resource type="PackedScene" path="res://assets/3D/station/map_v12.glb" id="8_vxuur"]
+[ext_resource type="PackedScene" path="res://scenes/dispatch/station_grass.tscn" id="7_grass"]
+[ext_resource type="PackedScene" path="res://assets/3D/station/map_v13.glb" id="8_vxuur"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 
@@ -216,8 +216,7 @@ offset_right = 620.0
 offset_bottom = 140.0
 script = ExtResource("2_hud")
 
-[node name="Grass Vegitation mix" parent="." unique_id=503554642 instance=ExtResource("7_vxuur")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.18273, 0.34496093, -37.500328)
+[node name="StationGrass" parent="." unique_id=503554642 instance=ExtResource("7_grass")]
 
 [node name="00 | COMPLETE BUILDING - Exterior" parent="." unique_id=1199464313 instance=ExtResource("8_vxuur")]
 transform = Transform3D(-0.9998732, 0, -0.015927076, 0, 1, 0, 0.015927076, 0, -0.9998732, 38.78409, 0.6589366, -73.730385)

@@ -5,7 +5,7 @@ func _init() -> void:
 	var total_tests: int = 0
 	var passed_tests: int = 0
 	
-	# Test 1: Load perimeter_fence.tscn
+	# Test 1: Load standalone perimeter_fence.tscn
 	print("Test: Load perimeter_fence.tscn")
 	var scene: PackedScene = load("res://scenes/dispatch/perimeter_fence.tscn") as PackedScene
 	total_tests += 1
@@ -39,33 +39,10 @@ func _init() -> void:
 		else:
 			print("  [FAIL] %s missing or invalid shape" % w_name)
 	
-	# Test 3: Visual fence segments
-	print("Test: Verify 84 visual fence segment instances")
-	var fences: Node3D = fence_inst.get_node_or_null("Fences") as Node3D
-	total_tests += 1
-	if fences != null and fences.get_child_count() == 84:
-		print("  [PASS] 84 fence segments instantiated around perimeter")
-		passed_tests += 1
-	else:
-		var count: int = fences.get_child_count() if fences else 0
-		print("  [FAIL] Expected 84 fence segments, got %d" % count)
-	
-	# Verify segments for all 4 sides exist
-	var has_north: bool = fences.has_node("Fence_N_00") and fences.has_node("Fence_N_22")
-	var has_south: bool = fences.has_node("Fence_S_00") and fences.has_node("Fence_S_22")
-	var has_west: bool = fences.has_node("Fence_W_00") and fences.has_node("Fence_W_18")
-	var has_east: bool = fences.has_node("Fence_E_00") and fences.has_node("Fence_E_18")
-	total_tests += 1
-	if has_north and has_south and has_west and has_east:
-		print("  [PASS] All cardinal directions (North, South, West, East) have full segment chains")
-		passed_tests += 1
-	else:
-		print("  [FAIL] Missing directional fence segments")
-	
 	fence_inst.queue_free()
 	
-	# Test 4: Operations room integration
-	print("Test: Operations room scene integration")
+	# Test 3: Operations room scene integration with duplicated fence meshes
+	print("Test: Operations room scene contains duplicated fence mesh instances")
 	var op_scene: PackedScene = load("res://scenes/dispatch/operations_room.tscn") as PackedScene
 	total_tests += 1
 	if op_scene != null:
@@ -75,6 +52,33 @@ func _init() -> void:
 		if pf != null:
 			print("  [PASS] PerimeterFence is properly instantiated in operations_room.tscn")
 			passed_tests += 1
+			
+			total_tests += 1
+			var op_colliders: Node = pf.get_node_or_null("Colliders")
+			if op_colliders != null and op_colliders.get_child_count() == 4:
+				print("  [PASS] 4 perimeter wall colliders active in operations_room.tscn")
+				passed_tests += 1
+			else:
+				print("  [FAIL] Missing wall colliders in operations_room.tscn")
+			
+			total_tests += 1
+			var fence_nodes: Array[Node] = []
+			for child: Node in pf.get_children():
+				if child.name.begins_with("Fence_"):
+					fence_nodes.append(child)
+			if fence_nodes.size() == 84:
+				print("  [PASS] Exactly 84 duplicated concrete fence meshes found in operations_room.tscn")
+				passed_tests += 1
+			else:
+				print("  [FAIL] Expected 84 duplicated fence meshes, found %d" % fence_nodes.size())
+			
+			total_tests += 1
+			var first_fence: Node = pf.get_node_or_null("Fence_N_00")
+			if first_fence != null and first_fence.get_child_count() > 0:
+				print("  [PASS] Duplicated fence mesh model loaded with visual child: %s" % first_fence.get_child(0).name)
+				passed_tests += 1
+			else:
+				print("  [FAIL] Fence_N_00 has no visual mesh children")
 		else:
 			print("  [FAIL] PerimeterFence node not found in operations_room.tscn")
 		op_inst.queue_free()

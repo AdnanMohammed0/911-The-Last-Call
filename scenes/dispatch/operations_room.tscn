@@ -21,6 +21,7 @@
 [ext_resource type="Script" path="res://scenes/dispatch/station/station_furniture.gd" id="21_rgo0w"]
 [ext_resource type="PackedScene" path="res://assets/3D/fence/old_fence.glb" id="25_4dowj"]
 [ext_resource type="PackedScene" uid="uid://ddoor_station_mesh_double" path="res://scenes/shared/door/door_double.tscn" id="32_door_double"]
+[ext_resource type="PackedScene" path="res://scenes/dispatch/perimeter_fence.tscn" id="33_fence_perimeter"]
 [ext_resource type="Script" path="res://scenes/dispatch/station_map.gd" id="station_map_script"]
 [ext_resource type="PackedScene" uid="uid://dihsymuo4dgwm" path="res://assets/3D/growd_papers/ground_paper_3.glb" id="p19_6q21n"]
 [ext_resource type="PackedScene" uid="uid://y413gx8lk5g" path="res://assets/3D/fence/metalfence.fbx" id="p20_opcu1"]
@@ -1038,6 +1039,9 @@ transform = Transform3D(-0.009361889, 0, -0.9999562, 0, 1, 0, 0.9999562, 0, -0.0
 
 [node name="Door_Lobby4" parent="Doors" unique_id=609298140 instance=ExtResource("32_door_double")]
 transform = Transform3D(0.0032300167, 0, 0.9999949, 0, 1, 0, -0.9999949, 0, 0.0032300167, 22.283949, 0.8019356, -18.039415)
+
+[node name="PerimeterFence" parent="." unique_id=1849204812 instance=ExtResource("33_fence_perimeter")]
+
 [node name="Players" type="Node3D" parent="." unique_id=133976686]
 
 [node name="SpawnPoints" type="Node3D" parent="." unique_id=1020473453]

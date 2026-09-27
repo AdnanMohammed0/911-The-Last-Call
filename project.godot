@@ -43,6 +43,7 @@ GameSettings="*res://autoload/game_settings.gd"
 AudioDirector="*res://autoload/audio_server.gd"
 TelemetryService="*res://autoload/telemetry_manager.gd"
 CrashService="*res://autoload/crash_reporter.gd"
+Economy="*res://autoload/economy.gd"
 
 [debug]
 

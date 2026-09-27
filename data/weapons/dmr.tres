@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://data/weapons/weapon_data.gd" id="1_dmr"]
+
+[resource]
+script = ExtResource("1_dmr")
+id = &"dmr"
+display_name = "Marksman Rifle"
+damage = 72.0
+max_range = 200.0
+falloff_start = 70.0
+falloff_min_ratio = 0.8
+fire_interval = 0.32
+magazine_size = 10
+max_reserve = 50
+reload_seconds = 2.7
+hip_spread = 3.2
+aim_spread = 0.08
+move_spread = 2.6
+aim_fov = 30.0
+recoil_pattern = PackedVector2Array(2.6, 0.3, 2.4, -0.4)
+recoil_recovery = 9.0
+cost = 800
+allowed_classes = Array[StringName]([&"profiler", &"breacher"])
+noise_radius = 80.0
+body_length = 0.72
+barrel_length = 0.36
+body_color = Color(0.2, 0.18, 0.13, 1)

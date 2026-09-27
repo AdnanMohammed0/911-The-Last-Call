@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://data/weapons/weapon_data.gd" id="1_rev"]
+
+[resource]
+script = ExtResource("1_rev")
+id = &"revolver"
+display_name = ".357 Revolver"
+slot = 1
+damage = 58.0
+max_range = 70.0
+falloff_start = 18.0
+falloff_min_ratio = 0.55
+fire_interval = 0.45
+magazine_size = 6
+max_reserve = 36
+reload_seconds = 2.8
+hip_spread = 1.8
+aim_spread = 0.2
+move_spread = 1.6
+aim_fov = 58.0
+recoil_pattern = PackedVector2Array(3.4, 0.4, 3.1, -0.5)
+recoil_recovery = 10.0
+cost = 250
+noise_radius = 65.0
+body_length = 0.26
+barrel_length = 0.12
+body_color = Color(0.32, 0.33, 0.35, 1)

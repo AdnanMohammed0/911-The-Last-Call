@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://data/weapons/weapon_data.gd" id="1_asg"]
+
+[resource]
+script = ExtResource("1_asg")
+id = &"auto_shotgun"
+display_name = "Auto Shotgun"
+damage = 13.0
+pellets = 8
+max_range = 35.0
+falloff_start = 7.0
+falloff_min_ratio = 0.2
+fire_interval = 0.28
+automatic = true
+magazine_size = 10
+max_reserve = 40
+reload_seconds = 3.0
+hip_spread = 6.0
+aim_spread = 4.2
+move_spread = 1.2
+aim_fov = 64.0
+recoil_pattern = PackedVector2Array(3.8, 0.5, 3.4, -0.7)
+recoil_recovery = 10.0
+cost = 900
+allowed_classes = Array[StringName]([&"breacher"])
+noise_radius = 75.0
+body_length = 0.64
+barrel_length = 0.3
+body_color = Color(0.1, 0.1, 0.1, 1)

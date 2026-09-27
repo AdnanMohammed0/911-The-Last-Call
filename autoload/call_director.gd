@@ -290,7 +290,7 @@ func _answer_call() -> void:
 	if GameState != null and GameState.public_trust < LOW_TRUST_THRESHOLD:
 		trust_multiplier = LOW_TRUST_PENALTY_MULT
 	
-	var initial_patience: float = base_patience * trust_multiplier
+	var initial_patience: float = base_patience * trust_multiplier * Economy.patience_multiplier()
 	
 	# Setup VSA profile
 	if active_call.stress_profile != null:

@@ -12,6 +12,8 @@ const ARMOR_AMOUNT: float = 100.0
 @export var kind: Kind = Kind.WEAPON
 @export var weapon_id: StringName = &"rifle"
 @export var build_display: bool = true
+## Armor points an ARMOR locker hands out (Kevlar vest 50, plate carrier 100).
+@export var armor_amount: float = ARMOR_AMOUNT
 
 
 func _ready() -> void:
@@ -34,7 +36,7 @@ func get_prompt_text() -> String:
 		Kind.ARMOR:
 			if my_rank < Career.ARMOR_RANK:
 				return "Ballistic vest — requires %s" % Career.rank_name(Career.ARMOR_RANK)
-			return "Put on ballistic vest"
+			return "Put on ballistic vest (%d armor)" % roundi(armor_amount)
 		Kind.AMMO:
 			return "Refill ammunition"
 	var data: WeaponData = WeaponCatalog.get_data(weapon_id)
@@ -71,7 +73,7 @@ func _on_interact(peer_id: int) -> void:
 			var data: WeaponData = WeaponCatalog.get_data(weapon_id)
 			player.get_weapons().set_weapon(data.slot, weapon_id)
 		Kind.ARMOR:
-			player.get_health().give_armor(ARMOR_AMOUNT)
+			player.get_health().give_armor(maxf(armor_amount - player.get_health().armor, 0.0))
 		Kind.AMMO:
 			player.get_weapons().refill_ammo()
 

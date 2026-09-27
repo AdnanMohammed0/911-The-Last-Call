@@ -47,27 +47,49 @@ func test_operations_room_scene_loads_and_instantiates() -> void:
 	var wing_floor: StaticBody3D = instance.get_node_or_null("Geometry/WingSafetyFloor") as StaticBody3D
 	assert_not_null(wing_floor, "Station wing safety floor collider should exist")
 
-	# Verify offices, laptops, phones, and dramatic lights
-	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/DeskTech"), "DeskTech should exist")
-	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/DeskProfiler"), "DeskProfiler should exist")
-	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/DeskBreacher"), "DeskBreacher should exist")
-	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/DeskMedic"), "DeskMedic should exist")
+	# One main dispatch desk with the single main computer (the other desks are bought as workstations)
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/MainDesk"), "MainDesk should exist")
+	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/MainPhone"), "MainPhone should exist")
 	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/SupervisorDesk"), "SupervisorDesk should exist")
-	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/LaptopTech"), "LaptopTech should exist")
-	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/LaptopSupervisor"), "LaptopSupervisor should exist")
-	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/PhoneTech"), "PhoneTech should exist")
-	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/PhoneSupervisor"), "PhoneSupervisor should exist")
 	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/Lighting"), "Dramatic Lighting should exist")
+	for removed: String in ["DeskProfiler", "DeskBreacher", "DeskMedic", "LaptopTech", "LaptopSupervisor"]:
+		assert_null(instance.get_node_or_null("Geometry/OperationsRoom/" + removed), "%s was replaced by StationMart workstations" % removed)
+	var computers: int = 0
+	for node: Node in instance.find_children("*", "Area3D", true, false):
+		if node is DispatchComputer:
+			computers += 1
+	assert_eq(computers, 1, "exactly one computer before any workstation is bought")
+	assert_not_null(instance.get_node_or_null("DispatchSetup/MainComputer") as DispatchComputer, "the single main computer")
+	assert_not_null(instance.get_node_or_null("DispatchSetup/TerminalLayer/StationOS") as StationOS, "Station OS desktop")
+	assert_not_null(instance.get_node_or_null("DispatchSetup/TerminalLayer/DispatchTerminal") as DispatchTerminal, "911 CAD app")
+	assert_not_null(instance.get_node_or_null("StationFurniture") as StationFurniture, "armory, garage and bought furniture")
 
-	# Verify 3 interactive networked doors
-	var d1: Door = instance.get_node_or_null("Doors/Door_OpsToCorridor") as Door
-	var d2: Door = instance.get_node_or_null("Doors/Door_CorridorToArmory") as Door
-	var d3: Door = instance.get_node_or_null("Doors/Door_CorridorToParking") as Door
-	assert_not_null(d1, "Door from Ops to Corridor should exist")
-	assert_not_null(d2, "Door from Corridor to Armory should exist")
-	assert_not_null(d3, "Door from Corridor to Parking should exist")
-	if d2 != null:
-		assert_false(d2.is_locked, "Armory door should be unlocked for open station movement")
+
+func test_station_layout_builds_armory_and_garage() -> void:
+	Economy.persist = false
+	Economy.reset()
+	var instance: Node = (load(OPS_ROOM_PATH) as PackedScene).instantiate()
+	add_child_autofree(instance)
+	await wait_frames(2)
+	var furniture: StationFurniture = instance.get_node("StationFurniture") as StationFurniture
+	assert_not_null(furniture.get_node_or_null("Fixtures/Garage/DeployPoint/DeployDoor") as DeployDoor, "deploy point at the garage shutter")
+	var pistol: Node3D = furniture.item_node(&"rack_pistol")
+	assert_not_null(pistol, "starter pistol rack")
+	assert_not_null(furniture.item_node(&"ammo_crate"), "starter ammo crate")
+	assert_not_null(furniture.item_node(&"kevlar_vest"), "starter vest locker")
+	assert_null(furniture.item_node(&"rack_rifle"), "rifle rack must be bought first")
+	assert_true((furniture.get_node("LockedRacks/rack_rifle") as Node3D).visible, "locked rifle slot shows its price")
+	# Buying items makes them appear.
+	Economy.money = 100000
+	assert_eq(Economy.host_purchase(&"rack_rifle"), "")
+	assert_eq(Economy.host_purchase(&"workstation"), "")
+	assert_not_null(furniture.item_node(&"rack_rifle"))
+	assert_false((furniture.get_node("LockedRacks/rack_rifle") as Node3D).visible)
+	var station: Node3D = furniture.item_node(&"workstation", 0)
+	assert_not_null(station.get_node_or_null("Computer") as DispatchComputer, "bought workstation has a computer")
+	Economy.reset()
+	await wait_frames(1)
+	assert_null(furniture.item_node(&"workstation", 0), "reset removes bought furniture")
 
 
 func test_armory_loadout_scene_loads_and_instantiates() -> void:

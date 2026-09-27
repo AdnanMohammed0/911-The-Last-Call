@@ -1,6 +1,6 @@
 {
   "member": "adnan",
-  "updated_at": "2026-09-18",
+  "updated_at": "2026-09-27",
   "tasks": {
     "P1-01": {
       "status": "done",
@@ -866,6 +866,23 @@
         "data/calls/call_validator.gd",
         "scenes/dispatch/dispatch_setup.gd",
         "project.godot"
+      ]
+    },
+    {
+      "date": "2026-09-27",
+      "tasks": [],
+      "summary": "ترتيب Station 4: حذف الحاسبات الإضافية والإكسسوارات العشوائية (نباتات، أوراق، أسوار تسد المدخل)، حاسبة رئيسية وحدة بـ Station OS (taskbar + تطبيقات 911 CAD / StationMart / Bank / My Station / CCTV / Inbox). نظام فلوس (Economy autoload): راتب كل 4 دقايق حسب الاتصالات، التصنيف الصحيح يدفع أكثر، الغلط والفايت ينخصم، ومكافأة المهمات. StationMart بيه 42 غرض (حاسبات، حماية، أسلحة، دروع، طبي، استراحة، سيارات، ترقيات) تطلع بالمحطة فوراً. الـ Armory (رفوف أسلحة + دروع + ذخيرة) والكراج (نقطة Deploy + سيارات) رجعوا للخريطة بعد ما انحذفوا. 4 أسلحة جديدة. اختبارات test_economy + تحديث test_station4_greybox؛ 306 اختبار، كلها ناجحة عدا ملفين قدام ما يترجمون (test_call_director / test_global_meters).",
+      "files": [
+        "autoload/economy.gd",
+        "data/shop/shop_catalog.gd",
+        "ui/station_os/station_os.gd",
+        "scenes/dispatch/station/station_furniture.gd",
+        "scenes/shared/interactables/station_appliance.gd",
+        "scenes/dispatch/dispatch_setup.tscn",
+        "scenes/dispatch/operations_room.tscn",
+        "data/weapons/",
+        "tests/test_economy.gd",
+        "docs/design/STATION_ECONOMY.md"
       ]
     }
   ]

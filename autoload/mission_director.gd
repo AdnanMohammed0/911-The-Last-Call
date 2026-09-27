@@ -177,6 +177,7 @@ func extract() -> bool:
 	var trust: int = report["trust"]
 	_change_trust(trust)
 	GameState.station_budget += maxi(xp, 0) * 4
+	Economy.add_mission_pay(xp)
 	Career.award_team(xp, "Mission report", "missions")
 	var lines: PackedStringArray = report["lines"]
 	lines.append("%+d XP  ·  Public trust %+d" % [xp, trust])

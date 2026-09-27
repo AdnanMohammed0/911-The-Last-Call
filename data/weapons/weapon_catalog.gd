@@ -8,6 +8,10 @@ const WEAPON_PATHS: Dictionary[StringName, String] = {
 	&"smg": "res://data/weapons/smg.tres",
 	&"shotgun": "res://data/weapons/shotgun.tres",
 	&"rifle": "res://data/weapons/rifle.tres",
+	&"revolver": "res://data/weapons/revolver.tres",
+	&"pdw": "res://data/weapons/pdw.tres",
+	&"dmr": "res://data/weapons/dmr.tres",
+	&"auto_shotgun": "res://data/weapons/auto_shotgun.tres",
 }
 
 

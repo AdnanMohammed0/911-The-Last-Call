@@ -1,7 +1,7 @@
 ## Dispatch CAD terminal (the "computer" in the operations room): live view of the CallDirector for the
 ## local player: call status, caller ID, patience, transcript, reply choices (handset holder), police
 ## records, trace mini-game (Tech Operator), and the verdict / team vote after the call.
-## Opened by DispatchComputer / DispatchPhone interactables; Esc closes it.
+## Opened from the "911 CAD" app of Station OS (main computer) or the DispatchPhone; Esc closes it.
 ## Authority: LOCAL (UI) — every action is a request the host validates in CallDirector / VoteManager.
 class_name DispatchTerminal
 extends Control
@@ -17,6 +17,8 @@ const STATE_NAMES: Array[String] = ["IDLE", "RINGING", "CONNECTED", "ASSESSMENT"
 
 ## Emitted when a player asks for a test call from this terminal (DispatchSetup forwards it to the host).
 signal test_call_requested()
+## Emitted when the terminal closes (Station OS reopens its desktop).
+signal closed()
 
 var _status: Label
 var _clock: Label
@@ -92,6 +94,7 @@ func close() -> void:
 	_closed_player_input = null
 	if DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	closed.emit()
 
 
 func _unhandled_input(event: InputEvent) -> void:

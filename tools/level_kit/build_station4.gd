@@ -1,10 +1,10 @@
 ## Builds res://scenes/dispatch/operations_room.tscn — Blackvale County 911, Station 4:
 ## Features the full authentic 3D police station map (res://assets/3D/station/map_v13.glb / station_map.tscn)
 ## with all old greybox map geometry removed.
-## Includes offices (4 operator workstations + supervisor office), laptops, monitors, 911 phones,
-## swivel office chairs, server racks, and dramatic cinematic lighting with volumetric fog.
-## Keeps the node contract other systems rely on (Geometry/*, SpawnPoints/Spawn*_<Class>, Doors/*,
-## DispatchSetup, Players, PlayerSpawner). Run through tools/level_kit/build_levels.tscn.
+## Includes the main dispatch desk (one main computer), supervisor office, server racks and dramatic
+## lighting; the armory, garage and bought furniture come from StationFurniture at runtime.
+## Keeps the node contract other systems rely on (Geometry/*, SpawnPoints/Spawn*_<Class>,
+## DispatchSetup, StationFurniture, Players, PlayerSpawner). Run through tools/level_kit/build_levels.tscn.
 ## Authority: TOOLS
 class_name BuildStation4
 extends RefCounted
@@ -35,18 +35,11 @@ static func build() -> Error:
 	# Offices: Workstations, laptops, phones, chairs, and dramatic lighting inside Briefing Room
 	_offices(kit, ops_room)
 
-	# Interactive networked doors (hidden to avoid floating clutter in the 3D model)
-	var doors: Node3D = kit.group(root, "Doors")
-	var door_scene: String = "res://scenes/shared/door/door.tscn"
-	var d1: Node = kit.instance(door_scene, doors, "Door_OpsToCorridor", Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(16, FLOOR_Y, -22.5)))
-	var d2: Node = kit.instance(door_scene, doors, "Door_CorridorToArmory", Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(22, FLOOR_Y, -15.0)))
-	var d3: Node = kit.instance(door_scene, doors, "Door_CorridorToParking", Transform3D(Basis.IDENTITY, Vector3(38, FLOOR_Y, -14.0)))
-	(d1 as Node3D).visible = false
-	(d2 as Node3D).visible = false
-	(d3 as Node3D).visible = false
-
-	# Computers, Phone, CAD terminals, Shift Clock
-	kit.instance("res://scenes/dispatch/dispatch_setup.tscn", root, "DispatchSetup", Transform3D(Basis.IDENTITY, Vector3(8.0, FLOOR_Y, -26.8)))
+	# Main computer (Station OS), 911 phone, CAD terminal, shift clock — children use world coordinates
+	kit.instance("res://scenes/dispatch/dispatch_setup.tscn", root, "DispatchSetup", Transform3D.IDENTITY)
+	# Armory racks, garage deploy point, vehicles and everything bought in StationMart
+	var furniture: StationFurniture = StationFurniture.new()
+	kit.own(furniture, root, "StationFurniture")
 
 	# Players and Spawns: securely placed on the floor (Y = FLOOR_Y + 0.1) in front of desks
 	kit.group(root, "Players")
@@ -69,35 +62,15 @@ static func build() -> Error:
 
 
 static func _offices(kit: LevelKit, room: Node3D) -> void:
-	# --- 1. Operator Desks (Tech, Profiler, Breacher, Medic) ---
-	kit.desk(room, "DeskTech", Vector3(6.0, FLOOR_Y, -24.2), 0.0, 2)
-	kit.desk(room, "DeskProfiler", Vector3(10.0, FLOOR_Y, -24.2), 0.0, 2, "screen_amber")
-	kit.desk(room, "DeskBreacher", Vector3(6.0, FLOOR_Y, -20.8), 180.0, 1)
-	kit.desk(room, "DeskMedic", Vector3(10.0, FLOOR_Y, -20.8), 180.0, 2)
-	kit.box(room, "DeskBreacher_TacMap", Vector3(6.0, FLOOR_Y + 0.8, -20.8), Vector3(1.6, 0.02, 0.9), kit.material("screen_blue"), 0.0, false)
-
-	# --- 2. Laptops on Desks ---
-	_laptop(kit, room, "LaptopTech", Vector3(6.6, FLOOR_Y + 0.79, -24.05), 15.0, "screen_blue")
-	_laptop(kit, room, "LaptopProfiler", Vector3(9.2, FLOOR_Y + 0.79, -24.05), -15.0, "screen_amber")
-	_laptop(kit, room, "LaptopBreacher", Vector3(6.8, FLOOR_Y + 0.79, -20.95), 165.0, "screen_blue")
-	_laptop(kit, room, "LaptopMedic", Vector3(9.2, FLOOR_Y + 0.79, -20.95), 195.0, "screen_blue")
-	_laptop(kit, room, "LaptopSupervisor", Vector3(3.0, FLOOR_Y + 0.79, -22.35), 0.0, "screen_blue")
-
-	# --- 3. 911 Hotline and Desk Phones ---
-	_desk_phone(kit, room, "PhoneTech", Vector3(7.2, FLOOR_Y + 0.79, -24.3), 0.0, true)
-	_desk_phone(kit, room, "PhoneProfiler", Vector3(10.8, FLOOR_Y + 0.79, -24.3), 0.0, true)
-	_desk_phone(kit, room, "PhoneMedic", Vector3(10.8, FLOOR_Y + 0.79, -20.7), 180.0, false)
-	_desk_phone(kit, room, "PhoneSupervisor", Vector3(2.2, FLOOR_Y + 0.79, -22.35), 20.0, false)
-
-	# --- 4. Swivel Office Chairs ---
-	_chair(kit, room, "ChairTech", Vector3(6.0, FLOOR_Y, -23.3), 0.0)
-	_chair(kit, room, "ChairProfiler", Vector3(10.0, FLOOR_Y, -23.3), 0.0)
-	_chair(kit, room, "ChairBreacher", Vector3(6.0, FLOOR_Y, -21.7), 180.0)
-	_chair(kit, room, "ChairMedic", Vector3(10.0, FLOOR_Y, -21.7), 180.0)
+	# --- 1. Main dispatch desk (the single main computer lives in DispatchSetup; extra workstations are
+	# bought in StationMart and spawned by StationFurniture on the old operator desk spots) ---
+	kit.desk(room, "MainDesk", Vector3(6.0, FLOOR_Y, -24.2), 0.0, 2)
+	_desk_phone(kit, room, "MainPhone", Vector3(7.2, FLOOR_Y + 0.79, -24.3), 0.0, true)
+	_chair(kit, room, "MainChair", Vector3(6.0, FLOOR_Y, -23.3), 0.0)
 	_chair(kit, room, "ChairSupervisor", Vector3(3.0, FLOOR_Y, -21.7), 0.0)
 
 	# --- 5. Supervisor Executive Office ---
-	kit.desk(room, "SupervisorDesk", Vector3(3.0, FLOOR_Y, -22.5), 0.0, 1)
+	kit.desk(room, "SupervisorDesk", Vector3(3.0, FLOOR_Y, -22.5), 0.0, 0)
 	# Filing cabinets and storage behind supervisor
 	_filing_cabinet(kit, room, "CabinetSupervisor1", Vector3(1.2, FLOOR_Y, -23.2), 0.0)
 	_filing_cabinet(kit, room, "CabinetSupervisor2", Vector3(1.2, FLOOR_Y, -21.8), 0.0)
@@ -120,10 +93,7 @@ static func _offices(kit: LevelKit, room: Node3D) -> void:
 	_bankers_desk_lamp(kit, room, "SupervisorLamp", Vector3(2.3, FLOOR_Y + 0.79, -22.4), lights)
 
 	# Colored screen specular glows on operator desks
-	_screen_glow(kit, lights, "ScreenGlowTech", Vector3(6.0, FLOOR_Y + 1.1, -24.1), Color(0.12, 0.5, 0.9), 0.6)
-	_screen_glow(kit, lights, "ScreenGlowProfiler", Vector3(10.0, FLOOR_Y + 1.1, -24.1), Color(0.95, 0.6, 0.15), 0.6)
-	_screen_glow(kit, lights, "ScreenGlowBreacher", Vector3(6.0, FLOOR_Y + 1.1, -20.9), Color(0.15, 0.65, 0.95), 0.8)
-	_screen_glow(kit, lights, "ScreenGlowMedic", Vector3(10.0, FLOOR_Y + 1.1, -20.9), Color(0.2, 0.85, 0.6), 0.6)
+	_screen_glow(kit, lights, "ScreenGlowMain", Vector3(6.0, FLOOR_Y + 1.1, -24.1), Color(0.12, 0.5, 0.9), 0.6)
 
 	# Architectural corridor rim lights leading to reception
 	kit.bulkhead(lights, "HallwaySconce1", Vector3(16.0, FLOOR_Y + 2.35, -26.0), 90.0, 2.2, 8.0)

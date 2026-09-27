@@ -1,6 +1,6 @@
 {
  "member": "ali",
- "updated_at": "2026-09-27",
+ "updated_at": "2026-09-28",
  "tasks": {
   "P1-14": {
    "status": "done",
@@ -409,6 +409,25 @@
     "tests/test_anomaly_tools.gd"
    ],
    "commit": "ab6d008",
+   "auto": true
+  },
+  {
+   "date": "2026-09-28",
+   "tasks": [],
+   "summary": "feat(doors): add interactive double doors with opposite-side swing to station map",
+   "files": [
+    "assets/3D/door/door-1.glb",
+    "assets/3D/door/door-1.glb.import",
+    "assets/3D/door/door-1_Image_0.png",
+    "assets/3D/door/door-1_Image_0.png.import",
+    "assets/3D/door/door-1_Image_1.png",
+    "assets/3D/door/door-1_Image_1.png.import",
+    "assets/3D/door/door-1_Image_2.png",
+    "assets/3D/door/door-1_Image_2.png.import",
+    "assets/3D/door/door-1_Image_3.png",
+    "assets/3D/door/door-1_Image_3.png.import"
+   ],
+   "commit": "c348526",
    "auto": true
   }
  ]

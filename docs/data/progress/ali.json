@@ -429,6 +429,25 @@
    ],
    "commit": "c348526",
    "auto": true
+  },
+  {
+   "date": "2026-09-28",
+   "tasks": [],
+   "summary": "feat(fence): surround station map perimeter with concrete boundary fence and colliders",
+   "files": [
+    "assets/3D/fence/fence_concrete-_15mb.glb",
+    "assets/3D/fence/fence_concrete-_15mb.glb.import",
+    "assets/3D/fence/fence_concrete-_15mb_0.png",
+    "assets/3D/fence/fence_concrete-_15mb_0.png.import",
+    "assets/3D/fence/fence_concrete-_15mb_1.png",
+    "assets/3D/fence/fence_concrete-_15mb_1.png.import",
+    "assets/3D/fence/fence_concrete-_15mb_2.png",
+    "assets/3D/fence/fence_concrete-_15mb_2.png.import",
+    "assets/3D/fence/fence_concrete-_15mb_3.png",
+    "assets/3D/fence/fence_concrete-_15mb_3.png.import"
+   ],
+   "commit": "844ffaf",
+   "auto": true
   }
  ]
 }

@@ -3,287 +3,269 @@
 [ext_resource type="PackedScene" uid="uid://b10au042mgmxd" path="res://assets/3D/fence/fence_concrete-_15mb.glb" id="1_fence_mesh"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_north"]
-size = Vector3(82.6, 4, 0.8)
+size = Vector3(83, 4, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_south"]
-size = Vector3(82.6, 4, 0.8)
+size = Vector3(83, 4, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_west"]
-size = Vector3(0.8, 4, 68.8)
+size = Vector3(1, 4, 71)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_east"]
-size = Vector3(0.8, 4, 68.8)
+size = Vector3(1, 4, 71)
 
 [node name="PerimeterFence" type="Node3D" unique_id=722872713]
 
 [node name="Colliders" type="StaticBody3D" parent="." unique_id=1960781990]
 
 [node name="NorthWall" type="CollisionShape3D" parent="Colliders" unique_id=1090279761]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.4, 2, -53)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.50, 2, -53.86)
 shape = SubResource("BoxShape3D_north")
 
 [node name="SouthWall" type="CollisionShape3D" parent="Colliders" unique_id=1967389837]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.4, 2, 15)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.50, 2, 16.14)
 shape = SubResource("BoxShape3D_south")
 
 [node name="WestWall" type="CollisionShape3D" parent="Colliders" unique_id=1817552324]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 2, -19)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.40, 2, -18.86)
 shape = SubResource("BoxShape3D_west")
 
 [node name="EastWall" type="CollisionShape3D" parent="Colliders" unique_id=412916526]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71.3, 2, -19)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71.40, 2, -18.86)
 shape = SubResource("BoxShape3D_east")
 
 [node name="Fences" type="Node3D" parent="." unique_id=849414230]
 
-[node name="Fence_N_00" parent="Fences" unique_id=910000000 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, -8.721739, 0.4, -53.0)
+[node name="Fence_West_00" parent="Fences" unique_id=910000000 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -51.8600)
 
-[node name="Fence_N_01" parent="Fences" unique_id=910000001 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, -5.165217, 0.4, -53.0)
+[node name="Fence_West_01" parent="Fences" unique_id=910000001 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -47.8600)
 
-[node name="Fence_N_02" parent="Fences" unique_id=910000002 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, -1.608696, 0.4, -53.0)
+[node name="Fence_West_02" parent="Fences" unique_id=910000002 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -43.8600)
 
-[node name="Fence_N_03" parent="Fences" unique_id=910000003 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 1.947826, 0.4, -53.0)
+[node name="Fence_West_03" parent="Fences" unique_id=910000003 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -39.8600)
 
-[node name="Fence_N_04" parent="Fences" unique_id=910000004 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 5.504348, 0.4, -53.0)
+[node name="Fence_West_04" parent="Fences" unique_id=910000004 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -35.8600)
 
-[node name="Fence_N_05" parent="Fences" unique_id=910000005 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 9.060870, 0.4, -53.0)
+[node name="Fence_West_05" parent="Fences" unique_id=910000005 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -31.8600)
 
-[node name="Fence_N_06" parent="Fences" unique_id=910000006 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 12.617391, 0.4, -53.0)
+[node name="Fence_West_06" parent="Fences" unique_id=910000006 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -27.8600)
 
-[node name="Fence_N_07" parent="Fences" unique_id=910000007 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 16.173913, 0.4, -53.0)
+[node name="Fence_West_07" parent="Fences" unique_id=910000007 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -23.8600)
 
-[node name="Fence_N_08" parent="Fences" unique_id=910000008 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 19.730435, 0.4, -53.0)
+[node name="Fence_West_08" parent="Fences" unique_id=910000008 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -19.8600)
 
-[node name="Fence_N_09" parent="Fences" unique_id=910000009 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 23.286957, 0.4, -53.0)
+[node name="Fence_West_09" parent="Fences" unique_id=910000009 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -15.8600)
 
-[node name="Fence_N_10" parent="Fences" unique_id=910000010 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 26.843478, 0.4, -53.0)
+[node name="Fence_West_10" parent="Fences" unique_id=910000010 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -11.8600)
 
-[node name="Fence_N_11" parent="Fences" unique_id=910000011 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 30.400000, 0.4, -53.0)
+[node name="Fence_West_11" parent="Fences" unique_id=910000011 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -7.8600)
 
-[node name="Fence_N_12" parent="Fences" unique_id=910000012 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 33.956522, 0.4, -53.0)
+[node name="Fence_West_12" parent="Fences" unique_id=910000012 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, -3.8600)
 
-[node name="Fence_N_13" parent="Fences" unique_id=910000013 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 37.513043, 0.4, -53.0)
+[node name="Fence_West_13" parent="Fences" unique_id=910000013 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, 0.1400)
 
-[node name="Fence_N_14" parent="Fences" unique_id=910000014 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 41.069565, 0.4, -53.0)
+[node name="Fence_West_14" parent="Fences" unique_id=910000014 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, 4.1400)
 
-[node name="Fence_N_15" parent="Fences" unique_id=910000015 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 44.626087, 0.4, -53.0)
+[node name="Fence_West_15" parent="Fences" unique_id=910000015 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, 8.1400)
 
-[node name="Fence_N_16" parent="Fences" unique_id=910000016 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 48.182609, 0.4, -53.0)
+[node name="Fence_West_16" parent="Fences" unique_id=910000016 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, 12.1400)
 
-[node name="Fence_N_17" parent="Fences" unique_id=910000017 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 51.739130, 0.4, -53.0)
+[node name="Fence_West_17" parent="Fences" unique_id=910000017 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4000, 0.433, 16.1400)
 
-[node name="Fence_N_18" parent="Fences" unique_id=910000018 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 55.295652, 0.4, -53.0)
+[node name="Fence_South_00" parent="Fences" unique_id=910000018 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, -8.4524, 0.433, 16.1400)
 
-[node name="Fence_N_19" parent="Fences" unique_id=910000019 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 58.852174, 0.4, -53.0)
+[node name="Fence_South_01" parent="Fences" unique_id=910000019 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, -4.5571, 0.433, 16.1400)
 
-[node name="Fence_N_20" parent="Fences" unique_id=910000020 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 62.408696, 0.4, -53.0)
+[node name="Fence_South_02" parent="Fences" unique_id=910000020 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, -0.6619, 0.433, 16.1400)
 
-[node name="Fence_N_21" parent="Fences" unique_id=910000021 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 65.965217, 0.4, -53.0)
+[node name="Fence_South_03" parent="Fences" unique_id=910000021 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 3.2333, 0.433, 16.1400)
 
-[node name="Fence_N_22" parent="Fences" unique_id=910000022 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 69.521739, 0.4, -53.0)
+[node name="Fence_South_04" parent="Fences" unique_id=910000022 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 7.1286, 0.433, 16.1400)
 
-[node name="Fence_S_00" parent="Fences" unique_id=910000023 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, -8.721739, 0.4, 15.0)
+[node name="Fence_South_05" parent="Fences" unique_id=910000023 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 11.0238, 0.433, 16.1400)
 
-[node name="Fence_S_01" parent="Fences" unique_id=910000024 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, -5.165217, 0.4, 15.0)
+[node name="Fence_South_06" parent="Fences" unique_id=910000024 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 14.9190, 0.433, 16.1400)
 
-[node name="Fence_S_02" parent="Fences" unique_id=910000025 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, -1.608696, 0.4, 15.0)
+[node name="Fence_South_07" parent="Fences" unique_id=910000025 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 18.8143, 0.433, 16.1400)
 
-[node name="Fence_S_03" parent="Fences" unique_id=910000026 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 1.947826, 0.4, 15.0)
+[node name="Fence_South_08" parent="Fences" unique_id=910000026 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 22.7095, 0.433, 16.1400)
 
-[node name="Fence_S_04" parent="Fences" unique_id=910000027 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 5.504348, 0.4, 15.0)
+[node name="Fence_South_09" parent="Fences" unique_id=910000027 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 26.6048, 0.433, 16.1400)
 
-[node name="Fence_S_05" parent="Fences" unique_id=910000028 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 9.060870, 0.4, 15.0)
+[node name="Fence_South_10" parent="Fences" unique_id=910000028 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 30.5000, 0.433, 16.1400)
 
-[node name="Fence_S_06" parent="Fences" unique_id=910000029 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 12.617391, 0.4, 15.0)
+[node name="Fence_South_11" parent="Fences" unique_id=910000029 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 34.3952, 0.433, 16.1400)
 
-[node name="Fence_S_07" parent="Fences" unique_id=910000030 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 16.173913, 0.4, 15.0)
+[node name="Fence_South_12" parent="Fences" unique_id=910000030 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 38.2905, 0.433, 16.1400)
 
-[node name="Fence_S_08" parent="Fences" unique_id=910000031 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 19.730435, 0.4, 15.0)
+[node name="Fence_South_13" parent="Fences" unique_id=910000031 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 42.1857, 0.433, 16.1400)
 
-[node name="Fence_S_09" parent="Fences" unique_id=910000032 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 23.286957, 0.4, 15.0)
+[node name="Fence_South_14" parent="Fences" unique_id=910000032 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 46.0810, 0.433, 16.1400)
 
-[node name="Fence_S_10" parent="Fences" unique_id=910000033 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 26.843478, 0.4, 15.0)
+[node name="Fence_South_15" parent="Fences" unique_id=910000033 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 49.9762, 0.433, 16.1400)
 
-[node name="Fence_S_11" parent="Fences" unique_id=910000034 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 30.400000, 0.4, 15.0)
+[node name="Fence_South_16" parent="Fences" unique_id=910000034 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 53.8714, 0.433, 16.1400)
 
-[node name="Fence_S_12" parent="Fences" unique_id=910000035 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 33.956522, 0.4, 15.0)
+[node name="Fence_South_17" parent="Fences" unique_id=910000035 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 57.7667, 0.433, 16.1400)
 
-[node name="Fence_S_13" parent="Fences" unique_id=910000036 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 37.513043, 0.4, 15.0)
+[node name="Fence_South_18" parent="Fences" unique_id=910000036 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 61.6619, 0.433, 16.1400)
 
-[node name="Fence_S_14" parent="Fences" unique_id=910000037 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 41.069565, 0.4, 15.0)
+[node name="Fence_South_19" parent="Fences" unique_id=910000037 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 65.5571, 0.433, 16.1400)
 
-[node name="Fence_S_15" parent="Fences" unique_id=910000038 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 44.626087, 0.4, 15.0)
+[node name="Fence_South_20" parent="Fences" unique_id=910000038 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(-1.125, 0, 0, 0, 1.125, 0, 0, 0, -1.125, 69.4524, 0.433, 16.1400)
 
-[node name="Fence_S_16" parent="Fences" unique_id=910000039 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 48.182609, 0.4, 15.0)
+[node name="Fence_East_00" parent="Fences" unique_id=910000039 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -51.8600)
 
-[node name="Fence_S_17" parent="Fences" unique_id=910000040 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 51.739130, 0.4, 15.0)
+[node name="Fence_East_01" parent="Fences" unique_id=910000040 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -47.8600)
 
-[node name="Fence_S_18" parent="Fences" unique_id=910000041 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 55.295652, 0.4, 15.0)
+[node name="Fence_East_02" parent="Fences" unique_id=910000041 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -43.8600)
 
-[node name="Fence_S_19" parent="Fences" unique_id=910000042 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 58.852174, 0.4, 15.0)
+[node name="Fence_East_03" parent="Fences" unique_id=910000042 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -39.8600)
 
-[node name="Fence_S_20" parent="Fences" unique_id=910000043 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 62.408696, 0.4, 15.0)
+[node name="Fence_East_04" parent="Fences" unique_id=910000043 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -35.8600)
 
-[node name="Fence_S_21" parent="Fences" unique_id=910000044 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 65.965217, 0.4, 15.0)
+[node name="Fence_East_05" parent="Fences" unique_id=910000044 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -31.8600)
 
-[node name="Fence_S_22" parent="Fences" unique_id=910000045 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-0.01, 0, -8.74228e-10, 0, 0.01, 0, 8.74228e-10, 0, -0.01, 69.521739, 0.4, 15.0)
+[node name="Fence_East_06" parent="Fences" unique_id=910000045 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -27.8600)
 
-[node name="Fence_W_00" parent="Fences" unique_id=910000046 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -51.210526)
+[node name="Fence_East_07" parent="Fences" unique_id=910000046 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -23.8600)
 
-[node name="Fence_W_01" parent="Fences" unique_id=910000047 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -47.631579)
+[node name="Fence_East_08" parent="Fences" unique_id=910000047 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -19.8600)
 
-[node name="Fence_W_02" parent="Fences" unique_id=910000048 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -44.052632)
+[node name="Fence_East_09" parent="Fences" unique_id=910000048 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -15.8600)
 
-[node name="Fence_W_03" parent="Fences" unique_id=910000049 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -40.473684)
+[node name="Fence_East_10" parent="Fences" unique_id=910000049 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -11.8600)
 
-[node name="Fence_W_04" parent="Fences" unique_id=910000050 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -36.894737)
+[node name="Fence_East_11" parent="Fences" unique_id=910000050 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -7.8600)
 
-[node name="Fence_W_05" parent="Fences" unique_id=910000051 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -33.315789)
+[node name="Fence_East_12" parent="Fences" unique_id=910000051 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, -3.8600)
 
-[node name="Fence_W_06" parent="Fences" unique_id=910000052 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -29.736842)
+[node name="Fence_East_13" parent="Fences" unique_id=910000052 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, 0.1400)
 
-[node name="Fence_W_07" parent="Fences" unique_id=910000053 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -26.157895)
+[node name="Fence_East_14" parent="Fences" unique_id=910000053 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, 4.1400)
 
-[node name="Fence_W_08" parent="Fences" unique_id=910000054 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -22.578947)
+[node name="Fence_East_15" parent="Fences" unique_id=910000054 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, 8.1400)
 
-[node name="Fence_W_09" parent="Fences" unique_id=910000055 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -19.000000)
+[node name="Fence_East_16" parent="Fences" unique_id=910000055 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, 12.1400)
 
-[node name="Fence_W_10" parent="Fences" unique_id=910000056 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -15.421053)
+[node name="Fence_East_17" parent="Fences" unique_id=910000056 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(0.00179565, 0, 1.125, 0, 1.125, 0, -1.125, 0, 0.00179565, 71.4000, 0.433, 16.1400)
 
-[node name="Fence_W_11" parent="Fences" unique_id=910000057 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -11.842105)
+[node name="Fence_North_00" parent="Fences" unique_id=910000057 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, -8.4524, 0.433, -53.8600)
 
-[node name="Fence_W_12" parent="Fences" unique_id=910000058 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -8.263158)
+[node name="Fence_North_01" parent="Fences" unique_id=910000058 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, -4.5571, 0.433, -53.8600)
 
-[node name="Fence_W_13" parent="Fences" unique_id=910000059 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -4.684211)
+[node name="Fence_North_02" parent="Fences" unique_id=910000059 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, -0.6619, 0.433, -53.8600)
 
-[node name="Fence_W_14" parent="Fences" unique_id=910000060 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, -1.105263)
+[node name="Fence_North_03" parent="Fences" unique_id=910000060 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 3.2333, 0.433, -53.8600)
 
-[node name="Fence_W_15" parent="Fences" unique_id=910000061 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, 2.473684)
+[node name="Fence_North_04" parent="Fences" unique_id=910000061 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 7.1286, 0.433, -53.8600)
 
-[node name="Fence_W_16" parent="Fences" unique_id=910000062 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, 6.052632)
+[node name="Fence_North_05" parent="Fences" unique_id=910000062 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 11.0238, 0.433, -53.8600)
 
-[node name="Fence_W_17" parent="Fences" unique_id=910000063 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, 9.631579)
+[node name="Fence_North_06" parent="Fences" unique_id=910000063 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 14.9190, 0.433, -53.8600)
 
-[node name="Fence_W_18" parent="Fences" unique_id=910000064 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.37114e-10, -10.5, 0.4, 13.210526)
+[node name="Fence_North_07" parent="Fences" unique_id=910000064 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 18.8143, 0.433, -53.8600)
 
-[node name="Fence_E_00" parent="Fences" unique_id=910000065 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -51.210526)
+[node name="Fence_North_08" parent="Fences" unique_id=910000065 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 22.7095, 0.433, -53.8600)
 
-[node name="Fence_E_01" parent="Fences" unique_id=910000066 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -47.631579)
+[node name="Fence_North_09" parent="Fences" unique_id=910000066 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 26.6048, 0.433, -53.8600)
 
-[node name="Fence_E_02" parent="Fences" unique_id=910000067 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -44.052632)
+[node name="Fence_North_10" parent="Fences" unique_id=910000067 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 30.5000, 0.433, -53.8600)
 
-[node name="Fence_E_03" parent="Fences" unique_id=910000068 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -40.473684)
+[node name="Fence_North_11" parent="Fences" unique_id=910000068 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 34.3952, 0.433, -53.8600)
 
-[node name="Fence_E_04" parent="Fences" unique_id=910000069 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -36.894737)
+[node name="Fence_North_12" parent="Fences" unique_id=910000069 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 38.2905, 0.433, -53.8600)
 
-[node name="Fence_E_05" parent="Fences" unique_id=910000070 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -33.315789)
+[node name="Fence_North_13" parent="Fences" unique_id=910000070 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 42.1857, 0.433, -53.8600)
 
-[node name="Fence_E_06" parent="Fences" unique_id=910000071 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -29.736842)
+[node name="Fence_North_14" parent="Fences" unique_id=910000071 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 46.0810, 0.433, -53.8600)
 
-[node name="Fence_E_07" parent="Fences" unique_id=910000072 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -26.157895)
+[node name="Fence_North_15" parent="Fences" unique_id=910000072 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 49.9762, 0.433, -53.8600)
 
-[node name="Fence_E_08" parent="Fences" unique_id=910000073 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -22.578947)
+[node name="Fence_North_16" parent="Fences" unique_id=910000073 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 53.8714, 0.433, -53.8600)
 
-[node name="Fence_E_09" parent="Fences" unique_id=910000074 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -19.000000)
+[node name="Fence_North_17" parent="Fences" unique_id=910000074 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 57.7667, 0.433, -53.8600)
 
-[node name="Fence_E_10" parent="Fences" unique_id=910000075 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -15.421053)
+[node name="Fence_North_18" parent="Fences" unique_id=910000075 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 61.6619, 0.433, -53.8600)
 
-[node name="Fence_E_11" parent="Fences" unique_id=910000076 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -11.842105)
+[node name="Fence_North_19" parent="Fences" unique_id=910000076 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 65.5571, 0.433, -53.8600)
 
-[node name="Fence_E_12" parent="Fences" unique_id=910000077 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -8.263158)
-
-[node name="Fence_E_13" parent="Fences" unique_id=910000078 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -4.684211)
-
-[node name="Fence_E_14" parent="Fences" unique_id=910000079 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, -1.105263)
-
-[node name="Fence_E_15" parent="Fences" unique_id=910000080 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, 2.473684)
-
-[node name="Fence_E_16" parent="Fences" unique_id=910000081 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, 6.052632)
-
-[node name="Fence_E_17" parent="Fences" unique_id=910000082 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, 9.631579)
-
-[node name="Fence_E_18" parent="Fences" unique_id=910000083 instance=ExtResource("1_fence_mesh")]
-transform = Transform3D(-4.37114e-10, 0, -0.01, 0, 0.01, 0, 0.01, 0, -4.37114e-10, 71.3, 0.4, 13.210526)
+[node name="Fence_North_20" parent="Fences" unique_id=910000077 instance=ExtResource("1_fence_mesh")]
+transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 69.4524, 0.433, -53.8600)

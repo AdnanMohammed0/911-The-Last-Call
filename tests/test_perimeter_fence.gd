@@ -66,19 +66,19 @@ func _init() -> void:
 			for child: Node in pf.get_children():
 				if child.name.begins_with("Fence_"):
 					fence_nodes.append(child)
-			if fence_nodes.size() == 84:
-				print("  [PASS] Exactly 84 duplicated concrete fence meshes found in operations_room.tscn")
+			if fence_nodes.size() == 78:
+				print("  [PASS] Exactly 78 duplicated concrete fence meshes found in operations_room.tscn")
 				passed_tests += 1
 			else:
-				print("  [FAIL] Expected 84 duplicated fence meshes, found %d" % fence_nodes.size())
+				print("  [FAIL] Expected 78 duplicated fence meshes, found %d" % fence_nodes.size())
 			
 			total_tests += 1
-			var first_fence: Node = pf.get_node_or_null("Fence_N_00")
+			var first_fence: Node = pf.get_node_or_null("Fence_West_00")
 			if first_fence != null and first_fence.get_child_count() > 0:
 				print("  [PASS] Duplicated fence mesh model loaded with visual child: %s" % first_fence.get_child(0).name)
 				passed_tests += 1
 			else:
-				print("  [FAIL] Fence_N_00 has no visual mesh children")
+				print("  [FAIL] Fence_West_00 has no visual mesh children")
 		else:
 			print("  [FAIL] PerimeterFence node not found in operations_room.tscn")
 		op_inst.queue_free()

@@ -131,7 +131,7 @@ func _on_vote_cast(peer_id: int, vote_id: int, option: StringName) -> void:
 	_update_vote_tally(tally)
 	
 	# Disable this player's vote buttons
-	for btn in _vote_buttons.values():
+	for btn: Button in _vote_buttons.values():
 		btn.disabled = true
 
 
@@ -142,7 +142,7 @@ func _on_vote_closed(vote_id: int, result: StringName, tally: Dictionary) -> voi
 	if result != &"":
 		_vote_tally_label.text += "\n[color=#7dff9a]SELECTED: %s[/color]" % String(result).to_upper()
 	
-	for btn in _vote_buttons.values():
+	for btn: Button in _vote_buttons.values():
 		btn.disabled = true
 
 
@@ -274,7 +274,7 @@ func _refresh_gear_list() -> void:
 		if slot_gear.is_empty():
 			continue
 		
-		var header: Label = _label(slot_names[slot], 16, Color(0.7, 0.9, 1.0))
+		var header: Label = _label(String(slot_names[slot]), 16, Color(0.7, 0.9, 1.0))
 		_gear_list.add_child(header)
 		
 		for gear in slot_gear:
@@ -461,8 +461,7 @@ func _build() -> void:
 	_vote_tally_label = _label("Waiting for vote to open...", 14, Color(0.7, 0.8, 0.9), false)
 	_vote_tally_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_vote_box.add_child(_vote_tally_label)
-	
-	HSeparator.new().add_to_parent(_vote_box)
+	_vote_box.add_child(HSeparator.new())
 	
 	var vote_options: Array[StringName] = [&"code3", &"silent", &"on_foot", &"decoy"]
 	var vote_descriptions: Dictionary = {
@@ -472,14 +471,14 @@ func _build() -> void:
 		&"decoy": "DECOY — Requires 3+ players or Tech drone, cruiser at risk"
 	}
 	
-	for opt in vote_options:
-		var btn: Button = _button(vote_descriptions[opt], func() -> void: _vote_approach(opt))
+	for opt: StringName in vote_options:
+		var btn: Button = _button(String(vote_descriptions[opt]), func() -> void: _vote_approach(opt))
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.disabled = true
 		_vote_buttons[opt] = btn
 		_vote_box.add_child(btn)
 	
-	HSeparator.new().add_to_parent(right)
+	right.add_child(HSeparator.new())
 	
 	_confirm_button = _button("CONFIRM LOADOUT", _confirm_loadout)
 	_confirm_button.custom_minimum_size = Vector2(0, 48)

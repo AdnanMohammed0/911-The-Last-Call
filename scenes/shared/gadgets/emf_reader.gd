@@ -44,7 +44,9 @@ func _scan_for_anomalies() -> void:
 	
 	# Scan for anomalies in range
 	for node: Node in get_tree().get_nodes_in_group("anomalies"):
-		var anomaly: Node = node
+		var anomaly: Node3D = node as Node3D
+		if anomaly == null:
+			continue
 		var distance: float = global_position.distance_to(anomaly.global_position)
 		if distance > max_range:
 			continue
@@ -53,7 +55,7 @@ func _scan_for_anomalies() -> void:
 		var level: int = _get_anomaly_emf_level(anomaly, distance)
 		if level > max_level:
 			max_level = level
-			detected_anomaly = anomaly.get_name()
+			detected_anomaly = anomaly.name
 			anomaly_pos = anomaly.global_position
 	
 	# Apply accuracy penalty for non-Medics
@@ -68,7 +70,7 @@ func _scan_for_anomalies() -> void:
 		anomaly_detected.emit(detected_anomaly, max_level, anomaly_pos)
 
 
-func _get_anomaly_emf_level(anomaly: Node, distance: float) -> int:
+func _get_anomaly_emf_level(anomaly: Node3D, distance: float) -> int:
 	# Base EMF level from anomaly state
 	var base_level: int = 0
 	if anomaly.has_method("get_emf_level"):

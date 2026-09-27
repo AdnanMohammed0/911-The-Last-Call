@@ -448,6 +448,18 @@
    ],
    "commit": "844ffaf",
    "auto": true
+  },
+  {
+   "date": "2026-09-28",
+   "tasks": [],
+   "summary": "feat(fence): duplicate concrete fence mesh directly in operations_room scene",
+   "files": [
+    "scenes/dispatch/operations_room.tscn",
+    "scenes/dispatch/perimeter_fence.tscn",
+    "tests/test_perimeter_fence.gd"
+   ],
+   "commit": "8794b69",
+   "auto": true
   }
  ]
 }

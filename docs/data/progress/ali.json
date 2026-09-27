@@ -460,6 +460,18 @@
    ],
    "commit": "8794b69",
    "auto": true
+  },
+  {
+   "date": "2026-09-28",
+   "tasks": [],
+   "summary": "feat(fence): complete 78 duplicated concrete fence meshes around perimeter matching user template",
+   "files": [
+    "scenes/dispatch/operations_room.tscn",
+    "scenes/dispatch/perimeter_fence.tscn",
+    "tests/test_perimeter_fence.gd"
+   ],
+   "commit": "bfe375b",
+   "auto": true
   }
  ]
 }

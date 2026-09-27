@@ -73,11 +73,13 @@ func _scan_for_anomalies() -> void:
 func _get_anomaly_emf_level(anomaly: Node3D, distance: float) -> int:
 	# Base EMF level from anomaly state
 	var base_level: int = 0
-	if anomaly.has_method("get_emf_level"):
-		base_level = anomaly.get_emf_level()
-	elif anomaly.has_method("state"):
+	if anomaly.has_method(&"get_emf_level"):
+		@warning_ignore("unsafe_cast")
+		base_level = anomaly.call(&"get_emf_level") as int
+	elif "state" in anomaly:
 		# Drowned Woman state machine mapping
-		var state: int = anomaly.state
+		@warning_ignore("unsafe_cast")
+		var state: int = anomaly.get(&"state") as int
 		match state:
 			0: base_level = 1  # DORMANT
 			1: base_level = 3  # MANIFEST

@@ -10,21 +10,31 @@ extends GutTest
 var _telemetry_settings: TelemetrySettings
 var _telemetry_manager: TelemetryManager
 var _crash_reporter: CrashReporter
-var _game_settings: GameSettings
+var _game_settings: Node
+var _orig_telemetry_instance: TelemetryManager
+var _orig_crash_instance: CrashReporter
 
 
 func before_each() -> void:
+	_orig_telemetry_instance = TelemetryManager.instance
+	_orig_crash_instance = CrashReporter.instance
+
 	# Create fresh instances for each test
 	_telemetry_settings = TelemetrySettings.new()
 	_telemetry_manager = TelemetryManager.new()
 	_telemetry_manager.settings = _telemetry_settings
+	_telemetry_manager._init_session()
+	
 	_crash_reporter = CrashReporter.new()
-	_game_settings = GameSettings.new()
+	_crash_reporter.active = true
+	_game_settings = GameSettings
+	_game_settings.telemetry_consent_given = false
+	_game_settings.telemetry_enabled = false
+	_game_settings.crash_reporting_enabled = false
 
 	# Mock singletons
 	TelemetryManager.instance = _telemetry_manager
 	CrashReporter.instance = _crash_reporter
-	GameSettings.instance = _game_settings
 
 	# Clean up any test config files
 	var config: ConfigFile = ConfigFile.new()
@@ -34,15 +44,24 @@ func before_each() -> void:
 
 func after_each() -> void:
 	# Clean up
-	TelemetryManager.instance = null
-	CrashReporter.instance = null
-	GameSettings.instance = null
+	TelemetryManager.instance = _orig_telemetry_instance
+	CrashReporter.instance = _orig_crash_instance
+	if is_instance_valid(_telemetry_manager):
+		_telemetry_manager.free()
+	_telemetry_manager = null
+	if is_instance_valid(_crash_reporter):
+		_crash_reporter.free()
+	_crash_reporter = null
+	_telemetry_settings = null
+	_game_settings = null
 
 	# Remove test configs
 	var dir: DirAccess = DirAccess.open("user://")
 	if dir != null:
-		dir.remove("test_telemetry.cfg")
-		dir.remove("test_settings.cfg")
+		if dir.file_exists("test_telemetry.cfg"):
+			dir.remove("test_telemetry.cfg")
+		if dir.file_exists("test_settings.cfg"):
+			dir.remove("test_settings.cfg")
 
 
 # --- TelemetrySettings Tests ---
@@ -213,16 +232,16 @@ func test_telemetry_manager_priority_queue() -> void:
 	# Add priority event
 	_telemetry_manager.record_error("PriorityError", "High priority")
 
-	# Priority event should be at the front when flushing
-	_telemetry_manager._flush_queue()
-	# Note: We can't easily test the internal send order without mocking HTTP,
-	# but we can verify priority events are marked correctly
+	# Verify priority events are marked correctly
 	var has_priority: bool = false
 	for event in _telemetry_manager.event_queue:
 		if event.get("priority", false):
 			has_priority = true
 			break
 	assert_true(has_priority)
+
+	_telemetry_manager._flush_queue()
+	assert_true(_telemetry_manager.event_queue.is_empty())
 
 
 func test_telemetry_manager_session_lifecycle() -> void:
@@ -239,6 +258,7 @@ func test_telemetry_manager_session_lifecycle() -> void:
 	assert_eq(_telemetry_manager.session_data.phase, "dispatch")
 
 	# Record shift summary
+	_telemetry_manager.session_data.start_time -= 1.0
 	_telemetry_manager.record_shift_summary()
 	assert_true(_telemetry_manager.session_data.total_playtime_seconds > 0)
 
@@ -343,13 +363,15 @@ func test_game_settings_save_load_privacy() -> void:
 	_game_settings.telemetry_consent_given = true
 	_game_settings.save_settings()
 
-	# Create new instance and load
-	var new_settings: GameSettings = GameSettings.new()
-	new_settings.load_settings()
+	# Reset and reload
+	_game_settings.telemetry_enabled = false
+	_game_settings.crash_reporting_enabled = false
+	_game_settings.telemetry_consent_given = false
+	_game_settings.load_settings()
 
-	assert_true(new_settings.telemetry_enabled)
-	assert_true(new_settings.crash_reporting_enabled)
-	assert_true(new_settings.telemetry_consent_given)
+	assert_true(_game_settings.telemetry_enabled)
+	assert_true(_game_settings.crash_reporting_enabled)
+	assert_true(_game_settings.telemetry_consent_given)
 
 
 func test_game_settings_consent_flow() -> void:
@@ -416,6 +438,7 @@ func test_full_consent_flow() -> void:
 	# 3. Telemetry records events
 	_telemetry_manager.record_event(&"test_event", {})
 	assert_eq(_telemetry_manager.event_queue.size(), 1)
+	_telemetry_manager._flush_queue()
 
 	# 4. Crash occurs
 	_crash_reporter.report_exception("Crash", "Trace")

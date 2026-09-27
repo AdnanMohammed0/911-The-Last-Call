@@ -145,6 +145,10 @@ func record_event(event_type: StringName, payload: Dictionary = {}) -> void:
 	if not settings.telemetry_enabled:
 		return
 
+	var is_host: bool = true
+	if multiplayer != null and multiplayer.has_multiplayer_peer():
+		is_host = multiplayer.is_server()
+
 	var event: Dictionary = {
 		"event_type": event_type,
 		"timestamp": Time.get_unix_time_from_system(),
@@ -155,8 +159,8 @@ func record_event(event_type: StringName, payload: Dictionary = {}) -> void:
 		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
 		"engine_version": Engine.get_version_info()["string"],
 		"platform": OS.get_name(),
-		"is_host": multiplayer.is_server() if multiplayer.multiplayer_peer != null else true,
-		"peer_count": NetManager.roster.size(),
+		"is_host": is_host,
+		"peer_count": NetManager.roster.size() if NetManager != null else 0,
 	}
 
 	_enqueue_event(event)
@@ -221,7 +225,6 @@ func record_crash(crash_info: Dictionary) -> void:
 	}
 
 	_enqueue_event(event, true)
-	_flush_queue()  # Send immediately for crashes
 
 
 ## Enable/disable telemetry at runtime (respects user consent).
@@ -234,10 +237,11 @@ func set_telemetry_enabled(enabled: bool) -> void:
 	_save_settings()
 
 	if enabled:
-		_batch_timer.start()
+		if _batch_timer != null:
+			_batch_timer.start()
 	else:
-		_batch_timer.stop()
-		_flush_queue()  # Send any remaining events
+		if _batch_timer != null:
+			_batch_timer.stop()
 
 
 ## Enable/disable crash reporting.
@@ -306,10 +310,6 @@ func _enqueue_event(event: Dictionary, priority: bool = false) -> void:
 
 	event.priority = priority
 	event_queue.append(event)
-
-	# Flush immediately for priority events
-	if priority:
-		_flush_queue()
 
 
 func _flush_queue() -> void:
@@ -476,7 +476,7 @@ func _on_game_quit() -> void:
 		_flush_queue()
 		# Give HTTP request time to complete (blocking not possible in Godot, but we try)
 		var start_time: int = Time.get_ticks_msec()
-		while _http_request.get_http_client_status() == HTTPClient.STATUS_REQUESTING:
+		while _http_request != null and _http_request.get_http_client_status() == HTTPClient.STATUS_REQUESTING:
 			if Time.get_ticks_msec() - start_time > 2000:  # Max 2 seconds
 				break
 			OS.delay_msec(10)

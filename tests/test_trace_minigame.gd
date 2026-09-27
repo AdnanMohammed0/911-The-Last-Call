@@ -9,7 +9,8 @@ var _trace_console: TraceConsole
 var _mock_call_data: CallData
 
 
-func before() -> void:
+func before_each() -> void:
+	CallDirector.reset()
 	_trace_console = TraceConsole.new()
 	
 	# Create mock call data
@@ -20,8 +21,10 @@ func before() -> void:
 	_mock_call_data.patience_seconds = 180.0
 
 
-func after() -> void:
+func after_each() -> void:
+	CallDirector.reset()
 	_trace_console = null
+	_mock_call_data = null
 
 
 ## Test: TraceConsole initializes with correct defaults
@@ -50,16 +53,9 @@ func test_start_trace() -> void:
 func test_lock_tower_with_perfect_alignment() -> void:
 	_trace_console.start_trace(Vector2(0.0, 0.0))
 	
-	# Get the target for tower 0
-	var target: Dictionary = _trace_console.get_current_target()
-	
-	# Apply perfect alignment for required time
-	var required_time: float = 0.0
-	# We need to simulate the lock time by calling update with perfect alignment
-	# The required lock time is randomized 6-10s, so we'll just run until locked
-	
-	for i in range(500):  # 500 frames at 60fps = ~8.3 seconds
-		var state_changed: bool = _trace_console.update(1.0/60.0, target["frequency"], target["phase"], target["gain"])
+	for i in range(700):
+		var target: Dictionary = _trace_console.get_current_target()
+		_trace_console.update(1.0/60.0, target["frequency"], target["phase"], target["gain"])
 		if _trace_console.get_towers_locked() >= 1:
 			break
 	
@@ -153,8 +149,8 @@ func test_reset_clears_state() -> void:
 	_trace_console.start_trace(Vector2(0.0, 0.0))
 	
 	# Lock one tower
-	var target: Dictionary = _trace_console.get_current_target()
-	for i in range(500):
+	for i in range(700):
+		var target: Dictionary = _trace_console.get_current_target()
 		_trace_console.update(1.0/60.0, target["frequency"], target["phase"], target["gain"])
 		if _trace_console.get_towers_locked() >= 1:
 			break
@@ -194,8 +190,7 @@ func test_noise_drift() -> void:
 
 ## Test: Trace result stored in CallDirector
 func test_trace_result_stored_in_calldirector() -> void:
-	var call_director: CallDirector = CallDirector.new()
-	add_child_autofree(call_director)
+	CallDirector.reset()
 	
 	var call: CallData = CallData.new()
 	call.id = &"trace_test"
@@ -203,19 +198,19 @@ func test_trace_result_stored_in_calldirector() -> void:
 	call.true_location = Vector2(10000.0, 20000.0)
 	call.patience_seconds = 180.0
 	
-	call_director.register_call(call)
-	call_director.ring_call(&"trace_test")
-	call_director._answer_call()
+	CallDirector.register_call(call)
+	CallDirector.ring_call(&"trace_test")
+	CallDirector._answer_call()
 	
 	# Simulate trace completion
-	call_director.set_trace_result(Vector2(9900.0, 20100.0), 50.0, false)
+	CallDirector.set_trace_result(Vector2(9900.0, 20100.0), 50.0, false)
 	
 	# End call with trace result
-	call_director._hangup_call(&"test")
-	call_director.submit_verdict(1, &"trace_test", &"genuine")
+	CallDirector._hangup_call(&"test")
+	CallDirector.submit_verdict(1, &"trace_test", &"genuine")
 	
 	# Check trace result was stored in history
-	var history: Dictionary = call_director.call_history[&"trace_test"]
+	var history: Dictionary = CallDirector.call_history[&"trace_test"]
 	assert_true(history.has("trace_location"))
 	assert_true(history.has("trace_radius"))
 	assert_true(history.has("trace_dead_freq"))
@@ -227,8 +222,7 @@ func test_trace_result_stored_in_calldirector() -> void:
 
 ## Test: Trace requires caller on line >= 25s (per GAMEPLAY_MECHANICS)
 func test_trace_requires_caller_connected() -> void:
-	var call_director: CallDirector = CallDirector.new()
-	add_child_autofree(call_director)
+	CallDirector.reset()
 	
 	var call: CallData = CallData.new()
 	call.id = &"trace_test_2"
@@ -236,14 +230,14 @@ func test_trace_requires_caller_connected() -> void:
 	call.true_location = Vector2(0.0, 0.0)
 	call.patience_seconds = 180.0
 	
-	call_director.register_call(call)
-	call_director.ring_call(&"trace_test_2")
+	CallDirector.register_call(call)
+	CallDirector.ring_call(&"trace_test_2")
 	# Don't answer - call is still ringing
 	
 	# Trace should not work in RINGING state
 	# (Trace button only appears in CONNECTED state in DispatchTerminal)
-	assert_eq(call_director.current_state, CallDirector.CallState.RINGING)
+	assert_eq(CallDirector.current_state, CallDirector.CallState.RINGING)
 	
-	call_director._answer_call()
-	assert_eq(call_director.current_state, CallDirector.CallState.CONNECTED)
+	CallDirector._answer_call()
+	assert_eq(CallDirector.current_state, CallDirector.CallState.CONNECTED)
 	# Now trace would be available

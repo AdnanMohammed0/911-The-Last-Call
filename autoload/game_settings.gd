@@ -445,7 +445,8 @@ func _on_telemetry_consent(telemetry: bool, crashes: bool) -> void:
 	crash_reporting_enabled = crashes
 
 	# Apply to TelemetryManager
-	if TelemetryManager.instance != null:
+	if TelemetryManager.instance != null and TelemetryManager.instance.settings != null:
+		TelemetryManager.instance.settings.set_consent(telemetry, crashes)
 		TelemetryManager.instance.set_telemetry_enabled(telemetry)
 		TelemetryManager.instance.set_crash_reporting_enabled(crashes)
 

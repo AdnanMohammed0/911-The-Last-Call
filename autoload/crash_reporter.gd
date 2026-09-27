@@ -105,13 +105,13 @@ func _build_crash_info(exception: String, stack_trace: String, context: Dictiona
 		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
 		"engine_version": Engine.get_version_info()["string"],
 		"platform": OS.get_name(),
-		"is_host": multiplayer.is_server() if multiplayer.multiplayer_peer != null else true,
+		"is_host": (multiplayer.is_server() if multiplayer.has_multiplayer_peer() else true) if multiplayer != null else true,
 		"shift": MissionDirector.shift_number,
 		"phase": String(GameState.phase_name(GameState.phase)),
 		"public_trust": GameState.public_trust,
 		"station_budget": GameState.station_budget,
 		"cult_awareness": GameState.cult_awareness,
-		"peer_count": NetManager.roster.size(),
+		"peer_count": NetManager.roster.size() if NetManager != null else 0,
 		"active_call": CallDirector.active_call_id if CallDirector != null else "",
 	}
 
@@ -128,7 +128,7 @@ func _handle_crash(crash_info: Dictionary) -> void:
 	if Engine.has_singleton("Steam"):
 		_Steam_report_crash(crash_info)
 
-	print("[CrashReporter] Crash recorded: %s" % crash_info.exception)
+	print("[CrashReporter] Crash recorded: %s" % crash_info.get("exception", ""))
 
 
 func _write_crash_dump(crash_info: Dictionary) -> void:

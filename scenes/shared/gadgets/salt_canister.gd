@@ -79,9 +79,9 @@ func deploy() -> bool:
 func _create_salt_line(start: Vector3, end: Vector3) -> Node:
 	var line: Node3D = Node3D.new()
 	line.name = "SaltLine"
+	add_child(line)
 	line.global_position = start
 	line.look_at(end, Vector3.UP)
-	add_child(line)
 	
 	# Visual: particle effect or mesh
 	var particles: GPUParticles3D = GPUParticles3D.new()
@@ -109,9 +109,9 @@ func _create_salt_line(start: Vector3, end: Vector3) -> Node:
 	var collision: CollisionShape3D = CollisionShape3D.new()
 	collision.shape = shape
 	area.add_child(collision)
+	add_child(area)
 	area.global_position = (start + end) * 0.5
 	area.look_at(end, Vector3.UP)
-	add_child(area)
 	
 	# Body entered: anomaly hits salt line
 	area.body_entered.connect(_on_anomaly_hit_salt.bind(area))
@@ -119,32 +119,21 @@ func _create_salt_line(start: Vector3, end: Vector3) -> Node:
 	return line
 
 
-func _make_particle_material() -> ShaderMaterial:
-	var shader: Shader = Shader.new()
-	shader.code = """
-		shader_type particles;
-		render_mode blend_add;
-		
-		uniform vec4 color : source_color = vec4(1.0, 0.95, 0.8, 0.8);
-		uniform float size = 0.1;
-		
-		void vertex() {
-			POINT_SIZE = size * (1.0 - LIFETIME);
-			COLOR = color * (1.0 - LIFETIME);
-			VELOCITY = vec3(0.0, 0.5, 0.0) + rand_from_seed(SEED) * 0.3;
-		}
-	"""
-	var mat: ShaderMaterial = ShaderMaterial.new()
-	mat.shader = shader
+func _make_particle_material() -> ParticleProcessMaterial:
+	var mat: ParticleProcessMaterial = ParticleProcessMaterial.new()
+	mat.color = Color(1.0, 0.95, 0.8, 0.8)
+	mat.gravity = Vector3(0, -1.0, 0)
+	mat.initial_velocity_min = 0.5
+	mat.initial_velocity_max = 1.0
 	return mat
 
 
 func _on_anomaly_hit_salt(barrier: Area3D, body: Node3D) -> void:
 	if body.is_in_group("anomalies"):
 		# Anomaly hit salt line - trigger retreat
-		if body.has_method("on_reverse_tone_complete"):
-			body.on_reverse_tone_complete()
-		elif body.has_method("retreat"):
-			body.retreat()
+		if body.has_method(&"on_reverse_tone_complete"):
+			body.call(&"on_reverse_tone_complete")
+		elif body.has_method(&"retreat"):
+			body.call(&"retreat")
 		# Visual feedback
 		EventBus.noise_event.emit(barrier.global_position, 5.0, 0)

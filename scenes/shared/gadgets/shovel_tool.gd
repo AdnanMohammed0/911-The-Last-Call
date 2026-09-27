@@ -14,6 +14,7 @@ signal dig_completed()
 var _owner: Player = null
 var _digging: bool = false
 var _dig_start_time: float = 0.0
+var _dig_start_pos: Vector3 = Vector3.INF
 var _dig_target: Node = null
 var _last_dig_msec: int = 0
 
@@ -60,6 +61,7 @@ func start_dig(target: Node) -> bool:
 	
 	_digging = true
 	_dig_start_time = Time.get_ticks_msec() / 1000.0
+	_dig_start_pos = _owner.global_position
 	_dig_target = target
 	_last_dig_msec = now
 	
@@ -74,8 +76,8 @@ func _complete_dig() -> void:
 	dig_progress.emit(1.0)
 	dig_completed.emit()
 	
-	if _dig_target != null and _dig_target.has_method("on_bones_buried"):
-		_dig_target.on_bones_buried()
+	if _dig_target != null and _dig_target.has_method(&"on_bones_buried"):
+		_dig_target.call(&"on_bones_buried")
 	
 	EventBus.noise_event.emit(global_position, 3.0, _owner.peer_id)
 

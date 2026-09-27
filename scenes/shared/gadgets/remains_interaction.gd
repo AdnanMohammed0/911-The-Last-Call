@@ -33,54 +33,14 @@ func _ready() -> void:
 func _create_remains_visual() -> void:
 	var mesh: MeshInstance3D = MeshInstance3D.new()
 	mesh.name = "RemainsMesh"
-	
-	# Simple skeleton shape
-	var cs: CSGSphere3D = CSGSphere3D.new()
-	cs.radius = 0.15
-	cs.operation = CSGCombiner3D.OPERATION_UNION
-	
-	var skel: Node3D = Node3D.new()
-	skel.name = "Skeleton"
-	
-	# Skull
-	var skull: CSGSphere3D = CSGSphere3D.new()
-	skull.radius = 0.12
-	skull.transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
-	skel.add_child(skull)
-	
-	# Ribcage
-	var ribs: CSGBox3D = CSGBox3D.new()
-	ribs.size = Vector3(0.25, 0.2, 0.1)
-	ribs.transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
-	skel.add_child(ribs)
-	
-	# Arms
-	for side in [-1, 1]:
-		var arm: CSGCylinder3D = CSGCylinder3D.new()
-		arm.radius = 0.03
-		arm.height = 0.35
-		arm.rotation_degrees = Vector3(90, 0, side * 30)
-		arm.transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, side * 0.2, 0.2, 0)
-		skel.add_child(arm)
-	
-	# Legs
-	for side in [-1, 1]:
-		var leg: CSGCylinder3D = CSGCylinder3D.new()
-		leg.radius = 0.04
-		leg.height = 0.4
-		leg.rotation_degrees = Vector3(-90, 0, side * 15)
-		leg.transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, side * 0.1, -0.3, 0)
-		skel.add_child(leg)
-	
-	mesh.mesh = _skel_to_mesh(skel)
+	mesh.mesh = _skel_to_mesh()
 	mesh.material_override = _make_bone_material()
 	add_child(mesh)
 
 
-func _skel_to_mesh(skel: Node3D) -> ArrayMesh:
+func _skel_to_mesh() -> ArrayMesh:
 	# Use a simple ArrayMesh for the remains
 	var mesh: ArrayMesh = ArrayMesh.new()
-	# Just return a simple box for now - in production use proper skeleton mesh
 	var arr: Array = []
 	arr.resize(ArrayMesh.ARRAY_MAX)
 	var verts: PackedVector3Array = PackedVector3Array([
@@ -90,7 +50,7 @@ func _skel_to_mesh(skel: Node3D) -> ArrayMesh:
 	var indices: PackedInt32Array = PackedInt32Array([0,1,2,2,3,0, 4,5,6,6,7,4, 0,1,5,5,4,0, 2,3,7,7,6,2, 0,3,7,7,4,0, 1,2,6,6,5,1])
 	arr[ArrayMesh.ARRAY_VERTEX] = verts
 	arr[ArrayMesh.ARRAY_INDEX] = indices
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVES_TRIANGLES, arr)
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 	return mesh
 
 
@@ -113,9 +73,9 @@ func _on_interacted(peer_id: int) -> void:
 		return
 	
 	var has_tool: bool = false
-	if _required_tool != &"" and _required_tool != &"hands":
+	if required_tool != &"" and required_tool != &"hands":
 		var loadout: Dictionary = LoadoutManager.get_player_loadout(peer_id)
-		has_tool = loadout.has(_required_tool)
+		has_tool = loadout.has(required_tool)
 	else:
 		has_tool = true  # Can dig by hand
 	
@@ -163,15 +123,15 @@ func _dig_tick(peer_id: int) -> void:
 
 func _complete_burial(peer_id: int) -> void:
 	_burial_state = 2  # buried
-	_dig_timer.stop()
-	_dig_timer.queue_free()
+	if _dig_timer != null:
+		_dig_timer.stop()
+		_dig_timer.queue_free()
 	
 	# Set the flag
-	FlagSystem.set_flag(flag_on_complete, true)
-	
-	# Reveal evidence if specified
-	if reward_evidence != &"":
-		FlagSystem.set_flag(reward_evidence, true)
+	if EventBus != null:
+		EventBus.flag_changed.emit(flag_on_complete, false, true)
+		if reward_evidence != &"":
+			EventBus.flag_changed.emit(reward_evidence, false, true)
 	
 	# Visual: remains disappear, peaceful effect
 	queue_free()
@@ -179,7 +139,8 @@ func _complete_burial(peer_id: int) -> void:
 	burial_completed.emit(flag_on_complete)
 	
 	# Notify anomaly system if needed
-	EventBus.call_event.emit(&"", &"remains_buried")
+	if EventBus != null:
+		EventBus.call_event.emit(&"", &"remains_buried")
 
 
 ## Checks if remains are still present (not buried)

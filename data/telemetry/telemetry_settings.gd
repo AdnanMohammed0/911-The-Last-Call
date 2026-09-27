@@ -46,8 +46,9 @@ func set_consent(enabled: bool, include_crashes: bool = true) -> void:
 	has_consented = true
 	telemetry_enabled = enabled
 	crash_reporting_enabled = include_crashes
-	consent_timestamp = Time.get_datetime_string_from_system(true)  # UTC
-	consent_version = ProjectSettings.get_setting("application/config/version", "unknown")
+	consent_timestamp = Time.get_datetime_string_from_system(true)
+	var ver: String = ProjectSettings.get_setting("application/config/version", "")
+	consent_version = ver if not ver.is_empty() else "0.1.0"
 	# session_id is generated per session, not saved
 
 

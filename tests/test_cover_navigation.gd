@@ -35,6 +35,7 @@ func before_each() -> void:
 	await wait_physics_frames(2)
 	_nav.bake_now()
 	await wait_for_signal(_nav.navigation_ready, 5.0)
+	await wait_physics_frames(2)
 
 
 func _points() -> Array[CoverPoint]:

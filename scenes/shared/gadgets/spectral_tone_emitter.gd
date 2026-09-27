@@ -85,9 +85,12 @@ func _find_nearest_anomaly() -> Node:
 	var best_dist: float = effective_range
 	
 	for node: Node in get_tree().get_nodes_in_group("anomalies"):
-		var dist: float = global_position.distance_to(node.global_position)
+		var anomaly_3d: Node3D = node as Node3D
+		if anomaly_3d == null:
+			continue
+		var dist: float = global_position.distance_to(anomaly_3d.global_position)
 		if dist < best_dist:
-			best = node
+			best = anomaly_3d
 			best_dist = dist
 	
 	return best
@@ -103,13 +106,13 @@ func _complete_channel() -> bool:
 	channel_completed.emit(true)
 	
 	# Trigger anomaly banishment
-	if _target_anomaly.has_method("on_reverse_tone_complete"):
-		_target_anomaly.on_reverse_tone_complete()
-		anomaly_banished.emit(_target_anomaly.get_name())
+	if _target_anomaly.has_method(&"on_reverse_tone_complete"):
+		_target_anomaly.call(&"on_reverse_tone_complete")
+		anomaly_banished.emit(_target_anomaly.name)
 		return true
-	elif _target_anomaly.has_method("banish"):
-		_target_anomaly.banish()
-		anomaly_banished.emit(_target_anomaly.get_name())
+	elif _target_anomaly.has_method(&"banish"):
+		_target_anomaly.call(&"banish")
+		anomaly_banished.emit(_target_anomaly.name)
 		return true
 	
 	return false
@@ -118,7 +121,7 @@ func _complete_channel() -> bool:
 func _interrupt_channel(success: bool) -> void:
 	_channeling = false
 	_target_anomaly = null
-	_channel_progress.emit(0.0)
+	channel_progress.emit(0.0)
 	channel_completed.emit(success)
 	EventBus.noise_event.emit(global_position, 5.0, _owner.peer_id if _owner != null else 0)
 

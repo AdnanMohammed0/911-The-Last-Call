@@ -5,7 +5,8 @@
 [resource]
 script = ExtResource("1_pdw")
 id = &"pdw"
-display_name = "Compact PDW"
+display_name = "AK Carbine"
+model_id = &"ak47"
 damage = 22.0
 max_range = 70.0
 falloff_start = 18.0

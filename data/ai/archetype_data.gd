@@ -6,6 +6,8 @@ extends Resource
 @export var id: StringName = &""
 @export var display_name: String = ""
 @export var color: Color = Color(0.4, 0.1, 0.1)
+## Outfit in HumanoidRig.LOOKS (empty = the archetype id).
+@export var look: StringName = &""
 
 @export_group("Survivability")
 @export var max_hp: float = 100.0
@@ -20,6 +22,8 @@ extends Resource
 ## False for unarmed suspects (prank callers): they never shoot, only flee or give up.
 @export var armed: bool = true
 @export var weapon_name: String = "Pistol"
+## Model in assets/3D/weapons/ held by the rig (empty = unarmed hands).
+@export var weapon_model: StringName = &"pistol"
 @export var damage: float = 12.0
 @export var effective_range: float = 25.0
 @export var fire_interval: float = 0.45

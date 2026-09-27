@@ -1,6 +1,6 @@
 {
   "member": "adnan",
-  "updated_at": "2026-09-27",
+  "updated_at": "2026-09-28",
   "tasks": {
     "P1-01": {
       "status": "done",
@@ -892,6 +892,26 @@
       "files": [
         "scenes/dispatch/operations_room.tscn",
         "scenes/dispatch/station/station_furniture.gd"
+      ]
+    },
+    {
+      "date": "2026-09-28",
+      "tasks": [
+        "P3-01",
+        "P3-10"
+      ],
+      "summary": "بدّلت الموديلات اللي نزلت (zip/glb/fbx) بالموجودات: حوّلتها ببليندر لـ GLB (قسمت حزمتين الأسلحة لـ 10 أسلحة منفصلة، القبضة بالـ origin والفوهة لقدام، والكنبة لكنبة + كرسي، وربطت textures الشاحنة المدرعة والسيرفر، وخففت مكينة القهوة، وسويت ساطور). ModelKit يحجّم ويوقّف أي موديل. بالمحطة: سيرفر CAD، قهوة، مكينة بيع، براد مي، كنبة جلد + كرسي، لوكرات حديد عليها سترة plate carrier، صندوق عتاد خشب، وشاحنة SWAT مدرعة. الأسلحة صارت موديلات حقيقية (يد + قفازات بالـ first person)، سلاح جديد M249 LMG ورف له، والـ PDW صار AK. شخصية HumanoidRig إجرائية (IK للأيدي على السلاح، مشي، crouch، lean، استسلام، تكبيل، موت) للاعبين (زي شرطة + سترة + شارة لون الكلاس) وللأعداء (6 أزياء، وكل واحد شايل سلاحه: مسدس، ريفولفر، AK، LMG، ساطور) مع وميض فوهة وtracer وصوت من السلاح نفسه، وضرر الأعداء صار أقوى. 305/306 اختبار ناجحة (نفس قبل).",
+      "files": [
+        "core/visual/model_kit.gd",
+        "scenes/shared/characters/humanoid_rig.gd",
+        "scenes/shared/weapons/weapon_model.gd",
+        "scenes/shared/weapons/weapon_holder.gd",
+        "scenes/shared/player/player_body.gd",
+        "scenes/field/enemies/hostile_agent.gd",
+        "scenes/dispatch/station/station_furniture.gd",
+        "assets/3D/weapons/",
+        "assets/3D/station_props/",
+        "data/weapons/lmg.tres"
       ]
     }
   ]

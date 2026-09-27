@@ -15,3 +15,6 @@ burst_size = 2
 magazine = 10
 reload_seconds = 1.8
 accuracy = 0.45
+weapon_model = &"pistol"
+damage = 16.0
+weapon_name = "Pistol"

@@ -12,7 +12,7 @@ const RANKS: Array[Array] = [
 ]
 ## Minimum rank index to draw each weapon from the armory (field pickups are never locked).
 const WEAPON_RANKS: Dictionary[StringName, int] = {
-	&"pistol": 0, &"revolver": 0, &"shotgun": 1, &"pdw": 1, &"smg": 2, &"auto_shotgun": 2, &"dmr": 2, &"rifle": 3,
+	&"pistol": 0, &"revolver": 0, &"shotgun": 1, &"pdw": 1, &"smg": 2, &"auto_shotgun": 2, &"dmr": 2, &"rifle": 3, &"lmg": 3,
 }
 const ARMOR_RANK: int = 1
 

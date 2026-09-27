@@ -94,41 +94,31 @@ func _build_display() -> void:
 				return
 			var model: WeaponModel = WeaponModel.build(data)
 			model.rotation_degrees = Vector3(0, 90, 0)
-			model.position = Vector3(-data.body_length * 0.5, 0, 0)
 			add_child(model)
+			model.centre_on_parent()
 			var label: Label3D = Label3D.new()
 			label.text = data.display_name.to_upper()
 			label.font_size = 28
 			label.pixel_size = 0.004
 			label.modulate = Color(0.85, 0.88, 0.9)
-			label.position = Vector3(0, -0.22, 0.06)
+			label.position = Vector3(0, -0.24, 0.06)
 			add_child(label)
 		Kind.ARMOR:
-			var vest: MeshInstance3D = MeshInstance3D.new()
-			var mesh: BoxMesh = BoxMesh.new()
-			mesh.size = Vector3(0.46, 0.55, 0.22)
-			var material: StandardMaterial3D = StandardMaterial3D.new()
-			material.albedo_color = Color(0.13, 0.15, 0.13)
-			material.roughness = 0.9
-			mesh.material = material
-			vest.mesh = mesh
-			add_child(vest)
-			var plate: MeshInstance3D = MeshInstance3D.new()
-			var plate_mesh: BoxMesh = BoxMesh.new()
-			plate_mesh.size = Vector3(0.3, 0.2, 0.02)
-			var text: StandardMaterial3D = StandardMaterial3D.new()
-			text.albedo_color = Color(0.85, 0.8, 0.3)
-			plate_mesh.material = text
-			plate.mesh = plate_mesh
-			plate.position = Vector3(0, 0.08, 0.12)
-			add_child(plate)
+			var vest: Node3D = ModelKit.prop(self, &"plate_carrier", "Vest", Vector3(0, -0.31, 0.02))
+			if vest == null:
+				var fallback: MeshInstance3D = MeshInstance3D.new()
+				var mesh: BoxMesh = BoxMesh.new()
+				mesh.size = Vector3(0.46, 0.55, 0.22)
+				fallback.mesh = mesh
+				add_child(fallback)
+			elif armor_amount < ARMOR_AMOUNT:
+				# Soft armour: a slimmer carrier.
+				vest.scale = Vector3(0.9, 0.9, 0.75)
 		Kind.AMMO:
-			var crate: MeshInstance3D = MeshInstance3D.new()
-			var crate_mesh: BoxMesh = BoxMesh.new()
-			crate_mesh.size = Vector3(0.8, 0.4, 0.45)
-			var olive: StandardMaterial3D = StandardMaterial3D.new()
-			olive.albedo_color = Color(0.23, 0.26, 0.17)
-			olive.roughness = 0.85
-			crate_mesh.material = olive
-			crate.mesh = crate_mesh
-			add_child(crate)
+			var crate: Node3D = ModelKit.prop(self, &"ammo_crate", "Crate", Vector3(0, -0.2, 0))
+			if crate == null:
+				var fallback_crate: MeshInstance3D = MeshInstance3D.new()
+				var crate_mesh: BoxMesh = BoxMesh.new()
+				crate_mesh.size = Vector3(0.8, 0.4, 0.45)
+				fallback_crate.mesh = crate_mesh
+				add_child(fallback_crate)

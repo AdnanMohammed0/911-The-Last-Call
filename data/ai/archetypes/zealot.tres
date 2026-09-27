@@ -18,3 +18,4 @@ run_speed = 5.0
 uses_cover = false
 rushes = true
 ied_radius = 3.0
+weapon_model = &"machete"

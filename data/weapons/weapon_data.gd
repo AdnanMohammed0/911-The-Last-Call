@@ -44,9 +44,15 @@ enum Slot { PRIMARY, SIDEARM }
 @export var noise_radius: float = 60.0
 
 @export_group("Look")
+## Model in assets/3D/weapons/<model_id>.glb (empty = the weapon id). Falls back to a procedural gun.
+@export var model_id: StringName = &""
 @export var body_length: float = 0.55
 @export var barrel_length: float = 0.25
 @export var body_color: Color = Color(0.08, 0.08, 0.09)
+
+
+func get_model_id() -> StringName:
+	return model_id if model_id != &"" else id
 
 
 func is_allowed_for(class_id: StringName) -> bool:

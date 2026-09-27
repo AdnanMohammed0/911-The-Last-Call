@@ -24,8 +24,9 @@ func _ready() -> void:
 		var model: WeaponModel = WeaponModel.build(data)
 		# Lying on its side on the floor.
 		model.rotation_degrees = Vector3(0, 90, 90)
-		model.position = Vector3(0, 0.05, data.body_length * 0.5)
 		add_child(model)
+		model.centre_on_parent()
+		model.position.y += 0.03
 
 
 func get_prompt_text() -> String:

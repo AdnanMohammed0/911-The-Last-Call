@@ -22,8 +22,8 @@ const TRASH_SCENE: String = "res://assets/3D/trash/trash_can.glb"
 const RUG_SCENE: String = "res://assets/3D/rug/paloma_large_wool_rug.glb"
 ## Weapon rack x positions along the armory's south wall (item id → x).
 const RACK_X: Dictionary[StringName, float] = {
-	&"rack_pistol": 23.6, &"rack_revolver": 25.3, &"rack_shotgun": 27.0, &"rack_smg": 28.7,
-	&"rack_pdw": 31.9, &"rack_rifle": 33.6, &"rack_dmr": 35.3, &"rack_auto_shotgun": 37.0,
+	&"rack_pistol": 23.2, &"rack_revolver": 24.9, &"rack_shotgun": 26.6, &"rack_smg": 28.3, &"rack_pdw": 30.0,
+	&"rack_rifle": 31.7, &"rack_dmr": 33.4, &"rack_auto_shotgun": 35.1, &"rack_lmg": 36.8,
 }
 const RACK_Z: float = -0.62
 ## Armor locker x positions along the armory's north wall.
@@ -187,9 +187,10 @@ func _build_item(item_id: StringName, index: int, holder: Node3D) -> void:
 		&"workstation":
 			_build_workstation(index, holder)
 		&"cad_server":
-			holder.position = Vector3(1.2, FLOOR, -19.2)
-			_kit.server_rack(holder, "Rack", Vector3.ZERO, 90.0)
-			_label(holder, "CAD SERVER", Vector3(0.36, 2.3, 0), 0.004, Color(0.4, 0.8, 1.0), 90.0)
+			holder.position = Vector3(0.9, FLOOR, -19.2)
+			if not _model(holder, &"server_rack", "Rack", Vector3.ZERO, 90.0):
+				_kit.server_rack(holder, "Rack", Vector3.ZERO, 90.0)
+			_label(holder, "CAD SERVER", Vector3(0.95, 2.3, 0), 0.004, Color(0.4, 0.8, 1.0), 90.0)
 		&"printer":
 			holder.position = Vector3(13.6, FLOOR, -27.2)
 			_kit.box(holder, "Stand", Vector3(0, 0.4, 0), Vector3(0.8, 0.8, 0.6), _kit.material("metal_painted"))
@@ -232,7 +233,7 @@ func _build_item(item_id: StringName, index: int, holder: Node3D) -> void:
 		&"safe_room":
 			_build_safe_room(holder)
 		&"ammo_crate":
-			_armory_use(holder, "Crate", Vector3(32.8, FLOOR + 0.2, -5.6), 0.0, ArmoryItem.Kind.AMMO, &"", 0.0)
+			_armory_use(holder, "Crate", Vector3(32.8, FLOOR + 0.2, -5.5), 0.0, ArmoryItem.Kind.AMMO, &"", 0.0)
 			_label(holder, "AMMO", Vector3(32.8, FLOOR + 0.75, -5.6), 0.004, Color(0.8, 0.9, 0.6))
 		&"ammo_bench":
 			_kit.box(holder, "Bench", Vector3(40.0, FLOOR + 0.45, -9.5), Vector3(0.9, 0.9, 2.0), _kit.material("wood"))
@@ -241,8 +242,13 @@ func _build_item(item_id: StringName, index: int, holder: Node3D) -> void:
 		&"kevlar_vest", &"plate_carrier", &"riot_gear":
 			var x: float = LOCKER_X[item_id]
 			var armor: float = item.get("armor", 100)
-			_kit.box(holder, "Locker", Vector3(x, FLOOR + 1.0, LOCKER_Z - 0.25), Vector3(1.2, 2.0, 0.4), _kit.material("metal_painted"))
-			_armory_use(holder, "Vest", Vector3(x, FLOOR + 1.25, LOCKER_Z), 0.0, ArmoryItem.Kind.ARMOR, &"", armor)
+			var lockers: int = 0
+			for offset: float in [-0.27, 0.27]:
+				if _model(holder, &"metal_locker", "Locker%d" % lockers, Vector3(x + offset, FLOOR, LOCKER_Z - 0.32), 0.0):
+					lockers += 1
+			if lockers == 0:
+				_kit.box(holder, "Locker", Vector3(x, FLOOR + 1.0, LOCKER_Z - 0.25), Vector3(1.2, 2.0, 0.4), _kit.material("metal_painted"))
+			_armory_use(holder, "Vest", Vector3(x, FLOOR + 1.3, LOCKER_Z + 0.02), 0.0, ArmoryItem.Kind.ARMOR, &"", armor)
 			_label(holder, "%s\n%d ARMOR" % [str(item["name"]).replace(" Locker", "").to_upper(), roundi(armor)],
 				Vector3(x, FLOOR + 0.55, LOCKER_Z + 0.05), 0.0028, Color(0.9, 0.92, 0.95))
 		&"first_aid":
@@ -267,21 +273,30 @@ func _build_item(item_id: StringName, index: int, holder: Node3D) -> void:
 			_label(holder, "INFIRMARY", Vector3(38.25, FLOOR + 2.4, -15.6), 0.005, Color(0.9, 0.95, 1.0), -90.0)
 		&"coffee_machine":
 			_counter(holder, Vector3(1.0, FLOOR, -16.7))
-			_appliance(holder, "Coffee", Vector3(1.0, FLOOR + 1.15, -16.75), 0.0, Vector3(0.45, 0.6, 0.4), Color(0.15, 0.12, 0.1),
+			var coffee_colour: Color = Color.TRANSPARENT if _model(holder, &"coffee_machine", "CoffeeModel", Vector3(1.0, FLOOR + 0.9, -16.78), 0.0, false) else Color(0.15, 0.12, 0.1)
+			_appliance(holder, "Coffee", Vector3(1.0, FLOOR + 1.15, -16.75), 0.0, Vector3(0.45, 0.6, 0.4), coffee_colour,
 				StationAppliance.Kind.HEAL, 15.0, "Drink coffee", "Coffee  +15 HP")
 		&"vending_machine":
-			_appliance(holder, "Vending", Vector3(2.4, FLOOR + 0.95, -16.75), 0.0, Vector3(1.0, 1.9, 0.8), Color(0.12, 0.25, 0.55),
-				StationAppliance.Kind.HEAL, 10.0, "Buy a snack", "Snack  +10 HP", true)
-			var glass: BoxMesh = BoxMesh.new()
-			glass.size = Vector3(0.6, 1.2, 0.02)
-			_kit.mesh(holder, "Glass", glass, Vector3(2.25, FLOOR + 1.1, -16.34), _kit.material("screen_blue"), Vector3.ZERO, false)
+			if _model(holder, &"vending_machine", "VendingModel", Vector3(2.4, FLOOR, -16.72), 0.0):
+				_appliance(holder, "Vending", Vector3(2.4, FLOOR + 0.95, -16.75), 0.0, Vector3(1.0, 1.9, 0.8), Color.TRANSPARENT,
+					StationAppliance.Kind.HEAL, 10.0, "Buy a snack", "Snack  +10 HP")
+			else:
+				_appliance(holder, "Vending", Vector3(2.4, FLOOR + 0.95, -16.75), 0.0, Vector3(1.0, 1.9, 0.8), Color(0.12, 0.25, 0.55),
+					StationAppliance.Kind.HEAL, 10.0, "Buy a snack", "Snack  +10 HP", true)
 		&"water_cooler":
-			_appliance(holder, "Cooler", Vector3(3.6, FLOOR + 0.6, -16.8), 0.0, Vector3(0.4, 1.2, 0.4), Color(0.85, 0.87, 0.9),
-				StationAppliance.Kind.HEAL, 5.0, "Drink water", "Water  +5 HP", true)
-			_kit.cylinder(holder, "Bottle", Vector3(3.6, FLOOR + 1.45, -16.8), 0.14, 0.45, _kit.material("screen_blue"), false)
+			if _model(holder, &"water_dispenser", "CoolerModel", Vector3(3.6, FLOOR, -16.85), 0.0):
+				_appliance(holder, "Cooler", Vector3(3.6, FLOOR + 0.65, -16.8), 0.0, Vector3(0.4, 1.3, 0.4), Color.TRANSPARENT,
+					StationAppliance.Kind.HEAL, 5.0, "Drink water", "Water  +5 HP")
+			else:
+				_appliance(holder, "Cooler", Vector3(3.6, FLOOR + 0.6, -16.8), 0.0, Vector3(0.4, 1.2, 0.4), Color(0.85, 0.87, 0.9),
+					StationAppliance.Kind.HEAL, 5.0, "Drink water", "Water  +5 HP", true)
+				_kit.cylinder(holder, "Bottle", Vector3(3.6, FLOOR + 1.45, -16.8), 0.14, 0.45, _kit.material("screen_blue"), false)
 		&"sofa":
 			holder.position = Vector3(5.0, FLOOR, -11.3)
 			holder.rotation_degrees.y = 180.0
+			if _model(holder, &"leather_couch", "Couch", Vector3.ZERO, 0.0):
+				_model(holder, &"leather_armchair", "Armchair", Vector3(2.4, 0, 0.9), -35.0)
+				return
 			_kit.box(holder, "Seat", Vector3(0, 0.25, 0), Vector3(2.4, 0.5, 0.9), _kit.material("fabric_dark"))
 			_kit.box(holder, "Back", Vector3(0, 0.7, 0.38), Vector3(2.4, 0.5, 0.18), _kit.material("fabric_dark"), 0.0, false)
 			for side: float in [-1.15, 1.15]:
@@ -320,8 +335,9 @@ func _build_item(item_id: StringName, index: int, holder: Node3D) -> void:
 			var yaw: float = bay[1]
 			_vehicle_model(holder, "Cruiser", at, yaw)
 		&"swat_van":
-			var van: Node3D = _kit.cruiser(holder, "Van", Vector3(48.6, FLOOR, -18.0), 180.0, true)
-			_label(van, "SWAT", Vector3(1.0, 1.3, 0), 0.012, Color(0.9, 0.9, 0.9), 90.0)
+			if not _model(holder, &"armored_truck", "Van", Vector3(48.6, FLOOR, -18.0), 180.0):
+				var van: Node3D = _kit.cruiser(holder, "Van", Vector3(48.6, FLOOR, -18.0), 180.0, true)
+				_label(van, "SWAT", Vector3(1.0, 1.3, 0), 0.012, Color(0.9, 0.9, 0.9), 90.0)
 		&"ambulance":
 			var ambulance: Node3D = _kit.cruiser(holder, "Ambulance", Vector3(44.6, FLOOR, -30.0), 90.0, true)
 			var body: MeshInstance3D = ambulance.get_node_or_null(^"Body/Mesh") as MeshInstance3D
@@ -487,6 +503,18 @@ func _beacon(parent: Node3D, node_name: String, at: Vector3, colour: Color, ener
 		light.light_color = colour
 		light.light_energy = energy
 		light.omni_range = 3.0
+
+
+## Imported prop `prop_id` (ModelKit.PROPS) at `at` in `holder` space (holders left at the origin take world
+## positions), with a box collider unless `solid` is false. False when the model is missing (callers fall
+## back to primitives).
+func _model(holder: Node3D, prop_id: StringName, node_name: String, at: Vector3, yaw: float, solid: bool = true) -> bool:
+	var wrapper: Node3D = ModelKit.prop(holder, prop_id, node_name, at, yaw)
+	if wrapper == null:
+		return false
+	if solid:
+		ModelKit.add_collider(wrapper)
+	return true
 
 
 ## The imported cop car, centred on `at` with a box collider around it. Faces the shutter at yaw 180.

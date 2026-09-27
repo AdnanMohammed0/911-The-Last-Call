@@ -92,6 +92,9 @@ var _arrest_point: Interactable
 @onready var eye: Node3D = $Eye
 @onready var _body: Node3D = $Body
 
+var _rig: HumanoidRig
+var _shot_player: AudioStreamPlayer3D
+
 
 func _ready() -> void:
 	add_to_group(GROUP)
@@ -174,7 +177,8 @@ func _apply_arrested() -> void:
 		collision_layer = 0
 		if _arrest_point != null:
 			_arrest_point.enabled = false
-		_body.scale.y = 0.75
+		if _rig != null:
+			_rig.pose = &"arrested"
 
 
 func change_morale(amount: float, _reason: StringName) -> void:
@@ -334,6 +338,7 @@ func act_rush_and_strike(bb: BTBlackboard) -> BTNode.Status:
 		bb.set_value(&"next_strike", get_time() + MELEE_COOLDOWN)
 		anim_state = &"melee"
 		target.get_health().apply_damage(archetype.melee_damage, HealthComponent.HitZone.TORSO)
+		_fx_melee.rpc()
 	return BTNode.Status.RUNNING
 
 
@@ -718,40 +723,67 @@ func _on_noise_for_hostage(position: Vector3, radius: float, _source_peer: int) 
 
 # --- Visuals (all peers) ----------------------------------------------------------
 
+## Dress the rig for this archetype and put its weapon in its hands.
 func _apply_color() -> void:
-	var material: StandardMaterial3D = StandardMaterial3D.new()
-	material.albedo_color = archetype.color
-	for child: Node in _body.get_children():
-		var mesh: MeshInstance3D = child as MeshInstance3D
-		if mesh != null and mesh.name != "Head":
-			mesh.material_override = material
+	if DisplayServer.get_name() == "headless":
+		return
+	_rig = HumanoidRig.new()
+	_rig.name = "Rig"
+	_body.add_child(_rig)
+	_rig.dress(archetype.look if archetype.look != &"" else archetype.id)
+	if archetype.armed and archetype.weapon_model != &"":
+		var one_handed: bool = archetype.weapon_model in [&"pistol", &"revolver"]
+		var model: WeaponModel = WeaponModel.build_model(archetype.weapon_model, one_handed)
+		var stance: HumanoidRig.Stance = HumanoidRig.Stance.MELEE if archetype.melee else (HumanoidRig.Stance.PISTOL if one_handed else HumanoidRig.Stance.RIFLE)
+		_rig.set_weapon(model, stance)
+	_shot_player = AudioStreamPlayer3D.new()
+	_shot_player.unit_size = 12.0
+	_shot_player.max_distance = 140.0
+	_shot_player.max_polyphony = 4
+	add_child(_shot_player)
 
 
-func _apply_pose(delta: float) -> void:
-	var lie: float = -1.45 if anim_state == &"dead" else 0.0
-	var kneel: float = 0.7 if anim_state == &"surrender" else 1.0
-	_body.rotation.x = lerpf(_body.rotation.x, lie, clampf(6.0 * delta, 0.0, 1.0))
-	_body.scale.y = lerpf(_body.scale.y, kneel, clampf(6.0 * delta, 0.0, 1.0))
+## Replicated anim_state -> rig pose (every peer).
+func _apply_pose(_delta: float) -> void:
+	if _rig == null:
+		return
+	match anim_state:
+		&"dead":
+			_rig.pose = &"dead"
+		&"surrender", &"hostage":
+			_rig.pose = &"surrender" if anim_state == &"surrender" else &"idle"
+		&"arrested":
+			_rig.pose = &"arrested"
+		_:
+			_rig.pose = &"idle"
+	if is_arrested:
+		_rig.pose = &"arrested"
+	_rig.aiming = anim_state in [&"aim", &"hostage", &"callout", &"melee"]
+	_rig.sprinting = anim_state in [&"run", &"flee"]
+	_rig.reloading = anim_state == &"reload"
+	_rig.crouch = 0.75 if anim_state == &"cover" else 0.0
 
 
 @rpc("authority", "call_local", "unreliable")
 func _fx_shot(from: Vector3, to: Vector3) -> void:
-	if DisplayServer.get_name() == "headless":
+	if DisplayServer.get_name() == "headless" or not is_inside_tree():
 		return
-	var mesh: ImmediateMesh = ImmediateMesh.new()
-	mesh.surface_begin(Mesh.PRIMITIVE_LINES)
-	mesh.surface_add_vertex(from)
-	mesh.surface_add_vertex(to)
-	mesh.surface_end()
-	var line: MeshInstance3D = MeshInstance3D.new()
-	line.mesh = mesh
-	var material: StandardMaterial3D = StandardMaterial3D.new()
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	material.albedo_color = Color(1.0, 0.85, 0.4)
-	line.material_override = material
-	line.top_level = true
-	add_child(line)
-	get_tree().create_timer(0.06).timeout.connect(line.queue_free)
+	var muzzle: Vector3 = _rig.muzzle_position() if _rig != null else from
+	var scene_root: Node = get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+	WeaponFx.muzzle_flash(scene_root, muzzle)
+	WeaponFx.tracer(scene_root, muzzle, to)
+	WeaponFx.impact(scene_root, to)
+	if _shot_player != null:
+		_shot_player.stream = WeaponAudio.gunshot(String(archetype.weapon_model), clampf(archetype.damage / 30.0, 0.2, 1.0))
+		_shot_player.pitch_scale = _rng.randf_range(0.94, 1.04)
+		_shot_player.global_position = muzzle
+		_shot_player.play()
+
+
+@rpc("authority", "call_local", "unreliable")
+func _fx_melee() -> void:
+	if _rig != null:
+		_rig.play_melee()
 
 
 @rpc("authority", "call_local", "reliable")

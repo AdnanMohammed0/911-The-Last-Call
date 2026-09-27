@@ -21,10 +21,9 @@ const FIRE_INTERVAL_TOLERANCE: float = 0.6
 const FIRE_RATE_SLACK: int = 2
 const DRAW_SECONDS: float = 0.35
 const PREDICTION_HOLD_MSEC: int = 400
-const HIP_POSITION: Vector3 = Vector3(0.17, -0.17, -0.5)
+const HIP_POSITION: Vector3 = Vector3(0.16, -0.17, -0.42)
 ## ADS: sights centred, slightly closer (y is lowered by WeaponModel.sight_height).
 const AIM_POSITION: Vector3 = Vector3(0.0, 0.0, -0.4)
-const REMOTE_POSITION: Vector3 = Vector3(0.22, -0.32, -0.42)
 
 ## Owner: a hit was confirmed by the host (hit marker).
 signal hit_confirmed(killed: bool, headshot: bool)
@@ -662,15 +661,16 @@ func _rebuild_model() -> void:
 		_model.queue_free()
 		_model = null
 	var weapon: WeaponData = get_active_weapon()
-	if weapon == null:
+	var body: PlayerBody = _player.get_node_or_null(^"Body") as PlayerBody
+	# Third-person gun in the character's hands (every peer; hidden from the owner's own camera).
+	if body != null:
+		body.set_weapon(WeaponModel.build(weapon) if weapon != null else null, weapon != null and weapon.slot == WeaponData.Slot.SIDEARM)
+	if weapon == null or not _player.is_multiplayer_authority():
 		return
-	var local: bool = _player.is_multiplayer_authority()
-	_model = WeaponModel.build(weapon, 1)
-	for child: Node in _model.get_children():
-		var mesh: MeshInstance3D = child as MeshInstance3D
-		if mesh != null and local:
-			mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	_model.position = HIP_POSITION if local else REMOTE_POSITION
+	# First-person viewmodel with gloved hands.
+	_model = WeaponModel.build(weapon, 1, true)
+	ModelKit.set_layers(_model, 1, false)
+	_model.position = HIP_POSITION
 	_player.get_camera().add_child(_model)
 
 
@@ -691,7 +691,13 @@ func _play_shot_fx(weapon: WeaponData, ends: PackedVector3Array, local: bool) ->
 		_shot_player.stream = stream
 		_shot_player.pitch_scale = _rng.randf_range(0.95, 1.05)
 		_shot_player.play()
-	var from: Vector3 = _model.muzzle.global_position if _model != null and _model.muzzle != null else _player.get_eye_position()
+	var from: Vector3 = _player.get_eye_position()
+	if local and _model != null and _model.muzzle != null:
+		from = _model.muzzle.global_position
+	else:
+		var body: PlayerBody = _player.get_node_or_null(^"Body") as PlayerBody
+		if body != null:
+			from = body.muzzle_position()
 	var scene_root: Node = get_tree().current_scene if get_tree().current_scene != null else get_tree().root
 	WeaponFx.muzzle_flash(scene_root, from)
 	for end: Vector3 in ends:

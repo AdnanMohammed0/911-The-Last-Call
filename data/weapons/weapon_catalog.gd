@@ -12,6 +12,7 @@ const WEAPON_PATHS: Dictionary[StringName, String] = {
 	&"pdw": "res://data/weapons/pdw.tres",
 	&"dmr": "res://data/weapons/dmr.tres",
 	&"auto_shotgun": "res://data/weapons/auto_shotgun.tres",
+	&"lmg": "res://data/weapons/lmg.tres",
 }
 
 

@@ -391,6 +391,25 @@
    ],
    "commit": "2212fed",
    "auto": true
+  },
+  {
+   "date": "2026-09-27",
+   "tasks": [],
+   "summary": "fix(ci): resolve GDScript strict typing parse errors and GUT test failures",
+   "files": [
+    "autoload/crash_reporter.gd",
+    "autoload/game_settings.gd",
+    "autoload/telemetry_manager.gd",
+    "data/telemetry/telemetry_settings.gd",
+    "scenes/shared/gadgets/emf_reader.gd",
+    "scenes/shared/gadgets/remains_interaction.gd",
+    "scenes/shared/gadgets/salt_canister.gd",
+    "scenes/shared/gadgets/shovel_tool.gd",
+    "scenes/shared/gadgets/spectral_tone_emitter.gd",
+    "tests/test_anomaly_tools.gd"
+   ],
+   "commit": "ab6d008",
+   "auto": true
   }
  ]
 }

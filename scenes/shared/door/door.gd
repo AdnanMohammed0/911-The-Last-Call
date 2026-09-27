@@ -57,6 +57,13 @@ signal door_unlocked(by_peer: int)
 @export var sound_locked: AudioStream
 @export var sound_unlock: AudioStream
 
+@export_group("Double Door (Optional)")
+@export var is_double_door: bool = false
+@export var hinge_right: Node3D = null
+@export var leaf_right_body: AnimatableBody3D = null
+@export var mesh_leaf_left: Node3D = null
+@export var mesh_leaf_right: Node3D = null
+
 # Replicated properties (MultiplayerSynchronizer)
 @export var current_state: DoorState = DoorState.CLOSED:
 	set(value):
@@ -83,18 +90,30 @@ var current_angle_deg: float = 0.0
 
 
 func _ready() -> void:
+	if hinge == null and has_node("Hinge"):
+		hinge = get_node("Hinge")
+	if leaf_body == null and has_node("Hinge/DoorLeaf"):
+		leaf_body = get_node("Hinge/DoorLeaf")
+	if hinge_right == null and has_node("HingeRight"):
+		hinge_right = get_node("HingeRight")
+	if leaf_right_body == null and has_node("HingeRight/DoorLeaf"):
+		leaf_right_body = get_node("HingeRight/DoorLeaf")
+	if mesh_leaf_left == null:
+		mesh_leaf_left = find_child("L_2", true, false) as Node3D
+	if mesh_leaf_right == null:
+		mesh_leaf_right = find_child("R_2_2", true, false) as Node3D
+
 	_update_target_angle()
 	current_angle_deg = target_angle_deg
-	if hinge:
-		hinge.rotation_degrees.y = current_angle_deg
+	_apply_hinge_rotations(current_angle_deg)
 
 
 func _process(delta: float) -> void:
-	if not hinge:
+	if not hinge and not mesh_leaf_left:
 		return
 	if is_equal_approx(current_angle_deg, target_angle_deg):
 		current_angle_deg = target_angle_deg
-		hinge.rotation_degrees.y = current_angle_deg
+		_apply_hinge_rotations(current_angle_deg)
 		return
 
 	var smooth_rate: float = kick_speed if current_state == DoorState.KICKED else swing_speed
@@ -104,7 +123,22 @@ func _process(delta: float) -> void:
 	if absf(current_angle_deg - target_angle_deg) < 0.05:
 		current_angle_deg = target_angle_deg
 
-	hinge.rotation_degrees.y = current_angle_deg
+	_apply_hinge_rotations(current_angle_deg)
+
+
+func _apply_hinge_rotations(angle: float) -> void:
+	if is_double_door:
+		if hinge:
+			hinge.rotation_degrees.y = -angle
+		if hinge_right:
+			hinge_right.rotation_degrees.y = angle
+		if mesh_leaf_left:
+			mesh_leaf_left.rotation_degrees.y = -angle
+		if mesh_leaf_right:
+			mesh_leaf_right.rotation_degrees.y = angle
+	else:
+		if hinge:
+			hinge.rotation_degrees.y = angle
 
 
 # --- Interaction API --------------------------------------------------------
@@ -150,8 +184,7 @@ func _handle_toggle_open(player_global_pos: Vector3, peer_id: int) -> void:
 		# If open or peeked, close it
 		_set_state(DoorState.CLOSED)
 		_broadcast_sound(SoundType.CLOSE)
-		if NoiseSystem != null:
-			NoiseSystem.emit_door_noise(global_position, DoorAction.TOGGLE_OPEN, peer_id)
+		_emit_noise(DoorAction.TOGGLE_OPEN, peer_id)
 		return
 
 	if is_locked:
@@ -163,8 +196,7 @@ func _handle_toggle_open(player_global_pos: Vector3, peer_id: int) -> void:
 	swing_direction = _calculate_swing_direction(player_global_pos)
 	_set_state(DoorState.OPEN)
 	_broadcast_sound(SoundType.OPEN)
-	if NoiseSystem != null:
-		NoiseSystem.emit_door_noise(global_position, DoorAction.TOGGLE_OPEN, peer_id)
+	_emit_noise(DoorAction.TOGGLE_OPEN, peer_id)
 
 
 func _handle_peek(player_global_pos: Vector3, peer_id: int) -> void:
@@ -177,20 +209,17 @@ func _handle_peek(player_global_pos: Vector3, peer_id: int) -> void:
 		# If already peeked, close it
 		_set_state(DoorState.CLOSED)
 		_broadcast_sound(SoundType.CLOSE)
-		if NoiseSystem != null:
-			NoiseSystem.emit_door_noise(global_position, DoorAction.TOGGLE_OPEN, peer_id)
+		_emit_noise(DoorAction.TOGGLE_OPEN, peer_id)
 	elif current_state == DoorState.CLOSED:
 		swing_direction = _calculate_swing_direction(player_global_pos)
 		_set_state(DoorState.PEEK)
 		_broadcast_sound(SoundType.PEEK)
-		if NoiseSystem != null:
-			NoiseSystem.emit_door_noise(global_position, DoorAction.PEEK, peer_id)
+		_emit_noise(DoorAction.PEEK, peer_id)
 	elif current_state == DoorState.OPEN:
 		# Can pull back to peek
 		_set_state(DoorState.PEEK)
 		_broadcast_sound(SoundType.PEEK)
-		if NoiseSystem != null:
-			NoiseSystem.emit_door_noise(global_position, DoorAction.PEEK, peer_id)
+		_emit_noise(DoorAction.PEEK, peer_id)
 
 
 func _handle_kick(player_global_pos: Vector3, peer_id: int) -> void:
@@ -203,8 +232,7 @@ func _handle_kick(player_global_pos: Vector3, peer_id: int) -> void:
 	swing_direction = _calculate_swing_direction(player_global_pos)
 	_set_state(DoorState.KICKED)
 	_broadcast_sound(SoundType.KICK)
-	if NoiseSystem != null:
-		NoiseSystem.emit_door_noise(global_position, DoorAction.KICK, peer_id)
+	_emit_noise(DoorAction.KICK, peer_id)
 	_trigger_kick_stun(peer_id)
 	door_kicked.emit(peer_id, was_locked)
 
@@ -214,8 +242,18 @@ func _handle_unlock(peer_id: int) -> void:
 		is_locked = false
 		door_unlocked.emit(peer_id)
 		_broadcast_sound(SoundType.UNLOCK)
-		if NoiseSystem != null:
-			NoiseSystem.emit_door_noise(global_position, DoorAction.UNLOCK, peer_id)
+		_emit_noise(DoorAction.UNLOCK, peer_id)
+
+
+func _emit_noise(action: DoorAction, peer_id: int) -> void:
+	if not is_inside_tree():
+		return
+	var tree := get_tree()
+	if tree == null or tree.root == null:
+		return
+	var noise_sys: Node = tree.root.get_node_or_null("NoiseSystem")
+	if noise_sys != null and noise_sys.has_method(&"emit_door_noise"):
+		noise_sys.call(&"emit_door_noise", global_position, action as int, peer_id)
 
 
 # --- Utilities & Motion -----------------------------------------------------
@@ -253,7 +291,7 @@ func _trigger_kick_stun(peer_id: int) -> void:
 	# Query overlapping bodies in stun area
 	var bodies := stun_area.get_overlapping_bodies()
 	for body in bodies:
-		if body == self or body == leaf_body:
+		if body == self or body == leaf_body or body == leaf_right_body:
 			continue
 		# If an enemy or entity has a stun or take_damage method, call it
 		if body.has_method(&"apply_stun"):
@@ -304,7 +342,7 @@ func _play_door_sound_rpc(type_val: int) -> void:
 
 
 func _play_sound(stream: AudioStream) -> void:
-	if not audio_player or stream == null:
+	if not audio_player or stream == null or not is_inside_tree():
 		return
 	audio_player.stream = stream
 	audio_player.play()

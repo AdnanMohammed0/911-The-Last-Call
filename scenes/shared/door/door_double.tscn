@@ -1,0 +1,92 @@
+[gd_scene format=3 uid="uid://ddoor_station_mesh_double"]
+
+[ext_resource type="Script" uid="uid://nxpx7h616tfv" path="res://scenes/shared/door/door.gd" id="1_door"]
+[ext_resource type="AudioStream" uid="uid://b17gxrqpj6xmn" path="res://audio/Open_Door.mp3" id="2_open_sound"]
+[ext_resource type="AudioStream" uid="uid://cdw5ollg6fb4m" path="res://audio/Close_Door.mp3" id="3_6sd4n"]
+[ext_resource type="PackedScene" uid="uid://cyae8fd3abucs" path="res://assets/3D/door/door-1.glb" id="4_mesh"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_door"]
+properties/0/path = NodePath(".:current_state")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:is_locked")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath(".:swing_direction")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath(".:target_angle_deg")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_post"]
+size = Vector3(0.12, 2.5, 0.22)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lintel"]
+size = Vector3(2.35, 0.16, 0.22)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_leaf"]
+size = Vector3(1.08, 2.34, 0.08)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_stun"]
+radius = 2.5
+
+[node name="Door" type="Node3D" unique_id=310000001]
+script = ExtResource("1_door")
+one_way_swing = false
+is_double_door = true
+sound_open = ExtResource("2_open_sound")
+sound_close = ExtResource("3_6sd4n")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=310000002]
+replication_config = SubResource("SceneReplicationConfig_door")
+
+[node name="door-1" parent="." unique_id=310000003 instance=ExtResource("4_mesh")]
+
+[node name="Frame" type="StaticBody3D" parent="." unique_id=310000004]
+
+[node name="PostL_Col" type="CollisionShape3D" parent="Frame" unique_id=310000005]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.13, 1.25, 0)
+shape = SubResource("BoxShape3D_post")
+
+[node name="PostR_Col" type="CollisionShape3D" parent="Frame" unique_id=310000006]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.13, 1.25, 0)
+shape = SubResource("BoxShape3D_post")
+
+[node name="Lintel_Col" type="CollisionShape3D" parent="Frame" unique_id=310000007]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.42, 0)
+shape = SubResource("BoxShape3D_lintel")
+
+[node name="Hinge" type="Node3D" parent="." unique_id=310000008]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08189, 0.02, 0.032)
+
+[node name="DoorLeaf" type="AnimatableBody3D" parent="Hinge" unique_id=310000009]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.54, 1.17, 0)
+sync_to_physics = false
+
+[node name="LeafCollision" type="CollisionShape3D" parent="Hinge/DoorLeaf" unique_id=310000010]
+shape = SubResource("BoxShape3D_leaf")
+
+[node name="HingeRight" type="Node3D" parent="." unique_id=310000011]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.08189, 0.02, 0.032)
+
+[node name="DoorLeaf" type="AnimatableBody3D" parent="HingeRight" unique_id=310000012]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.54, 1.17, 0)
+sync_to_physics = false
+
+[node name="LeafCollision" type="CollisionShape3D" parent="HingeRight/DoorLeaf" unique_id=310000013]
+shape = SubResource("BoxShape3D_leaf")
+
+[node name="StunArea3D" type="Area3D" parent="." unique_id=310000014]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.17, 0)
+collision_layer = 0
+collision_mask = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StunArea3D" unique_id=310000015]
+shape = SubResource("SphereShape3D_stun")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=310000016]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.17, 0)
+bus = &"SFX"
+unit_size = 4.0
+max_distance = 30.0

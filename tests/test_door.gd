@@ -21,6 +21,7 @@ func _run_all_tests() -> void:
 	_test_kick_breaches_locked_door()
 	_test_reinforced_door_resists_kick()
 	_test_distance_validation()
+	_test_double_door()
 
 
 func _assert_true(condition: bool, msg: String) -> void:
@@ -172,5 +173,61 @@ func _test_distance_validation() -> void:
 	var far_away_player := Vector3(0, 0, 15.0)
 	door.request_interact(Door.DoorAction.TOGGLE_OPEN, far_away_player)
 	_assert_true(door.current_state == Door.DoorState.CLOSED, "Door ignores interaction beyond max distance")
+	root.remove_child(door)
+	door.free()
+
+
+func _test_double_door() -> void:
+	print("Test: Double door station model synchronization and dual swing")
+	var scene := load("res://scenes/shared/door/door_double.tscn") as PackedScene
+	var door := scene.instantiate() as Door
+	root.add_child(door)
+	door._ready()
+
+	_assert_true(door.is_double_door, "Door is configured as double door")
+	_assert_true(door.hinge != null, "Left hinge found")
+	_assert_true(door.hinge_right != null, "Right hinge found")
+	_assert_true(door.mesh_leaf_left != null, "Left visual leaf L_2 found")
+	_assert_true(door.mesh_leaf_right != null, "Right visual leaf R_2_2 found")
+
+	var player_front := Vector3(0, 0, -1.5)
+	door.interact(Door.DoorAction.TOGGLE_OPEN, player_front)
+	_assert_true(door.current_state == Door.DoorState.OPEN, "Double door opened")
+
+	# Simulate physics/process lerp (2 seconds)
+	for i in range(120):
+		door._process(1.0 / 60.0)
+
+	_assert_true(is_equal_approx(door.mesh_leaf_left.rotation_degrees.y, -90.0), "Left leaf swung out to -90 deg")
+	_assert_true(is_equal_approx(door.mesh_leaf_right.rotation_degrees.y, 90.0), "Right leaf swung out to +90 deg")
+	_assert_true(is_equal_approx(door.hinge.rotation_degrees.y, -90.0), "Left collider hinge followed to -90 deg")
+	_assert_true(is_equal_approx(door.hinge_right.rotation_degrees.y, 90.0), "Right collider hinge followed to +90 deg")
+
+	# Close double door
+	door.interact(Door.DoorAction.TOGGLE_OPEN, player_front)
+	_assert_true(door.current_state == Door.DoorState.CLOSED, "Double door closed")
+
+	for i in range(120):
+		door._process(1.0 / 60.0)
+
+	_assert_true(is_zero_approx(door.mesh_leaf_left.rotation_degrees.y), "Left leaf returned to 0 deg")
+	_assert_true(is_zero_approx(door.mesh_leaf_right.rotation_degrees.y), "Right leaf returned to 0 deg")
+
+	# Approach from behind (+Z): should open away to -Z (opposite side from player)
+	var player_behind := Vector3(0, 0, 1.5)
+	door.interact(Door.DoorAction.TOGGLE_OPEN, player_behind)
+	_assert_true(door.current_state == Door.DoorState.OPEN, "Double door opened from behind")
+	_assert_true(door.swing_direction == -1.0, "Swing direction is -1.0 (away to opposite side)")
+
+	for i in range(120):
+		door._process(1.0 / 60.0)
+
+	_assert_true(is_equal_approx(door.mesh_leaf_left.rotation_degrees.y, 90.0), "Left leaf swung to +90 deg (-Z, opposite side)")
+	_assert_true(is_equal_approx(door.mesh_leaf_right.rotation_degrees.y, -90.0), "Right leaf swung to -90 deg (-Z, opposite side)")
+
+	# Close
+	door.interact(Door.DoorAction.TOGGLE_OPEN, player_behind)
+	_assert_true(door.current_state == Door.DoorState.CLOSED, "Double door closed after behind test")
+
 	root.remove_child(door)
 	door.free()

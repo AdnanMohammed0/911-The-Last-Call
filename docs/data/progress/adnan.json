@@ -884,6 +884,15 @@
         "tests/test_economy.gd",
         "docs/design/STATION_ECONOMY.md"
       ]
+    },
+    {
+      "date": "2026-09-27",
+      "tasks": [],
+      "summary": "رجّعت أغراض الماب اللي انشالت (الحاويات، سيارة الشرطة بالباركنك، الأسوار، التايرات، الأوراق، النباتات، السجادة) بنفس أماكنها، ونقلت حواجز StationMart لقدام حتى ما تتداخل ويا الأسوار.",
+      "files": [
+        "scenes/dispatch/operations_room.tscn",
+        "scenes/dispatch/station/station_furniture.gd"
+      ]
     }
   ]
 }

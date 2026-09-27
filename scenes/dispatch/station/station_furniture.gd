@@ -214,10 +214,10 @@ func _build_item(item_id: StringName, index: int, holder: Node3D) -> void:
 				_kit.cylinder(holder, "Pole%d" % i, pole + Vector3(0, 3.0, 0), 0.08, 6.0, _kit.material("metal_dark"))
 				_kit.floodlight(holder, "Flood%d" % i, pole + Vector3(0, 6.0, 0), 180.0, 55.0, 10.0, 30.0)
 		&"barricades":
-			_kit.jersey_barrier(holder, "BarrierWest", Vector3(17.0, 0.6, -37.0), 90.0)
-			_kit.jersey_barrier(holder, "BarrierEast", Vector3(26.6, 0.6, -37.0), 90.0)
+			_kit.jersey_barrier(holder, "BarrierWest", Vector3(17.0, 0.6, -39.4), 90.0)
+			_kit.jersey_barrier(holder, "BarrierEast", Vector3(26.6, 0.6, -39.4), 90.0)
 			for i: int in 4:
-				_kit.cylinder(holder, "Bollard%d" % i, Vector3(19.4 + i * 1.6, 1.1, -36.6), 0.12, 1.0, _kit.material("hazard_yellow"))
+				_kit.cylinder(holder, "Bollard%d" % i, Vector3(19.4 + i * 1.6, 1.1, -39.0), 0.12, 1.0, _kit.material("hazard_yellow"))
 		&"metal_detector":
 			holder.position = Vector3(21.7, FLOOR, -31.6)
 			for side: float in [-0.6, 0.6]:

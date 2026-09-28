@@ -1250,7 +1250,7 @@ transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 69.4524, 0.433, -
 [node name="SpawnPoints" type="Node3D" parent="." unique_id=1020473453]
 
 [node name="Spawn1_Tech" type="Marker3D" parent="SpawnPoints" unique_id=635336782]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.95, -23)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.95, -23.4)
 
 [node name="Spawn2_Profiler" type="Marker3D" parent="SpawnPoints" unique_id=887665076]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.95, -23)

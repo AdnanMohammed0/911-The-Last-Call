@@ -1,15 +1,15 @@
 ## Dispatch Computer (Station OS): An in-world interactive PC-9801 retro workstation.
 ## The CRT monitor screen shows the live Windows 11 / Station OS desktop rendered from a SubViewport.
-## Interacting seats the player comfortably at the desk, framing the retro monitor realistically without covering
+## Interacting seats the player comfortably close at the desk, framing the retro monitor realistically without covering
 ## the whole screen, and allowing direct mouse and keyboard interaction with all OS apps.
 ## Pressing [Esc] or clicking Stand Up smoothly returns the player to first-person walking.
 class_name DispatchComputer
 extends Interactable
 
-const SCREEN_SIZE: Vector2 = Vector2(0.465, 0.35)
-const SEAT_DISTANCE: float = 0.40
-const ZOOM_DISTANCE: float = 0.25
-const TRANSITION_TIME: float = 0.35
+const SCREEN_SIZE: Vector2 = Vector2(0.448, 0.336)
+const SEAT_DISTANCE: float = 0.28
+const ZOOM_DISTANCE: float = 0.18
+const TRANSITION_TIME: float = 0.30
 
 @export var screen_mesh_path: NodePath = NodePath("ScreenDisplay")
 @export var viewport_path: NodePath = NodePath("../TerminalLayer")
@@ -26,7 +26,6 @@ var _hint_hud: CanvasLayer = null
 
 
 func _ready() -> void:
-	# Configure interaction properties (do not call super() in Godot 4 _ready)
 	collision_layer = LAYER
 	collision_mask = 0
 	monitoring = false
@@ -37,7 +36,6 @@ func _ready() -> void:
 	_setup_screen_material()
 	_create_hint_hud()
 	
-	# Connect to desktop close signal to exit seated mode if user logs off
 	var desktop: StationOS = StationOS.find(get_tree())
 	if desktop != null:
 		desktop.closed.connect(_on_desktop_closed)
@@ -49,10 +47,10 @@ func _setup_screen_material() -> void:
 	if _screen_mesh == null or _viewport == null:
 		return
 	
-	# Hide the model's built-in opaque black CRT glass mesh so it never occludes ScreenDisplay
+	# Find and free the model's built-in black CRT screen mesh
 	var model_node: Node = get_node_or_null("Model")
 	if model_node != null:
-		_hide_built_in_screen_mesh(model_node)
+		_remove_built_in_screen_mesh(model_node)
 	
 	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	
@@ -60,15 +58,16 @@ func _setup_screen_material() -> void:
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.albedo_texture = _viewport.get_texture()
 	mat.cull_mode = BaseMaterial3D.CULL_BACK
+	mat.render_priority = 2
 	_screen_mesh.material_override = mat
 
 
-func _hide_built_in_screen_mesh(node: Node) -> void:
+func _remove_built_in_screen_mesh(node: Node) -> void:
 	if node.name == "Monitor" or node.name == "0":
-		if node is Node3D:
-			(node as Node3D).visible = false
+		node.queue_free()
+		return
 	for child: Node in node.get_children():
-		_hide_built_in_screen_mesh(child)
+		_remove_built_in_screen_mesh(child)
 
 
 func _create_hint_hud() -> void:

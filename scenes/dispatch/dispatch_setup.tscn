@@ -11,7 +11,7 @@
 size = Vector3(1.2, 1.0, 1.2)
 
 [sub_resource type="QuadMesh" id="QuadMesh_screen"]
-size = Vector2(0.465, 0.35)
+size = Vector2(0.448, 0.336)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_phone"]
 size = Vector3(0.36, 0.2, 0.3)
@@ -35,7 +35,7 @@ shape = SubResource("BoxShape3D_monitor")
 transform = Transform3D(0.0055, 0, 0, 0, 0.0055, 0, 0, 0, 0.0055, 0, 0, 0)
 
 [node name="ScreenDisplay" type="MeshInstance3D" parent="MainComputer"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4715, 0.038)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.472, 0.046)
 mesh = SubResource("QuadMesh_screen")
 
 [node name="Phone" type="Area3D" parent="." node_paths=PackedStringArray("ring_light", "status_label")]

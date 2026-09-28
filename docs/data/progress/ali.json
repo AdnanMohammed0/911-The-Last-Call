@@ -502,6 +502,17 @@
    ],
    "commit": "46496c2",
    "auto": true
+  },
+  {
+   "date": "2026-09-28",
+   "tasks": [],
+   "summary": "fix(computer): fix screen occlusion from model mesh, adjust seat distance closer, and ensure reliable interaction",
+   "files": [
+    "scenes/dispatch/dispatch_computer.gd",
+    "scenes/dispatch/dispatch_setup.tscn"
+   ],
+   "commit": "6154d2b",
+   "auto": true
   }
  ]
 }

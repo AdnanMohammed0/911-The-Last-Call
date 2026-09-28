@@ -20,7 +20,7 @@ const PROPS: Dictionary[StringName, Array] = {
 	&"ammo_crate": ["res://assets/3D/station_props/ammo_crate.glb", Fit.WIDTH, 0.95, 0.0],
 	&"plate_carrier": ["res://assets/3D/gear/plate_carrier.glb", Fit.HEIGHT, 0.62, 0.0],
 	&"armored_truck": ["res://assets/3D/cars/armored_truck.glb", Fit.DEPTH, 6.2, 0.0],
-	&"cruiser": ["res://assets/3D/cars/fairheaven_lt_80_cop_cruiser_-_low_poly_model.glb", Fit.WIDTH, 5.1, 90.0],
+	&"cruiser": ["res://assets/3D/cars/fairheaven_lt_80_cop_cruiser_-_low_poly_model.glb", Fit.DEPTH, 5.0, 90.0],
 }
 
 static var _scenes: Dictionary[String, PackedScene] = {}

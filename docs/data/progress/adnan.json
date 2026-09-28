@@ -913,6 +913,21 @@
         "assets/3D/station_props/",
         "data/weapons/lmg.tres"
       ]
+    },
+    {
+      "date": "2026-09-28",
+      "tasks": [],
+      "summary": "بداية إعادة بناء الـ UI من الصفر: ثيم جديد (خط Barlow، أحمر طوارئ + أزرق سيرين)، UiKit، أيقونات vector، أزرار KitButton، وأزرار BrushButton بضربة فرشاة بيضاء (نفس الصورة المرجعية)، shaders (زجاج acrylic/blur، حافة ممزقة، grunge للوغو، خلفية Windows 11، شاشة CCTV). القائمة الرئيسية: مشهد 3D حي (شارع ممطر بالليل، سيارة شرطة بأضواء حمرة/زرقة، شاحنة مدرعة، أسفلت عاكس، ضباب) مع sidebar ممزق فيه اللوغو والقائمة؛ صفحات Host/Join زجاجية؛ Lobby جديد بالكامل (قائمة الضباط، كروت الأدوار بإحصائيات وأيقونات، Ready/Start/Leave). الإعدادات بشريط جانبي وأيقونات، وقائمة الإيقاف بنفس الستايل مع بطاقة Comms للمايك. 305 اختبار ناجحة.",
+      "files": [
+        "ui/theme/game_theme.gd",
+        "ui/kit/",
+        "ui/shaders/",
+        "ui/menu/menu_backdrop.gd",
+        "scenes/boot/main_menu.gd",
+        "scenes/boot/class_card.gd",
+        "ui/settings/settings_menu.gd",
+        "ui/hud/pause_menu.gd"
+      ]
     }
   ]
 }

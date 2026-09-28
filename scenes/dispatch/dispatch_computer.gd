@@ -1,14 +1,14 @@
 ## Dispatch Computer (Station OS): An in-world interactive PC-9801 retro workstation.
 ## The CRT monitor screen shows the live Windows 11 / Station OS desktop rendered from a SubViewport.
-## Interacting seats the player at the desk, framing the retro monitor realistically without covering
+## Interacting seats the player comfortably at the desk, framing the retro monitor realistically without covering
 ## the whole screen, and allowing direct mouse and keyboard interaction with all OS apps.
 ## Pressing [Esc] or clicking Stand Up smoothly returns the player to first-person walking.
 class_name DispatchComputer
 extends Interactable
 
 const SCREEN_SIZE: Vector2 = Vector2(0.465, 0.35)
-const SEAT_DISTANCE: float = 0.65
-const ZOOM_DISTANCE: float = 0.38
+const SEAT_DISTANCE: float = 0.40
+const ZOOM_DISTANCE: float = 0.25
 const TRANSITION_TIME: float = 0.35
 
 @export var screen_mesh_path: NodePath = NodePath("ScreenDisplay")
@@ -26,10 +26,14 @@ var _hint_hud: CanvasLayer = null
 
 
 func _ready() -> void:
-	super()
+	# Configure interaction properties (do not call super() in Godot 4 _ready)
+	collision_layer = LAYER
+	collision_mask = 0
+	monitoring = false
 	prompt_text = "Use computer (Station OS)"
-	max_distance = 2.4
-	cooldown = 0.3
+	max_distance = 4.0
+	cooldown = 0.2
+	
 	_setup_screen_material()
 	_create_hint_hud()
 	
@@ -45,14 +49,26 @@ func _setup_screen_material() -> void:
 	if _screen_mesh == null or _viewport == null:
 		return
 	
+	# Hide the model's built-in opaque black CRT glass mesh so it never occludes ScreenDisplay
+	var model_node: Node = get_node_or_null("Model")
+	if model_node != null:
+		_hide_built_in_screen_mesh(model_node)
+	
+	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	
 	var mat: StandardMaterial3D = StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.albedo_texture = _viewport.get_texture()
-	mat.emission_enabled = true
-	mat.emission_texture = _viewport.get_texture()
-	mat.emission_energy_multiplier = 1.0
-	mat.roughness = 0.2
 	mat.cull_mode = BaseMaterial3D.CULL_BACK
 	_screen_mesh.material_override = mat
+
+
+func _hide_built_in_screen_mesh(node: Node) -> void:
+	if node.name == "Monitor" or node.name == "0":
+		if node is Node3D:
+			(node as Node3D).visible = false
+	for child: Node in node.get_children():
+		_hide_built_in_screen_mesh(child)
 
 
 func _create_hint_hud() -> void:
@@ -86,13 +102,31 @@ func _create_hint_hud() -> void:
 	box.add_child(zoom_label)
 
 
+func _can_interact(_peer_id: int) -> bool:
+	return not _is_active
+
+
+func _on_interact(peer_id: int) -> void:
+	_start_using(peer_id)
+
+
 func _on_interacted(peer_id: int) -> void:
-	if peer_id != multiplayer.get_unique_id():
-		return
+	_start_using(peer_id)
+
+
+func _start_using(peer_id: int) -> void:
+	var my_id: int = multiplayer.get_unique_id() if multiplayer.has_multiplayer_peer() else 1
+	if peer_id != my_id and peer_id != 0:
+		if NetManager.is_online():
+			return
 	if _is_active:
 		return
 	
 	var player: Player = Player.find_by_peer(get_tree(), peer_id)
+	if player == null:
+		player = Player.find_by_peer(get_tree(), 1)
+	if player == null:
+		player = get_tree().get_first_node_in_group(&"players") as Player
 	if player == null:
 		return
 	
@@ -175,7 +209,7 @@ func _get_camera_view_transform(distance: float) -> Transform3D:
 	return Transform3D(target_basis, eye_pos)
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if not _is_active:
 		return
 	
@@ -216,7 +250,8 @@ func _project_mouse_event(event: InputEvent, mouse_pos: Vector2) -> InputEvent:
 	var screen_xform: Transform3D = _screen_mesh.global_transform
 	var screen_normal: Vector3 = screen_xform.basis.z.normalized()
 	
-	var plane: Plane = Plane(screen_normal, screen_xform.origin.dot(screen_normal))
+	var d: float = screen_normal.dot(screen_xform.origin)
+	var plane: Plane = Plane(screen_normal, d)
 	var hit: Variant = plane.intersects_ray(from, dir)
 	if not (hit is Vector3):
 		return null
@@ -228,6 +263,11 @@ func _project_mouse_event(event: InputEvent, mouse_pos: Vector2) -> InputEvent:
 	var h: float = SCREEN_SIZE.y
 	var u: float = (local.x + w * 0.5) / w
 	var v: float = (h * 0.5 - local.y) / h
+	
+	# Only forward clicks if inside the screen bounds
+	if event is InputEventMouseButton:
+		if u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0:
+			return null
 	
 	u = clampf(u, 0.0, 1.0)
 	v = clampf(v, 0.0, 1.0)

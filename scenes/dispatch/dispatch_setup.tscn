@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://c72iqy0ds7u2k" path="res://assets/3D/Computer/pc-9801ux.glb" id="6_pc98"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_monitor"]
-size = Vector3(0.8, 0.85, 0.8)
+size = Vector3(1.2, 1.0, 1.2)
 
 [sub_resource type="QuadMesh" id="QuadMesh_screen"]
 size = Vector2(0.465, 0.35)
@@ -28,14 +28,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.635, -24.35)
 script = ExtResource("2_computer")
 
 [node name="Shape" type="CollisionShape3D" parent="MainComputer"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0.2)
 shape = SubResource("BoxShape3D_monitor")
 
 [node name="Model" parent="MainComputer" instance=ExtResource("6_pc98")]
 transform = Transform3D(0.0055, 0, 0, 0, 0.0055, 0, 0, 0, 0.0055, 0, 0, 0)
 
 [node name="ScreenDisplay" type="MeshInstance3D" parent="MainComputer"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.471, 0.016)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4715, 0.038)
 mesh = SubResource("QuadMesh_screen")
 
 [node name="Phone" type="Area3D" parent="." node_paths=PackedStringArray("ring_light", "status_label")]

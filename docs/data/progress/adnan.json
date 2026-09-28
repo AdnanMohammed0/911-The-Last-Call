@@ -948,6 +948,16 @@
         "ui/station_os/station_os.gd",
         "scenes/dispatch/station/station_furniture.gd"
       ]
+    },
+    {
+      "date": "2026-09-28",
+      "tasks": [],
+      "summary": "شاشة الاتصال (911 CAD) انعادت: خلفية مغبّشة، هيدر بحالة المكالمة (تنبض وقت الرنين) والساعة، كارت المتصل بأيقونات وبار الصبر، أزرار Answer/Hang up/Handset/Trace كبيرة، كارت السجلات، الـ transcript ككارت، أزرار الردود، وتصنيف المكالمة بأزرار ملونة. شاشة الـ Armory Loadout والـ Trace Console بنفس الستايل الزجاجي. 305 اختبار ناجحة.",
+      "files": [
+        "ui/dispatch/dispatch_terminal.gd",
+        "ui/loadout/loadout_ui.gd",
+        "ui/dispatch/tools/trace_minigame.gd"
+      ]
     }
   ]
 }

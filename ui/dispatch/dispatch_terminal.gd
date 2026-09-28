@@ -108,7 +108,10 @@ func _process(_delta: float) -> void:
 		var minutes: int = CallDirector.shift_clock_minutes
 		_clock.text = "SHIFT %02d:%02d" % [minutes / 60, minutes % 60]
 		if CallDirector.current_state == CallDirector.CallState.RINGING:
-			_status.text = "● INCOMING 911 CALL  (%ds)" % ceili(CallDirector.ring_timer)
+			_status.text = "INCOMING 911 CALL · %ds" % ceili(CallDirector.ring_timer)
+			_status.modulate.a = 0.55 + 0.45 * absf(sin(Time.get_ticks_msec() * 0.008))
+		else:
+			_status.modulate.a = 1.0
 
 
 # --- Actions (requests to the host) ---------------------------------------------------
@@ -275,7 +278,7 @@ func _refresh() -> void:
 		CallDirector.CallState.RINGING:
 			_status.add_theme_color_override("font_color", RED)
 		CallDirector.CallState.CONNECTED:
-			_status.text = "● CALL IN PROGRESS"
+			_status.text = "CALL IN PROGRESS"
 			_status.add_theme_color_override("font_color", GREEN)
 		CallDirector.CallState.ASSESSMENT:
 			_status.text = "ASSESSMENT — CLASSIFY THE CALL"
@@ -320,9 +323,9 @@ func _rebuild_choices(can_choose: bool) -> void:
 		var required: StringName = data.get("required_class", &"")
 		var unlocked: bool = data.get("unlocked", true)
 		var class_ok: bool = required == &"" or my_class == &"" or required == my_class
-		var button: Button = Button.new()
+		var button: KitButton = KitButton.make("%d.  %s" % [index + 1, text], &"chevron_right", KitButton.Variant.SUBTLE)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		button.text = "%d. %s" % [index + 1, text]
+		button.custom_minimum_size = Vector2(0, 44)
 		if not unlocked:
 			button.text += "   [%s]" % data.get("lock_reason", "locked")
 		elif not class_ok:
@@ -358,141 +361,209 @@ func _clock_text() -> String:
 # --- Layout -----------------------------------------------------------------------------
 
 func _build() -> void:
+	theme = GameSettings.ui_theme
 	var dim: ColorRect = ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.55)
+	dim.color = Color(0.01, 0.014, 0.02)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var blur: ShaderMaterial = ShaderMaterial.new()
+	blur.shader = UiKit.ACRYLIC
+	blur.set_shader_parameter(&"blur_lod", 4.0)
+	blur.set_shader_parameter(&"tint_amount", 0.72)
+	dim.material = blur
 	add_child(dim)
 
-	var frame: PanelContainer = PanelContainer.new()
+	var frame: PanelContainer = UiKit.glass(Color(0.03, 0.036, 0.046), 16, 0, 0, 0.9, 3.5, Color(1, 1, 1, 0.1))
 	frame.set_anchors_preset(Control.PRESET_FULL_RECT)
-	frame.offset_left = 120
-	frame.offset_top = 70
-	frame.offset_right = -120
-	frame.offset_bottom = -70
-	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = Color(0.02, 0.05, 0.05, 0.97)
-	style.border_color = Color(0.2, 0.55, 0.4)
-	style.set_border_width_all(2)
-	style.set_content_margin_all(18)
-	frame.add_theme_stylebox_override("panel", style)
+	frame.offset_left = 90
+	frame.offset_top = 56
+	frame.offset_right = -90
+	frame.offset_bottom = -56
 	add_child(frame)
-
 	var root: VBoxContainer = VBoxContainer.new()
-	root.add_theme_constant_override("separation", 12)
+	root.add_theme_constant_override("separation", 0)
 	frame.add_child(root)
 
+	# Header bar.
+	var header_panel: PanelContainer = PanelContainer.new()
+	var header_style: StyleBoxFlat = UiKit.style(Color(1, 1, 1, 0.03), 0, 24, 14)
+	header_style.corner_radius_top_left = 16
+	header_style.corner_radius_top_right = 16
+	header_style.border_color = Color(1, 1, 1, 0.07)
+	header_style.border_width_bottom = 1
+	header_panel.add_theme_stylebox_override("panel", header_style)
+	root.add_child(header_panel)
 	var header: HBoxContainer = HBoxContainer.new()
-	root.add_child(header)
-	var title: Label = _label("BLACKVALE COUNTY 911 · STATION 4 · DISPATCH CAD", 24, GREEN, false)
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	header.add_child(title)
-	_clock = _label("SHIFT 00:00", 24, AMBER, false)
-	header.add_child(_clock)
-	var close_button: Button = Button.new()
-	close_button.text = "  Close [Esc]  "
-	close_button.pressed.connect(close)
+	header.add_theme_constant_override("separation", 14)
+	header_panel.add_child(header)
+	var logo: PanelContainer = PanelContainer.new()
+	logo.add_theme_stylebox_override("panel", UiKit.style(Color(RED, 0.18), 10, 8, 8, Color(RED, 0.5), 1))
+	logo.add_child(IconView.make(&"siren", 26, RED))
+	header.add_child(logo)
+	var titles: VBoxContainer = VBoxContainer.new()
+	titles.add_theme_constant_override("separation", -3)
+	header.add_child(titles)
+	titles.add_child(UiKit.caps("Blackvale County 911 · Station 4", 11, GameTheme.TEXT_DIM, &"bold", 2))
+	titles.add_child(UiKit.label("Dispatch CAD", 26, GameTheme.TEXT, &"black_italic"))
+	header.add_child(UiKit.expand(Control.new()))
+	_status = UiKit.caps("NO ACTIVE CALL", 15, DIM, &"extrabold", 2)
+	_status.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	header.add_child(_status)
+	header.add_child(VSeparator.new())
+	var clock_row: HBoxContainer = HBoxContainer.new()
+	clock_row.add_theme_constant_override("separation", 8)
+	header.add_child(clock_row)
+	var clock_icon: IconView = IconView.make(&"clock", 18, AMBER)
+	clock_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	clock_row.add_child(clock_icon)
+	_clock = UiKit.label("SHIFT 00:00", 18, AMBER, &"bold")
+	_clock.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	clock_row.add_child(_clock)
+	var close_button: KitButton = KitButton.make("Close", &"close", KitButton.Variant.SUBTLE, close)
+	close_button.custom_minimum_size = Vector2(110, 40)
 	header.add_child(close_button)
 
-	_status = _label("NO ACTIVE CALL", 30, DIM, false)
-	root.add_child(_status)
-
 	var columns: HBoxContainer = HBoxContainer.new()
-	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	columns.add_theme_constant_override("separation", 18)
-	root.add_child(columns)
+	var body: MarginContainer = UiKit.margin(columns, 22, 18, 22, 20)
+	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	root.add_child(body)
 
-	# Left: caller + controls
+	# Left: caller card, controls, records.
 	var left: VBoxContainer = VBoxContainer.new()
-	left.custom_minimum_size = Vector2(420, 0)
-	left.add_theme_constant_override("separation", 10)
+	left.custom_minimum_size = Vector2(430, 0)
+	left.add_theme_constant_override("separation", 12)
 	columns.add_child(left)
-	_caller = _label("", 18, Color(0.85, 0.9, 0.88))
-	left.add_child(_caller)
-	left.add_child(_label("CALLER PATIENCE", 14, DIM))
+	var caller_card: PanelContainer = _card()
+	left.add_child(caller_card)
+	var caller_box: VBoxContainer = VBoxContainer.new()
+	caller_box.add_theme_constant_override("separation", 10)
+	caller_card.add_child(caller_box)
+	var caller_head: HBoxContainer = HBoxContainer.new()
+	caller_head.add_theme_constant_override("separation", 12)
+	caller_box.add_child(caller_head)
+	var avatar: PanelContainer = PanelContainer.new()
+	avatar.add_theme_stylebox_override("panel", UiKit.style(Color(1, 1, 1, 0.06), 26, 10, 10, Color(1, 1, 1, 0.12), 1))
+	avatar.add_child(IconView.make(&"phone", 26, GREEN))
+	avatar.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	caller_head.add_child(avatar)
+	var caller_titles: VBoxContainer = VBoxContainer.new()
+	caller_titles.add_theme_constant_override("separation", 0)
+	caller_head.add_child(caller_titles)
+	caller_titles.add_child(UiKit.caps("Caller ID", 10, GameTheme.TEXT_DIM, &"bold", 2))
+	_caller = UiKit.label("", 15, Color(0.88, 0.92, 0.94), &"medium")
+	_caller.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_caller.custom_minimum_size = Vector2(320, 0)
+	caller_titles.add_child(_caller)
+	var patience_row: HBoxContainer = HBoxContainer.new()
+	caller_box.add_child(patience_row)
+	var patience_label: Label = UiKit.caps("Caller patience", 10, GameTheme.TEXT_DIM, &"bold", 2)
+	patience_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	patience_row.add_child(patience_label)
+	_handset = UiKit.caps("HANDSET: on the desk", 10, AMBER, &"bold", 1)
+	patience_row.add_child(_handset)
 	_patience = ProgressBar.new()
-	_patience.custom_minimum_size = Vector2(0, 18)
+	_patience.custom_minimum_size = Vector2(0, 8)
 	_patience.show_percentage = false
 	_patience.max_value = 1.0
 	_patience.value = 0.0
-	var fill: StyleBoxFlat = StyleBoxFlat.new()
-	fill.bg_color = AMBER
-	_patience.add_theme_stylebox_override("fill", fill)
-	left.add_child(_patience)
-	_handset = _label("HANDSET: on the desk", 16, AMBER)
-	left.add_child(_handset)
-	_answer_button = _button("Answer call", answer)
-	left.add_child(_answer_button)
-	_handset_button = _button("Take handset", take_handset)
-	left.add_child(_handset_button)
-	_hangup_button = _button("Hang up", hang_up)
-	left.add_child(_hangup_button)
-	
-	# Trace button (Tech Operator only)
-	_trace_button = _button("TRACE CALL", _open_trace)
-	_trace_button.add_theme_color_override("font_color", TECH_BLUE)
-	var trace_style: StyleBoxFlat = StyleBoxFlat.new()
-	trace_style.bg_color = Color(0.1, 0.15, 0.25)
-	trace_style.border_color = TECH_BLUE
-	trace_style.set_border_width_all(2)
-	_trace_button.add_theme_stylebox_override("normal", trace_style)
+	_patience.add_theme_stylebox_override("fill", UiKit.style(AMBER, 4, 0, 0))
+	_patience.add_theme_stylebox_override("background", UiKit.style(Color(1, 1, 1, 0.08), 4, 0, 0))
+	caller_box.add_child(_patience)
+
+	var controls: GridContainer = GridContainer.new()
+	controls.columns = 2
+	controls.add_theme_constant_override("h_separation", 8)
+	controls.add_theme_constant_override("v_separation", 8)
+	left.add_child(controls)
+	_answer_button = _button("Answer", answer, &"phone", KitButton.Variant.PRIMARY, GameTheme.SUCCESS)
+	controls.add_child(_answer_button)
+	_hangup_button = _button("Hang up", hang_up, &"close", KitButton.Variant.DANGER)
+	controls.add_child(_hangup_button)
+	_handset_button = _button("Take handset", take_handset, &"headset", KitButton.Variant.SUBTLE)
+	controls.add_child(_handset_button)
+	_trace_button = _button("Trace call", _open_trace, &"target", KitButton.Variant.PRIMARY, TECH_BLUE)
 	_trace_button.visible = false
-	left.add_child(_trace_button)
-	
-	left.add_child(HSeparator.new())
-	left.add_child(_label("RECORDS LOOKUP", 14, DIM))
+	controls.add_child(_trace_button)
+	for child: Node in controls.get_children():
+		(child as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	var records_card: PanelContainer = _card()
+	records_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	left.add_child(records_card)
+	var records_box: VBoxContainer = VBoxContainer.new()
+	records_box.add_theme_constant_override("separation", 8)
+	records_card.add_child(records_box)
+	records_box.add_child(UiKit.icon_row(&"folder", "RECORDS LOOKUP", 12, GameTheme.TEXT_DIM, AMBER))
 	_records = RichTextLabel.new()
 	_records.bbcode_enabled = true
 	_records.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_records.custom_minimum_size = Vector2(0, 170)
+	_records.custom_minimum_size = Vector2(0, 150)
 	_records.add_theme_font_size_override("normal_font_size", 15)
-	left.add_child(_records)
-	_test_button = _button("Start test call", func() -> void: test_call_requested.emit())
+	records_box.add_child(_records)
+	_test_button = _button("Start test call", func() -> void: test_call_requested.emit(), &"refresh", KitButton.Variant.GHOST)
 	left.add_child(_test_button)
 
-	# Centre: transcript + replies + verdict
+	# Centre: transcript, replies, verdict.
 	var centre: VBoxContainer = VBoxContainer.new()
 	centre.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	centre.add_theme_constant_override("separation", 10)
+	centre.add_theme_constant_override("separation", 12)
 	columns.add_child(centre)
-	centre.add_child(_label("CALL TRANSCRIPT", 14, DIM))
+	var transcript_card: PanelContainer = _card()
+	transcript_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	centre.add_child(transcript_card)
+	var transcript_box: VBoxContainer = VBoxContainer.new()
+	transcript_box.add_theme_constant_override("separation", 8)
+	transcript_card.add_child(transcript_box)
+	transcript_box.add_child(UiKit.icon_row(&"file", "CALL TRANSCRIPT", 12, GameTheme.TEXT_DIM, GREEN))
 	_transcript = RichTextLabel.new()
 	_transcript.bbcode_enabled = true
 	_transcript.scroll_following = true
 	_transcript.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_transcript.add_theme_font_size_override("normal_font_size", 18)
-	centre.add_child(_transcript)
-	centre.add_child(_label("REPLIES", 14, DIM))
+	_transcript.add_theme_constant_override("line_separation", 6)
+	transcript_box.add_child(_transcript)
+	centre.add_child(UiKit.caps("Replies", 11, GameTheme.TEXT_DIM, &"bold", 2))
 	_choices = VBoxContainer.new()
+	_choices.add_theme_constant_override("separation", 6)
 	centre.add_child(_choices)
 
 	_verdict_box = VBoxContainer.new()
+	_verdict_box.add_theme_constant_override("separation", 8)
 	centre.add_child(_verdict_box)
-	_verdict_box.add_child(_label("CLASSIFY THIS CALL", 16, AMBER))
+	_verdict_box.add_child(UiKit.caps("Classify this call", 12, AMBER, &"extrabold", 2))
 	_verdict_buttons = HBoxContainer.new()
+	_verdict_buttons.add_theme_constant_override("separation", 8)
 	_verdict_box.add_child(_verdict_buttons)
+	var verdict_colours: Array[Color] = [GREEN, RED, TECH_BLUE, AMBER, Color(0.7, 0.5, 1.0)]
+	var index: int = 0
 	for verdict: StringName in CallData.VERDICTS:
-		var verdict_button: Button = _button(String(verdict).to_upper(), classify.bind(verdict))
+		var verdict_button: KitButton = _button(String(verdict).to_upper(), classify.bind(verdict), &"", KitButton.Variant.DEFAULT, verdict_colours[index % verdict_colours.size()])
 		verdict_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		verdict_button.custom_minimum_size = Vector2(0, 52)
+		verdict_button.add_theme_color_override("font_color", verdict_colours[index % verdict_colours.size()].lightened(0.2))
 		_verdict_buttons.add_child(verdict_button)
-	_vote_label = _label("", 15, DIM)
+		index += 1
+	_vote_label = UiKit.label("", 15, DIM, &"medium")
 	_verdict_box.add_child(_vote_label)
-	_result = _label("", 20, GREEN)
+	_result = UiKit.label("", 20, GREEN, &"bold")
 	_verdict_box.add_child(_result)
 
 
+func _card() -> PanelContainer:
+	var card: PanelContainer = PanelContainer.new()
+	card.add_theme_stylebox_override("panel", UiKit.style(Color(1, 1, 1, 0.035), 12, 16, 14, Color(1, 1, 1, 0.06), 1))
+	return card
+
+
 func _label(text: String, size: int, colour: Color, wrap: bool = true) -> Label:
-	var label: Label = Label.new()
-	label.text = text
-	label.add_theme_font_size_override("font_size", size)
-	label.add_theme_color_override("font_color", colour)
+	var label: Label = UiKit.label(text, size, colour, &"medium")
 	if wrap:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return label
 
 
-func _button(text: String, callback: Callable) -> Button:
-	var button: Button = Button.new()
-	button.text = text
-	button.custom_minimum_size = Vector2(0, 36)
-	button.pressed.connect(callback)
+func _button(text: String, callback: Callable, icon_name: StringName = &"", variant: KitButton.Variant = KitButton.Variant.SUBTLE, accent: Color = GameTheme.ACCENT) -> KitButton:
+	var button: KitButton = KitButton.make(text, icon_name, variant, callback)
+	button.accent = accent
+	button.custom_minimum_size = Vector2(0, 46)
 	return button

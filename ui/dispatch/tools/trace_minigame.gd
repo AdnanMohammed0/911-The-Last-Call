@@ -210,19 +210,19 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _build() -> void:
 	var dim: ColorRect = ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.7)
+	dim.color = Color(0.01, 0.014, 0.02)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var blur: ShaderMaterial = ShaderMaterial.new()
+	blur.shader = UiKit.ACRYLIC
+	blur.set_shader_parameter(&"blur_lod", 4.0)
+	blur.set_shader_parameter(&"tint_amount", 0.72)
+	dim.material = blur
 	add_child(dim)
 	
 	var frame: PanelContainer = PanelContainer.new()
 	frame.set_anchors_preset(Control.PRESET_CENTER)
 	frame.custom_minimum_size = Vector2(600, 500)
-	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = Color(0.02, 0.05, 0.08, 0.98)
-	style.border_color = Color(0.2, 0.55, 0.9)
-	style.set_border_width_all(2)
-	style.set_content_margin_all(20)
-	frame.add_theme_stylebox_override("panel", style)
+	UiKit.apply_glass(frame, Color(0.03, 0.04, 0.06), 16, 26, 22, 0.9, 3.5, Color(0.4, 0.7, 1.0, 0.3))
 	add_child(frame)
 	
 	var root: VBoxContainer = VBoxContainer.new()
@@ -232,7 +232,7 @@ func _build() -> void:
 	# Header
 	var header: HBoxContainer = HBoxContainer.new()
 	root.add_child(header)
-	var title: Label = _label("TRACE CONSOLE — 3-TOWER TRIANGULATION", 22, Color(0.4, 0.9, 1.0), false)
+	var title: Label = UiKit.label("Trace Console · 3-tower triangulation", 26, Color(0.6, 0.85, 1.0), &"black_italic")
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(title)
 	_close_button = _button("Cancel", _on_close_pressed)
@@ -322,20 +322,15 @@ func _build() -> void:
 
 
 func _label(text: String, size: int, colour: Color, wrap: bool = true) -> Label:
-	var label: Label = Label.new()
-	label.text = text
-	label.add_theme_font_size_override("font_size", size)
-	label.add_theme_color_override("font_color", colour)
+	var label: Label = UiKit.label(text, size, colour, &"semibold" if size >= 18 else &"medium")
 	if wrap:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return label
 
 
 func _button(text: String, callback: Callable) -> Button:
-	var button: Button = Button.new()
-	button.text = text
-	button.custom_minimum_size = Vector2(120, 36)
-	button.pressed.connect(callback)
+	var button: KitButton = KitButton.make(text.strip_edges(), &"", KitButton.Variant.SUBTLE, callback)
+	button.custom_minimum_size = Vector2(120, 40)
 	return button
 
 

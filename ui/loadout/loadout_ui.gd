@@ -365,8 +365,13 @@ func get_current_qty(gear_id: StringName) -> int:
 
 func _build() -> void:
 	var dim: ColorRect = ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.6)
+	dim.color = Color(0.01, 0.014, 0.02)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var blur: ShaderMaterial = ShaderMaterial.new()
+	blur.shader = UiKit.ACRYLIC
+	blur.set_shader_parameter(&"blur_lod", 4.0)
+	blur.set_shader_parameter(&"tint_amount", 0.72)
+	dim.material = blur
 	add_child(dim)
 	
 	var frame: PanelContainer = PanelContainer.new()
@@ -375,12 +380,7 @@ func _build() -> void:
 	frame.offset_top = 50
 	frame.offset_right = -60
 	frame.offset_bottom = -50
-	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = Color(0.02, 0.05, 0.05, 0.97)
-	style.border_color = Color(0.2, 0.55, 0.4)
-	style.set_border_width_all(2)
-	style.set_content_margin_all(20)
-	frame.add_theme_stylebox_override("panel", style)
+	UiKit.apply_glass(frame, Color(0.03, 0.036, 0.046), 16, 26, 22, 0.9, 3.5, Color(1, 1, 1, 0.1))
 	add_child(frame)
 	
 	var root: VBoxContainer = VBoxContainer.new()
@@ -390,7 +390,7 @@ func _build() -> void:
 	# Header
 	var header: HBoxContainer = HBoxContainer.new()
 	root.add_child(header)
-	var title: Label = _label("STATION 4 ARMORY — TACTICAL LOADOUT & REQUISITION", 24, Color(0.4, 1.0, 0.6), false)
+	var title: Label = UiKit.label("Armory · Loadout & Requisition", 30, GameTheme.TEXT, &"black_italic")
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(title)
 	_budget_label = _label("STATION BUDGET: $10000", 24, Color(1.0, 0.8, 0.2), false)
@@ -482,11 +482,9 @@ func _build() -> void:
 	
 	_confirm_button = _button("CONFIRM LOADOUT", _confirm_loadout)
 	_confirm_button.custom_minimum_size = Vector2(0, 48)
-	var confirm_style: StyleBoxFlat = StyleBoxFlat.new()
-	confirm_style.bg_color = Color(0.1, 0.3, 0.15)
-	confirm_style.border_color = Color(0.4, 1.0, 0.5)
-	confirm_style.set_border_width_all(2)
-	_confirm_button.add_theme_stylebox_override("normal", confirm_style)
+	(_confirm_button as KitButton).variant = KitButton.Variant.PRIMARY
+	(_confirm_button as KitButton).accent = GameTheme.SUCCESS
+	(_confirm_button as KitButton).icon_name = &"check"
 	right.add_child(_confirm_button)
 	
 	var hint: Label = _label("Budget < $3000: heavy gear locked. Budget < $1000: only basic gear.", 12, Color(0.6, 0.7, 0.8), false)
@@ -495,18 +493,14 @@ func _build() -> void:
 
 
 func _label(text: String, size: int, colour: Color, wrap: bool = true) -> Label:
-	var label: Label = Label.new()
-	label.text = text
-	label.add_theme_font_size_override("font_size", size)
-	label.add_theme_color_override("font_color", colour)
+	var label: Label = UiKit.label(text, size, colour, &"semibold" if size >= 18 else &"medium")
 	if wrap:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return label
 
 
 func _button(text: String, callback: Callable) -> Button:
-	var button: Button = Button.new()
-	button.text = text
-	button.custom_minimum_size = Vector2(80, 32)
-	button.pressed.connect(callback)
+	var button: KitButton = KitButton.make(text.strip_edges(), &"", KitButton.Variant.SUBTLE, callback)
+	button.custom_minimum_size = Vector2(80, 40)
+	return button
 	return button

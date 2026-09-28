@@ -483,6 +483,25 @@
    ],
    "commit": "2d54b7f",
    "auto": true
+  },
+  {
+   "date": "2026-09-28",
+   "tasks": [],
+   "summary": "feat(computer): replace workstation with pc-9801ux 3D model, viewport screen display and realistic in-world desk interaction",
+   "files": [
+    "assets/3D/Computer/pc-9801ux.glb",
+    "assets/3D/Computer/pc-9801ux.glb.import",
+    "assets/3D/Computer/pc-9801ux_0.png",
+    "assets/3D/Computer/pc-9801ux_0.png.import",
+    "assets/3D/Computer/pc-9801ux_1.png",
+    "assets/3D/Computer/pc-9801ux_1.png.import",
+    "assets/3D/Computer/pc-9801ux_2.png",
+    "assets/3D/Computer/pc-9801ux_2.png.import",
+    "assets/3D/Computer/pc-9801ux_3.png",
+    "assets/3D/Computer/pc-9801ux_3.png.import"
+   ],
+   "commit": "46496c2",
+   "auto": true
   }
  ]
 }

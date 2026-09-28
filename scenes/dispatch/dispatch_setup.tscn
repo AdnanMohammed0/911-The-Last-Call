@@ -5,9 +5,13 @@
 [ext_resource type="Script" path="res://scenes/dispatch/dispatch_phone.gd" id="3_phone"]
 [ext_resource type="Script" path="res://ui/dispatch/dispatch_terminal.gd" id="4_terminal"]
 [ext_resource type="Script" path="res://ui/station_os/station_os.gd" id="5_os"]
+[ext_resource type="PackedScene" uid="uid://c72iqy0ds7u2k" path="res://assets/3D/Computer/pc-9801ux.glb" id="6_pc98"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_monitor"]
-size = Vector3(1.4, 0.55, 0.3)
+size = Vector3(0.8, 0.85, 0.8)
+
+[sub_resource type="QuadMesh" id="QuadMesh_screen"]
+size = Vector2(0.465, 0.35)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_phone"]
 size = Vector3(0.36, 0.2, 0.3)
@@ -20,11 +24,19 @@ script = ExtResource("1_setup")
 clock_label = NodePath("WallClock/Time")
 
 [node name="MainComputer" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.03, -24.52)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.635, -24.35)
 script = ExtResource("2_computer")
 
 [node name="Shape" type="CollisionShape3D" parent="MainComputer"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0)
 shape = SubResource("BoxShape3D_monitor")
+
+[node name="Model" parent="MainComputer" instance=ExtResource("6_pc98")]
+transform = Transform3D(0.0055, 0, 0, 0, 0.0055, 0, 0, 0, 0.0055, 0, 0, 0)
+
+[node name="ScreenDisplay" type="MeshInstance3D" parent="MainComputer"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.471, 0.016)
+mesh = SubResource("QuadMesh_screen")
 
 [node name="Phone" type="Area3D" parent="." node_paths=PackedStringArray("ring_light", "status_label")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2, 1.7, -24.3)
@@ -80,8 +92,12 @@ text = "SHIFT CLOCK  00:00 - 06:00"
 font_size = 40
 modulate = Color(0.7, 0.75, 0.8, 1)
 
-[node name="TerminalLayer" type="CanvasLayer" parent="."]
-layer = 40
+[node name="TerminalLayer" type="SubViewport" parent="."]
+disable_3d = true
+gui_embed_subwindows = true
+handle_input_locally = false
+render_target_update_mode = 3
+size = Vector2i(1600, 1200)
 
 [node name="StationOS" type="Control" parent="TerminalLayer"]
 layout_mode = 3
@@ -93,6 +109,7 @@ grow_vertical = 2
 script = ExtResource("5_os")
 
 [node name="DispatchTerminal" type="Control" parent="TerminalLayer"]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

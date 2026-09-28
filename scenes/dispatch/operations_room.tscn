@@ -75,30 +75,6 @@ size = Vector3(0.06, 0.74, 1.1)
 [sub_resource type="BoxMesh" id="BoxMesh_mcnxu"]
 size = Vector3(0.5, 0.7, 0.9)
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_b78l7"]
-top_radius = 0.02
-bottom_radius = 0.02
-height = 0.22
-
-[sub_resource type="BoxMesh" id="BoxMesh_nk640"]
-size = Vector3(0.62, 0.38, 0.03)
-
-[sub_resource type="BoxMesh" id="BoxMesh_g8dlb"]
-size = Vector3(0.59, 0.34, 0.005)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_v842k"]
-top_radius = 0.02
-bottom_radius = 0.02
-height = 0.22
-
-[sub_resource type="BoxMesh" id="BoxMesh_p0en3"]
-size = Vector3(0.62, 0.38, 0.03)
-
-[sub_resource type="BoxMesh" id="BoxMesh_chbk4"]
-size = Vector3(0.59, 0.34, 0.005)
-
-[sub_resource type="BoxMesh" id="BoxMesh_he4v7"]
-size = Vector3(0.46, 0.02, 0.15)
 
 [sub_resource type="BoxMesh" id="BoxMesh_43rj8"]
 size = Vector3(0.22, 0.05, 0.18)
@@ -390,42 +366,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0.36, 0.05)
 material_override = ExtResource("4_2gys5")
 mesh = SubResource("BoxMesh_mcnxu")
 
-[node name="Stand0" type="MeshInstance3D" parent="Geometry/OperationsRoom/MainDesk" unique_id=1607585036]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.33, 0.89, -0.33)
-material_override = ExtResource("5_004x1")
-mesh = SubResource("CylinderMesh_b78l7")
-
-[node name="Monitor0" type="MeshInstance3D" parent="Geometry/OperationsRoom/MainDesk" unique_id=296148762]
-transform = Transform3D(1, 0, 0, 0, 0.9945219, 0.104528464, 0, -0.104528464, 0.9945219, -0.33, 1.18, -0.34)
-material_override = ExtResource("5_004x1")
-mesh = SubResource("BoxMesh_nk640")
-
-[node name="Screen0" type="MeshInstance3D" parent="Geometry/OperationsRoom/MainDesk" unique_id=566998936]
-transform = Transform3D(1, 0, 0, 0, 0.9945219, 0.104528464, 0, -0.104528464, 0.9945219, -0.33, 1.18, -0.322)
-material_override = ExtResource("6_rgo0w")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_g8dlb")
-
-[node name="Stand1" type="MeshInstance3D" parent="Geometry/OperationsRoom/MainDesk" unique_id=1473825645]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.33, 0.89, -0.33)
-material_override = ExtResource("5_004x1")
-mesh = SubResource("CylinderMesh_v842k")
-
-[node name="Monitor1" type="MeshInstance3D" parent="Geometry/OperationsRoom/MainDesk" unique_id=1938521657]
-transform = Transform3D(1, 0, 0, 0, 0.9945219, 0.104528464, 0, -0.104528464, 0.9945219, 0.33, 1.18, -0.34)
-material_override = ExtResource("5_004x1")
-mesh = SubResource("BoxMesh_p0en3")
-
-[node name="Screen1" type="MeshInstance3D" parent="Geometry/OperationsRoom/MainDesk" unique_id=628601834]
-transform = Transform3D(1, 0, 0, 0, 0.9945219, 0.104528464, 0, -0.104528464, 0.9945219, 0.33, 1.18, -0.322)
-material_override = ExtResource("6_rgo0w")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_chbk4")
-
-[node name="Keyboard" type="MeshInstance3D" parent="Geometry/OperationsRoom/MainDesk" unique_id=899001583]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0.795, 0.05)
-material_override = ExtResource("5_004x1")
-mesh = SubResource("BoxMesh_he4v7")
 
 [node name="MainPhone" type="Node3D" parent="Geometry/OperationsRoom" unique_id=283086910]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2, 1.64, -24.3)

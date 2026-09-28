@@ -15,6 +15,8 @@
 class_name StationOS
 extends Control
 
+signal closed()
+
 const GROUP: StringName = &"station_os"
 const WALLPAPER: Shader = preload("res://ui/shaders/win11_wallpaper.gdshader")
 const SCREEN_FX: Shader = preload("res://ui/shaders/screen_fx.gdshader")
@@ -67,6 +69,7 @@ var _date_label: Label
 var _windows: Dictionary[StringName, PanelContainer] = {}
 var _maximized: Dictionary[StringName, Rect2] = {}
 var _task_buttons: Dictionary[StringName, TaskbarButton] = {}
+var _is_open: bool = false
 var _closed_player_input: Player = null
 var _in_cad: bool = false
 var _drag_window: Control = null
@@ -95,7 +98,7 @@ func _ready() -> void:
 	add_to_group(GROUP)
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	visible = false
+	visible = true
 	theme = GameSettings.ui_theme
 	_build()
 	_inbox.append("[b]County HQ — Welcome to Station 4[/b]\nThe station is paid every %d minutes of shift time. Every call you handle pays $%d, and every call you classify [color=#7dff9a]correctly[/color] pays $%d more. Wrong verdicts (-$%d) and missed calls (-$%d) are deducted. Mission payouts are added to the next payday.\nSpend the money in [b]StationMart[/b]: more computers, security, weapons for the armory, armor, vehicles for the garage and comfort items that raise morale (and pay)." % [
@@ -114,8 +117,7 @@ static func find(tree: SceneTree) -> StationOS:
 # --- Open / close --------------------------------------------------------------------------------
 
 func open() -> void:
-	if visible:
-		return
+	_is_open = true
 	visible = true
 	add_to_group(DispatchTerminal.MODAL_GROUP)
 	var player: Player = Player.find_by_peer(get_tree(), multiplayer.get_unique_id())
@@ -134,9 +136,9 @@ func open() -> void:
 
 
 func close() -> void:
-	if not visible:
+	if not _is_open:
 		return
-	visible = false
+	_is_open = false
 	_start_menu.visible = false
 	remove_from_group(DispatchTerminal.MODAL_GROUP)
 	_set_cctv_active(false)
@@ -145,10 +147,11 @@ func close() -> void:
 	_closed_player_input = null
 	if DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	closed.emit()
 
 
 func is_open() -> bool:
-	return visible
+	return _is_open
 
 
 func _unhandled_input(event: InputEvent) -> void:

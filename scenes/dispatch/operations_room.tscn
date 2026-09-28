@@ -7,20 +7,36 @@
 [ext_resource type="PackedScene" path="res://scenes/dispatch/station_grass.tscn" id="3_grass"]
 [ext_resource type="Material" path="res://assets/materials/metal_painted.tres" id="4_2gys5"]
 [ext_resource type="Material" path="res://assets/3D/station/materials/plastic_black.tres" id="5_004x1"]
-[ext_resource type="Material" path="res://assets/3D/station/materials/screen_blue.tres" id="6_rgo0w"]
 [ext_resource type="Material" path="res://assets/3D/station/materials/led_red.tres" id="8_7ukr3"]
 [ext_resource type="Material" path="res://assets/materials/steel.tres" id="9_hee0e"]
 [ext_resource type="Material" uid="uid://cabhx13xshnl8" path="res://assets/3D/station/materials/fabric_dark.tres" id="10_2mulj"]
 [ext_resource type="Material" path="res://assets/3D/station/materials/led_blue.tres" id="11_bk34g"]
 [ext_resource type="Material" path="res://assets/3D/station/materials/led_green.tres" id="12_i5s62"]
 [ext_resource type="Material" path="res://assets/3D/station/materials/diffuser_cool.tres" id="13_cjou6"]
+[ext_resource type="PackedScene" uid="uid://daui7os44y1cq" path="res://assets/3D/lamp/light_ceiling_lamp_-_15mb.glb" id="13_rvkp3"]
 [ext_resource type="Material" path="res://assets/3D/station/materials/diffuser_warm.tres" id="14_errnb"]
 [ext_resource type="PackedScene" uid="uid://dh2fl70vpps8o" path="res://assets/3D/station/map_v13.glb" id="15_dih32"]
 [ext_resource type="Script" uid="uid://dkhtknkofw6eu" path="res://core/net/player_spawner.gd" id="17_cfby5"]
+[ext_resource type="PackedScene" uid="uid://cajvp5ol3lyqj" path="res://assets/3D/Reception/reception_desk.glb" id="17_w15tf"]
+[ext_resource type="PackedScene" uid="uid://byxsjl81qck13" path="res://assets/3D/chair/waiting_chair.glb" id="18_21axn"]
+[ext_resource type="PackedScene" uid="uid://cteucciu27bso" path="res://assets/3D/stuff/trash_can(1).glb" id="18_he4v7"]
+[ext_resource type="PackedScene" uid="uid://bue2ejyyrhogm" path="res://assets/3D/paintings/vintage_framed_world_map.glb" id="19_tf3au"]
 [ext_resource type="PackedScene" path="res://scenes/dispatch/dispatch_setup.tscn" id="20_004x1"]
 [ext_resource type="Script" uid="uid://bv3o6hji4fpgf" path="res://scenes/dispatch/station/station_furniture.gd" id="21_rgo0w"]
+[ext_resource type="PackedScene" uid="uid://dcswx18534jve" path="res://assets/3D/phone/office_phone.glb" id="23_ipksy"]
+[ext_resource type="PackedScene" uid="uid://bjjf1cpw3kr35" path="res://assets/3D/lockers/box_for_documents_or_other_papers..glb" id="25_kmh1s"]
+[ext_resource type="PackedScene" uid="uid://dajiqtlhii4i2" path="res://assets/3D/Plants/cactus.glb" id="26_jabc7"]
+[ext_resource type="PackedScene" uid="uid://dmcx0cnym3e1g" path="res://assets/3D/Plants/potted_plant.glb" id="27_l1qp8"]
+[ext_resource type="PackedScene" uid="uid://blaahxytorqiw" path="res://assets/3D/stuff/ventilator.glb" id="30_sacfc"]
 [ext_resource type="PackedScene" path="res://scenes/shared/door/door_double.tscn" id="32_door_double"]
 [ext_resource type="PackedScene" uid="uid://b10au042mgmxd" path="res://assets/3D/fence/fence_concrete-_15mb.glb" id="33_fence_concrete"]
+[ext_resource type="PackedScene" uid="uid://db0i1obqbtuex" path="res://assets/3D/chair/office_chair_modern.glb" id="35_63p7m"]
+[ext_resource type="PackedScene" uid="uid://cfv57tmfa27kr" path="res://assets/3D/Plants/house_plant.glb" id="38_mcnxu"]
+[ext_resource type="PackedScene" uid="uid://cg1s1m2v3mkla" path="res://assets/3D/clock/basic_clock_rigged.glb" id="39_b78l7"]
+[ext_resource type="PackedScene" uid="uid://b30seis40qw6t" path="res://assets/3D/growd_papers/papers__envelopes.glb" id="45_wvrax"]
+[ext_resource type="PackedScene" uid="uid://oyt5li3u5gh0" path="res://assets/3D/paintings/psx_-_corkevidence_board_2.glb" id="46_g8kpt"]
+[ext_resource type="PackedScene" uid="uid://bftrglvtm4j1y" path="res://assets/3D/paintings/papers_please__-_recognition_for_sufficience.glb" id="47_rn7o4"]
+[ext_resource type="PackedScene" uid="uid://b6jbk2jf8ihyn" path="res://assets/3D/stuff/glasses.glb" id="48_tcjey"]
 [ext_resource type="PackedScene" uid="uid://dihsymuo4dgwm" path="res://assets/3D/growd_papers/ground_paper_3.glb" id="p19_6q21n"]
 [ext_resource type="PackedScene" uid="uid://y413gx8lk5g" path="res://assets/3D/fence/metalfence.fbx" id="p20_opcu1"]
 [ext_resource type="PackedScene" uid="uid://cqy86tfyuvwuk" path="res://assets/3D/cars/fairheaven_lt_80_cop_cruiser_-_low_poly_model.glb" id="p21_004x1"]
@@ -74,7 +90,6 @@ size = Vector3(0.06, 0.74, 1.1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_mcnxu"]
 size = Vector3(0.5, 0.7, 0.9)
-
 
 [sub_resource type="BoxMesh" id="BoxMesh_43rj8"]
 size = Vector3(0.22, 0.05, 0.18)
@@ -365,7 +380,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0.36, 0.05)
 [node name="Mesh" type="MeshInstance3D" parent="Geometry/OperationsRoom/MainDesk/Drawers" unique_id=1155953111]
 material_override = ExtResource("4_2gys5")
 mesh = SubResource("BoxMesh_mcnxu")
-
 
 [node name="MainPhone" type="Node3D" parent="Geometry/OperationsRoom" unique_id=283086910]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2, 1.64, -24.3)
@@ -695,32 +709,6 @@ spot_attenuation = 0.85
 spot_angle = 68.0
 spot_angle_attenuation = 0.7
 
-[node name="Light2" type="SpotLight3D" parent="Geometry/OperationsRoom/Lighting/SpotProfiler/Light" unique_id=1723260827]
-transform = Transform3D(2.9847178, 0, 0, 0, 0.9597671, 0.28079736, 0, -0.28079736, 0.9597671, 13.852026, 0.93345916, -0.98243743)
-light_color = Color(1, 0.88, 0.72, 1)
-light_energy = 3.2
-light_volumetric_fog_energy = 0.85
-light_size = 0.4
-shadow_enabled = true
-shadow_bias = 0.04
-spot_range = 6.0
-spot_attenuation = 0.85
-spot_angle = 68.0
-spot_angle_attenuation = 0.7
-
-[node name="Light" type="SpotLight3D" parent="Geometry/OperationsRoom/Lighting/SpotProfiler/Light/Light2" unique_id=1123913831]
-transform = Transform3D(2.9847178, 0, 0, 0, 0.9999736, -0.007265504, 0, 0.007265504, 0.9999736, -8.648567, 9.714308, -1.4304508)
-light_color = Color(1, 0.88, 0.72, 1)
-light_energy = 3.2
-light_volumetric_fog_energy = 0.85
-light_size = 0.4
-shadow_enabled = true
-shadow_bias = 0.04
-spot_range = 6.0
-spot_attenuation = 0.85
-spot_angle = 68.0
-spot_angle_attenuation = 0.7
-
 [node name="Fill" type="OmniLight3D" parent="Geometry/OperationsRoom/Lighting/SpotProfiler" unique_id=1666301716]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
 light_color = Color(1, 0.88, 0.72, 1)
@@ -779,11 +767,12 @@ cast_shadow = 0
 mesh = SubResource("BoxMesh_puq71")
 
 [node name="Light" type="SpotLight3D" parent="Geometry/OperationsRoom/Lighting/SpotMedic" unique_id=1849353634]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, -0.05, 0)
-light_color = Color(0.9, 0.95, 1, 1)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 2.1903315, 0.30926925, 2.8069897)
+light_color = Color(0.9019608, 1, 1, 1)
 light_energy = 3.2
+light_indirect_energy = 0.0
 light_volumetric_fog_energy = 0.85
-light_size = 0.4
+light_size = 0.281
 shadow_enabled = true
 shadow_bias = 0.04
 spot_range = 6.0
@@ -870,14 +859,11 @@ material_override = ExtResource("14_errnb")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_273iu")
 
-[node name="Light" type="OmniLight3D" parent="Geometry/OperationsRoom/Lighting/HallwaySconce1" unique_id=316469653]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.35)
-light_color = Color(1, 0.8, 0.58, 1)
-light_energy = 2.2
-light_size = 0.1
-shadow_enabled = true
-omni_range = 8.0
-omni_attenuation = 1.4
+[node name="Sketchfab_Scene" parent="Geometry/OperationsRoom/Lighting/HallwaySconce1" unique_id=1792584500 instance=ExtResource("13_rvkp3")]
+transform = Transform3D(-9.3498656e-08, 0, -2.139, 0, 2.139, 0, 2.139, 0, -9.3498656e-08, 0.2495346, 1.4757326, 6.342119)
+
+[node name="Sketchfab_Scene" parent="Geometry/OperationsRoom/Lighting/HallwaySconce1/Sketchfab_Scene" unique_id=1907802412 instance=ExtResource("13_rvkp3")]
+transform = Transform3D(0.924, 0, 0, 0, 0.924, 0, 0, 0, 0.924, -0.13266729, -0.0024135415, -2.2184525)
 
 [node name="HallwaySconce2" type="Node3D" parent="Geometry/OperationsRoom/Lighting" unique_id=143396009]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 16, 3.2, -22.5)
@@ -971,6 +957,21 @@ transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -9.636702, 0.3893081, -
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21841288, 0.81708956, 0.06298447)
 script = ExtResource("station_map_script")
 
+[node name="Sketchfab_Scene" parent="Geometry/00 | COMPLETE BUILDING - Exterior" unique_id=318542786 instance=ExtResource("17_w15tf")]
+transform = Transform3D(-14.054664, 0, -0.19378829, 0, 14.056, 0, 0.19378829, 0, -14.054664, 24.710733, -0.017089784, -29.293594)
+
+[node name="Sketchfab_Scene" parent="Geometry/00 | COMPLETE BUILDING - Exterior/Sketchfab_Scene" unique_id=1543992525 instance=ExtResource("18_he4v7")]
+transform = Transform3D(-0.15098564, 0, 0.0020818345, 0, 0.151, 0, -0.0020818345, 0, -0.15098564, -0.24489193, 0.0061419434, -0.17390302)
+
+[node name="Sketchfab_Scene2" parent="Geometry/00 | COMPLETE BUILDING - Exterior" unique_id=1102733970 instance=ExtResource("18_21axn")]
+transform = Transform3D(-0.02511628, 0, -1.0276932, 0, 1.028, 0, 1.0276932, 0, -0.02511628, 24.633926, -0.017089367, -31.177435)
+
+[node name="Sketchfab_Scene3" parent="Geometry/00 | COMPLETE BUILDING - Exterior" unique_id=282521442 instance=ExtResource("18_21axn")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 19.343445, -0.017089248, -31.012178)
+
+[node name="Sketchfab_Scene4" parent="Geometry/00 | COMPLETE BUILDING - Exterior" unique_id=1274006781 instance=ExtResource("19_tf3au")]
+transform = Transform3D(-0.0024637347, 0, 0.4099926, 0, 0.41, 0, -0.4099926, 0, -0.0024637347, 22.28323, 1.6301, -24.376226)
+
 [node name="StationGrass" parent="Geometry" unique_id=402694544 instance=ExtResource("3_grass")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21841288, 0.81708956, 0.06298447)
 
@@ -988,6 +989,21 @@ transform = Transform3D(0.03740242, 0, -0.9993003, 0, 1, 0, 0.9993003, 0, 0.0374
 
 [node name="metalfence4" parent="Geometry" unique_id=578308451 instance=ExtResource("p20_opcu1")]
 transform = Transform3D(0.0038872422, 0, 0.99999243, 0, 1, 0, -0.99999243, 0, 0.0038872422, 24.400496, 0.7080645, -37.442997)
+
+[node name="Sketchfab_Scene" parent="Geometry" unique_id=877124251 instance=ExtResource("23_ipksy")]
+transform = Transform3D(-0.021976287, 0, 0.020421628, 0, 0.03, 0, -0.020421628, 0, -0.021976287, 23.615767, 1.7995145, -28.217154)
+
+[node name="Sketchfab_Scene2" parent="Geometry" unique_id=1811332611 instance=ExtResource("25_kmh1s")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 39.686172, -13.148554, -63.63385)
+
+[node name="Sketchfab_Scene3" parent="Geometry" unique_id=451139059 instance=ExtResource("18_he4v7")]
+transform = Transform3D(1.895, 0, 0, 0, 1.895, 0, 0, 0, 1.895, 17.740305, 0.9056947, -24.561518)
+
+[node name="Sketchfab_Scene4" parent="Geometry" unique_id=970582028 instance=ExtResource("26_jabc7")]
+transform = Transform3D(0.756642, 0, 1.1695905, 0, 1.393, 0, -1.1695905, 0, 0.756642, 16.775444, 1.1032952, -24.781498)
+
+[node name="Sketchfab_Scene5" parent="Geometry" unique_id=1498536457 instance=ExtResource("27_l1qp8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.090672, 1.8167506, -26.94583)
 
 [node name="Doors" type="Node3D" parent="." unique_id=2130240825]
 
@@ -1245,6 +1261,9 @@ transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 65.45335, 0.433, 
 [node name="Fence_North_20" parent="PerimeterFence" unique_id=910000077 instance=ExtResource("33_fence_concrete")]
 transform = Transform3D(1.125, 0, 0, 0, 1.125, 0, 0, 0, 1.125, 69.4524, 0.433, -53.225285)
 
+[node name="Sketchfab_Scene" parent="PerimeterFence" unique_id=648914825 instance=ExtResource("30_sacfc")]
+transform = Transform3D(0.14278373, 0, 0.060314212, 0, 0.155, 0, -0.060314212, 0, 0.14278373, 21.058392, 1.7958869, -28.478168)
+
 [node name="Players" type="Node3D" parent="." unique_id=133976686]
 
 [node name="SpawnPoints" type="Node3D" parent="." unique_id=1020473453]
@@ -1280,7 +1299,10 @@ transform = Transform3D(-0.9988589, 0, 0.047757898, 0, 1, 0, -0.047757898, 0, -0
 [node name="Sketchfab_Scene2" parent="Sketchfab_Scene2" unique_id=1160895634 instance=ExtResource("p24_cfby5")]
 transform = Transform3D(0.9791783, 0, 0.20300207, 0, 1, 0, -0.20300207, 0, 0.9791783, -1.8463421, 0.0016018152, 0.62845075)
 
-[node name="Sketchfab_Scene4" parent="." unique_id=1126724806 instance=ExtResource("p26_rvkp3")]
+[node name="Sketchfab_Scene2" parent="Sketchfab_Scene2/Sketchfab_Scene2" unique_id=780194278 instance=ExtResource("p24_cfby5")]
+transform = Transform3D(0.9791783, 0, 0.20300207, 0, 1, 0, -0.20300207, 0, 0.9791783, -35.52332, 0.0016018152, 0.22459483)
+
+[node name="Sketchfab_Scene4" parent="." unique_id=1760215458 instance=ExtResource("p26_rvkp3")]
 transform = Transform3D(0.005, 0, 0, 0, 0.005, 0, 0, 0, 0.005, 19.280642, 0.7976707, -33.933628)
 
 [node name="Sketchfab_Scene4" parent="Sketchfab_Scene4" unique_id=1706778479 instance=ExtResource("p26_rvkp3")]
@@ -1324,3 +1346,54 @@ transform = Transform3D(0.5435669, 0, -0.8393659, 0, 1, 0, 0.8393659, 0, 0.54356
 
 [node name="Sketchfab_Scene7" parent="." unique_id=1522382116 instance=ExtResource("p31_6q21n")]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 21.689714, 0.7883241, -34.642235)
+
+[node name="Sketchfab_Scene3" parent="." unique_id=565818278 instance=ExtResource("35_63p7m")]
+transform = Transform3D(-1.0981774, 0, 0.38888484, 0, 1.165, 0, -0.38888484, 0, -1.0981774, 22.044836, 0.8000001, -27.49107)
+
+[node name="AreaLight3D" type="AreaLight3D" parent="." unique_id=866926931]
+transform = Transform3D(2.1604981, 0, 0, 0, 0.0021097208, 0.9999978, 0, -0.9999978, 0.0021097208, 22.317623, 4.7239113, -26.253798)
+light_color = Color(1, 1, 0.6862745, 1)
+light_indirect_energy = 1.792
+light_volumetric_fog_energy = 1.115
+light_size = 0.272
+light_specular = 0.757
+area_range = 5.895
+area_attenuation = -0.39
+area_size = Vector2(2.9690628, 0.6813507)
+
+[node name="AreaLight3D2" type="AreaLight3D" parent="." unique_id=1971349057]
+transform = Transform3D(1, 0, 0, 0, -0.009228252, 0.99995744, 0, -0.99995744, -0.009228252, 21.983425, 4.456993, -31.408014)
+light_color = Color(1, 1, 0.6862745, 1)
+light_indirect_energy = 1.792
+light_volumetric_fog_energy = 1.115
+light_size = 0.272
+light_specular = 0.757
+area_range = 8.195
+area_attenuation = 0.006
+area_size = Vector2(2.9690628, 0.6813507)
+
+[node name="Sketchfab_Scene8" parent="." unique_id=646732893 instance=ExtResource("38_mcnxu")]
+transform = Transform3D(0.245, 0, 0, 0, 0.245, 0, 0, 0, 0.245, 27.81259, 0.8612069, -24.99136)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=1055738920]
+transform = Transform3D(1, 0, 0, 0, 0.038067874, 0.99927515, 0, -0.99927515, 0.038067874, 16.954058, 4.6021814, -24.605715)
+light_color = Color(1, 1, 0, 1)
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="." unique_id=253058627]
+transform = Transform3D(1, 0, 0, 0, 0.023049176, 0.99973434, 0, -0.99973434, 0.023049176, 27.694803, 4.777983, -25.027397)
+light_color = Color(1, 1, 0, 1)
+
+[node name="Sketchfab_Scene9" parent="." unique_id=1711791725 instance=ExtResource("39_b78l7")]
+transform = Transform3D(-8.742278e-11, 0, 0.002, 0, 0.002, 0, -0.002, 0, -8.742278e-11, 22.165415, 4.005868, -24.22191)
+
+[node name="Sketchfab_Scene10" parent="." unique_id=456072813 instance=ExtResource("45_wvrax")]
+transform = Transform3D(0.98027116, 0, 0.19765733, 0, 1, 0, -0.19765733, 0, 0.98027116, 21.877684, 1.8040036, -28.805977)
+
+[node name="Sketchfab_Scene11" parent="." unique_id=671947434 instance=ExtResource("46_g8kpt")]
+transform = Transform3D(-30, 0, -2.6226833e-06, 0, 30, 0, 2.6226833e-06, 0, -30, 37.27995, 0.46775627, -14.861528)
+
+[node name="Sketchfab_Scene12" parent="." unique_id=400454111 instance=ExtResource("47_rn7o4")]
+transform = Transform3D(-0.0017860014, 0, 0.0077980896, 0, 0.008, 0, -0.0077980896, 0, -0.0017860014, 20.588741, 1.8228788, -28.155115)
+
+[node name="Sketchfab_Scene13" parent="." unique_id=248844518 instance=ExtResource("48_tcjey")]
+transform = Transform3D(0.00036487676, 0, 0.00093105587, 0, 0.001, 0, -0.00093105587, 0, 0.00036487676, 24.07704, 1.804402, -27.649752)

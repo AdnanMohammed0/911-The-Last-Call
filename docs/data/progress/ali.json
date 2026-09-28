@@ -513,6 +513,18 @@
    ],
    "commit": "6154d2b",
    "auto": true
+  },
+  {
+   "date": "2026-09-28",
+   "tasks": [],
+   "summary": "fix(computer): remove built-in black monitor mesh, fit screen to bezel opening, and seat camera close",
+   "files": [
+    "scenes/dispatch/dispatch_computer.gd",
+    "scenes/dispatch/dispatch_setup.tscn",
+    "scenes/dispatch/operations_room.tscn"
+   ],
+   "commit": "ef7053d",
+   "auto": true
   }
  ]
 }

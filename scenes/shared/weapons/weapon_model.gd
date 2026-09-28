@@ -143,15 +143,15 @@ func _add_arms(layers: int) -> void:
 	# Firing hand wraps the grip; forearm heads back and down to the right.
 	var right_hand: Vector3 = Vector3(0.0, -0.045, 0.02)
 	_hand(arms, right_hand, glove, Vector3(0, 0, -0.12))
-	_segment(arms, right_hand + Vector3(0.01, -0.03, 0.05), right_hand + Vector3(0.09, -0.2, 0.34), 0.034, sleeve)
+	_segment(arms, right_hand + Vector3(0.01, -0.03, 0.05), right_hand + Vector3(0.06, -0.3, 0.4), 0.03, sleeve)
 	_segment(arms, right_hand + Vector3(0.0, -0.01, 0.035), right_hand + Vector3(0.02, -0.04, 0.09), 0.03, glove)
 	# Support hand.
 	var left_hand: Vector3 = support_point
 	if is_one_handed:
 		left_hand = Vector3(-0.025, -0.055, 0.035)
 	_hand(arms, left_hand, glove, Vector3(0, 0, 0.35))
-	var elbow: Vector3 = left_hand + (Vector3(-0.16, -0.22, 0.26) if not is_one_handed else Vector3(-0.12, -0.2, 0.3))
-	_segment(arms, left_hand + Vector3(-0.01, -0.03, 0.03), elbow, 0.032, sleeve)
+	var elbow: Vector3 = left_hand + (Vector3(-0.22, -0.3, 0.3) if not is_one_handed else Vector3(-0.1, -0.3, 0.3))
+	_segment(arms, left_hand + Vector3(-0.01, -0.03, 0.03), elbow, 0.028, sleeve)
 	ModelKit.set_layers(arms, layers, false)
 
 

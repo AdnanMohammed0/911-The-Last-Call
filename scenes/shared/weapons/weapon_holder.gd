@@ -21,9 +21,11 @@ const FIRE_INTERVAL_TOLERANCE: float = 0.6
 const FIRE_RATE_SLACK: int = 2
 const DRAW_SECONDS: float = 0.35
 const PREDICTION_HOLD_MSEC: int = 400
-const HIP_POSITION: Vector3 = Vector3(0.16, -0.17, -0.42)
+const HIP_POSITION: Vector3 = Vector3(0.15, -0.16, -0.44)
+## First-person gun scale (a smaller gun closer to the eye keeps the view clear, like most shooters).
+const VIEWMODEL_SCALE: float = 0.62
 ## ADS: sights centred, slightly closer (y is lowered by WeaponModel.sight_height).
-const AIM_POSITION: Vector3 = Vector3(0.0, 0.0, -0.4)
+const AIM_POSITION: Vector3 = Vector3(0.0, 0.0, -0.34)
 
 ## Owner: a hit was confirmed by the host (hit marker).
 signal hit_confirmed(killed: bool, headshot: bool)
@@ -626,8 +628,8 @@ func _update_owner_view(delta: float) -> void:
 	var speed: float = _player.get_horizontal_speed()
 	_bob_time += delta * lerpf(0.0, 9.0, clampf(speed / 4.0, 0.0, 1.0))
 	var bob: Vector3 = Vector3(sin(_bob_time) * 0.008, absf(cos(_bob_time)) * 0.01, 0.0) * (0.25 if aiming else 1.0)
-	var target: Vector3 = (AIM_POSITION - Vector3(0, WeaponModel.sight_height(weapon), 0) if aiming and weapon != null else HIP_POSITION) + bob
-	target.z += _kick * (0.02 if aiming else 0.045)
+	var target: Vector3 = (AIM_POSITION - Vector3(0, WeaponModel.sight_height(weapon) * VIEWMODEL_SCALE, 0) if aiming and weapon != null else HIP_POSITION) + bob
+	target.z += _kick * (0.014 if aiming else 0.03)
 	var tilt: float = 0.0
 	if is_reloading():
 		target.y -= 0.12
@@ -671,6 +673,7 @@ func _rebuild_model() -> void:
 	_model = WeaponModel.build(weapon, 1, true)
 	ModelKit.set_layers(_model, 1, false)
 	_model.position = HIP_POSITION
+	_model.scale = Vector3.ONE * VIEWMODEL_SCALE
 	_player.get_camera().add_child(_model)
 
 

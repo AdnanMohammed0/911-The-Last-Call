@@ -34,51 +34,56 @@ func _ready() -> void:
 
 
 func _build() -> void:
+	# Tracker: accent bar, tracked caps title, objective text — no heavy box.
 	_tracker = PanelContainer.new()
-	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = Color(0.03, 0.04, 0.05, 0.55)
-	style.border_color = ACCENT
+	var style: StyleBoxFlat = UiKit.style(Color(0.02, 0.025, 0.035, 0.42), 6, 16, 12)
+	style.border_color = GameTheme.ACCENT
 	style.border_width_left = 3
-	style.set_corner_radius_all(4)
-	style.content_margin_left = 16
-	style.content_margin_right = 18
-	style.content_margin_top = 10
-	style.content_margin_bottom = 12
 	_tracker.add_theme_stylebox_override(&"panel", style)
 	_tracker.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_tracker.position = Vector2(32, 32)
-	_tracker.custom_minimum_size = Vector2(320, 0)
+	_tracker.position = Vector2(36, 36)
+	_tracker.custom_minimum_size = Vector2(340, 0)
 	add_child(_tracker)
 	var column: VBoxContainer = VBoxContainer.new()
 	column.add_theme_constant_override(&"separation", 4)
 	_tracker.add_child(column)
-	_tracker_title = _label(column, 13, ACCENT)
-	_tracker_text = _label(column, 17, TEXT)
+	var head: HBoxContainer = HBoxContainer.new()
+	head.add_theme_constant_override(&"separation", 8)
+	column.add_child(head)
+	var dot: IconView = IconView.make(&"siren", 16, GameTheme.ACCENT)
+	dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	head.add_child(dot)
+	_tracker_title = UiKit.caps("", 12, GameTheme.ACCENT, &"bold", 2)
+	_tracker_title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	head.add_child(_tracker_title)
+	_tracker_text = UiKit.label("", 17, TEXT, &"medium")
+	_tracker_text.add_theme_color_override(&"font_shadow_color", Color(0, 0, 0, 0.7))
+	_tracker_text.add_theme_constant_override(&"shadow_offset_y", 1)
 	_tracker_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_tracker_text.custom_minimum_size = Vector2(300, 0)
+	_tracker_text.custom_minimum_size = Vector2(320, 0)
+	column.add_child(_tracker_text)
 
+	# Banner: cinematic title between two thin rules.
 	_banner = PanelContainer.new()
-	var backdrop: StyleBoxFlat = StyleBoxFlat.new()
-	backdrop.bg_color = Color(0.02, 0.025, 0.03, 0.72)
-	backdrop.border_color = ACCENT
-	backdrop.border_width_top = 2
-	backdrop.content_margin_left = 48
-	backdrop.content_margin_right = 48
-	backdrop.content_margin_top = 16
-	backdrop.content_margin_bottom = 18
+	var backdrop: StyleBoxFlat = UiKit.style(Color(0.01, 0.012, 0.018, 0.6), 0, 80, 18)
+	backdrop.border_color = Color(GameTheme.ACCENT, 0.8)
+	backdrop.border_width_top = 1
+	backdrop.border_width_bottom = 1
 	_banner.add_theme_stylebox_override(&"panel", backdrop)
 	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_banner)
 	_banner.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	_banner.offset_top = 140
+	_banner.offset_top = 150
 	_banner.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	var banner_column: VBoxContainer = VBoxContainer.new()
-	banner_column.add_theme_constant_override(&"separation", 4)
+	banner_column.add_theme_constant_override(&"separation", 2)
 	_banner.add_child(banner_column)
-	_banner_title = _label(banner_column, 36, ACCENT)
+	_banner_title = UiKit.label("", 46, TEXT, &"black_italic")
 	_banner_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_banner_subtitle = _label(banner_column, 18, TEXT)
+	banner_column.add_child(_banner_title)
+	_banner_subtitle = UiKit.caps("", 13, Color(1, 1, 1, 0.7), &"semibold", 2)
 	_banner_subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	banner_column.add_child(_banner_subtitle)
 	_banner.modulate.a = 0.0
 
 	_feed = VBoxContainer.new()
@@ -87,8 +92,8 @@ func _build() -> void:
 	_feed.add_theme_constant_override(&"separation", 4)
 	add_child(_feed)
 	_feed.set_anchors_and_offsets_preset(Control.PRESET_CENTER_RIGHT)
-	_feed.offset_left = -360
-	_feed.offset_right = -32
+	_feed.offset_left = -380
+	_feed.offset_right = -40
 	_feed.offset_top = -60
 	_feed.offset_bottom = 120
 	_feed.grow_horizontal = Control.GROW_DIRECTION_BEGIN
@@ -96,6 +101,7 @@ func _build() -> void:
 
 func _label(parent: Node, size: int, color: Color) -> Label:
 	var label: Label = Label.new()
+	label.add_theme_font_override(&"font", GameTheme.font(&"bold"))
 	label.add_theme_font_size_override(&"font_size", size)
 	label.add_theme_color_override(&"font_color", color)
 	label.add_theme_color_override(&"font_shadow_color", Color(0, 0, 0, 0.7))
@@ -127,7 +133,7 @@ func _refresh() -> void:
 
 func _show_banner(title: String, subtitle: String) -> void:
 	_banner_title.text = title
-	_banner_subtitle.text = subtitle
+	_banner_subtitle.text = subtitle.to_upper()
 	_banner_left = BANNER_SECONDS
 	_refresh()
 

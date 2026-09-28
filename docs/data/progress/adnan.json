@@ -928,6 +928,17 @@
         "ui/settings/settings_menu.gd",
         "ui/hud/pause_menu.gd"
       ]
+    },
+    {
+      "date": "2026-09-28",
+      "tasks": [],
+      "summary": "HUD جديد بالكامل: حيوية تحت يسار (بار صحة مقسّم + رقم كبير + ألواح درع + ستامينا + خط الرتبة/الاسم/الدور بلون الكلاس)، بلوك السلاح تحت يمين (صورة السلاح مرسومة 3D بـ IconStudio، عداد المخزن، طلقات، مفاتيح الأسلحة)، crosshair ديناميكي وhit/kill markers، prompt التفاعل بمفتاح وحلقة hold، شاشة DOWNED بعداد دائري، مؤشر الصوت، والمهمة/البانر بستايل سينمائي. ألوان الأسلحة انخبزت بمواد ثابتة ببليندر (الـ palette كان يسيح)، والـ viewmodel صار أصغر.",
+      "files": [
+        "ui/hud/",
+        "ui/kit/icon_studio.gd",
+        "assets/3D/weapons/",
+        "scenes/shared/weapons/weapon_holder.gd"
+      ]
     }
   ]
 }

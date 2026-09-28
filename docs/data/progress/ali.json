@@ -525,6 +525,25 @@
    ],
    "commit": "ef7053d",
    "auto": true
+  },
+  {
+   "date": "2026-09-28",
+   "tasks": [],
+   "summary": "feat(level): add interior props, plants, lighting, and decor to operations room",
+   "files": [
+    "assets/3D/Plants/cactus.glb",
+    "assets/3D/Plants/cactus.glb.import",
+    "assets/3D/Plants/cactus_0.png",
+    "assets/3D/Plants/cactus_0.png.import",
+    "assets/3D/Plants/cactus_1.png",
+    "assets/3D/Plants/cactus_1.png.import",
+    "assets/3D/Plants/cactus_2.png",
+    "assets/3D/Plants/cactus_2.png.import",
+    "assets/3D/Plants/cactus_3.png",
+    "assets/3D/Plants/cactus_3.png.import"
+   ],
+   "commit": "03cd0db",
+   "auto": true
   }
  ]
 }

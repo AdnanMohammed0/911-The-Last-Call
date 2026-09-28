@@ -36,14 +36,31 @@ const WORKSTATIONS: Array[Array] = [
 ## Bought cruisers park next to the station cruiser: [position, yaw].
 const CRUISER_BAYS: Array[Array] = [[Vector3(48.6, FLOOR, -6.5), 180.0], [Vector3(42.4, FLOOR, -18.0), 180.0]]
 
+## When set, this node only builds that one purchasable item (StationMart product photos).
+var preview_item: StringName = &""
+
 var _kit: LevelKit
 var _fixtures: Node3D
 var _items: Node3D
 var _locked: Node3D
 
 
+## A detached copy of `item_id` as it appears in the station (labels hidden), for product photos.
+static func preview(item_id: StringName) -> Node3D:
+	var builder: StationFurniture = StationFurniture.new()
+	builder.preview_item = item_id
+	return builder
+
+
 func _ready() -> void:
 	_kit = LevelKit.new(self)
+	if preview_item != &"":
+		_items = _kit.group(self, "Items")
+		_locked = _kit.group(self, "LockedRacks")
+		_build_item(preview_item, 0, _kit.group(_items, "Preview"))
+		for label: Node in find_children("*", "Label3D", true, false):
+			(label as Label3D).visible = false
+		return
 	_fixtures = _kit.group(self, "Fixtures")
 	_items = _kit.group(self, "Items")
 	_locked = _kit.group(self, "LockedRacks")

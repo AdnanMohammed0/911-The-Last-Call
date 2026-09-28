@@ -939,6 +939,15 @@
         "assets/3D/weapons/",
         "scenes/shared/weapons/weapon_holder.gd"
       ]
+    },
+    {
+      "date": "2026-09-28",
+      "tasks": [],
+      "summary": "Station OS صار بستايل Windows 11: خلفية Bloom متحركة، taskbar بالنص acrylic (Start، بحث، تطبيقات مثبتة بمؤشر تشغيل، tray: واي فاي/صوت/بطارية/الرصيد/الساعة)، Start menu بالنص (بحث، Pinned، Recommended، تسجيل خروج)، نوافذ Mica مدورة بأنيميشن فتح/غلق، سحب وتكبير، وإشعارات toast. كل التطبيقات انعادت: StationMart صار متجر بصور حقيقية لكل غرض (تنرسم من نفس بناء المحطة / موديل السلاح)، بحث وتصنيفات؛ البنك بكارت رصيد وحلقة عدّاد الراتب؛ My Station بـ tiles؛ CCTV بفلتر كاميرا؛ Inbox ككروت.",
+      "files": [
+        "ui/station_os/station_os.gd",
+        "scenes/dispatch/station/station_furniture.gd"
+      ]
     }
   ]
 }

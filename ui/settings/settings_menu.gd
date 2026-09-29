@@ -13,6 +13,10 @@ var _rebinding_action: StringName = &""
 var _rebinding_button: Button
 var _bind_buttons: Dictionary[StringName, Button] = {}
 var _mic_bar: ProgressBar
+var _tabs: TabContainer
+var _page_title: Label
+var _rail_pages: PackedStringArray = PackedStringArray()
+var _language_option: OptionButton
 
 
 ## Opens the menu on top of `parent` (its own CanvasLayer so it covers any HUD).
@@ -69,8 +73,8 @@ func _ready() -> void:
 	var rail_box: VBoxContainer = VBoxContainer.new()
 	rail_box.add_theme_constant_override(&"separation", 6)
 	rail.add_child(rail_box)
-	rail_box.add_child(UiKit.caps("Options", 12, GameTheme.ACCENT))
-	rail_box.add_child(UiKit.label("Settings", 38, GameTheme.TEXT, &"black_italic"))
+	rail_box.add_child(UiKit.caps(tr("Options"), 12, GameTheme.ACCENT))
+	rail_box.add_child(UiKit.label(tr("Settings"), 38, GameTheme.TEXT, &"black_italic"))
 	rail_box.add_child(UiKit.spacer(18))
 
 	var content: VBoxContainer = VBoxContainer.new()
@@ -80,28 +84,34 @@ func _ready() -> void:
 	(content.get_parent() as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var header: HBoxContainer = HBoxContainer.new()
 	content.add_child(header)
-	var page_title: Label = UiKit.label("Video", 28, GameTheme.TEXT, &"bold")
+	var page_title: Label = UiKit.label(tr("Video"), 28, GameTheme.TEXT, &"bold")
+	_page_title = page_title
 	page_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(page_title)
-	var back: KitButton = KitButton.make("Back", &"back", KitButton.Variant.SUBTLE, close)
+	var back: KitButton = KitButton.make(tr("Back"), &"back", KitButton.Variant.SUBTLE, close)
 	back.custom_minimum_size = Vector2(130, 44)
 	header.add_child(back)
 	content.add_child(UiKit.separator())
 
 	var tabs: TabContainer = TabContainer.new()
+	_tabs = tabs
 	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	tabs.tabs_visible = false
 	content.add_child(tabs)
+	_general_tab(_page(tabs, "General"))
 	_video_tab(_page(tabs, "Video"))
 	_audio_tab(_page(tabs, "Audio"))
 	_voice_tab(_page(tabs, "Voice"))
 	_controls_tab(_page(tabs, "Controls"))
 
-	var pages: Array[Array] = [["Video", &"monitor"], ["Audio", &"volume"], ["Voice", &"mic"], ["Controls", &"keyboard"]]
+	var pages: Array[Array] = [
+		["General", &"globe"], ["Video", &"monitor"], ["Audio", &"volume"],
+		["Voice", &"mic"], ["Controls", &"keyboard"]]
 	var rail_buttons: Array[KitButton] = []
 	for i: int in pages.size():
 		var page: Array = pages[i]
 		var page_name: String = page[0]
+		_rail_pages.append(page_name)
 		var icon_name: StringName = page[1]
 		var entry: KitButton = KitButton.make(page_name, icon_name, KitButton.Variant.GHOST)
 		entry.alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -113,16 +123,28 @@ func _ready() -> void:
 		rail_buttons.append(entry)
 		entry.pressed.connect(func() -> void:
 			tabs.current_tab = i
-			page_title.text = page_name
+			page_title.text = tr(page_name)
 			for other: KitButton in rail_buttons:
 				other.set_pressed_no_signal(other == entry)
 				other.variant = KitButton.Variant.SUBTLE if other == entry else KitButton.Variant.GHOST
 				other.icon_tint = GameTheme.ACCENT if other == entry else Color(0, 0, 0, 0)
 				other.apply_variant())
 	rail_box.add_child(UiKit.expand(Control.new(), false, true))
-	rail_box.add_child(UiKit.paragraph("Changes apply instantly and are saved automatically.", 13, GameTheme.TEXT_FAINT))
+	rail_box.add_child(UiKit.paragraph(tr("Changes apply instantly and are saved automatically."), 13, GameTheme.TEXT_FAINT))
 	rail_buttons[0].pressed.emit()
 	back.grab_focus.call_deferred()
+	Localization.language_changed.connect(_on_language_changed)
+
+
+## Keeps the page header and the language picker in sync when the locale changes at runtime.
+func _on_language_changed(_locale: String) -> void:
+	if _page_title != null and _tabs != null and _rail_pages.size() > _tabs.current_tab:
+		_page_title.text = tr(_rail_pages[_tabs.current_tab])
+	for i: int in Localization.SUPPORTED_LOCALES.size():
+		var code: String = Localization.SUPPORTED_LOCALES[i]
+		_language_option.set_item_text(i, Localization.locale_label(code))
+		if code == Localization.current_locale:
+			_language_option.select(i)
 
 
 func close() -> void:
@@ -171,7 +193,7 @@ func _row(parent: Container, text: String, control: Control, hint: String = "") 
 	var row: HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override(&"separation", 24)
 	card.add_child(row)
-	var label: Label = UiKit.label(text, 17, GameTheme.TEXT, &"medium")
+	var label: Label = UiKit.label(tr(text), 17, GameTheme.TEXT, &"medium")
 	label.custom_minimum_size = Vector2(LABEL_WIDTH, 0)
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	row.add_child(label)
@@ -179,7 +201,7 @@ func _row(parent: Container, text: String, control: Control, hint: String = "") 
 	row.add_child(control)
 	if hint != "":
 		var hint_label: Label = Label.new()
-		hint_label.text = hint
+		hint_label.text = tr(hint)
 		hint_label.add_theme_color_override(&"font_color", GameTheme.TEXT_DIM)
 		hint_label.add_theme_font_size_override(&"font_size", 15)
 		hint_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -189,13 +211,13 @@ func _row(parent: Container, text: String, control: Control, hint: String = "") 
 func _section(parent: Container, text: String) -> void:
 	if parent.get_child_count() > 0:
 		parent.add_child(UiKit.spacer(14))
-	parent.add_child(UiKit.caps(text, 12, GameTheme.ACCENT))
+	parent.add_child(UiKit.caps(tr(text), 12, GameTheme.ACCENT))
 
 
 func _option(items: PackedStringArray, selected: int, on_select: Callable) -> OptionButton:
 	var option: OptionButton = OptionButton.new()
 	for item: String in items:
-		option.add_item(item)
+		option.add_item(tr(item))
 	option.select(selected)
 	option.item_selected.connect(on_select)
 	return option
@@ -233,6 +255,17 @@ func _slider(min_value: float, max_value: float, step: float, value: float, form
 
 # --- Tabs -------------------------------------------------------------------------------------------
 
+func _general_tab(page: VBoxContainer) -> void:
+	_section(page, "Interface")
+	var labels: PackedStringArray = PackedStringArray()
+	for code: String in Localization.SUPPORTED_LOCALES:
+		labels.append(Localization.locale_label(code))
+	var selected: int = maxi(Localization.SUPPORTED_LOCALES.find(Localization.current_locale), 0)
+	_language_option = _option(labels, selected, func(index: int) -> void:
+		Localization.set_language(Localization.SUPPORTED_LOCALES[index]))
+	_row(page, "Language", _language_option, "Arabic mirrors the whole interface right to left")
+
+
 func _video_tab(page: VBoxContainer) -> void:
 	_section(page, "Display")
 	_row(page, "Window mode", _option(GameSettings.WINDOW_MODE_NAMES, GameSettings.window_mode,
@@ -241,7 +274,7 @@ func _video_tab(page: VBoxContainer) -> void:
 	var caps: Array[int] = [0, 30, 60, 120, 144, 165, 240]
 	var cap_names: PackedStringArray = PackedStringArray()
 	for cap: int in caps:
-		cap_names.append("Unlimited" if cap == 0 else "%d FPS" % cap)
+		cap_names.append(tr("Unlimited") if cap == 0 else tr("%d FPS") % cap)
 	_row(page, "Frame rate limit", _option(cap_names, maxi(caps.find(GameSettings.max_fps), 0),
 		func(index: int) -> void: GameSettings.set_value("max_fps", caps[index])))
 	_row(page, "Show FPS counter", _toggle(GameSettings.show_fps, func(on: bool) -> void: GameSettings.set_value("show_fps", on)))

@@ -92,7 +92,7 @@ func _ready() -> void:
 	NetManager.internet_hosting_changed.connect(_on_internet_hosting_changed)
 
 	_address_edit.text = "127.0.0.1"
-	_name_edit.text = "Player"
+	_name_edit.text = tr("Player")
 	_show_view(_home_view)
 	_on_state_changed(NetManager.state)
 	_on_lobby_updated(NetManager.roster)
@@ -378,7 +378,7 @@ func _build_profile_chip() -> Control:
 	_name_edit.add_theme_stylebox_override(&"focus", UiKit.style(Color(1, 1, 1, 0.06), 4, 4, 0))
 	names.add_child(_name_edit)
 	var settings: KitButton = KitButton.make("", &"gear", KitButton.Variant.GHOST, func() -> void: SettingsMenu.open_over(self))
-	settings.tooltip_text = "Settings"
+	settings.tooltip_text = tr("Settings")
 	row.add_child(settings)
 	return chip
 
@@ -436,7 +436,7 @@ func _build_lobby() -> Control:
 	header.add_child(badges)
 	_lobby_title_state = UiKit.pill("Hosting", GameTheme.SUCCESS)
 	badges.add_child(_lobby_title_state)
-	_lobby_count = UiKit.caps("0 / 4 officers", 13, GameTheme.TEXT_DIM, &"bold", 2)
+	_lobby_count = UiKit.caps(tr("%d / %d OFFICERS") % [0, NetManager.MAX_PEERS], 13, GameTheme.TEXT_DIM, &"bold", 2)
 	badges.add_child(_lobby_count)
 	header.add_child(UiKit.expand(Control.new()))
 	_internet_row = HBoxContainer.new()
@@ -504,7 +504,7 @@ func _build_lobby() -> Control:
 	_ready_button.toggle_mode = true
 	_ready_button.custom_minimum_size = Vector2(210, 52)
 	_ready_button.toggled.connect(func(on: bool) -> void:
-		_ready_button.text = "Ready" if on else "Ready up"
+		_ready_button.text = tr("Ready") if on else tr("Ready up")
 		_ready_button.variant = KitButton.Variant.PRIMARY if on else KitButton.Variant.DEFAULT
 		_ready_button.accent = GameTheme.SUCCESS if on else GameTheme.ACCENT
 		_ready_button.apply_variant())
@@ -640,9 +640,9 @@ func _on_state_changed(new_state: NetManager.State) -> void:
 	_rejoin_button.visible = offline and NetManager.has_rejoin_info()
 	_internet_row.visible = (new_state == NetManager.State.HOSTING)
 	if new_state != NetManager.State.HOSTING:
-		_internet_label.text = "Checking router (UPnP)…"
+		_internet_label.text = tr("Checking router (UPnP)…")
 		_copy_address_button.disabled = true
-		_copy_address_button.text = "Copy IP"
+		_copy_address_button.text = tr("Copy IP")
 	match new_state:
 		NetManager.State.OFFLINE:
 			_set_status("Offline")
@@ -676,7 +676,7 @@ func _on_internet_hosting_changed(public_address: String, port_open: bool, messa
 
 func _on_copy_address_pressed() -> void:
 	DisplayServer.clipboard_set(NetManager.public_address)
-	_copy_address_button.text = "Copied!"
+	_copy_address_button.text = tr("Copied!")
 
 
 func _on_connection_failed(reason: String) -> void:
@@ -701,7 +701,7 @@ func _on_lobby_updated(roster: Dictionary) -> void:
 		_roster_list.add_child(_roster_row(peer_id, str(info.get("name", "Peer %d" % peer_id))))
 	for i: int in range(roster.size(), NetManager.MAX_PEERS):
 		_roster_list.add_child(_empty_slot())
-	_lobby_count.text = "%d / %d OFFICERS" % [roster.size(), NetManager.MAX_PEERS]
+	_lobby_count.text = tr("%d / %d OFFICERS") % [roster.size(), NetManager.MAX_PEERS]
 	_refresh_lobby_controls()
 	if _auto_start and NetManager.can_start():
 		_auto_start = false
@@ -788,7 +788,7 @@ func _refresh_lobby_controls() -> void:
 	_ready_button.disabled = not online or my_class == &""
 	if _ready_button.button_pressed != my_ready:
 		_ready_button.set_pressed_no_signal(my_ready)
-		_ready_button.text = "Ready" if my_ready else "Ready up"
+		_ready_button.text = tr("Ready") if my_ready else tr("Ready up")
 		_ready_button.variant = KitButton.Variant.PRIMARY if my_ready else KitButton.Variant.DEFAULT
 		_ready_button.accent = GameTheme.SUCCESS if my_ready else GameTheme.ACCENT
 		_ready_button.apply_variant()

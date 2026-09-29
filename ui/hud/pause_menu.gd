@@ -119,9 +119,9 @@ func _build_comms() -> Control:
 	titles.add_theme_constant_override(&"separation", -2)
 	head.add_child(titles)
 	titles.add_child(UiKit.caps("Comms", 11, GameTheme.SIREN_BLUE))
-	titles.add_child(UiKit.label("Voice & microphone", 22, GameTheme.TEXT, &"bold"))
+	titles.add_child(UiKit.label(tr("Voice & microphone"), 22, GameTheme.TEXT, &"bold"))
 	box.add_child(UiKit.separator())
-	_voice_mode_button = KitButton.make("Voice: open mic", &"mic", KitButton.Variant.SUBTLE)
+	_voice_mode_button = KitButton.make(tr("Voice: %s") % VoiceManager.get_mode_text(), &"mic", KitButton.Variant.SUBTLE)
 	_voice_mode_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_voice_mode_button.custom_minimum_size = Vector2(0, 44)
 	box.add_child(_voice_mode_button)
@@ -140,10 +140,10 @@ func _build_comms() -> Control:
 	_mic_status_label = UiKit.label("", 12, GameTheme.TEXT_FAINT, &"medium")
 	box.add_child(_mic_status_label)
 	_auto_gain_check = CheckButton.new()
-	_auto_gain_check.text = "Automatic gain"
+	_auto_gain_check.text = tr("Automatic gain")
 	box.add_child(_auto_gain_check)
 	_hear_myself_check = CheckButton.new()
-	_hear_myself_check.text = "Hear myself (mic test)"
+	_hear_myself_check.text = tr("Hear myself (mic test)")
 	box.add_child(_hear_myself_check)
 	return panel
 
@@ -152,8 +152,8 @@ func _process(_delta: float) -> void:
 	if not visible:
 		return
 	_mic_level_bar.value = clampf(inverse_lerp(-60.0, 0.0, VoiceManager.local_level_db), 0.0, 1.0)
-	var state: String = "sending" if VoiceManager.local_transmitting else "quiet"
-	_mic_status_label.text = "MIC %.0f dB  ·  NOISE %.0f dB  ·  GAIN +%.0f dB  ·  %s" % [
+	var state: String = tr("sending") if VoiceManager.local_transmitting else tr("quiet")
+	_mic_status_label.text = tr("MIC %.0f dB  ·  NOISE %.0f dB  ·  GAIN +%.0f dB  ·  %s") % [
 		VoiceManager.raw_level_db, VoiceManager.noise_floor_db, VoiceManager.current_gain_db, state.to_upper()]
 
 
@@ -174,16 +174,16 @@ func open() -> void:
 	visible = true
 	player.set_input_enabled(false)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	var leave_text: String = "Stop hosting" if NetManager.is_host() else "Leave to main menu"
-	_leave_button.text = (leave_text if NetManager.is_online() else "Back to main menu").to_upper()
-	_session_label.text = ("Hosting · %d officers on shift" % NetManager.roster.size()) if NetManager.is_host() \
-		else ("Connected as %s" % NetManager.get_player_name(NetManager.get_local_peer_id()) if NetManager.is_online() else "Offline shift")
+	var leave_text: String = tr("Stop hosting") if NetManager.is_host() else tr("Leave to main menu")
+	_leave_button.text = (leave_text if NetManager.is_online() else tr("Back to main menu")).to_upper()
+	_session_label.text = tr("Hosting · %d officers on shift") % NetManager.roster.size() if NetManager.is_host() \
+		else (tr("Connected as %s") % NetManager.get_player_name(NetManager.get_local_peer_id()) if NetManager.is_online() else tr("Offline shift"))
 	var objective: String = MissionDirector.objective_text
-	_objective_label.text = objective if not objective.is_empty() else "Shift %d · calls handled %d · public trust %d" % [
+	_objective_label.text = objective if not objective.is_empty() else tr("Shift %d · calls handled %d · public trust %d") % [
 		MissionDirector.shift_number, MissionDirector.calls_handled, MissionDirector.public_trust]
 	if NetManager.is_host() and NetManager.is_online():
-		_objective_label.text += "\nStopping ends the shift for everyone."
-	_voice_mode_button.text = "Voice: %s" % VoiceManager.get_mode_text()
+		_objective_label.text += "\n" + tr("Stopping ends the shift for everyone.")
+	_voice_mode_button.text = tr("Voice: %s") % VoiceManager.get_mode_text()
 	_mic_device_option.clear()
 	var current: String = VoiceManager.get_input_device()
 	for device: String in VoiceManager.get_input_devices():
@@ -221,7 +221,7 @@ func _on_mic_device_selected(index: int) -> void:
 
 func _on_voice_mode_pressed() -> void:
 	VoiceManager.toggle_mode()
-	_voice_mode_button.text = "Voice: %s" % VoiceManager.get_mode_text()
+	_voice_mode_button.text = tr("Voice: %s") % VoiceManager.get_mode_text()
 
 
 func _on_leave_pressed() -> void:

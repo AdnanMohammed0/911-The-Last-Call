@@ -1,6 +1,6 @@
 ## Player-facing settings saved to user://settings.cfg: video (window mode, V-Sync, FPS cap, quality preset,
 ## render scale, FOV, brightness), audio bus volumes, controls (sensitivity, ADS sensitivity, invert Y,
-## crouch toggle, key bindings), voice, and privacy (telemetry/crash reporting opt-in).
+## crouch toggle, key bindings), voice, language, and privacy (telemetry/crash reporting opt-in).
 ## Applies graphics quality to every WorldEnvironment that enters the tree, and installs the shared UI theme on the root window.
 ## Authority: LOCAL
 extends Node
@@ -45,6 +45,8 @@ var ads_sensitivity: float = 0.7
 var invert_y: bool = false
 var crouch_toggle: bool = false
 var show_fps: bool = false
+## UI language, applied by the Localization autoload (see data/localization/ui_*.csv).
+var language: String = "en"
 
 ## Shared UI theme. Controls under a CanvasLayer do not inherit the window theme, so menus assign it.
 var ui_theme: Theme
@@ -113,6 +115,9 @@ func load_settings() -> void:
 		if push_to_talk != (VoiceManager.mode != VoiceManager.Mode.VOICE_ACTIVITY):
 			VoiceManager.toggle_mode()
 
+	if config.has_section("language"):
+		language = config.get_value("language", "locale", language)
+
 	if config.has_section("privacy"):
 		telemetry_enabled = config.get_value("privacy", "telemetry_enabled", false)
 		crash_reporting_enabled = config.get_value("privacy", "crash_reporting_enabled", false)
@@ -149,6 +154,7 @@ func save_settings() -> void:
 	config.set_value("voice", "input_device", VoiceManager.get_input_device())
 	config.set_value("voice", "auto_gain", VoiceManager.auto_gain)
 	config.set_value("voice", "push_to_talk", VoiceManager.mode != VoiceManager.Mode.VOICE_ACTIVITY)
+	config.set_value("language", "locale", language)
 	config.set_value("privacy", "telemetry_enabled", telemetry_enabled)
 	config.set_value("privacy", "crash_reporting_enabled", crash_reporting_enabled)
 	config.set_value("privacy", "consent_given", telemetry_consent_given)
@@ -178,9 +184,10 @@ func binding_text(action: StringName) -> String:
 	var names: PackedStringArray = PackedStringArray()
 	for event: InputEvent in InputMap.action_get_events(action):
 		names.append(event_text(event))
-	return " / ".join(names) if not names.is_empty() else "Unbound"
+	return " / ".join(names) if not names.is_empty() else tr("Unbound")
 
 
+## Static, so it cannot use tr(); goes through the TranslationServer directly.
 static func event_text(event: InputEvent) -> String:
 	var key: InputEventKey = event as InputEventKey
 	if key != null:
@@ -189,15 +196,15 @@ static func event_text(event: InputEvent) -> String:
 	if mouse != null:
 		match mouse.button_index:
 			MOUSE_BUTTON_LEFT:
-				return "Left mouse"
+				return String(TranslationServer.translate("Left mouse"))
 			MOUSE_BUTTON_RIGHT:
-				return "Right mouse"
+				return String(TranslationServer.translate("Right mouse"))
 			MOUSE_BUTTON_MIDDLE:
-				return "Middle mouse"
+				return String(TranslationServer.translate("Middle mouse"))
 			MOUSE_BUTTON_WHEEL_UP:
-				return "Wheel up"
+				return String(TranslationServer.translate("Mouse wheel up"))
 			MOUSE_BUTTON_WHEEL_DOWN:
-				return "Wheel down"
+				return String(TranslationServer.translate("Mouse wheel down"))
 			_:
 				return "Mouse %d" % mouse.button_index
 	return event.as_text()

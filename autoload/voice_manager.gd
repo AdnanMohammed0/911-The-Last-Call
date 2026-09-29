@@ -182,7 +182,7 @@ func _load_settings() -> void:
 
 
 func get_mode_text() -> String:
-	return "Open mic (voice activity)" if mode == Mode.VOICE_ACTIVITY else "Push-to-talk (Caps Lock)"
+	return tr("Open mic (voice activity)") if mode == Mode.VOICE_ACTIVITY else tr("Push-to-talk (Caps Lock)")
 
 
 func has_microphone() -> bool:

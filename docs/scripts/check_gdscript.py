@@ -8,7 +8,9 @@ import pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 TARGETS = [ROOT / "autoload/localization.gd", ROOT / "tests/test_localization.gd",
-           ROOT / "ui/settings/settings_menu.gd", ROOT / "autoload/game_settings.gd"]
+           ROOT / "ui/settings/settings_menu.gd", ROOT / "autoload/game_settings.gd",
+           ROOT / "tests/test_net_matrix.gd", ROOT / "autoload/net_manager.gd",
+           ROOT / "autoload/lag_compensation.gd"]
 
 errors = []
 

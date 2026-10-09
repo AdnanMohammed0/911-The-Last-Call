@@ -100,15 +100,27 @@ func test_arabic_is_right_to_left_and_english_is_not() -> void:
 	assert_false(Localization.is_rtl())
 
 
-func test_root_window_mirrors_for_arabic() -> void:
+func test_controls_are_mirrored_for_arabic() -> void:
+	# Window has no layout_direction in Godot 4.6, so Localization pushes the direction onto every
+	# Control instead. Assert the property, not is_layout_rtl(): headless never resolves the layout
+	# pass, so is_layout_rtl() reports false even for a Control explicitly set to RTL.
+	var probe: Control = Control.new()
+	add_child_autofree(probe)
 	Localization.set_language("ar", false)
-	var root: Window = get_tree().root
-	assert_eq(root.layout_direction, Window.LAYOUT_DIRECTION_RTL)
-	# Every Control inherits the direction from the root window, which is what mirrors the UI.
-	assert_true(root.is_layout_rtl(), "root window should report RTL for Arabic")
+	assert_eq(probe.layout_direction, Control.LAYOUT_DIRECTION_RTL)
 	Localization.set_language("en", false)
-	assert_eq(root.layout_direction, Window.LAYOUT_DIRECTION_LTR)
-	assert_false(root.is_layout_rtl(), "root window should report LTR for English")
+	assert_eq(probe.layout_direction, Control.LAYOUT_DIRECTION_LTR)
+
+
+func test_a_nested_control_under_a_canvas_layer_is_mirrored() -> void:
+	# Most of the interface hangs off CanvasLayers, which are plain Nodes, so a Control's nearest
+	# Control ancestor can be far below the root. The walk has to reach those too.
+	var layer: CanvasLayer = CanvasLayer.new()
+	add_child_autofree(layer)
+	var nested: Panel = Panel.new()
+	layer.add_child(nested)
+	Localization.set_language("ar", false)
+	assert_eq(nested.layout_direction, Control.LAYOUT_DIRECTION_RTL)
 
 
 func test_arabic_font_is_installed_on_the_theme() -> void:

@@ -12,8 +12,8 @@ Task: `P5-06` · Owner: `@mohamed` · Authority: LOCAL
 ## 1. How it works
 
 ```
-data/localization/ui_en.csv  ─┐
-data/localization/ui_ar.csv  ─┤  Localization (autoload) ─> TranslationServer
+data/localization/ui_en.loc  ─┐
+data/localization/ui_ar.loc  ─┤  Localization (autoload) ─> TranslationServer
 assets/fonts/NotoSansArabic…  ─┘        │
                                          ├─> tr() in code
 GameSettings.language (user://settings) ─┤
@@ -97,7 +97,7 @@ settings round trip, and the native language labels.
 
 1. Add the code to `SUPPORTED_LOCALES`, and to `RTL_LOCALES` if it reads right-to-left.
 2. Add `LOCALE_LABELS["<code>"]` in its own script.
-3. Copy `ui_en.csv` to `ui_<code>.csv` and fill in the values.
+3. Copy `ui_en.loc` to `ui_<code>.loc` and fill in the values.
 4. Add a font if the script is not covered by the existing ones.
 5. Run the validator — it will list every string still untranslated.
 

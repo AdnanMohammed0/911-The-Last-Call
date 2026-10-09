@@ -45,7 +45,7 @@ var ads_sensitivity: float = 0.7
 var invert_y: bool = false
 var crouch_toggle: bool = false
 var show_fps: bool = false
-## UI language, applied by the Localization autoload (see data/localization/ui_*.csv).
+## UI language, applied by the Localization autoload (see data/localization/ui_*.loc).
 var language: String = "en"
 
 ## Shared UI theme. Controls under a CanvasLayer do not inherit the window theme, so menus assign it.

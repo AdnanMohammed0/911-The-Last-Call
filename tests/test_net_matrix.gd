@@ -46,9 +46,9 @@ func test_parse_address_rejects_a_nonsense_port_and_keeps_the_host() -> void:
 
 func test_parse_address_keeps_ipv6_intact() -> void:
 	# A bracketed IPv6 literal has several colons, so it must not be mistaken for host:port.
-	var parsed: Array = NetManager.parse_address("::1")
-	assert_eq(parsed[0], "::1")
-	assert_eq(parsed[1], NetManager.DEFAULT_PORT)
+	# Compared whole rather than by indexing: this project escalates the untyped-element-access
+	# warning to an error, so reading parsed[0] straight into a call does not compile.
+	assert_eq(NetManager.parse_address("::1"), ["::1", NetManager.DEFAULT_PORT])
 
 
 # --- Player names ------------------------------------------------------------------------------
@@ -56,7 +56,10 @@ func test_parse_address_keeps_ipv6_intact() -> void:
 func test_sanitize_name_strips_control_characters_and_caps_length() -> void:
 	# Voice chat shows this next to the speaker, so control characters from a pasted name have to
 	# go: a NUL or a newline in a name breaks the roster layout.
-	var with_control: String = "  Ada" + String.chr(0) + "\nLovelace  "
+	# String.chr(0) cannot be used for the NUL case: Godot resolves codepoint 0 to U+FFFD, which is a
+	# printable replacement character that would sail straight through the filter. chr(1) is a real
+	# C0 control character and does survive the round trip.
+	var with_control: String = "  Ada" + String.chr(1) + "\nLovelace  "
 	assert_eq(NetManager.sanitize_name(with_control, 2), "AdaLovelace")
 	assert_eq(NetManager.sanitize_name("A".repeat(NetManager.MAX_NAME_LENGTH + 20), 3).length(),
 		NetManager.MAX_NAME_LENGTH)

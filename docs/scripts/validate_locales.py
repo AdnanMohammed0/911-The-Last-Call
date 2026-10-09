@@ -29,7 +29,7 @@ def read_locales_from_autoload():
 
 
 def read_table(locale):
-    path = TABLE_DIR / f"ui_{locale}.csv"
+    path = TABLE_DIR / f"ui_{locale}.loc"
     if not path.exists():
         errors.append(f"data/localization/ui_{locale}.csv is missing (declared in SUPPORTED_LOCALES)")
         return None

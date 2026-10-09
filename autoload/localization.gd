@@ -19,6 +19,12 @@ const LOCALE_LABELS: Dictionary[String, String] = {
 	"ar": "العربية",
 }
 const TABLE_DIR: String = "res://data/localization"
+## Table extension. NOT ".csv" on purpose: Godot imports .csv/.tsv with its own CSV *translation*
+## importer, which expects a `keys,en,ar` layout. Given our `key,locale` tables it misreads the header,
+## emits junk `*.locale.translation` resources, and on rows containing escaped quotes it aborts the
+## whole `--headless --import` with a FATAL out-of-bounds crash, which takes CI down. Keeping the
+## tables out of the importer means this file's RFC 4180 reader is the only thing that parses them.
+const TABLE_EXT: String = ".loc"
 ## Godot's built-in font has no Arabic glyphs, so Arabic needs its own font to avoid empty boxes.
 const ARABIC_FONT_PATH: String = "res://assets/fonts/NotoSansArabic-Regular.ttf"
 
@@ -73,7 +79,7 @@ func t(message: String) -> String:
 ## Reads `ui_<locale>.csv` for every supported language and hands the result to the TranslationServer.
 func _load_tables() -> void:
 	for locale: String in SUPPORTED_LOCALES:
-		var path: String = "%s/ui_%s.csv" % [TABLE_DIR, locale]
+		var path: String = "%s/ui_%s%s" % [TABLE_DIR, locale, TABLE_EXT]
 		if not FileAccess.file_exists(path):
 			push_warning("Localization: string table '%s' not found, '%s' falls back to English." % [path, locale])
 			continue
@@ -147,17 +153,42 @@ func _parse_csv(path: String) -> Array[PackedStringArray]:
 
 # --- Layout and font --------------------------------------------------------------------------
 
-## Mirrors the UI for right-to-left languages. Every Control inherits the direction from the root
-## window, so scenes need no per-node changes.
+## Mirrors the UI for right-to-left languages, so no scene needs per-node changes.
+##
+## `Window` has no `layout_direction` in Godot 4.6 (only a read-only `is_layout_rtl()`), so the
+## direction cannot be set on the root window the way `LAYOUT_DIRECTION_APPLICATION_LOCALE` would
+## have done it. Instead it is pushed onto every Control that has not chosen a direction itself.
+## A full walk is needed rather than the root window's direct children: much of the interface hangs
+## off CanvasLayers, which are plain Nodes, so a Control's nearest Control ancestor can be far below
+## the root and inheritance has nothing to resolve against.
 ##
 ## The direction is set explicitly instead of LAYOUT_DIRECTION_APPLICATION_LOCALE: the project keeps
 ## its own RTL list, so the layout should not depend on the engine's locale detection or the OS
-## locale, and the result stays deterministic in tests.
+## locale, and the result stays deterministic.
+##
+## Every Control is set, including ones that already carry a direction. Skipping the ones that are
+## not LAYOUT_DIRECTION_INHERITED would be self-defeating: this function is itself what gives a
+## Control a non-inherited direction, so every Control it ever touched would be skipped afterwards
+## and a language switch would leave half the UI mirrored and half not.
+##
+## The write is guarded on an actual change. Assigning layout_direction invalidates layout, and this
+## runs over every Control in the tree, so writing the value back to Controls that already match
+## makes a language switch re-lay-out and re-shape text for the whole UI for no reason at all.
 func _apply_layout() -> void:
 	var tree: SceneTree = get_tree()
 	if tree == null or tree.root == null:
 		return
-	tree.root.layout_direction = Window.LAYOUT_DIRECTION_RTL if is_rtl() else Window.LAYOUT_DIRECTION_LTR
+	_apply_direction(tree.root)
+
+
+func _apply_direction(node: Node) -> void:
+	if node is Control:
+		var control: Control = node as Control
+		var target: int = Control.LAYOUT_DIRECTION_RTL if is_rtl() else Control.LAYOUT_DIRECTION_LTR
+		if control.layout_direction != target:
+			control.layout_direction = target
+	for child: Node in node.get_children():
+		_apply_direction(child)
 
 
 ## Swaps the theme font to the Arabic one. The engine default has no Arabic glyphs, so without this

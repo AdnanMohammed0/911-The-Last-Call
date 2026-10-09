@@ -1,0 +1,177 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_a8kqx"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_25ws6"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_c8te4"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_efg10"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_rg5hm"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_a4ybw"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_p7ias"]
+
+[sub_resource type="Resource" id="Resource_mmi0e"]
+script = ExtResource("2_25ws6")
+text = "Is anyone hurt?"
+next = &"hurt"
+
+[sub_resource type="Resource" id="Resource_lyjuy"]
+script = ExtResource("2_25ws6")
+text = "Can you see the flames from where you are?"
+next = &"flames"
+
+[sub_resource type="Resource" id="Resource_gtcbb"]
+script = ExtResource("2_25ws6")
+text = "[Tech] Pulling the farm records."
+next = &"tech"
+required_class = &"tech"
+reveals = Array[StringName]([&"foreclosed_farm"])
+
+[sub_resource type="Resource" id="Resource_bogro"]
+script = ExtResource("1_a8kqx")
+id = &"start"
+line = "The barn's on fire, the whole barn! My husband is inside! Send the fire trucks and the police!"
+choices = Array[ExtResource("2_25ws6")]([SubResource("Resource_mmi0e"), SubResource("Resource_lyjuy"), SubResource("Resource_gtcbb")])
+
+[sub_resource type="Resource" id="Resource_nwk7h"]
+script = ExtResource("2_25ws6")
+text = "[Medic] Is he calling out? Can you hear him?"
+next = &"medic"
+required_class = &"medic"
+
+[sub_resource type="Resource" id="Resource_v4lft"]
+script = ExtResource("2_25ws6")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_ek4kc"]
+script = ExtResource("1_a8kqx")
+id = &"hurt"
+line = "Walter's in there. He went in for the horses. Please, all of you, come now."
+choices = Array[ExtResource("2_25ws6")]([SubResource("Resource_nwk7h"), SubResource("Resource_v4lft")])
+
+[sub_resource type="Resource" id="Resource_hlbty"]
+script = ExtResource("2_25ws6")
+text = "A burning barn is loud. What do you hear?"
+next = &"quiet"
+patience_delta = -10.0
+reveals = Array[StringName]([&"no_fire_sound"])
+
+[sub_resource type="Resource" id="Resource_uaexb"]
+script = ExtResource("1_a8kqx")
+id = &"medic"
+line = "No... it's quiet. It's very quiet."
+choices = Array[ExtResource("2_25ws6")]([SubResource("Resource_hlbty")])
+
+[sub_resource type="Resource" id="Resource_uqulj"]
+script = ExtResource("2_25ws6")
+text = "[Profiler] There's no crackle, no wind, no horses. Just breathing."
+next = &"quiet"
+required_class = &"profiler"
+reveals = Array[StringName]([&"no_fire_sound"])
+
+[sub_resource type="Resource" id="Resource_5ds13"]
+script = ExtResource("2_25ws6")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_b1g53"]
+script = ExtResource("1_a8kqx")
+id = &"flames"
+line = "Yes, huge flames, it's so hot out here."
+choices = Array[ExtResource("2_25ws6")]([SubResource("Resource_uqulj"), SubResource("Resource_5ds13")])
+
+[sub_resource type="Resource" id="Resource_wg12v"]
+script = ExtResource("1_a8kqx")
+id = &"tech"
+speaker = &"dispatcher"
+line = "(Kessler Farm was foreclosed in 2019. Ruth Kessler lives in the Pine Hill care home.)"
+auto_next = &"tech_after"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_45n4x"]
+script = ExtResource("2_25ws6")
+text = "Ruth Kessler is in a care home. Who is this?"
+next = &"quiet"
+required_evidence = Array[StringName]([&"foreclosed_farm"])
+patience_delta = -30.0
+
+[sub_resource type="Resource" id="Resource_ypi3v"]
+script = ExtResource("2_25ws6")
+text = "Units are on the way."
+next = &"end_units"
+
+[sub_resource type="Resource" id="Resource_tiq6t"]
+script = ExtResource("1_a8kqx")
+id = &"tech_after"
+line = "Why are you so slow? Walter is burning!"
+choices = Array[ExtResource("2_25ws6")]([SubResource("Resource_45n4x"), SubResource("Resource_ypi3v")])
+
+[sub_resource type="Resource" id="Resource_jnsvu"]
+script = ExtResource("2_25ws6")
+text = "Send tactical, fire service holds back."
+next = &"tactical"
+
+[sub_resource type="Resource" id="Resource_o7tcl"]
+script = ExtResource("2_25ws6")
+text = "Log it as an ambush. Nobody goes near the farm."
+next = &"logged"
+
+[sub_resource type="Resource" id="Resource_qfxg6"]
+script = ExtResource("1_a8kqx")
+id = &"quiet"
+speaker = &"unknown"
+line = "(far away, many voices begin to chant) 'Bring the fire trucks. Bring the police. Bring all of them.'"
+choices = Array[ExtResource("2_25ws6")]([SubResource("Resource_jnsvu"), SubResource("Resource_o7tcl")])
+
+[sub_resource type="Resource" id="Resource_n022t"]
+script = ExtResource("1_a8kqx")
+id = &"tactical"
+speaker = &"dispatcher"
+line = "(Tactical team dispatched to Kessler Farm with an ambush warning.)"
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_snfht"]
+script = ExtResource("1_a8kqx")
+id = &"logged"
+speaker = &"dispatcher"
+line = "(Ambush logged. County Road 12 closed.)"
+
+[sub_resource type="Resource" id="Resource_4q6e7"]
+script = ExtResource("1_a8kqx")
+id = &"end_units"
+line = "Good. Come to the barn. Walter will be so glad."
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_27c55"]
+script = ExtResource("4_efg10")
+nodes = Array[ExtResource("1_a8kqx")]([SubResource("Resource_bogro"), SubResource("Resource_ek4kc"), SubResource("Resource_uaexb"), SubResource("Resource_b1g53"), SubResource("Resource_wg12v"), SubResource("Resource_tiq6t"), SubResource("Resource_qfxg6"), SubResource("Resource_n022t"), SubResource("Resource_snfht"), SubResource("Resource_4q6e7")])
+
+[sub_resource type="Resource" id="Resource_am6v7"]
+script = ExtResource("5_rg5hm")
+id = &"rec_kessler"
+title = "Kessler Farm"
+content = "Foreclosed 2019. Ruth Kessler (82) moved to Pine Hill care home. Property reported used for 'night gatherings'."
+
+[sub_resource type="Curve" id="Curve_t6pd0"]
+_data = [Vector2(0, 0.4), 0.0, 0.0, 0, 0, Vector2(1, 0.42), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_ymc5n"]
+script = ExtResource("7_p7ias")
+tremor_curve = SubResource("Curve_t6pd0")
+background_tags = Array[StringName]([&"no_fire_sound", &"chanting_far"])
+baseline_heart_rate = 66
+
+[resource]
+script = ExtResource("6_a4ybw")
+id = &"call_barn_fire"
+title = "Fire at Kessler Farm"
+truth = 2
+earliest_minute = 62
+dialogue = SubResource("Resource_27c55")
+phone_number = "911-555-0138"
+caller_name = "Ruth Kessler"
+caller_location_name = "Kessler Farm, County Road 12"
+true_location = Vector2(120, 470)
+records = Array[ExtResource("5_rg5hm")]([SubResource("Resource_am6v7")])
+stress_profile = SubResource("Resource_ymc5n")
+patience_seconds = 160.0

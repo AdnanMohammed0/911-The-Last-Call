@@ -1,0 +1,223 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1_a3stv"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2_jcogy"]
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="3_ciun4"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="4_lxcnl"]
+[ext_resource type="Script" path="res://data/calls/record_entry.gd" id="5_8hkgc"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="6_6wm8k"]
+[ext_resource type="Script" path="res://data/calls/stress_profile.gd" id="7_f5bct"]
+
+[sub_resource type="Resource" id="Resource_dwv4g"]
+script = ExtResource("2_jcogy")
+text = "Banging from inside? Are you sure?"
+next = &"banging"
+
+[sub_resource type="Resource" id="Resource_rogkx"]
+script = ExtResource("2_jcogy")
+text = "Where exactly are you?"
+next = &"where"
+
+[sub_resource type="Resource" id="Resource_evy1r"]
+script = ExtResource("2_jcogy")
+text = "Is anyone guarding the truck?"
+next = &"guards"
+
+[sub_resource type="Resource" id="Resource_48qc0"]
+script = ExtResource("1_a3stv")
+id = &"start"
+line = "Yeah, I'm a trucker, I'm parked at the harbor... there's a refrigerated box truck here and somebody's banging inside it."
+choices = Array[ExtResource("2_jcogy")]([SubResource("Resource_dwv4g"), SubResource("Resource_rogkx"), SubResource("Resource_evy1r")])
+
+[sub_resource type="Resource" id="Resource_lb76y"]
+script = ExtResource("2_jcogy")
+text = "[Profiler] That's a pattern. Knock three times back on the door."
+next = &"knock_back"
+required_class = &"profiler"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_hepn0"]
+script = ExtResource("2_jcogy")
+text = "Don't go near it. Is anyone guarding it?"
+next = &"guards"
+
+[sub_resource type="Resource" id="Resource_c834f"]
+script = ExtResource("2_jcogy")
+text = "Can you read the plate or the company name?"
+next = &"plate"
+
+[sub_resource type="Resource" id="Resource_x23g7"]
+script = ExtResource("1_a3stv")
+id = &"banging"
+line = "Listen— (metal knocking, three, then three again) Hear that? That's people."
+choices = Array[ExtResource("2_jcogy")]([SubResource("Resource_lb76y"), SubResource("Resource_hepn0"), SubResource("Resource_c834f")])
+
+[sub_resource type="Resource" id="Resource_01oar"]
+script = ExtResource("2_jcogy")
+text = "Can you open the back?"
+next = &"open_truck"
+patience_delta = -10.0
+reveals = Array[StringName]([&"people_inside"])
+
+[sub_resource type="Resource" id="Resource_e36jd"]
+script = ExtResource("2_jcogy")
+text = "Don't open it. Are there armed men nearby?"
+next = &"guards"
+reveals = Array[StringName]([&"people_inside"])
+
+[sub_resource type="Resource" id="Resource_xk7sv"]
+script = ExtResource("1_a3stv")
+id = &"knock_back"
+line = "(knock, knock, knock) ...Three back. And a voice. A kid's voice. Oh no. Oh no no."
+choices = Array[ExtResource("2_jcogy")]([SubResource("Resource_01oar"), SubResource("Resource_e36jd")])
+
+[sub_resource type="Resource" id="Resource_8ddlx"]
+script = ExtResource("2_jcogy")
+text = "Do it, carefully."
+next = &"cut_lock"
+patience_delta = -20.0
+
+[sub_resource type="Resource" id="Resource_ovo4i"]
+script = ExtResource("2_jcogy")
+text = "Wait. Check if anyone's watching you first."
+next = &"guards"
+
+[sub_resource type="Resource" id="Resource_6hg5r"]
+script = ExtResource("1_a3stv")
+id = &"open_truck"
+line = "There's a padlock. I've got bolt cutters in my rig, I could—"
+choices = Array[ExtResource("2_jcogy")]([SubResource("Resource_8ddlx"), SubResource("Resource_ovo4i")])
+
+[sub_resource type="Resource" id="Resource_d3xfk"]
+script = ExtResource("2_jcogy")
+text = "Get back in your truck and drive away. Now."
+next = &"end_flee"
+
+[sub_resource type="Resource" id="Resource_g7wyx"]
+script = ExtResource("2_jcogy")
+text = "Hide and tell me how many."
+next = &"count_guards"
+patience_delta = 10.0
+
+[sub_resource type="Resource" id="Resource_i6juj"]
+script = ExtResource("1_a3stv")
+id = &"cut_lock"
+line = "(a car door slams somewhere) Somebody's coming out of the warehouse. They've got guns."
+choices = Array[ExtResource("2_jcogy")]([SubResource("Resource_d3xfk"), SubResource("Resource_g7wyx")])
+
+[sub_resource type="Resource" id="Resource_p77n2"]
+script = ExtResource("2_jcogy")
+text = "How many men total?"
+next = &"count_guards"
+
+[sub_resource type="Resource" id="Resource_w1fyj"]
+script = ExtResource("2_jcogy")
+text = "Stay out of sight. What's written on the truck?"
+next = &"plate"
+
+[sub_resource type="Resource" id="Resource_mres3"]
+script = ExtResource("1_a3stv")
+id = &"guards"
+line = "Two cars by the warehouse door. Guys smoking out front. One's got a rifle under his coat."
+choices = Array[ExtResource("2_jcogy")]([SubResource("Resource_p77n2"), SubResource("Resource_w1fyj")])
+
+[sub_resource type="Resource" id="Resource_7sx4k"]
+script = ExtResource("2_jcogy")
+text = "[Tech] What's the warehouse number? I'll pull the lease."
+next = &"tech_lease"
+required_class = &"tech"
+reveals = Array[StringName]([&"dissolved_company"])
+
+[sub_resource type="Resource" id="Resource_0vb12"]
+script = ExtResource("2_jcogy")
+text = "Good work. Get somewhere safe, units are rolling."
+next = &"end_units"
+reveals = Array[StringName]([&"armed_suspects"])
+
+[sub_resource type="Resource" id="Resource_vv2ir"]
+script = ExtResource("1_a3stv")
+id = &"count_guards"
+line = "Four outside... there's light upstairs in the office too. Maybe more in there."
+choices = Array[ExtResource("2_jcogy")]([SubResource("Resource_7sx4k"), SubResource("Resource_0vb12")])
+
+[sub_resource type="Resource" id="Resource_t47cw"]
+script = ExtResource("1_a3stv")
+id = &"tech_lease"
+speaker = &"dispatcher"
+line = "(Lease record: Blackvale Meats LLC, dissolved in 2021. Nobody should be storing anything here.)"
+auto_next = &"end_units"
+auto_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_wqrxn"]
+script = ExtResource("2_jcogy")
+text = "Covered on purpose. How many men are there?"
+next = &"count_guards"
+reveals = Array[StringName]([&"hidden_plate"])
+
+[sub_resource type="Resource" id="Resource_ykola"]
+script = ExtResource("1_a3stv")
+id = &"plate"
+line = "'Blackvale Meats'. Plate starts K-7... I can't see the rest, it's covered in mud."
+choices = Array[ExtResource("2_jcogy")]([SubResource("Resource_wqrxn")])
+
+[sub_resource type="Resource" id="Resource_xe6c6"]
+script = ExtResource("2_jcogy")
+text = "Is anyone guarding the truck?"
+next = &"guards"
+
+[sub_resource type="Resource" id="Resource_ku4np"]
+script = ExtResource("2_jcogy")
+text = "Banging from inside? Are you sure?"
+next = &"banging"
+
+[sub_resource type="Resource" id="Resource_mp3xt"]
+script = ExtResource("1_a3stv")
+id = &"where"
+line = "Pier 4, by the old cold storage. There's containers everywhere."
+choices = Array[ExtResource("2_jcogy")]([SubResource("Resource_xe6c6"), SubResource("Resource_ku4np")])
+
+[sub_resource type="Resource" id="Resource_rtiqq"]
+script = ExtResource("1_a3stv")
+id = &"end_flee"
+line = "(engine starts) I'm out, I'm out. Please, get those people out of that box."
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_bb1i5"]
+script = ExtResource("1_a3stv")
+id = &"end_units"
+line = "Please hurry. It's freezing in there. They won't last all night."
+on_enter_events = Array[StringName]([&"dispatch_units"])
+
+[sub_resource type="Resource" id="Resource_xlmxs"]
+script = ExtResource("4_lxcnl")
+nodes = Array[ExtResource("1_a3stv")]([SubResource("Resource_48qc0"), SubResource("Resource_x23g7"), SubResource("Resource_xk7sv"), SubResource("Resource_6hg5r"), SubResource("Resource_i6juj"), SubResource("Resource_mres3"), SubResource("Resource_vv2ir"), SubResource("Resource_t47cw"), SubResource("Resource_ykola"), SubResource("Resource_mp3xt"), SubResource("Resource_rtiqq"), SubResource("Resource_bb1i5")])
+
+[sub_resource type="Resource" id="Resource_6rg2j"]
+script = ExtResource("5_8hkgc")
+id = &"rec_pier4"
+title = "Pier 4 cold storage"
+content = "Leased to 'Blackvale Meats LLC' — company dissolved 2021. Two noise complaints this month."
+
+[sub_resource type="Curve" id="Curve_qaoc2"]
+_data = [Vector2(0, 0.45), 0.0, 0.0, 0, 0, Vector2(1, 0.7), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_5bvx2"]
+script = ExtResource("7_f5bct")
+tremor_curve = SubResource("Curve_qaoc2")
+background_tags = Array[StringName]([&"reefer_compressor", &"harbor_wind", &"knocking"])
+baseline_heart_rate = 104
+
+[resource]
+script = ExtResource("6_6wm8k")
+id = &"call_harbor_truck"
+title = "Refrigerated Truck"
+earliest_minute = 12
+dialogue = SubResource("Resource_xlmxs")
+phone_number = "911-555-0161"
+caller_name = "Walt Hendricks"
+caller_location_name = "Harbor warehouse district, Pier 4"
+true_location = Vector2(820, 520)
+records = Array[ExtResource("5_8hkgc")]([SubResource("Resource_6rg2j")])
+stress_profile = SubResource("Resource_5bvx2")
+patience_seconds = 220.0

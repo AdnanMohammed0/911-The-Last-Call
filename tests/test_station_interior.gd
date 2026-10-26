@@ -30,6 +30,10 @@ func test_furniture_leaves_doors_corridor_and_spawn_points_clear() -> void:
 		AABB(Vector3(51.3, 0.9, -25.4), Vector3(2.7, 2.2, 2.7)),
 		AABB(Vector3(54.7, 0.9, -28.9), Vector3(2.7, 2.2, 2.5)),
 		AABB(Vector3(59.5, 0.9, -31.8), Vector3(2.3, 2.2, 2.6)),
+		# Armory doors (corridor and garage side) and the generator hall's south exit.
+		AABB(Vector3(21.0, 0.9, -4.2), Vector3(3.0, 2.2, 2.7)),
+		AABB(Vector3(37.0, 0.9, -4.6), Vector3(2.8, 2.2, 2.7)),
+		AABB(Vector3(54.1, 0.9, -2.7), Vector3(2.8, 2.2, 2.6)),
 	]
 	for point: Vector3 in [Vector3(6, 0.95, -23.4), Vector3(10, 0.95, -23), Vector3(6, 0.95, -22), Vector3(10, 0.95, -22)]:
 		openings.append(AABB(point - Vector3(0.45, 0, 0.45), Vector3(0.9, 1.9, 0.9)))

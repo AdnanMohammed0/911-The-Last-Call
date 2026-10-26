@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://dil8m4ouo5quo"]
 
+[ext_resource type="PackedScene" path="res://scenes/dispatch/station/station_interior.tscn" id="interior_dressing"]
 [ext_resource type="Texture2D" uid="uid://chdfhm66qepyu" path="res://scenes/dispatch/citrus_orchard_road_puresky_4k.exr" id="1_dih32"]
 [ext_resource type="Material" uid="uid://bjf0jtmiglbei" path="res://assets/materials/desk_laminate.tres" id="2_20w1g"]
 [ext_resource type="PackedScene" uid="uid://ca38dh4bb34em" path="res://assets/3D/stuff/road_barrier_collection.glb" id="2_errnb"]
@@ -62,9 +63,9 @@ background_energy_multiplier = 0.2
 sky = SubResource("Sky_eavvg")
 sky_rotation = Vector3(0, 2.1275563, 0)
 ambient_light_source = 3
-ambient_light_color = Color(0.5047121, 0.46931827, 0.18151301, 1)
+ambient_light_color = Color(0.36, 0.42, 0.47, 1)
 ambient_light_sky_contribution = 0.35
-ambient_light_energy = 1.95
+ambient_light_energy = 0.65
 reflected_light_source = 2
 glow_intensity = 0.05
 fog_enabled = true
@@ -327,6 +328,8 @@ size = Vector3(1, 4, 71)
 size = Vector3(1, 4, 71)
 
 [node name="Station4_OperationsRoom" type="Node3D" unique_id=2082432568]
+
+[node name="StationInterior" parent="." instance=ExtResource("interior_dressing")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1632926867]
 environment = SubResource("Environment_064fq")

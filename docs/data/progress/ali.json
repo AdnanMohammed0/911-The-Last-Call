@@ -24,8 +24,8 @@
   },
   "P2-18": {
    "status": "done",
-   "note": "دمج مجسم مركز الشرطة الواقعي عالي الدقة (assets/3D/map.glb) في Station 4 (operations_room.tscn) مع توليد تصادمات فيزيائية تلقائية (trimesh) للأرضيات والجدران والسلالم عبر station_map.gd، وتوزيع مكاتب العمليات (DispatchSetup) ومخزن الأسلحة والكراج وباب الانتشار التكتيكي ونقاط توليد الأدوار الأربعة مع الحفاظ على التوافق التام مع اختبارات GUT.",
-   "updated_at": "2026-09-17"
+   "note": "دمج مجسم مركز الشرطة الواقعي عالي الدقة (assets/3D/map.glb) في Station 4 (operations_room.tscn) مع توليد تصادمات فيزيائية تلقائية (trimesh) للأرضيات والجدران والسلالم عبر station_map.gd، وتوزيع مكاتب العمليات (DispatchSetup) ومخزن الأسلحة والكراج وباب الانتشار التكتيكي ونقاط توليد الأدوار الأربعة مع الحفاظ على التوافق التام مع اختبارات GUT. إضافة تأثيث داخلي لعشر مناطق بمشهد StationInterior قابل للتحرير: 56 نسخة من المودلز الموجودة، طاولة اجتماعات، أرشيف، خزائن موظفين، استراحة، انتظار، حمّام، ورشة وغرف خدمات، مع إضاءة داخلية أبرد. تحقق بصري داخل Godot 4.7.2 Forward+، ونجاح اختباري خلو الأبواب والظهور من العوائق وعدم التداخل مع جميع مشتريات StationMart، إضافة إلى اختبارات المحطة الثلاثة.",
+   "updated_at": "2026-10-27"
   }
  },
  "log": [
@@ -550,6 +550,22 @@
    "tasks": [],
    "summary": "مراجعة تقدم Ali واعتماديات الفريق: P1-14 وP1-18 وP1-19 وP2-03 وP2-18 مكتملة؛ المهمة التالية المقترحة P2-07، وتعتمد على CallDirector وHandset token/choice pings المكتملة عند Adnan وDialogueGraph المكتمل عند Mohamed.",
    "files": [
+    "docs/data/progress/ali.json"
+   ]
+  },
+  {
+   "date": "2026-10-27",
+   "tasks": [
+    "P2-18"
+   ],
+   "summary": "تأثيث عشر مناطق داخل Station 4 باستخدام المودلز الموجودة وديكور ثابت قابل للتعديل، مع ضبط المقاييس والتصادمات والإضاءة والحفاظ على أماكن أثاث المتجر. نجحت 5 اختبارات GUT؛ تمت مراجعة 12 لقطة من المحطة داخل Godot.",
+   "files": [
+    "scenes/dispatch/operations_room.tscn",
+    "scenes/dispatch/station/station_interior.tscn",
+    "tools/level_kit/furnish_station.gd",
+    "tools/level_kit/furnish_station.tscn",
+    "tests/test_station_interior.gd",
+    "docs/design/STATION_INTERIOR.md",
     "docs/data/progress/ali.json"
    ]
   }

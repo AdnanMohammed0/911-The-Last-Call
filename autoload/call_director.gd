@@ -23,6 +23,7 @@ var ring_timer: float = 0.0
 var ring_timeout: float = DEFAULT_RING_TIMEOUT
 
 var handset_owner_peer_id: int = 0
+var _choice_pings_by_peer: Dictionary[int, int] = {}
 
 var registered_calls: Dictionary[StringName, CallData] = {}
 var call_queue: Array[StringName] = []
@@ -453,9 +454,13 @@ func set_trace_result(location: Vector2, radius: float, is_dead_freq: bool) -> v
 func request_take_handset() -> void:
 	if not _is_server():
 		return
+	if current_state != CallState.CONNECTED or handset_owner_peer_id != 0:
+		return
 	var sender: int = multiplayer.get_remote_sender_id()
 	if sender == 0:
 		sender = 1
+	if not _is_call_participant(sender):
+		return
 	
 	handset_owner_peer_id = sender
 	_sync_handset_owner.rpc(handset_owner_peer_id)
@@ -464,6 +469,8 @@ func request_take_handset() -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func request_release_handset() -> void:
 	if not _is_server():
+		return
+	if current_state != CallState.CONNECTED:
 		return
 	var sender: int = multiplayer.get_remote_sender_id()
 	if sender == 0:
@@ -478,13 +485,19 @@ func request_release_handset() -> void:
 func request_pass_handset(to_peer_id: int) -> void:
 	if not _is_server():
 		return
+	if current_state != CallState.CONNECTED:
+		return
 	var sender: int = multiplayer.get_remote_sender_id()
 	if sender == 0:
 		sender = 1
 	
-	if handset_owner_peer_id == sender or handset_owner_peer_id == 0:
+	if handset_owner_peer_id == sender and to_peer_id != sender and _is_call_participant(to_peer_id):
 		handset_owner_peer_id = to_peer_id
 		_sync_handset_owner.rpc(to_peer_id)
+
+
+func _is_call_participant(peer_id: int) -> bool:
+	return peer_id == 1 or NetManager.roster.has(peer_id)
 
 
 @rpc("authority", "call_local", "reliable")
@@ -533,10 +546,27 @@ func request_dialogue_choice(choice_index: int) -> void:
 func request_ping_choice(choice_index: int) -> void:
 	if not _is_server():
 		return
+	if current_state != CallState.CONNECTED or not dialogue_runner.is_active or dialogue_runner.current_node == null:
+		return
+	if choice_index < 0 or choice_index >= dialogue_runner.current_node.choices.size():
+		return
 	var sender: int = multiplayer.get_remote_sender_id()
 	if sender == 0:
 		sender = 1
-	
+	if not _is_call_participant(sender) or handset_owner_peer_id == 0 or sender == handset_owner_peer_id:
+		return
+	var choices: Array[Dictionary] = dialogue_runner.get_available_choices_data()
+	for choice: Dictionary in choices:
+		if choice.get("index", -1) == choice_index:
+			if not choice.get("unlocked", false):
+				return
+			var required_class: StringName = choice.get("required_class", &"")
+			var owner_class: StringName = NetManager.get_class_id(handset_owner_peer_id)
+			if required_class != &"" and owner_class != &"" and required_class != owner_class:
+				return
+	if _choice_pings_by_peer.get(sender, -1) == choice_index:
+		return
+	_choice_pings_by_peer[sender] = choice_index
 	_sync_choice_ping.rpc(sender, choice_index)
 
 
@@ -549,6 +579,7 @@ func _sync_choice_ping(sender_peer_id: int, choice_index: int) -> void:
 func _on_dialogue_node_entered(node: DialogueNode) -> void:
 	if not _is_server():
 		return
+	_choice_pings_by_peer.clear()
 	
 	var choices_data: Array[Dictionary] = dialogue_runner.get_available_choices_data()
 	var audio_path: String = ""
@@ -816,6 +847,7 @@ func reset() -> void:
 	active_call = null
 	active_call_id = &""
 	handset_owner_peer_id = 0
+	_choice_pings_by_peer.clear()
 	_rapport_applied = false
 	_challenge_penalties = 0
 	_trace_result_location = Vector2.ZERO

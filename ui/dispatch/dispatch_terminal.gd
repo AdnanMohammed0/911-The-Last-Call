@@ -14,6 +14,7 @@ const RED: Color = Color(1.0, 0.35, 0.3)
 const DIM: Color = Color(0.55, 0.62, 0.6)
 const TECH_BLUE: Color = Color(0.4, 0.7, 1.0)
 const STATE_NAMES: Array[String] = ["IDLE", "RINGING", "CONNECTED", "ASSESSMENT", "COMPLETED", "MISSED"]
+const SCANLINES: Shader = preload("res://ui/shaders/dispatch_scanlines.gdshader")
 
 ## Emitted when a player asks for a test call from this terminal (DispatchSetup forwards it to the host).
 signal test_call_requested()
@@ -35,12 +36,15 @@ var _result: Label
 var _answer_button: Button
 var _hangup_button: Button
 var _handset_button: Button
+var _pass_choices: HBoxContainer
 var _test_button: Button
 var _trace_button: Button
+var _terminal_font: Font
 
 var _call_id: StringName = &""
 var _last_node_id: StringName = &""
 var _choice_data: Array = []
+var _choice_pings: Dictionary = {} # peer_id -> choice index for the current node
 var _closed_player_input: Player = null
 var _trace_minigame: TraceMiniGame = null
 
@@ -58,7 +62,9 @@ func _ready() -> void:
 	EventBus.call_classified.connect(_on_call_classified)
 	EventBus.caller_patience_updated.connect(_on_patience)
 	EventBus.dialogue_node_changed.connect(_on_dialogue_node)
+	EventBus.dialogue_choice_pinged.connect(_on_choice_pinged)
 	EventBus.handset_owner_changed.connect(func(_peer: int) -> void: _refresh())
+	NetManager.lobby_updated.connect(func(_roster: Dictionary) -> void: _refresh())
 	EventBus.evidence_unlocked.connect(func(key: StringName) -> void: _append("[color=#7fd4ff]EVIDENCE:[/color] %s" % key))
 	VoteManager.vote_updated.connect(_on_vote_updated)
 	VoteManager.vote_opened.connect(_on_vote_updated)
@@ -135,6 +141,14 @@ func choose(index: int) -> void:
 	_call_host(&"request_dialogue_choice", [index])
 
 
+func ping_choice(index: int) -> void:
+	_call_host(&"request_ping_choice", [index])
+
+
+func pass_handset(to_peer_id: int) -> void:
+	_call_host(&"request_pass_handset", [to_peer_id])
+
+
 func classify(verdict: StringName) -> void:
 	if _call_id == &"":
 		return
@@ -195,6 +209,7 @@ func _on_call_ring(call_id: StringName, call_data: CallData) -> void:
 	_result.text = ""
 	_vote_label.text = ""
 	_choice_data = []
+	_choice_pings.clear()
 	_last_node_id = &""
 	_show_records(call_data)
 	_append("[color=#ffb347]%s — incoming call from %s[/color]" % [_clock_text(), call_data.phone_number if call_data != null else "UNKNOWN"])
@@ -215,6 +230,7 @@ func _on_call_missed(_call_id_missed: StringName) -> void:
 func _on_assessment_started(_id: StringName) -> void:
 	_append("[color=#ffb347]— caller disconnected. Classify the call. —[/color]")
 	_choice_data = []
+	_choice_pings.clear()
 	_refresh()
 
 
@@ -239,12 +255,21 @@ func _on_patience(current: float, max_patience: float) -> void:
 func _on_dialogue_node(node_id: StringName, speaker: StringName, line: String, choices: Array) -> void:
 	# CallDirector re-sends the current node when only the choices change: print each line once.
 	var is_new_node: bool = node_id != _last_node_id
+	if is_new_node:
+		_choice_pings.clear()
 	_last_node_id = node_id
 	if is_new_node and not line.is_empty():
 		var colour: String = "e8e8e8" if speaker == &"caller" else "9ec9ff"
 		_append("[color=#8a9]%s[/color] [color=#%s]%s[/color]" % [String(speaker).to_upper(), colour, line])
 	_choice_data = choices
 	_refresh()
+
+
+func _on_choice_pinged(peer_id: int, choice_index: int) -> void:
+	if CallDirector.current_state != CallDirector.CallState.CONNECTED:
+		return
+	_choice_pings[peer_id] = choice_index
+	_rebuild_choices(CallDirector.has_handset(multiplayer.get_unique_id()))
 
 
 func _on_vote_updated(vote: Dictionary) -> void:
@@ -292,7 +317,8 @@ func _refresh() -> void:
 	_answer_button.disabled = state != CallDirector.CallState.RINGING
 	_hangup_button.disabled = state != CallDirector.CallState.CONNECTED or not CallDirector.has_handset(me)
 	_handset_button.text = "Put handset down" if owner == me else "Take handset"
-	_handset_button.disabled = state != CallDirector.CallState.CONNECTED
+	_handset_button.disabled = state != CallDirector.CallState.CONNECTED or (owner != 0 and owner != me)
+	_rebuild_pass_targets(state == CallDirector.CallState.CONNECTED and owner == me)
 	_verdict_box.visible = state == CallDirector.CallState.ASSESSMENT or not _result.text.is_empty()
 	for child: Node in _verdict_buttons.get_children():
 		(child as Button).disabled = state != CallDirector.CallState.ASSESSMENT
@@ -308,6 +334,7 @@ func _refresh() -> void:
 
 func _rebuild_choices(can_choose: bool) -> void:
 	for child: Node in _choices.get_children():
+		_choices.remove_child(child)
 		child.queue_free()
 	if _choice_data.is_empty():
 		var hint: Label = Label.new()
@@ -315,29 +342,54 @@ func _rebuild_choices(can_choose: bool) -> void:
 		hint.add_theme_color_override("font_color", DIM)
 		_choices.add_child(hint)
 		return
-	var my_class: StringName = NetManager.get_class_id(multiplayer.get_unique_id())
+	var choice_peer: int = multiplayer.get_unique_id() if can_choose else CallDirector.handset_owner_peer_id
+	var choice_class: StringName = NetManager.get_class_id(choice_peer)
 	for entry: Variant in _choice_data:
 		var data: Dictionary = entry
 		var index: int = data.get("index", 0)
 		var text: String = data.get("text", "")
 		var required: StringName = data.get("required_class", &"")
 		var unlocked: bool = data.get("unlocked", true)
-		var class_ok: bool = required == &"" or my_class == &"" or required == my_class
-		var button: KitButton = KitButton.make("%d.  %s" % [index + 1, text], &"chevron_right", KitButton.Variant.SUBTLE)
+		var class_ok: bool = required == &"" or choice_class == &"" or required == choice_class
+		var is_ping: bool = not can_choose
+		var prefix: String = "SUGGEST" if is_ping else "REPLY"
+		var button: KitButton = KitButton.make("%d.  %s    · %s" % [index + 1, text, prefix], &"chevron_right", KitButton.Variant.SUBTLE)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.add_theme_font_override(&"font", _terminal_font)
 		button.custom_minimum_size = Vector2(0, 44)
 		if not unlocked:
 			button.text += "   [%s]" % data.get("lock_reason", "locked")
 		elif not class_ok:
 			button.text += "   [%s only]" % String(required).capitalize()
-		button.disabled = not can_choose or not unlocked or not class_ok
-		button.pressed.connect(choose.bind(index))
+		button.disabled = not unlocked or not class_ok
+		button.pressed.connect(ping_choice.bind(index) if is_ping else choose.bind(index))
 		_choices.add_child(button)
+		var peers: PackedStringArray = PackedStringArray()
+		for peer_id: int in _choice_pings:
+			if _choice_pings[peer_id] == index:
+				peers.append(NetManager.get_player_name(peer_id))
+		if not peers.is_empty():
+			var ping_label: Label = UiKit.caps("TEAM SUGGESTS: %s" % ", ".join(peers), 10, TECH_BLUE, &"bold", 1)
+			_choices.add_child(ping_label)
 	if not can_choose:
 		var who: Label = Label.new()
-		who.text = "Only the handset holder can reply."
+		who.text = "Suggest a reply to the handset holder."
 		who.add_theme_color_override("font_color", DIM)
 		_choices.add_child(who)
+
+
+func _rebuild_pass_targets(can_pass: bool) -> void:
+	for child: Node in _pass_choices.get_children():
+		_pass_choices.remove_child(child)
+		child.queue_free()
+	_pass_choices.visible = can_pass
+	if not can_pass:
+		return
+	for peer_id: int in NetManager.roster:
+		if peer_id == multiplayer.get_unique_id():
+			continue
+		var button: KitButton = _button("Pass to %s" % NetManager.get_player_name(peer_id), pass_handset.bind(peer_id), &"headset", KitButton.Variant.GHOST)
+		_pass_choices.add_child(button)
 
 
 func _show_records(call: CallData) -> void:
@@ -362,6 +414,9 @@ func _clock_text() -> String:
 
 func _build() -> void:
 	theme = GameSettings.ui_theme
+	var mono: SystemFont = SystemFont.new()
+	mono.font_names = PackedStringArray(["Consolas", "Courier New", "monospace"])
+	_terminal_font = mono
 	var dim: ColorRect = ColorRect.new()
 	dim.color = Color(0.01, 0.014, 0.02)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -486,6 +541,9 @@ func _build() -> void:
 	controls.add_child(_trace_button)
 	for child: Node in controls.get_children():
 		(child as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_pass_choices = HBoxContainer.new()
+	_pass_choices.add_theme_constant_override("separation", 8)
+	left.add_child(_pass_choices)
 
 	var records_card: PanelContainer = _card()
 	records_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -520,8 +578,16 @@ func _build() -> void:
 	_transcript.scroll_following = true
 	_transcript.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_transcript.add_theme_font_size_override("normal_font_size", 18)
+	_transcript.add_theme_font_override(&"normal_font", _terminal_font)
 	_transcript.add_theme_constant_override("line_separation", 6)
 	transcript_box.add_child(_transcript)
+	var scanlines: ColorRect = ColorRect.new()
+	scanlines.set_anchors_preset(Control.PRESET_FULL_RECT)
+	scanlines.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var scanline_material: ShaderMaterial = ShaderMaterial.new()
+	scanline_material.shader = SCANLINES
+	scanlines.material = scanline_material
+	transcript_card.add_child(scanlines)
 	centre.add_child(UiKit.caps("Replies", 11, GameTheme.TEXT_DIM, &"bold", 2))
 	_choices = VBoxContainer.new()
 	_choices.add_theme_constant_override("separation", 6)

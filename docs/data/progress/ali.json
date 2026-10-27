@@ -629,6 +629,17 @@
     "scenes/dispatch/dispatch_computer.gd",
     "docs/data/progress/ali.json"
    ]
+  },
+  {
+   "date": "2026-10-27",
+   "tasks": ["P2-18"],
+   "summary": "تكبير شاشة كمبيوتر CAD الرئيسية 50% إضافية، وزيادة قابلية قراءة النص بتعديل دقة واجهة الكمبيوتر إلى 1152×864، مع ضبط جلوس الكاميرا وتخطيط CAD وCCTV للدقة الجديدة. نجحت اختبارات المحطة والهاتف والشبكة 7/7، وفحص حدود نوافذ المتجر وCAD والكاميرات.",
+   "files": [
+    "scenes/dispatch/dispatch_setup.tscn",
+    "ui/dispatch/dispatch_terminal.gd",
+    "ui/station_os/station_os.gd",
+    "docs/data/progress/ali.json"
+   ]
   }
  ]
 }

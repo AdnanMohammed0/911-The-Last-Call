@@ -356,7 +356,8 @@ func _rebuild_choices(can_choose: bool) -> void:
 		var button: KitButton = KitButton.make("%d.  %s    · %s" % [index + 1, text, prefix], &"chevron_right", KitButton.Variant.SUBTLE)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.add_theme_font_override(&"font", _terminal_font)
-		button.custom_minimum_size = Vector2(0, 44)
+		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.custom_minimum_size = Vector2(0, 52)
 		if not unlocked:
 			button.text += "   [%s]" % data.get("lock_reason", "locked")
 		elif not class_ok:
@@ -429,10 +430,11 @@ func _build() -> void:
 
 	var frame: PanelContainer = UiKit.glass(Color(0.03, 0.036, 0.046), 16, 0, 0, 0.9, 3.5, Color(1, 1, 1, 0.1))
 	frame.set_anchors_preset(Control.PRESET_FULL_RECT)
-	frame.offset_left = 90
-	frame.offset_top = 56
-	frame.offset_right = -90
-	frame.offset_bottom = -56
+	var compact: bool = get_viewport().get_visible_rect().size.x < 1200
+	frame.offset_left = 42 if compact else 90
+	frame.offset_top = 28 if compact else 56
+	frame.offset_right = -42 if compact else -90
+	frame.offset_bottom = -28 if compact else -56
 	add_child(frame)
 	var root: VBoxContainer = VBoxContainer.new()
 	root.add_theme_constant_override("separation", 0)
@@ -485,7 +487,7 @@ func _build() -> void:
 
 	# Left: caller card, controls, records.
 	var left: VBoxContainer = VBoxContainer.new()
-	left.custom_minimum_size = Vector2(430, 0)
+	left.custom_minimum_size = Vector2(330 if compact else 430, 0)
 	left.add_theme_constant_override("separation", 12)
 	columns.add_child(left)
 	var caller_card: PanelContainer = _card()

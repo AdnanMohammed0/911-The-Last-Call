@@ -841,7 +841,7 @@ func _refresh_station() -> void:
 
 func _build_cctv() -> Control:
 	var grid: GridContainer = GridContainer.new()
-	grid.columns = 3
+	grid.columns = 2 if get_viewport().get_visible_rect().size.x < 1280 else 3
 	grid.add_theme_constant_override(&"h_separation", 10)
 	grid.add_theme_constant_override(&"v_separation", 10)
 	for feed: Array in CCTV_CAMERAS:

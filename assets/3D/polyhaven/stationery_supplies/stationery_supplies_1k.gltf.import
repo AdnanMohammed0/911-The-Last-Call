@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cvr7npfovak1d"
-path="res://.godot/imported/wall_clock_1k.gltf-8233452db79291ce1ac1a934fb60bdd2.scn"
+uid="uid://wxicy7jit2oj"
+path="res://.godot/imported/stationery_supplies_1k.gltf-861645e8a8ebd3cb739de356108e7365.scn"
 
 [deps]
 
-source_file="res://assets/3D/polyhaven/wall_clock/wall_clock_1k.gltf"
-dest_files=["res://.godot/imported/wall_clock_1k.gltf-8233452db79291ce1ac1a934fb60bdd2.scn"]
+source_file="res://assets/3D/polyhaven/stationery_supplies/stationery_supplies_1k.gltf"
+dest_files=["res://.godot/imported/stationery_supplies_1k.gltf-861645e8a8ebd3cb739de356108e7365.scn"]
 
 [params]
 

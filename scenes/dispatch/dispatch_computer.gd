@@ -1,5 +1,6 @@
-## Dispatch Computer (Station OS): An in-world interactive PC-9801 retro workstation.
-## The CRT monitor screen shows the live Windows 11 / Station OS desktop rendered from a SubViewport.
+## Dispatch Computer (Station OS): An in-world interactive CAD workstation (scenes/dispatch/station/cad_monitor.tscn).
+## The CRT monitor screen shows the live Windows 11 / Station OS desktop rendered from a SubViewport; bought
+## workstations that have no viewport of their own mirror the station's shared Station OS viewport.
 ## Interacting seats the player comfortably close at the desk, framing the retro monitor realistically without covering
 ## the whole screen, and allowing direct mouse and keyboard interaction with all OS apps.
 ## Pressing [Esc] or clicking Stand Up smoothly returns the player to first-person walking.
@@ -44,6 +45,10 @@ func _ready() -> void:
 func _setup_screen_material() -> void:
 	_screen_mesh = get_node_or_null(screen_mesh_path) as MeshInstance3D
 	_viewport = get_node_or_null(viewport_path) as SubViewport
+	if _viewport == null:
+		var desktop: StationOS = StationOS.find(get_tree())
+		if desktop != null:
+			_viewport = desktop.get_viewport() as SubViewport
 	if _screen_mesh == null or _viewport == null:
 		return
 	

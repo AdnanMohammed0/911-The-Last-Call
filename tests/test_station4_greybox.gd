@@ -48,9 +48,9 @@ func test_operations_room_scene_loads_and_instantiates() -> void:
 	assert_not_null(wing_floor, "Station wing safety floor collider should exist")
 
 	# One main dispatch desk with the single main computer (the other desks are bought as workstations)
-	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/MainDesk"), "MainDesk should exist")
-	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/MainPhone"), "MainPhone should exist")
-	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/SupervisorDesk"), "SupervisorDesk should exist")
+	assert_not_null(instance.get_node_or_null("StationInterior/Dispatch/MainConsole"), "Main dispatch console should exist")
+	assert_not_null(instance.get_node_or_null("DispatchSetup/Phone"), "911 phone should exist on the console")
+	assert_not_null(instance.get_node_or_null("StationInterior/Dispatch/SupervisorDesk"), "Supervisor desk should exist")
 	assert_not_null(instance.get_node_or_null("Geometry/OperationsRoom/Lighting"), "Dramatic Lighting should exist")
 	for removed: String in ["DeskProfiler", "DeskBreacher", "DeskMedic", "LaptopTech", "LaptopSupervisor"]:
 		assert_null(instance.get_node_or_null("Geometry/OperationsRoom/" + removed), "%s was replaced by StationMart workstations" % removed)

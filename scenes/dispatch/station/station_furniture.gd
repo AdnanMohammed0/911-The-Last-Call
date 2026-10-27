@@ -20,6 +20,13 @@ const CRUISER_SCENE: String = "res://assets/3D/cars/fairheaven_lt_80_cop_cruiser
 const TIRES_SCENE: String = "res://assets/3D/tires/dirty_old_tires.glb"
 const TRASH_SCENE: String = "res://assets/3D/trash/trash_can.glb"
 const RUG_SCENE: String = "res://assets/3D/rug/paloma_large_wool_rug.glb"
+const CHAIR_SCENE: String = "res://assets/3D/chair/office_chair_modern.glb"
+## Dispatch console and CAD monitor shared with the main console (built by tools/level_kit/furnish_station.gd).
+const CONSOLE_SCENE: String = "res://scenes/dispatch/station/dispatch_console.tscn"
+const MONITOR_SCENE: String = "res://scenes/dispatch/station/cad_monitor.tscn"
+## Console worktop height and the CAD monitor's screen centre above its foot.
+const CONSOLE_TOP: float = 0.785
+const MONITOR_SCREEN: Vector3 = Vector3(0, 0.472, 0.046)
 ## Weapon rack x positions along the armory's south wall (item id → x).
 const RACK_X: Dictionary[StringName, float] = {
 	&"rack_pistol": 23.2, &"rack_revolver": 24.9, &"rack_shotgun": 26.6, &"rack_smg": 28.3, &"rack_pdw": 30.0,
@@ -184,7 +191,6 @@ func _build_signs() -> void:
 	_label(signs, "BREAK ROOM ←", Vector3(16.35, FLOOR + 2.2, -14.6), 0.005, white, 90.0)
 	_label(signs, "ARMORY  →  GARAGE", Vector3(22.15, FLOOR + 2.2, -5.0), 0.005, Color(1, 0.8, 0.35), -90.0)
 	_label(signs, "OPERATIONS →", Vector3(22.15, FLOOR + 2.2, -20.2), 0.005, white, -90.0)
-	_label(signs, "MAIN COMPUTER · STATION OS", Vector3(6.0, FLOOR + 1.75, -24.75), 0.003, Color(0.45, 1, 0.6))
 
 
 func _build_decor() -> void:
@@ -383,18 +389,36 @@ func _build_workstation(index: int, holder: Node3D) -> void:
 	var yaw: float = spot[1]
 	holder.position = at
 	holder.rotation_degrees.y = yaw
-	_kit.desk(holder, "Desk", Vector3.ZERO, 0.0, 2)
-	_kit.box(holder, "Chair", Vector3(0, 0.25, 0.9), Vector3(0.5, 0.5, 0.5), _kit.material("fabric_dark"), 0.0, false)
+	var monitor_at: Vector3 = Vector3(0, CONSOLE_TOP, -0.05)
+	var console: Node3D = ModelKit.instance(CONSOLE_SCENE)
+	var monitor: Node3D = ModelKit.instance(MONITOR_SCENE)
+	if console != null and monitor != null:
+		console.name = "Desk"
+		holder.add_child(console)
+		monitor.name = "CadMonitor"
+		monitor.position = monitor_at
+		holder.add_child(monitor)
+		ModelKit.place(holder, CHAIR_SCENE, "Chair", Vector3(0.2, 0, 0.75), 172.0, ModelKit.Fit.HEIGHT, 1.05)
+	else:
+		_kit.desk(holder, "Desk", Vector3.ZERO, 0.0, 2)
+		_kit.box(holder, "Chair", Vector3(0, 0.25, 0.9), Vector3(0.5, 0.5, 0.5), _kit.material("fabric_dark"), 0.0, false)
 	var computer: DispatchComputer = DispatchComputer.new()
 	computer.name = "Computer"
-	computer.position = Vector3(0, 1.18, -0.28)
+	computer.position = monitor_at + MONITOR_SCREEN
 	var shape: CollisionShape3D = CollisionShape3D.new()
 	var box: BoxShape3D = BoxShape3D.new()
 	box.size = Vector3(1.4, 0.55, 0.3)
 	shape.shape = box
 	computer.add_child(shape)
+	# Mirrors the station's Station OS viewport onto this monitor (see DispatchComputer).
+	var display: MeshInstance3D = MeshInstance3D.new()
+	display.name = "ScreenDisplay"
+	var quad: QuadMesh = QuadMesh.new()
+	quad.size = DispatchComputer.SCREEN_SIZE
+	display.mesh = quad
+	computer.add_child(display)
 	holder.add_child(computer)
-	_label(holder, "WORKSTATION %d" % (index + 2), Vector3(0, 1.48, -0.36), 0.003, Color(0.45, 1, 0.6))
+	_label(holder, "WORKSTATION %d" % (index + 2), Vector3(0, CONSOLE_TOP - 0.02, 0.458), 0.0011, Color(0.45, 1, 0.6))
 
 
 func _build_cctv(holder: Node3D) -> void:

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bbnlphjl8pbv8"
-path="res://.godot/imported/wall_clock_diff_1k.jpg-279b5ccbeca278da67c857575aab5fc9.ctex"
+uid="uid://du4uvc8suxumc"
+path="res://.godot/imported/stationery_supplies_arm_1k.jpg-7300d2f0141306595f8098f6e641c876.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/3D/polyhaven/wall_clock/textures/wall_clock_diff_1k.jpg"
-dest_files=["res://.godot/imported/wall_clock_diff_1k.jpg-279b5ccbeca278da67c857575aab5fc9.ctex"]
+source_file="res://assets/3D/polyhaven/stationery_supplies/textures/stationery_supplies_arm_1k.jpg"
+dest_files=["res://.godot/imported/stationery_supplies_arm_1k.jpg-7300d2f0141306595f8098f6e641c876.ctex"]
 
 [params]
 

@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://scenes/dispatch/dispatch_phone.gd" id="3_phone"]
 [ext_resource type="Script" path="res://ui/dispatch/dispatch_terminal.gd" id="4_terminal"]
 [ext_resource type="Script" path="res://ui/station_os/station_os.gd" id="5_os"]
-[ext_resource type="PackedScene" uid="uid://c72iqy0ds7u2k" path="res://assets/3D/Computer/pc-9801ux.glb" id="6_pc98"]
+[ext_resource type="PackedScene" path="res://scenes/dispatch/station/cad_monitor.tscn" id="6_monitor"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_monitor"]
 size = Vector3(1.2, 1.0, 1.2)
@@ -31,15 +31,14 @@ script = ExtResource("2_computer")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0.2)
 shape = SubResource("BoxShape3D_monitor")
 
-[node name="Model" parent="MainComputer" instance=ExtResource("6_pc98")]
-transform = Transform3D(0.0055, 0, 0, 0, 0.0055, 0, 0, 0, 0.0055, 0, 0, 0)
+[node name="Model" parent="MainComputer" instance=ExtResource("6_monitor")]
 
 [node name="ScreenDisplay" type="MeshInstance3D" parent="MainComputer"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.472, 0.046)
 mesh = SubResource("QuadMesh_screen")
 
 [node name="Phone" type="Area3D" parent="." node_paths=PackedStringArray("ring_light", "status_label")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2, 1.7, -24.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.98, 1.7, -24.35)
 script = ExtResource("3_phone")
 ring_light = NodePath("RingLight")
 status_label = NodePath("../StatusScreen")
@@ -63,7 +62,7 @@ outline_size = 8
 modulate = Color(1, 0.55, 0.45, 1)
 
 [node name="StatusScreen" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.55, -24.62)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.95, 2.86, -27.84)
 pixel_size = 0.003
 text = "LINES CLEAR"
 font_size = 44
@@ -71,7 +70,7 @@ outline_size = 10
 modulate = Color(0.55, 0.75, 0.7, 1)
 
 [node name="WallClock" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 3.4, -27.6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 3.62, -27.88)
 
 [node name="Face" type="CSGBox3D" parent="WallClock"]
 size = Vector3(1.6, 0.5, 0.05)

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://deiqrgn3uyp4n"
-path="res://.godot/imported/wall_clock_arm_1k.jpg-643e3fb2ee62bb146181b295a5213028.ctex"
+uid="uid://cky7s1gdw4uw"
+path="res://.godot/imported/ceiling_fan_spec_1k.jpg-d1cf8f183f0cbabe2d74445f76c58ce1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/3D/polyhaven/wall_clock/textures/wall_clock_arm_1k.jpg"
-dest_files=["res://.godot/imported/wall_clock_arm_1k.jpg-643e3fb2ee62bb146181b295a5213028.ctex"]
+source_file="res://assets/3D/polyhaven/ceiling_fan/textures/ceiling_fan_spec_1k.jpg"
+dest_files=["res://.godot/imported/ceiling_fan_spec_1k.jpg-d1cf8f183f0cbabe2d74445f76c58ce1.ctex"]
 
 [params]
 

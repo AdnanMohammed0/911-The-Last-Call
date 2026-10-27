@@ -15,6 +15,7 @@ const DIM: Color = Color(0.55, 0.62, 0.6)
 const TECH_BLUE: Color = Color(0.4, 0.7, 1.0)
 const STATE_NAMES: Array[String] = ["IDLE", "RINGING", "CONNECTED", "ASSESSMENT", "COMPLETED", "MISSED"]
 const SCANLINES: Shader = preload("res://ui/shaders/dispatch_scanlines.gdshader")
+const READABILITY := preload("res://ui/kit/ui_readability.gd")
 
 ## Emitted when a player asks for a test call from this terminal (DispatchSetup forwards it to the host).
 signal test_call_requested()
@@ -55,6 +56,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	visible = false
 	_build()
+	READABILITY.enlarge_text(self)
 	EventBus.call_ring.connect(_on_call_ring)
 	EventBus.call_connected.connect(_on_call_connected)
 	EventBus.call_missed.connect(_on_call_missed)
@@ -341,6 +343,7 @@ func _rebuild_choices(can_choose: bool) -> void:
 		hint.text = "(no replies — listen)" if CallDirector.current_state == CallDirector.CallState.CONNECTED else ""
 		hint.add_theme_color_override("font_color", DIM)
 		_choices.add_child(hint)
+		READABILITY.enlarge_text(_choices)
 		return
 	var choice_peer: int = multiplayer.get_unique_id() if can_choose else CallDirector.handset_owner_peer_id
 	var choice_class: StringName = NetManager.get_class_id(choice_peer)
@@ -377,6 +380,7 @@ func _rebuild_choices(can_choose: bool) -> void:
 		who.text = "Suggest a reply to the handset holder."
 		who.add_theme_color_override("font_color", DIM)
 		_choices.add_child(who)
+	READABILITY.enlarge_text(_choices)
 
 
 func _rebuild_pass_targets(can_pass: bool) -> void:
@@ -391,6 +395,7 @@ func _rebuild_pass_targets(can_pass: bool) -> void:
 			continue
 		var button: KitButton = _button("Pass to %s" % NetManager.get_player_name(peer_id), pass_handset.bind(peer_id), &"headset", KitButton.Variant.GHOST)
 		_pass_choices.add_child(button)
+	READABILITY.enlarge_text(_pass_choices)
 
 
 func _show_records(call: CallData) -> void:

@@ -1,21 +1,18 @@
 ## Dispatch Computer (Station OS): An in-world interactive CAD workstation (scenes/dispatch/station/cad_monitor.tscn).
 ## The CRT monitor screen shows the live Windows 11 / Station OS desktop rendered from a SubViewport; bought
 ## workstations that have no viewport of their own mirror the station's shared Station OS viewport.
-## Interacting seats the player comfortably close at the desk, framing the retro monitor realistically without covering
-## the whole screen, and allowing direct mouse and keyboard interaction with all OS apps.
+## Interacting seats the player at the desk and shows the viewport at readable screen size.
+## Mouse and keyboard input are forwarded into the same viewport used by the in-world display.
 ## Pressing [Esc] or clicking Stand Up smoothly returns the player to first-person walking.
 class_name DispatchComputer
 extends Interactable
 
 const SCREEN_SIZE: Vector2 = Vector2(0.448, 0.336)
 const SEAT_DISTANCE: float = 0.28
-const ZOOM_DISTANCE: float = 0.18
 const TRANSITION_TIME: float = 0.30
 
 @export var screen_mesh_path: NodePath = NodePath("ScreenDisplay")
 @export var viewport_path: NodePath = NodePath("../TerminalLayer")
-@export var seat_distance: float = SEAT_DISTANCE
-@export var zoom_distance: float = ZOOM_DISTANCE
 
 var _screen_mesh: MeshInstance3D
 var _viewport: SubViewport
@@ -24,8 +21,9 @@ var _camera: Camera3D = null
 var _orig_cam_xform: Transform3D
 var _cam_tween: Tween = null
 var _is_active: bool = false
-var _is_zoomed: bool = false
 var _hint_hud: CanvasLayer = null
+var _screen_hud: CanvasLayer = null
+var _screen_view: TextureRect = null
 
 
 func _ready() -> void:
@@ -37,6 +35,7 @@ func _ready() -> void:
 	cooldown = 0.2
 	
 	_setup_screen_material()
+	_create_screen_hud()
 	_create_hint_hud()
 	
 	var desktop: StationOS = StationOS.find(get_tree())
@@ -77,6 +76,39 @@ func _remove_built_in_screen_mesh(node: Node) -> void:
 		_remove_built_in_screen_mesh(child)
 
 
+func _create_screen_hud() -> void:
+	if _viewport == null:
+		return
+	_screen_hud = CanvasLayer.new()
+	_screen_hud.layer = 49
+	_screen_hud.visible = false
+	add_child(_screen_hud)
+	var backdrop: ColorRect = ColorRect.new()
+	backdrop.color = Color(0.008, 0.012, 0.018, 0.98)
+	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_screen_hud.add_child(backdrop)
+	_screen_view = TextureRect.new()
+	_screen_view.texture = _viewport.get_texture()
+	_screen_view.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_screen_view.stretch_mode = TextureRect.STRETCH_SCALE
+	_screen_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_screen_hud.add_child(_screen_view)
+	_fit_screen_view()
+	get_viewport().size_changed.connect(_fit_screen_view)
+
+
+func _fit_screen_view() -> void:
+	if _screen_view == null or _viewport == null:
+		return
+	var window_size: Vector2 = get_viewport().get_visible_rect().size
+	var available: Vector2 = (window_size - Vector2(32, 80)).max(Vector2.ONE)
+	var aspect: float = float(_viewport.size.x) / float(_viewport.size.y)
+	var height: float = minf(available.y, available.x / aspect)
+	_screen_view.size = Vector2(height * aspect, height)
+	_screen_view.position = Vector2((window_size.x - _screen_view.size.x) * 0.5, 16.0 + (available.y - height) * 0.5)
+
+
 func _create_hint_hud() -> void:
 	_hint_hud = CanvasLayer.new()
 	_hint_hud.layer = 50
@@ -102,10 +134,10 @@ func _create_hint_hud() -> void:
 	exit_btn.pressed.connect(leave_computer)
 	box.add_child(exit_btn)
 	
-	var zoom_label: Label = Label.new()
-	zoom_label.text = "·   [Hold Right Click] Lean In"
-	zoom_label.modulate = Color(0.8, 0.85, 0.9, 0.8)
-	box.add_child(zoom_label)
+	var view_label: Label = Label.new()
+	view_label.text = "·   STATION OS"
+	view_label.modulate = Color(0.8, 0.85, 0.9, 0.8)
+	box.add_child(view_label)
 
 
 func _can_interact(_peer_id: int) -> bool:
@@ -145,9 +177,11 @@ func _start_using(peer_id: int) -> void:
 	_player.set_input_enabled(false)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_is_active = true
-	_is_zoomed = false
 	
-	_tween_camera_to_view(seat_distance)
+	_tween_camera_to_view(SEAT_DISTANCE)
+	if _screen_hud != null:
+		_fit_screen_view()
+		_screen_hud.visible = true
 	if _hint_hud != null:
 		_hint_hud.visible = true
 	
@@ -160,8 +194,9 @@ func leave_computer() -> void:
 	if not _is_active:
 		return
 	_is_active = false
-	_is_zoomed = false
 	
+	if _screen_hud != null:
+		_screen_hud.visible = false
 	if _hint_hud != null:
 		_hint_hud.visible = false
 	
@@ -219,22 +254,8 @@ func _input(event: InputEvent) -> void:
 	if not _is_active:
 		return
 	
-	if event.is_action_pressed(&"ui_cancel"):
-		leave_computer()
-		get_viewport().set_input_as_handled()
-		return
-	
-	if event is InputEventMouseButton:
-		var mb: InputEventMouseButton = event as InputEventMouseButton
-		if mb.button_index == MOUSE_BUTTON_RIGHT:
-			_is_zoomed = mb.pressed
-			_tween_camera_to_view(zoom_distance if _is_zoomed else seat_distance)
-			get_viewport().set_input_as_handled()
-			return
-	
 	if event is InputEventMouse:
-		var mouse_pos: Vector2 = get_viewport().get_mouse_position()
-		var vp_event: InputEvent = _project_mouse_event(event, mouse_pos)
+		var vp_event: InputEvent = _project_mouse_event(event, (event as InputEventMouse).position)
 		if vp_event != null and _viewport != null:
 			_viewport.push_input(vp_event)
 			get_viewport().set_input_as_handled()
@@ -248,40 +269,18 @@ func _input(event: InputEvent) -> void:
 
 
 func _project_mouse_event(event: InputEvent, mouse_pos: Vector2) -> InputEvent:
-	if _camera == null or _screen_mesh == null or _viewport == null:
+	if _screen_view == null or _viewport == null:
 		return null
-	
-	var from: Vector3 = _camera.project_ray_origin(mouse_pos)
-	var dir: Vector3 = _camera.project_ray_normal(mouse_pos)
-	var screen_xform: Transform3D = _screen_mesh.global_transform
-	var screen_normal: Vector3 = screen_xform.basis.z.normalized()
-	
-	var d: float = screen_normal.dot(screen_xform.origin)
-	var plane: Plane = Plane(screen_normal, d)
-	var hit: Variant = plane.intersects_ray(from, dir)
-	if not (hit is Vector3):
+	var rect: Rect2 = _screen_view.get_global_rect()
+	if rect.size.x <= 0.0 or rect.size.y <= 0.0 or not rect.has_point(mouse_pos):
 		return null
-	
-	var hit_pos: Vector3 = hit
-	var local: Vector3 = screen_xform.affine_inverse() * hit_pos
-	
-	var w: float = SCREEN_SIZE.x
-	var h: float = SCREEN_SIZE.y
-	var u: float = (local.x + w * 0.5) / w
-	var v: float = (h * 0.5 - local.y) / h
-	
-	# Only forward clicks if inside the screen bounds
-	if event is InputEventMouseButton:
-		if u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0:
-			return null
-	
-	u = clampf(u, 0.0, 1.0)
-	v = clampf(v, 0.0, 1.0)
-	
-	var vp_pos: Vector2 = Vector2(u * float(_viewport.size.x), v * float(_viewport.size.y))
+	var ratio: Vector2 = Vector2(float(_viewport.size.x) / rect.size.x, float(_viewport.size.y) / rect.size.y)
+	var vp_pos: Vector2 = (mouse_pos - rect.position) * ratio
 	var cloned: InputEvent = event.duplicate()
 	if cloned is InputEventMouse:
 		var me: InputEventMouse = cloned as InputEventMouse
 		me.position = vp_pos
 		me.global_position = vp_pos
+		if me is InputEventMouseMotion:
+			(me as InputEventMouseMotion).relative *= ratio
 	return cloned

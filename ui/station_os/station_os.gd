@@ -20,6 +20,7 @@ signal closed()
 const GROUP: StringName = &"station_os"
 const WALLPAPER: Shader = preload("res://ui/shaders/win11_wallpaper.gdshader")
 const SCREEN_FX: Shader = preload("res://ui/shaders/screen_fx.gdshader")
+const READABILITY := preload("res://ui/kit/ui_readability.gd")
 const GREEN: Color = Color(0.42, 0.9, 0.55)
 const AMBER: Color = Color(1.0, 0.74, 0.3)
 const RED: Color = Color(1.0, 0.4, 0.36)
@@ -101,6 +102,7 @@ func _ready() -> void:
 	visible = true
 	theme = GameSettings.ui_theme
 	_build()
+	READABILITY.enlarge_text(self)
 	_inbox.append("[b]County HQ — Welcome to Station 4[/b]\nThe station is paid every %d minutes of shift time. Every call you handle pays $%d, and every call you classify [color=#7dff9a]correctly[/color] pays $%d more. Wrong verdicts (-$%d) and missed calls (-$%d) are deducted. Mission payouts are added to the next payday.\nSpend the money in [b]StationMart[/b]: more computers, security, weapons for the armory, armor, vehicles for the garage and comfort items that raise morale (and pay)." % [
 		roundi(Economy.PAY_PERIOD_SEC / 60.0), Economy.HANDLED_PAY, Economy.CORRECT_PAY, Economy.WRONG_PENALTY, Economy.MISSED_PENALTY])
 	Economy.money_changed.connect(func(_m: int) -> void: _refresh_apps())
@@ -126,6 +128,7 @@ func open() -> void:
 		_closed_player_input = player
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_refresh_apps()
+	READABILITY.enlarge_text(self)
 	if is_inside_tree() and DisplayServer.get_name() != "headless":
 		modulate.a = 0.0
 		scale = Vector2(1.02, 1.02)
@@ -475,7 +478,7 @@ func _build_shop() -> Control:
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	main.add_child(scroll)
 	_shop_grid = GridContainer.new()
-	_shop_grid.columns = 3
+	_shop_grid.columns = 2 if get_viewport().get_visible_rect().size.x < 1280 else 3
 	_shop_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_shop_grid.add_theme_constant_override(&"h_separation", 12)
 	_shop_grid.add_theme_constant_override(&"v_separation", 12)
@@ -975,6 +978,7 @@ func _toast(icon_name: StringName, title: String, body: String, tint: Color) -> 
 	body_label.custom_minimum_size = Vector2(280, 0)
 	texts.add_child(body_label)
 	_toasts.add_child(toast)
+	READABILITY.enlarge_text(toast)
 	toast.modulate.a = 0.0
 	var tween: Tween = toast.create_tween()
 	tween.tween_property(toast, "modulate:a", 1.0, 0.2)
@@ -998,6 +1002,7 @@ func _refresh_apps() -> void:
 	_refresh_desktop_icons()
 	_refresh_taskbar()
 	_refresh_start_recent()
+	READABILITY.enlarge_text(self)
 
 
 func _refresh_taskbar() -> void:

@@ -640,6 +640,20 @@
     "ui/station_os/station_os.gd",
     "docs/data/progress/ali.json"
    ]
+  },
+  {
+   "date": "2026-10-27",
+   "tasks": ["P2-18"],
+   "summary": "تصحيح حجم الكمبيوتر: إعادة مودل CAD وشاشته الثلاثية الأبعاد والتصادم إلى المقاس الأصلي. عند الاستخدام صار Station OS يظهر كواجهة كبيرة مستقلة مع إدخال ماوس وكيبورد مطابق، وتكبير خطوط نظام الكمبيوتر وCAD 35% لتحسين القراءة. تحقق بصري بلقطتي سطح المكتب وCAD داخل Godot، ونجاح 8 اختبارات مرتبطة.",
+   "files": [
+    "scenes/dispatch/dispatch_computer.gd",
+    "scenes/dispatch/dispatch_setup.tscn",
+    "ui/kit/ui_readability.gd",
+    "ui/station_os/station_os.gd",
+    "ui/dispatch/dispatch_terminal.gd",
+    "tests/test_computer_view.gd",
+    "docs/data/progress/ali.json"
+   ]
   }
  ]
 }

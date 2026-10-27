@@ -619,6 +619,16 @@
     "tests/test_phone_network.gd",
     "docs/data/progress/ali.json"
    ]
+  },
+  {
+   "date": "2026-10-27",
+   "tasks": ["P2-18"],
+   "summary": "تكبير شاشة كمبيوتر CAD الرئيسية 30% مع تكبير جسم المونيتر وتعديل مسافة الكاميرا لتظهر الشاشة كاملة. نجحت اختبارات مشهد Station 4 الثلاثة.",
+   "files": [
+    "scenes/dispatch/dispatch_setup.tscn",
+    "scenes/dispatch/dispatch_computer.gd",
+    "docs/data/progress/ali.json"
+   ]
   }
  ]
 }

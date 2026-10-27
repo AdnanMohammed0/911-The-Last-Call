@@ -14,6 +14,8 @@ const TRANSITION_TIME: float = 0.30
 
 @export var screen_mesh_path: NodePath = NodePath("ScreenDisplay")
 @export var viewport_path: NodePath = NodePath("../TerminalLayer")
+@export var seat_distance: float = SEAT_DISTANCE
+@export var zoom_distance: float = ZOOM_DISTANCE
 
 var _screen_mesh: MeshInstance3D
 var _viewport: SubViewport
@@ -145,7 +147,7 @@ func _start_using(peer_id: int) -> void:
 	_is_active = true
 	_is_zoomed = false
 	
-	_tween_camera_to_view(SEAT_DISTANCE)
+	_tween_camera_to_view(seat_distance)
 	if _hint_hud != null:
 		_hint_hud.visible = true
 	
@@ -226,7 +228,7 @@ func _input(event: InputEvent) -> void:
 		var mb: InputEventMouseButton = event as InputEventMouseButton
 		if mb.button_index == MOUSE_BUTTON_RIGHT:
 			_is_zoomed = mb.pressed
-			_tween_camera_to_view(ZOOM_DISTANCE if _is_zoomed else SEAT_DISTANCE)
+			_tween_camera_to_view(zoom_distance if _is_zoomed else seat_distance)
 			get_viewport().set_input_as_handled()
 			return
 	

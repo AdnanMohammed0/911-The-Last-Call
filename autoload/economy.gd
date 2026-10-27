@@ -11,6 +11,8 @@ extends Node
 
 const PATH: String = "user://station_economy.cfg"
 const START_MONEY: int = 2500
+## Temporary development balance for testing StationMart with an existing save.
+const DEBUG_TEST_BALANCE: int = 1_000_000
 const PAY_PERIOD_SEC: float = 240.0
 const BASE_PAY: int = 200
 const HANDLED_PAY: int = 50
@@ -341,6 +343,8 @@ func load_profile() -> void:
 	if state.is_empty():
 		state = {"money": START_MONEY}
 	_apply_state(state)
+	if persist and OS.is_debug_build() and multiplayer.is_server():
+		money = maxi(money, DEBUG_TEST_BALANCE)
 	_emit_all()
 
 

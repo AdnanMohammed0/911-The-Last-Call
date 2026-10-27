@@ -21,12 +21,14 @@ var _camera: Camera3D = null
 var _orig_cam_xform: Transform3D
 var _cam_tween: Tween = null
 var _is_active: bool = false
+var _world_3d_was_disabled: bool = false
 var _hint_hud: CanvasLayer = null
 var _screen_hud: CanvasLayer = null
 var _screen_view: TextureRect = null
 
 
 func _ready() -> void:
+	add_to_group(&"dispatch_computers")
 	collision_layer = LAYER
 	collision_mask = 0
 	monitoring = false
@@ -37,9 +39,15 @@ func _ready() -> void:
 	_setup_screen_material()
 	_create_screen_hud()
 	_create_hint_hud()
+	_refresh_idle_screen()
 	
 	var desktop: StationOS = StationOS.find(get_tree())
 	if desktop != null:
+		_bind_desktop(desktop)
+
+
+func _bind_desktop(desktop: StationOS) -> void:
+	if not desktop.closed.is_connected(_on_desktop_closed):
 		desktop.closed.connect(_on_desktop_closed)
 
 
@@ -58,7 +66,9 @@ func _setup_screen_material() -> void:
 	if model_node != null:
 		_remove_built_in_screen_mesh(model_node)
 	
-	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	# Keep the world-space monitor image, but render the desktop only while in use.
+	if not _shared_viewport_in_use():
+		_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	
 	var mat: StandardMaterial3D = StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -66,6 +76,23 @@ func _setup_screen_material() -> void:
 	mat.cull_mode = BaseMaterial3D.CULL_BACK
 	mat.render_priority = 2
 	_screen_mesh.material_override = mat
+
+
+func _refresh_idle_screen() -> void:
+	if _viewport == null or _shared_viewport_in_use():
+		return
+	_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	await RenderingServer.frame_post_draw
+	if is_instance_valid(_viewport) and not _shared_viewport_in_use():
+		_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+
+
+func _shared_viewport_in_use() -> bool:
+	for node: Node in get_tree().get_nodes_in_group(&"dispatch_computers"):
+		var computer: DispatchComputer = node as DispatchComputer
+		if computer != null and computer._is_active and computer._viewport == _viewport:
+			return true
+	return false
 
 
 func _remove_built_in_screen_mesh(node: Node) -> void:
@@ -177,6 +204,10 @@ func _start_using(peer_id: int) -> void:
 	_player.set_input_enabled(false)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_is_active = true
+	_world_3d_was_disabled = get_viewport().disable_3d
+	get_viewport().disable_3d = true
+	if _viewport != null:
+		_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	
 	_tween_camera_to_view(SEAT_DISTANCE)
 	if _screen_hud != null:
@@ -187,6 +218,7 @@ func _start_using(peer_id: int) -> void:
 	
 	var desktop: StationOS = StationOS.find(get_tree())
 	if desktop != null:
+		_bind_desktop(desktop)
 		desktop.open()
 
 
@@ -194,6 +226,7 @@ func leave_computer() -> void:
 	if not _is_active:
 		return
 	_is_active = false
+	get_viewport().disable_3d = _world_3d_was_disabled
 	
 	if _screen_hud != null:
 		_screen_hud.visible = false
@@ -211,8 +244,12 @@ func leave_computer() -> void:
 		_finish_leave()
 	
 	var desktop: StationOS = StationOS.find(get_tree())
+	var terminal: DispatchTerminal = DispatchTerminal.find(get_tree())
+	if terminal != null and terminal.visible:
+		terminal.close()
 	if desktop != null and desktop.is_open():
 		desktop.close()
+	_refresh_idle_screen()
 
 
 func _finish_leave() -> void:
@@ -252,6 +289,10 @@ func _get_camera_view_transform(distance: float) -> Transform3D:
 
 func _input(event: InputEvent) -> void:
 	if not _is_active:
+		return
+	if event.is_action_pressed(&"ui_cancel"):
+		leave_computer()
+		get_viewport().set_input_as_handled()
 		return
 	
 	if event is InputEventMouse:

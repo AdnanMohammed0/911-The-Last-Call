@@ -745,7 +745,7 @@ func _break_room() -> void:
 	_board(room, "SafetyNotice", "END OF SHIFT / CHECKLIST", Vector3(12.8, 2.85, -10.79), 180, 2.1)
 	_sign(room, "RoomPlate", "STAFF / BREAK ROOM", Vector3(15.9, 3.55, -14.8), -90, 1.8)
 	_light(room, "WarmFluorescent", Vector3(4, 4.48, -14), true)
-	_light(room, "TableLight", Vector3(10, 4.48, -14.7), true, true)
+	_light(room, "TableLight", Vector3(10, 4.48, -14.7), true, false)
 	_ceiling_fan(room, "BreakCeilingFan", Vector3(7.0, 0, -14.7))
 	# Kitchenette along the north wall, under the staff notices.
 	var kitchen: Node3D = _cabinet(room, "Kitchenette", Vector3(9.8, FLOOR, -16.93), 4.0)
@@ -798,7 +798,7 @@ func _operations() -> void:
 	_model(room, FILES, "CaseCabinetA", Vector3(37.65, FLOOR, -21.5), -90, 1.8)
 	_model(room, FILES, "CaseCabinetB", Vector3(37.65, FLOOR, -20.3), -90, 1.8)
 	_sign(room, "BriefingSign", "OPERATIONS / BRIEFING", Vector3(28.7, 3.8, -23.88), 0, 2.3)
-	_light(room, "TableFluorescentA", Vector3(29.3, 4.48, -19.7), false, true)
+	_light(room, "TableFluorescentA", Vector3(29.3, 4.48, -19.7), false, false)
 	_light(room, "TableFluorescentB", Vector3(33, 4.48, -19.7))
 	_light(room, "MedicalCornerLight", Vector3(35.7, 4.48, -14.8))
 	# Investigators' desks against the evidence wall, under the case board.
@@ -835,7 +835,7 @@ func _evidence() -> void:
 	_box(table, "EvidenceSeal", Vector3(-0.05, 0.985, -0.1), Vector3(0.045, 0.008, 0.4), "red")
 	_sign(room, "RestrictedSign", "EVIDENCE / AUTHORIZED STAFF ONLY", Vector3(30.4, 3.55, -12.28), 0, 3.4)
 	_light(room, "ArchiveLightA", Vector3(26, 4.48, -9.4))
-	_light(room, "ArchiveLightB", Vector3(33, 4.48, -9.4), false, true)
+	_light(room, "ArchiveLightB", Vector3(33, 4.48, -9.4), false, false)
 	_camera(room, "EvidenceCamera", Vector3(38.1, 4.15, -6.75), Vector3(30, 0.85, -9.5))
 
 
@@ -901,7 +901,7 @@ func _staff_support() -> void:
 	_model(room, PLANT, "StaffPlant", Vector3(11.4, FLOOR, -0.9), 15, 1.45)
 	_model(room, BIN, "StaffBin", Vector3(10.8, FLOOR, -2.2), 0, 0.55)
 	_model(room, FILES, "PersonnelCabinet", Vector3(11.6, FLOOR, -3.8), -90, 1.75)
-	_light(room, "LockerLight", Vector3(3.5, 4.48, -6), false, true)
+	_light(room, "LockerLight", Vector3(3.5, 4.48, -6), false, false)
 	_light(room, "DutyLight", Vector3(9, 4.48, -4.5), true)
 	_clock(room, "LockerRoomClock", Vector3(6.0, 3.2, -0.3), 180)
 	_fire_point(room, "LockerFirePoint", Vector3(0.28, FLOOR, -1.6), 90)

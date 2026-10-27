@@ -5,6 +5,8 @@ const ARMORY_PATH: String = "res://scenes/loadout/armory.tscn"
 
 
 func test_operations_room_scene_loads_and_instantiates() -> void:
+	Economy.persist = false
+	Economy.reset()
 	var packed := load(OPS_ROOM_PATH) as PackedScene
 	assert_not_null(packed, "Operations room scene file should load")
 	if packed == null:

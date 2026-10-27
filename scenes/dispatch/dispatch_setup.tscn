@@ -95,7 +95,7 @@ modulate = Color(0.7, 0.75, 0.8, 1)
 disable_3d = true
 gui_embed_subwindows = true
 handle_input_locally = false
-render_target_update_mode = 3
+render_target_update_mode = 1
 size = Vector2i(1152, 864)
 
 [node name="StationOS" type="Control" parent="TerminalLayer"]

@@ -663,6 +663,23 @@
     "autoload/economy.gd",
     "docs/data/progress/ali.json"
    ]
+  },
+  {
+   "date": "2026-10-27",
+   "tasks": [
+    "P2-18"
+   ],
+   "summary": "إصلاح الخروج من كمبيوتر Station OS بزر Esc أو Log off، وإغلاق CAD عند تركه. تحسين سلاسة Station 4 بإيقاف رسم سطح المكتب أثناء عدم الاستخدام وإيقاف رسم العالم ثلاثي الأبعاد خلف واجهة الكمبيوتر أثناء استخدامه، وتعطيل ظلال المصابيح المحلية المكلفة مع إبقاء ظل الشمس. قياس ست مناطق على Godot 4.7.2 بدقة 1080p، ونجاح اختبارات الكمبيوتر والمحطة والتأثيث.",
+   "files": [
+    "scenes/dispatch/dispatch_computer.gd",
+    "scenes/dispatch/dispatch_setup.tscn",
+    "scenes/dispatch/operations_room.tscn",
+    "scenes/dispatch/station/station_interior.tscn",
+    "tools/level_kit/furnish_station.gd",
+    "tests/test_computer_view.gd",
+    "tests/test_station4_greybox.gd",
+    "docs/data/progress/ali.json"
+   ]
   }
  ]
 }

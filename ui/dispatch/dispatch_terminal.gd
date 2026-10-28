@@ -212,6 +212,9 @@ func _open_vsa() -> void:
 		return
 	if CallDirector.active_call.stress_profile == null:
 		return
+	var my_class: StringName = NetManager.get_class_id(multiplayer.get_unique_id())
+	if my_class != &"profiler" and not (not NetManager.is_online() and NetManager.roster.is_empty()):
+		return
 	if _vsa_minigame == null:
 		_vsa_minigame = VsaMiniGame.new()
 		_vsa_minigame.tag_requested.connect(_request_vsa_tag)
@@ -352,7 +355,19 @@ func _refresh() -> void:
 	var my_class: StringName = NetManager.get_class_id(me)
 	var is_tech: bool = my_class == &"tech"
 	_trace_button.visible = is_tech and state == CallDirector.CallState.CONNECTED and CallDirector.has_handset(me)
-	_vsa_button.visible = my_class == &"profiler" and state == CallDirector.CallState.CONNECTED and call != null and call.stress_profile != null
+	var vsa_role_available: bool = my_class == &"profiler" or (not NetManager.is_online() and NetManager.roster.is_empty())
+	var vsa_call_available: bool = state == CallDirector.CallState.CONNECTED and call != null and call.stress_profile != null
+	_vsa_button.visible = true
+	_vsa_button.disabled = not vsa_role_available or not vsa_call_available
+	if not vsa_role_available:
+		_vsa_button.text = "VSA · Profiler only"
+		_vsa_button.tooltip_text = "Select the Profiler role in the lobby to analyze calls."
+	elif not vsa_call_available:
+		_vsa_button.text = "VSA · Await call"
+		_vsa_button.tooltip_text = "Answer a call with a voice profile to use the analyzer."
+	else:
+		_vsa_button.text = "Analyze voice"
+		_vsa_button.tooltip_text = "Open the Voice Stress Analyzer."
 	
 	_rebuild_choices(state == CallDirector.CallState.CONNECTED and CallDirector.has_handset(me))
 
@@ -570,7 +585,6 @@ func _build() -> void:
 	_trace_button.visible = false
 	controls.add_child(_trace_button)
 	_vsa_button = _button("Analyze voice", _open_vsa, &"target", KitButton.Variant.PRIMARY, Color(0.34, 0.85, 0.92))
-	_vsa_button.visible = false
 	controls.add_child(_vsa_button)
 	for child: Node in controls.get_children():
 		(child as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL

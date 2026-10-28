@@ -81,6 +81,30 @@ func test_profiler_opens_vsa_from_cad() -> void:
 	terminal._vsa_minigame.close()
 
 
+func test_vsa_button_explains_requirements_and_supports_offline_station() -> void:
+	var call: CallData = CallData.new()
+	call.stress_profile = _profile()
+	CallDirector.active_call = call
+	CallDirector.current_state = CallDirector.CallState.IDLE
+	var terminal: DispatchTerminal = DispatchTerminal.new()
+	add_child_autofree(terminal)
+	assert_true(terminal._vsa_button.visible)
+	assert_true(terminal._vsa_button.disabled)
+	assert_true(terminal._vsa_button.text.contains("Await call"))
+	CallDirector.current_state = CallDirector.CallState.CONNECTED
+	NetManager.roster[1]["class_id"] = &"tech"
+	terminal._refresh()
+	assert_true(terminal._vsa_button.visible)
+	assert_true(terminal._vsa_button.disabled)
+	assert_true(terminal._vsa_button.text.contains("Profiler only"))
+	NetManager.roster.clear()
+	terminal._refresh()
+	assert_false(terminal._vsa_button.disabled)
+	terminal._open_vsa()
+	assert_true(terminal._vsa_minigame.visible)
+	terminal._vsa_minigame.close()
+
+
 func test_host_accepts_profiler_tag_once_and_rejects_other_role() -> void:
 	var director: DirectorScript = DirectorScript.new()
 	add_child_autofree(director)
@@ -109,3 +133,18 @@ func test_host_accepts_profiler_tag_once_and_rejects_other_role() -> void:
 	NetManager.roster[1]["class_id"] = &"tech"
 	director.request_vsa_tag(12.0, &"loop")
 	assert_eq(results.size(), 3)
+
+
+func test_offline_station_can_tag_without_lobby_roster() -> void:
+	NetManager.roster.clear()
+	var director: DirectorScript = DirectorScript.new()
+	add_child_autofree(director)
+	var call: CallData = CallData.new()
+	call.stress_profile = _profile()
+	director.active_call = call
+	director.current_state = director.CallState.CONNECTED
+	director.vsa.set_profile(call.stress_profile, 100.0)
+	director.dialogue_runner.max_patience = 100.0
+	director.dialogue_runner.patience_remaining = 50.0
+	director.request_vsa_tag(12.0, &"loop")
+	assert_true(director.dialogue_runner.revealed_evidence.has(&"evidence_loop_detected"))

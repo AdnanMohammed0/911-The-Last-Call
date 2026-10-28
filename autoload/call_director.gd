@@ -676,7 +676,7 @@ func request_vsa_tag(playback_time: float, tag_type: StringName) -> void:
 		sender = 1
 	if current_state != CallState.CONNECTED or active_call == null or active_call.stress_profile == null:
 		return
-	if NetManager.get_class_id(sender) != &"profiler":
+	if NetManager.get_class_id(sender) != &"profiler" and not (not NetManager.is_online() and NetManager.roster.is_empty()):
 		return
 	if is_nan(playback_time) or is_inf(playback_time) or playback_time < 0.0 or playback_time > vsa.total_call_duration:
 		return

@@ -697,6 +697,17 @@
     "tests/test_vsa_ui.gd",
     "docs/data/progress/ali.json"
    ]
+  },
+  {
+   "date": "2026-10-28",
+   "tasks": ["P2-09"],
+   "summary": "تحسين ظهور VSA بعد ملاحظة غياب زر Analyze voice: صار الزر ظاهراً دائماً مع سبب عدم جاهزيته، وسمحنا بتجربة التحليل في Station 4 Offline بعد الرد على مكالمة مع إبقاء قصره على Profiler في اللعب الشبكي. نجحت 5 اختبارات VSA و3 اختبارات واجهة الهاتف.",
+   "files": [
+    "ui/dispatch/dispatch_terminal.gd",
+    "autoload/call_director.gd",
+    "tests/test_vsa_ui.gd",
+    "docs/data/progress/ali.json"
+   ]
   }
  ]
 }

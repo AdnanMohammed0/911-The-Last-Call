@@ -17,12 +17,13 @@ const RESPONSE_VERDICTS: Array[StringName] = [&"genuine", &"ambush"]
 const STATION_SCENE: String = "res://scenes/dispatch/operations_room.tscn"
 const WAREHOUSE: String = "res://scenes/field/missions/warehouse_raid.tscn"
 const SUBURB: String = "res://scenes/field/missions/aspen_drive.tscn"
+const FARMHOUSE: String = "res://scenes/field/missions/farmhouse.tscn"
 const DEFAULT_MISSION: String = WAREHOUSE
-const MISSION_NAMES: Dictionary[String, String] = {WAREHOUSE: "Harbor Warehouse", SUBURB: "Aspen Drive"}
+const MISSION_NAMES: Dictionary[String, String] = {WAREHOUSE: "Harbor Warehouse", SUBURB: "Aspen Drive", FARMHOUSE: "14 Birch Lane"}
 ## Which map each call sends the team to (unlisted calls use DEFAULT_MISSION).
 const CALL_MISSIONS: Dictionary[StringName, String] = {
 	&"call_willow_court": SUBURB, &"call_lost_child": SUBURB, &"call_domestic": SUBURB, &"call_overdose": SUBURB,
-	&"call_home_invasion": SUBURB, &"call_school_threat": SUBURB, &"call_closet_monster": SUBURB,
+	&"call_home_invasion": SUBURB, &"call_school_threat": SUBURB, &"call_closet_monster": FARMHOUSE,
 }
 const KIND_DIFFICULTY: Dictionary[StringName, float] = {&"raid": 1.25, &"ambush": 1.5, &"arrest": 1.0, &"empty": 1.0}
 

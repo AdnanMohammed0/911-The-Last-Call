@@ -12,4 +12,6 @@ func _ready() -> void:
 	print("BUILD warehouse_raid: ", error_string(warehouse))
 	var suburb: Error = BuildAspenDrive.build()
 	print("BUILD aspen_drive: ", error_string(suburb))
-	get_tree().quit(0 if station == OK and warehouse == OK and suburb == OK else 1)
+	var farmhouse: Error = BuildFarmhouse.build()
+	print("BUILD farmhouse: ", error_string(farmhouse))
+	get_tree().quit(0 if station == OK and warehouse == OK and suburb == OK and farmhouse == OK else 1)

@@ -51,6 +51,11 @@
    "status": "done",
    "note": "بناء Case Board داخل CAD مع القضايا السابقة ودبابيس الأدلة عبر المكالمات. يستطيع Medic ربط قضية سابقة بالمكالمة الحالية مرة واحدة عبر Pattern Link، مع تحقق الخادم ومزامنة الدليل. نجاح 25 اختبار GUT مرتبط وفحص Godot بلا أخطاء ترجمة.",
    "updated_at": "2026-10-28"
+  },
+  "P3-16": {
+   "status": "done",
+   "note": "خريطة Farmhouse مستقلة لقضية Scratching Behind the Wall على 14 Birch Lane: أرض ريفية وطريق وصول، بيت مؤثث بغرفة جلوس ومطبخ وغرفة نوم وخزانة الرهينة، حظيرة وسياج ومولد، باب أمامي مقفل وخلفي لدخول هادئ، نقاط لاعبين وأعداء واستخراج. ربط المكالمة بالخريطة وإصلاح تفعيل شبكة الملاحة بعد الخبز؛ اختُبرت مسارات الشارع والباب الخلفي والداخل وموقع الرهينة، ونجحت 35 تجربة GUT مرتبطة.",
+   "updated_at": "2026-10-28"
   }
  },
  "log": [
@@ -752,6 +757,22 @@
     "ui/dispatch/tools/case_board.gd",
     "tests/test_cctv_console.gd",
     "tests/test_dispatch_archive.gd",
+    "docs/data/progress/ali.json"
+   ]
+  },
+  {
+   "date": "2026-10-28",
+   "tasks": [
+    "P3-16"
+   ],
+   "summary": "بناء خريطة Farmhouse لقضية Closet Monster وربطها بتدفق المهمات، مع مدخل أمامي وخلفي وغرف وخزانة رهينة وحظيرة وأعداء واستخراج، وتصحيح مزامنة NavigationRegion بعد خبز الشبكة. نجاح 35 اختباراً مرتبطاً.",
+   "files": [
+    "tools/level_kit/build_farmhouse.gd",
+    "tools/level_kit/build_levels.gd",
+    "scenes/field/missions/farmhouse.tscn",
+    "autoload/mission_director.gd",
+    "core/ai/mission_navigation.gd",
+    "tests/test_farmhouse.gd",
     "docs/data/progress/ali.json"
    ]
   }

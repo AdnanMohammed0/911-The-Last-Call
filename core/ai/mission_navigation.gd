@@ -12,7 +12,7 @@ signal navigation_ready(cover_points: int)
 @export var auto_generate_cover: bool = true
 ## Parse nodes in this group instead of this region's children (lets you drop it into existing levels).
 @export var source_group: StringName = &""
-@export var agent_radius: float = 0.4
+@export var agent_radius: float = 0.5
 @export var cover_spacing: float = 1.6
 ## Also parse visual meshes (only needed for geometry without collision).
 @export var parse_render_meshes: bool = false
@@ -25,8 +25,8 @@ func _ready() -> void:
 		navigation_mesh = NavigationMesh.new()
 	var mesh: NavigationMesh = navigation_mesh
 	mesh.agent_radius = agent_radius
-	mesh.agent_height = 1.8
-	mesh.agent_max_climb = 0.35
+	mesh.agent_height = 2.0
+	mesh.agent_max_climb = 0.25
 	mesh.cell_size = 0.25
 	mesh.cell_height = 0.25
 	# Collision shapes are enough for walkability and avoid slow runtime mesh parsing.
@@ -43,6 +43,9 @@ func bake_now() -> void:
 	bake_navigation_mesh(false)
 	await get_tree().physics_frame  # let the navigation map sync the new region
 	await get_tree().physics_frame
+	# Baking mutates the resource; refresh the region RID before agents query its map.
+	NavigationServer3D.region_set_navigation_mesh(get_rid(), navigation_mesh)
+	NavigationServer3D.map_force_update(get_navigation_map())
 	var generated: int = 0
 	if auto_generate_cover and get_tree().get_nodes_in_group(CoverPoint.GROUP).is_empty():
 		generated = CoverGenerator.generate(self, cover_spacing)

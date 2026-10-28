@@ -9,6 +9,8 @@ const DEFAULT_RING_TIMEOUT: float = 20.0
 const DEFAULT_TIME_SCALE: float = 6.0 # 1 real min = 6 in-game min (1 in-game min = 10 real sec)
 const PHONE_BUS_NAME: StringName = &"Phone"
 
+signal vsa_tag_result(result: Dictionary)
+
 # --- State ---
 var shift_clock_minutes: int = 0
 var shift_clock_accum_seconds: float = 0.0
@@ -669,28 +671,40 @@ func _sync_dialogue_finished(_reason: StringName) -> void:
 func request_vsa_tag(playback_time: float, tag_type: StringName) -> void:
 	if not _is_server():
 		return
-	if current_state != CallState.CONNECTED:
+	var sender: int = multiplayer.get_remote_sender_id()
+	if sender <= 0:
+		sender = 1
+	if current_state != CallState.CONNECTED or active_call == null or active_call.stress_profile == null:
+		return
+	if NetManager.get_class_id(sender) != &"profiler":
+		return
+	if is_nan(playback_time) or is_inf(playback_time) or playback_time < 0.0 or playback_time > vsa.total_call_duration:
+		return
+	if tag_type not in [&"loop", &"tremor_flat", &"tremor_high", &"emf_hum", &"background_isolate"]:
 		return
 	
 	var res: Dictionary = vsa.tag_evidence(playback_time, tag_type)
+	@warning_ignore("unsafe_call_argument")
+	var ev_key: StringName = StringName(res.get("evidence_key", &""))
+	if ev_key != &"" and ev_key in dialogue_runner.revealed_evidence:
+		res["success"] = false
+		res["patience_delta"] = 0.0
+		res["reason"] = "Evidence already tagged for this call"
+		res["evidence_key"] = &""
 	@warning_ignore("unsafe_cast")
 	var delta_patience: float = (res.get("patience_delta", 0.0) as float)
 	if delta_patience != 0.0:
 		dialogue_runner.modify_patience(delta_patience)
 	
-	@warning_ignore("unsafe_call_argument")
-	var ev_key: StringName = StringName(res.get("evidence_key", &""))
-	if ev_key != &"":
+	if res.get("success", false) == true and ev_key != &"":
 		dialogue_runner.add_revealed_evidence(ev_key)
 	
-	var sender: int = multiplayer.get_remote_sender_id()
-	_sync_vsa_tag_result.rpc_id(sender if sender > 0 else 1, res)
+	_sync_vsa_tag_result.rpc_id(sender, res)
 
 
 @rpc("authority", "call_local", "reliable")
-func _sync_vsa_tag_result(_result: Dictionary) -> void:
-	# Local client receives notification of tag result
-	pass
+func _sync_vsa_tag_result(result: Dictionary) -> void:
+	vsa_tag_result.emit(result)
 
 
 func get_vsa() -> VoiceStressAnalyzer:

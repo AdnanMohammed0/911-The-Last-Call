@@ -1,6 +1,6 @@
 {
  "member": "ali",
- "updated_at": "2026-10-27",
+ "updated_at": "2026-10-28",
  "tasks": {
   "P1-14": {
    "status": "done",
@@ -26,6 +26,11 @@
    "status": "done",
    "note": "إكمال واجهة الهاتف والسماعة داخل Dispatch CAD: خيارات رد لحامل السماعة، واقتراحات زملاء مرئية لكل خيار، وأزرار تمرير السماعة، مع خط monospace ومؤثر scanlines. تحقق السيرفر من المرسل وحالة المكالمة والخيار والمستلم قبل الـRPC. نجحت 3 اختبارات واجهة وتحكم و5 اختبارات حوار، واختبار ENet فعلي بلاعبين لمزامنة الاقتراح ونقل السماعة.",
    "updated_at": "2026-10-27"
+  },
+  "P2-09": {
+   "status": "done",
+   "note": "واجهة VSA داخل Dispatch CAD للـProfiler: موجة مبنية من StressProfile، سحب نافذة المسح، قراءة التوتر والنبض والطيف الحي وعزل الخلفية، واختيار Tag مع نتيجة واضحة. الخادم يتحقق من الدور والوقت والنوع ويضيف الأدلة إلى DialogueRunner وEventBus بدون مكافأة مكررة. تحقق بصري بدقة 1152×864 ونجاح 14 اختباراً مرتبطاً.",
+   "updated_at": "2026-10-28"
   },
   "P2-18": {
    "status": "done",
@@ -678,6 +683,18 @@
     "tools/level_kit/furnish_station.gd",
     "tests/test_computer_view.gd",
     "tests/test_station4_greybox.gd",
+    "docs/data/progress/ali.json"
+   ]
+  },
+  {
+   "date": "2026-10-28",
+   "tasks": ["P2-09"],
+   "summary": "إكمال لعبة VSA المصغرة للـProfiler داخل CAD: مسح الموجة وسحب المؤشر، قراءات التوتر والطيف، عزل الخلفية، ووسم الأدلة المرتبط بالخادم وبحوارات القضية. اختبار بصري و14 اختبار GUT ناجح.",
+   "files": [
+    "ui/dispatch/tools/vsa_minigame.gd",
+    "ui/dispatch/dispatch_terminal.gd",
+    "autoload/call_director.gd",
+    "tests/test_vsa_ui.gd",
     "docs/data/progress/ali.json"
    ]
   }

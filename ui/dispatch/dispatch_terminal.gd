@@ -40,6 +40,7 @@ var _handset_button: Button
 var _pass_choices: HBoxContainer
 var _test_button: Button
 var _trace_button: Button
+var _vsa_button: Button
 var _terminal_font: Font
 
 var _call_id: StringName = &""
@@ -48,6 +49,7 @@ var _choice_data: Array = []
 var _choice_pings: Dictionary = {} # peer_id -> choice index for the current node
 var _closed_player_input: Player = null
 var _trace_minigame: TraceMiniGame = null
+var _vsa_minigame: VsaMiniGame = null
 
 
 func _ready() -> void:
@@ -95,6 +97,8 @@ func open() -> void:
 func close() -> void:
 	if not visible:
 		return
+	if _vsa_minigame != null:
+		_vsa_minigame.close()
 	visible = false
 	remove_from_group(MODAL_GROUP)
 	if _closed_player_input != null and is_instance_valid(_closed_player_input):
@@ -203,6 +207,22 @@ func _on_trace_cancelled() -> void:
 	_append("[color=#ffb347]Trace cancelled.[/color]")
 
 
+func _open_vsa() -> void:
+	if CallDirector.current_state != CallDirector.CallState.CONNECTED or CallDirector.active_call == null:
+		return
+	if CallDirector.active_call.stress_profile == null:
+		return
+	if _vsa_minigame == null:
+		_vsa_minigame = VsaMiniGame.new()
+		_vsa_minigame.tag_requested.connect(_request_vsa_tag)
+		add_child(_vsa_minigame)
+	_vsa_minigame.open(CallDirector.get_vsa())
+
+
+func _request_vsa_tag(time_seconds: float, tag_type: StringName) -> void:
+	_call_host(&"request_vsa_tag", [time_seconds, tag_type])
+
+
 # --- EventBus handlers ----------------------------------------------------------------
 
 func _on_call_ring(call_id: StringName, call_data: CallData) -> void:
@@ -230,6 +250,8 @@ func _on_call_missed(_call_id_missed: StringName) -> void:
 
 
 func _on_assessment_started(_id: StringName) -> void:
+	if _vsa_minigame != null:
+		_vsa_minigame.close()
 	_append("[color=#ffb347]— caller disconnected. Classify the call. —[/color]")
 	_choice_data = []
 	_choice_pings.clear()
@@ -330,6 +352,7 @@ func _refresh() -> void:
 	var my_class: StringName = NetManager.get_class_id(me)
 	var is_tech: bool = my_class == &"tech"
 	_trace_button.visible = is_tech and state == CallDirector.CallState.CONNECTED and CallDirector.has_handset(me)
+	_vsa_button.visible = my_class == &"profiler" and state == CallDirector.CallState.CONNECTED and call != null and call.stress_profile != null
 	
 	_rebuild_choices(state == CallDirector.CallState.CONNECTED and CallDirector.has_handset(me))
 
@@ -546,6 +569,9 @@ func _build() -> void:
 	_trace_button = _button("Trace call", _open_trace, &"target", KitButton.Variant.PRIMARY, TECH_BLUE)
 	_trace_button.visible = false
 	controls.add_child(_trace_button)
+	_vsa_button = _button("Analyze voice", _open_vsa, &"target", KitButton.Variant.PRIMARY, Color(0.34, 0.85, 0.92))
+	_vsa_button.visible = false
+	controls.add_child(_vsa_button)
 	for child: Node in controls.get_children():
 		(child as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_pass_choices = HBoxContainer.new()

@@ -93,6 +93,10 @@ var _station_tiles: GridContainer
 var _station_owned: VBoxContainer
 var _inbox_list: VBoxContainer
 var _inbox: Array[String] = []
+var _cctv_selected: Array[int] = []
+var _cctv_checks: Array[CheckButton] = []
+var _cctv_status: Label
+var _cctv_tap_button: Button
 
 
 func _ready() -> void:
@@ -110,6 +114,7 @@ func _ready() -> void:
 	Economy.period_changed.connect(_refresh_apps)
 	Economy.purchase_result.connect(_on_purchase_result)
 	Economy.payday.connect(_on_payday)
+	CallDirector.cctv_hijack_updated.connect(_refresh_cctv_hijack)
 
 
 static func find(tree: SceneTree) -> StationOS:
@@ -209,6 +214,7 @@ func open_app(app_id: StringName) -> void:
 	_raise(window)
 	if app_id == &"cctv":
 		_set_cctv_active(true)
+		_refresh_cctv_hijack(CallDirector.cctv_hijacked_cameras)
 	_refresh_apps()
 	_refresh_taskbar()
 	if fresh:
@@ -317,10 +323,12 @@ func _create_window(app_id: StringName) -> PanelContainer:
 	var free_space: Vector2 = (size - Vector2(0, TASKBAR_HEIGHT) - window.custom_minimum_size) * 0.5
 	window.position = free_space.max(Vector2(20, 20)) + Vector2(offset, offset) - Vector2(60, 40)
 	window.position = window.position.max(Vector2(12, 12))
+	var intended_position: Vector2 = window.position
 	window.gui_input.connect(func(event: InputEvent) -> void:
 		if event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
 			_raise(window))
 	_windows_layer.add_child(window)
+	window.position = intended_position
 
 	var column: VBoxContainer = VBoxContainer.new()
 	column.add_theme_constant_override(&"separation", 0)
@@ -843,17 +851,32 @@ func _refresh_station() -> void:
 # --- CCTV ----------------------------------------------------------------------------------------
 
 func _build_cctv() -> Control:
+	var root_box: VBoxContainer = VBoxContainer.new()
+	root_box.add_theme_constant_override(&"separation", 8)
+	var actions: HBoxContainer = HBoxContainer.new()
+	actions.add_theme_constant_override(&"separation", 10)
+	root_box.add_child(actions)
+	_cctv_status = UiKit.label("Select up to 3 feeds to tap during a call.", 12, DIM, &"medium")
+	_cctv_status.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	actions.add_child(_cctv_status)
+	_cctv_tap_button = KitButton.make("Tap selected", &"target", KitButton.Variant.PRIMARY, _request_cctv_hijack)
+	actions.add_child(_cctv_tap_button)
+	_cctv_checks.clear()
+	_cctv_selected.clear()
 	var grid: GridContainer = GridContainer.new()
-	grid.columns = 2 if get_viewport().get_visible_rect().size.x < 1280 else 3
+	grid.columns = 3 if size.x >= 1024.0 else 2
+	var feed_size: Vector2i = Vector2i(320, 180) if grid.columns == 3 else Vector2i(376, 212)
 	grid.add_theme_constant_override(&"h_separation", 10)
 	grid.add_theme_constant_override(&"v_separation", 10)
-	for feed: Array in CCTV_CAMERAS:
+	root_box.add_child(grid)
+	for index: int in range(CCTV_CAMERAS.size()):
+		var feed: Array = CCTV_CAMERAS[index]
 		var cell: PanelContainer = PanelContainer.new()
 		cell.add_theme_stylebox_override(&"panel", UiKit.style(Color(0, 0, 0, 1), 8, 0, 0))
 		grid.add_child(cell)
 		var container: SubViewportContainer = SubViewportContainer.new()
 		container.stretch = true
-		container.custom_minimum_size = Vector2(376, 212)
+		container.custom_minimum_size = Vector2(feed_size)
 		var fx: ShaderMaterial = ShaderMaterial.new()
 		fx.shader = SCREEN_FX
 		fx.set_shader_parameter(&"monochrome", true)
@@ -861,8 +884,9 @@ func _build_cctv() -> Control:
 		container.material = fx
 		cell.add_child(container)
 		var viewport: SubViewport = SubViewport.new()
-		viewport.size = Vector2i(376, 212)
+		viewport.size = feed_size
 		viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+		viewport.world_3d = get_tree().root.world_3d
 		container.add_child(viewport)
 		var camera: Camera3D = Camera3D.new()
 		camera.fov = 80.0
@@ -884,10 +908,53 @@ func _build_cctv() -> Control:
 		dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		top.add_child(dot)
 		top.add_child(UiKit.caps("Rec", 10, RED, &"bold", 2))
+		var check: CheckButton = CheckButton.new()
+		check.text = "Tap"
+		check.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		check.alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		check.toggled.connect(_on_cctv_selected.bind(index, check))
+		top.add_child(check)
+		_cctv_checks.append(check)
 		var feed_name: String = feed[0]
 		overlay.add_child(UiKit.expand(Control.new(), false, true))
 		overlay.add_child(UiKit.caps(feed_name, 11, Color(0.85, 1, 0.9), &"bold", 2))
-	return grid
+	_refresh_cctv_hijack(CallDirector.cctv_hijacked_cameras)
+	return root_box
+
+
+func _on_cctv_selected(selected: bool, index: int, check: CheckButton) -> void:
+	if selected and not index in _cctv_selected:
+		if _cctv_selected.size() >= 3:
+			check.set_pressed_no_signal(false)
+			_cctv_status.text = "Choose at most 3 cameras."
+			return
+		_cctv_selected.append(index)
+	elif not selected:
+		_cctv_selected.erase(index)
+	_refresh_cctv_hijack(CallDirector.cctv_hijacked_cameras)
+
+
+func _request_cctv_hijack() -> void:
+	if _cctv_selected.is_empty():
+		return
+	if multiplayer.is_server():
+		CallDirector.request_cctv_hijack(_cctv_selected)
+	else:
+		CallDirector.request_cctv_hijack.rpc_id(1, _cctv_selected)
+
+
+func _refresh_cctv_hijack(camera_indices: Array[int]) -> void:
+	if _cctv_status == null:
+		return
+	var connected: bool = CallDirector.current_state == CallDirector.CallState.CONNECTED
+	var my_class: StringName = NetManager.get_class_id(multiplayer.get_unique_id())
+	var can_tap: bool = connected and (my_class == &"tech" or (not NetManager.is_online() and NetManager.roster.is_empty())) and camera_indices.is_empty()
+	_cctv_tap_button.disabled = not can_tap or _cctv_selected.is_empty()
+	_cctv_status.text = "TAPPED %d / 3 · feeds linked to current call" % camera_indices.size() if not camera_indices.is_empty() else ("Select up to 3 feeds · %d selected" % _cctv_selected.size() if can_tap else "Tech Operator · answer a call to tap cameras")
+	for index: int in range(_cctv_checks.size()):
+		var check: CheckButton = _cctv_checks[index]
+		check.disabled = not can_tap
+		check.text = "TAPPED" if index in camera_indices else "Tap"
 
 
 func _set_cctv_active(active: bool) -> void:
@@ -1092,6 +1159,7 @@ func _build() -> void:
 		_desktop.add_child(icon)
 
 	_windows_layer = Control.new()
+	_windows_layer.layout_direction = Control.LAYOUT_DIRECTION_LTR
 	_windows_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_windows_layer.offset_bottom = -TASKBAR_HEIGHT
 	_windows_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE

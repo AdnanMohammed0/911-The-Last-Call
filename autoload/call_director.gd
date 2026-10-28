@@ -10,6 +10,9 @@ const DEFAULT_TIME_SCALE: float = 6.0 # 1 real min = 6 in-game min (1 in-game mi
 const PHONE_BUS_NAME: StringName = &"Phone"
 
 signal vsa_tag_result(result: Dictionary)
+signal cctv_hijack_updated(camera_indices: Array[int])
+signal records_lookup_updated(record_id: StringName, seconds_left: float, completed: bool)
+signal pattern_link_result(result: Dictionary)
 
 # --- State ---
 var shift_clock_minutes: int = 0
@@ -52,6 +55,12 @@ var _challenge_penalties: int = 0
 var _trace_result_location: Vector2 = Vector2.ZERO
 var _trace_result_radius: float = 0.0
 var _trace_result_is_dead_freq: bool = false
+var cctv_hijacked_cameras: Array[int] = []
+var records_lookup_id: StringName = &""
+var records_lookup_time_left: float = 0.0
+var records_unlocked: Array[StringName] = []
+var case_evidence_by_call: Dictionary[StringName, Array] = {}
+var pattern_link_used_call_id: StringName = &""
 
 
 func _ready() -> void:
@@ -88,6 +97,7 @@ func _process(delta: float) -> void:
 	
 	_process_shift_clock(delta)
 	_process_call_lifecycle(delta)
+	_process_records_lookup(delta)
 
 
 func _is_server() -> bool:
@@ -282,6 +292,11 @@ func request_answer_call(call_id: StringName) -> void:
 
 func _answer_call() -> void:
 	current_state = CallState.CONNECTED
+	cctv_hijacked_cameras.clear()
+	records_lookup_id = &""
+	records_lookup_time_left = 0.0
+	records_unlocked.clear()
+	pattern_link_used_call_id = &""
 	
 	# Reset per-call modifier state
 	_rapport_applied = false
@@ -314,6 +329,11 @@ func _answer_call() -> void:
 @rpc("authority", "call_local", "reliable")
 func _sync_call_connected(call_id: StringName, patience: float) -> void:
 	current_state = CallState.CONNECTED
+	cctv_hijacked_cameras.clear()
+	records_lookup_id = &""
+	records_lookup_time_left = 0.0
+	records_unlocked.clear()
+	pattern_link_used_call_id = &""
 	active_call_id = call_id
 	active_call = registered_calls.get(call_id, null)
 	
@@ -432,6 +452,8 @@ func submit_verdict(sender_peer_id: int, call_id: StringName, verdict: StringNam
 @rpc("authority", "call_local", "reliable")
 func _sync_call_classified(call_id: StringName, verdict: StringName) -> void:
 	current_state = CallState.COMPLETED
+	if not _is_server() and not call_history.has(call_id):
+		call_history[call_id] = {"id": call_id, "state": "completed", "minute": shift_clock_minutes, "verdict": verdict}
 	if EventBus != null:
 		EventBus.call_classified.emit(call_id, verdict)
 		EventBus.call_ended.emit(call_id, verdict)
@@ -446,6 +468,106 @@ func set_trace_result(location: Vector2, radius: float, is_dead_freq: bool) -> v
 	_trace_result_location = location
 	_trace_result_radius = radius
 	_trace_result_is_dead_freq = is_dead_freq
+
+
+## Tech Operator taps up to three station cameras for the current call. The host owns the choice.
+@rpc("any_peer", "call_remote", "reliable")
+func request_cctv_hijack(camera_indices: Array[int]) -> void:
+	if not _is_server() or current_state != CallState.CONNECTED or active_call == null:
+		return
+	var sender: int = multiplayer.get_remote_sender_id()
+	if sender <= 0:
+		sender = 1
+	if NetManager.get_class_id(sender) != &"tech" and not (not NetManager.is_online() and NetManager.roster.is_empty()):
+		return
+	if not Economy.owns(&"cctv") or not cctv_hijacked_cameras.is_empty():
+		return
+	if camera_indices.is_empty() or camera_indices.size() > 3:
+		return
+	var unique: Array[int] = []
+	for index: int in camera_indices:
+		if index < 0 or index >= StationOS.CCTV_CAMERAS.size() or index in unique:
+			return
+		unique.append(index)
+	cctv_hijacked_cameras = unique
+	_sync_cctv_hijack.rpc(unique)
+	dialogue_runner.add_revealed_evidence(StringName("evidence_cctv_%s" % active_call_id))
+
+
+@rpc("authority", "call_local", "reliable")
+func _sync_cctv_hijack(camera_indices: Array[int]) -> void:
+	cctv_hijacked_cameras = camera_indices.duplicate()
+	cctv_hijack_updated.emit(cctv_hijacked_cameras)
+
+
+## A Tech deep lookup takes 30 seconds on the host and turns the record into evidence.
+@rpc("any_peer", "call_remote", "reliable")
+func request_records_lookup(record_id: StringName) -> void:
+	if not _is_server() or current_state != CallState.CONNECTED or active_call == null:
+		return
+	var sender: int = multiplayer.get_remote_sender_id()
+	if sender <= 0:
+		sender = 1
+	if NetManager.get_class_id(sender) != &"tech" and not (not NetManager.is_online() and NetManager.roster.is_empty()):
+		return
+	if records_lookup_id != &"" or record_id in records_unlocked:
+		return
+	var found: bool = false
+	for record: RecordEntry in active_call.records:
+		if record.id == record_id:
+			found = true
+			break
+	if not found:
+		return
+	records_lookup_id = record_id
+	records_lookup_time_left = 30.0
+	_sync_records_lookup.rpc(record_id, records_lookup_time_left, false)
+
+
+func _process_records_lookup(delta: float) -> void:
+	if not _is_server() or records_lookup_id == &"" or current_state != CallState.CONNECTED:
+		return
+	records_lookup_time_left = maxf(0.0, records_lookup_time_left - delta)
+	if records_lookup_time_left > 0.0:
+		return
+	var completed_id: StringName = records_lookup_id
+	records_lookup_id = &""
+	records_unlocked.append(completed_id)
+	_sync_records_lookup.rpc(completed_id, 0.0, true)
+	dialogue_runner.add_revealed_evidence(StringName("evidence_record_%s" % completed_id))
+
+
+@rpc("authority", "call_local", "reliable")
+func _sync_records_lookup(record_id: StringName, seconds_left: float, completed: bool) -> void:
+	records_lookup_id = &"" if completed else record_id
+	records_lookup_time_left = seconds_left
+	if completed and not record_id in records_unlocked:
+		records_unlocked.append(record_id)
+	records_lookup_updated.emit(record_id, seconds_left, completed)
+
+
+## Investigator/Medic links the live case to one prior call, once per call.
+@rpc("any_peer", "call_remote", "reliable")
+func request_pattern_link(prior_call_id: StringName) -> void:
+	if not _is_server() or current_state != CallState.CONNECTED or active_call == null or active_call_id == &"":
+		return
+	var sender: int = multiplayer.get_remote_sender_id()
+	if sender <= 0:
+		sender = 1
+	if NetManager.get_class_id(sender) != &"medic" and not (not NetManager.is_online() and NetManager.roster.is_empty()):
+		return
+	if pattern_link_used_call_id == active_call_id or prior_call_id == active_call_id or not call_history.has(prior_call_id):
+		return
+	pattern_link_used_call_id = active_call_id
+	var key: StringName = StringName("evidence_pattern_%s_%s" % [prior_call_id, active_call_id])
+	dialogue_runner.add_revealed_evidence(key)
+	_sync_pattern_link.rpc({"prior_call_id": prior_call_id, "current_call_id": active_call_id, "evidence_key": key})
+
+
+@rpc("authority", "call_local", "reliable")
+func _sync_pattern_link(result: Dictionary) -> void:
+	pattern_link_used_call_id = result.get("current_call_id", &"")
+	pattern_link_result.emit(result)
 
 
 # ==============================================================================
@@ -654,6 +776,13 @@ func _sync_patience(current: float, max_p: float) -> void:
 
 @rpc("authority", "call_local", "reliable")
 func _sync_evidence_unlocked(evidence_key: StringName) -> void:
+	if not _is_server():
+		dialogue_runner.add_revealed_evidence(evidence_key)
+	if active_call_id != &"":
+		if not case_evidence_by_call.has(active_call_id):
+			case_evidence_by_call[active_call_id] = []
+		if not evidence_key in case_evidence_by_call[active_call_id]:
+			case_evidence_by_call[active_call_id].append(evidence_key)
 	if EventBus != null:
 		EventBus.evidence_unlocked.emit(evidence_key)
 
@@ -790,6 +919,12 @@ func get_snapshot() -> Dictionary:
 		"trace_result_location": _trace_result_location,
 		"trace_result_radius": _trace_result_radius,
 		"trace_result_is_dead_freq": _trace_result_is_dead_freq,
+		"cctv_hijacked_cameras": cctv_hijacked_cameras,
+		"records_lookup_id": records_lookup_id,
+		"records_lookup_time_left": records_lookup_time_left,
+		"records_unlocked": records_unlocked,
+		"case_evidence_by_call": case_evidence_by_call,
+		"pattern_link_used_call_id": pattern_link_used_call_id,
 	}
 
 
@@ -809,6 +944,16 @@ func apply_snapshot(data: Dictionary) -> void:
 	_trace_result_location = data.get("trace_result_location", Vector2.ZERO)
 	_trace_result_radius = data.get("trace_result_radius", 0.0)
 	_trace_result_is_dead_freq = data.get("trace_result_is_dead_freq", false)
+	@warning_ignore("unsafe_cast")
+	var saved_cameras: Array = data.get("cctv_hijacked_cameras", []) as Array
+	cctv_hijacked_cameras.assign(saved_cameras)
+	records_lookup_id = data.get("records_lookup_id", &"")
+	records_lookup_time_left = data.get("records_lookup_time_left", 0.0)
+	@warning_ignore("unsafe_cast")
+	var saved_records: Array = data.get("records_unlocked", []) as Array
+	records_unlocked.assign(saved_records)
+	case_evidence_by_call = data.get("case_evidence_by_call", {})
+	pattern_link_used_call_id = data.get("pattern_link_used_call_id", &"")
 	
 	if EventBus != null:
 		EventBus.shift_clock_updated.emit(shift_clock_minutes)
@@ -867,6 +1012,12 @@ func reset() -> void:
 	_trace_result_location = Vector2.ZERO
 	_trace_result_radius = 0.0
 	_trace_result_is_dead_freq = false
+	cctv_hijacked_cameras.clear()
+	records_lookup_id = &""
+	records_lookup_time_left = 0.0
+	records_unlocked.clear()
+	case_evidence_by_call.clear()
+	pattern_link_used_call_id = &""
 	call_queue.clear()
 	call_history.clear()
 	if phone_audio_player != null and phone_audio_player.playing:

@@ -41,6 +41,8 @@ var _pass_choices: HBoxContainer
 var _test_button: Button
 var _trace_button: Button
 var _vsa_button: Button
+var _records_button: Button
+var _case_board_button: Button
 var _terminal_font: Font
 
 var _call_id: StringName = &""
@@ -50,6 +52,8 @@ var _choice_pings: Dictionary = {} # peer_id -> choice index for the current nod
 var _closed_player_input: Player = null
 var _trace_minigame: TraceMiniGame = null
 var _vsa_minigame: VsaMiniGame = null
+var _records_database: RecordsDatabase = null
+var _case_board: CaseBoard = null
 
 
 func _ready() -> void:
@@ -99,6 +103,10 @@ func close() -> void:
 		return
 	if _vsa_minigame != null:
 		_vsa_minigame.close()
+	if _records_database != null:
+		_records_database.close()
+	if _case_board != null:
+		_case_board.close()
 	visible = false
 	remove_from_group(MODAL_GROUP)
 	if _closed_player_input != null and is_instance_valid(_closed_player_input):
@@ -224,6 +232,30 @@ func _open_vsa() -> void:
 
 func _request_vsa_tag(time_seconds: float, tag_type: StringName) -> void:
 	_call_host(&"request_vsa_tag", [time_seconds, tag_type])
+
+
+func _open_records() -> void:
+	if _records_database == null:
+		_records_database = RecordsDatabase.new()
+		_records_database.lookup_requested.connect(_request_records_lookup)
+		add_child(_records_database)
+	_records_database.open()
+
+
+func _request_records_lookup(record_id: StringName) -> void:
+	_call_host(&"request_records_lookup", [record_id])
+
+
+func _open_case_board() -> void:
+	if _case_board == null:
+		_case_board = CaseBoard.new()
+		_case_board.pattern_link_requested.connect(_request_pattern_link)
+		add_child(_case_board)
+	_case_board.open()
+
+
+func _request_pattern_link(prior_call_id: StringName) -> void:
+	_call_host(&"request_pattern_link", [prior_call_id])
 
 
 # --- EventBus handlers ----------------------------------------------------------------
@@ -586,6 +618,10 @@ func _build() -> void:
 	controls.add_child(_trace_button)
 	_vsa_button = _button("Analyze voice", _open_vsa, &"target", KitButton.Variant.PRIMARY, Color(0.34, 0.85, 0.92))
 	controls.add_child(_vsa_button)
+	_records_button = _button("Records DB", _open_records, &"folder", KitButton.Variant.SUBTLE)
+	controls.add_child(_records_button)
+	_case_board_button = _button("Case Board", _open_case_board, &"pin", KitButton.Variant.SUBTLE)
+	controls.add_child(_case_board_button)
 	for child: Node in controls.get_children():
 		(child as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_pass_choices = HBoxContainer.new()

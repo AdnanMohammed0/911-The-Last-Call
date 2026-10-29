@@ -80,7 +80,7 @@ func test_settings_menu_builds_all_tabs_and_closes() -> void:
 	var menu: SettingsMenu = SettingsMenu.new()
 	add_child_autofree(menu)
 	var tabs: TabContainer = menu.find_children("*", "TabContainer", true, false)[0] as TabContainer
-	assert_eq(tabs.get_tab_count(), 4)
+	assert_eq(tabs.get_tab_count(), 5, "General, Video, Audio, Voice, Controls")
 	assert_gt(menu._bind_buttons.size(), 15, "a rebind button per action")
 	watch_signals(menu)
 	menu.close()

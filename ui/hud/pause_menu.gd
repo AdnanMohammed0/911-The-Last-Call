@@ -13,6 +13,7 @@ var _resume_button: BrushButton
 var _leave_button: BrushButton
 var _quit_button: BrushButton
 var _settings_button: BrushButton
+var _report_button: BrushButton
 var _session_label: Label
 var _objective_label: Label
 var _voice_mode_button: KitButton
@@ -32,6 +33,7 @@ func _ready() -> void:
 	_build()
 	_resume_button.pressed.connect(close)
 	_settings_button.pressed.connect(_on_settings_pressed)
+	_report_button.pressed.connect(_on_report_pressed)
 	_leave_button.pressed.connect(_on_leave_pressed)
 	_quit_button.pressed.connect(_on_quit_pressed)
 	_voice_mode_button.pressed.connect(_on_voice_mode_pressed)
@@ -82,6 +84,7 @@ func _build() -> void:
 	column.add_child(UiKit.spacer(36))
 	_resume_button = _brush(column, "Resume")
 	_settings_button = _brush(column, "Settings")
+	_report_button = _brush(column, tr("Report a bug"))
 	_leave_button = _brush(column, "Leave to main menu")
 	_quit_button = _brush(column, "Quit to desktop")
 	column.add_child(UiKit.expand(Control.new(), false, true))
@@ -213,6 +216,14 @@ func _on_settings_pressed() -> void:
 	menu.closed.connect(func() -> void:
 		visible = true
 		_settings_button.grab_focus())
+
+
+func _on_report_pressed() -> void:
+	var dialog: BugReportDialog = BugReportDialog.open_over(self)
+	visible = false
+	dialog.closed.connect(func() -> void:
+		visible = true
+		_report_button.grab_focus())
 
 
 func _on_mic_device_selected(index: int) -> void:

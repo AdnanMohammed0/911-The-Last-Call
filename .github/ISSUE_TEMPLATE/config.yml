@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Community Discord
+    url: https://github.com/AdnanMohammed0/911-The-Last-Call/blob/main/docs/community/DISCORD_AND_BUG_REPORTS.md
+    about: Server layout, roles and the fastest way to reach a moderator.
+  - name: Questions and looking-for-group
+    url: https://github.com/AdnanMohammed0/911-The-Last-Call/discussions
+    about: Use Discussions for questions, ideas and finding a squad.

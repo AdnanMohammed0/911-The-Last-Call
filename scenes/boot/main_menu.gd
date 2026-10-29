@@ -13,7 +13,6 @@ const STATION4_SCENE: String = "res://scenes/dispatch/operations_room.tscn"
 const TORN_EDGE: Shader = preload("res://ui/shaders/torn_edge.gdshader")
 const GRUNGE: Shader = preload("res://ui/shaders/grunge_text.gdshader")
 const CLASS_ORDER: Array[StringName] = [&"tech", &"profiler", &"breacher", &"medic"]
-const VERSION_TEXT: String = "BUILD 0.9 · SHIFT 1 PREVIEW"
 
 var _auto_class: StringName = &""
 var _auto_start: bool = false
@@ -35,6 +34,7 @@ var _join_nav_button: BrushButton
 var _station4_button: BrushButton
 var _rejoin_button: BrushButton
 var _settings_button: BrushButton
+var _report_button: BrushButton
 var _quit_button: BrushButton
 var _door_sandbox_button: KitButton
 var _sandbox_button: KitButton
@@ -79,6 +79,7 @@ func _ready() -> void:
 	_start_button.pressed.connect(_on_start_pressed)
 	_rejoin_button.pressed.connect(_on_rejoin_pressed)
 	_settings_button.pressed.connect(func() -> void: SettingsMenu.open_over(self))
+	_report_button.pressed.connect(func() -> void: BugReportDialog.open_over(self))
 	_quit_button.pressed.connect(func() -> void: get_tree().quit())
 	_copy_address_button.pressed.connect(_on_copy_address_pressed)
 	for card: ClassCard in _cards:
@@ -243,6 +244,7 @@ func _build_home() -> Control:
 	_join_nav_button = _brush(box, "Join a shift", "JoinNavButton")
 	_station4_button = _brush(box, "Station 4 · Offline", "Station4Button")
 	_settings_button = _brush(box, "Settings", "SettingsButton")
+	_report_button = _brush(box, tr("Report a bug"), "ReportBugButton")
 	_quit_button = _brush(box, "Quit", "QuitButton")
 	box.add_child(UiKit.spacer(26))
 	var dev: HBoxContainer = HBoxContainer.new()
@@ -348,7 +350,7 @@ func _build_footer() -> Control:
 	_status_label = UiKit.label("Offline", 15, GameTheme.TEXT_DIM, &"medium")
 	_status_label.name = "StatusLabel"
 	status.add_child(_status_label)
-	box.add_child(UiKit.caps(VERSION_TEXT, 11, GameTheme.TEXT_FAINT, &"semibold", 2))
+	box.add_child(UiKit.caps(BuildInfo.label(), 11, GameTheme.TEXT_FAINT, &"semibold", 2))
 	return box
 
 

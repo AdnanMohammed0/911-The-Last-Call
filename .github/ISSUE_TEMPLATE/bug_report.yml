@@ -1,0 +1,81 @@
+name: Bug report
+description: "Report a reproducible problem in 911: The Last Call."
+title: "[Bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **In-game:** open the pause menu → *Report a bug* → *Copy report*. That
+        bundle contains the build, hardware and session state, and no personal data. Paste it below.
+
+        For quick questions and looking-for-group, use the community Discord. This form is for bugs
+        that need a fix and a paper trail.
+  - type: input
+    id: build
+    attributes:
+      label: Build
+      description: Copy the footer line from the main menu (e.g. "BUILD 1.0.0-rc.1 · RC").
+      placeholder: BUILD 1.0.0-rc.1 · RC
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Windows
+        - Linux
+        - Steam Deck
+        - Other / not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Gameplay
+        - Crash
+        - Performance
+        - Audio
+        - Multiplayer
+        - UI / localization
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you were doing, what went wrong, and whether it repeats.
+      placeholder: We were on shift 2, three players. The caller's patience bar froze...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Host a 3-player shift
+        2. Start the interrogation call
+        3. ...
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic report
+      description: Paste the report copied by the in-game reporter. Remove any names or addresses you do not want public.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for the same problem.
+          required: true
+        - label: I included the diagnostic report when it was available.
+          required: false

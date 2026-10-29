@@ -1,0 +1,98 @@
+name: Release candidate
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GODOT_VERSION: "4.7.2-stable"
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify tag and project data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate progress files
+        run: python docs/scripts/validate_progress.py
+
+      - name: Validate localization tables
+        run: python docs/scripts/validate_locales.py
+
+      - name: Check GDScript structure
+        run: python docs/scripts/check_gdscript.py
+
+      - name: Tag matches application/config/version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: python docs/scripts/rc_manifest.py --check-version "$GITHUB_REF_NAME"
+
+  build:
+    name: Export RC (Windows + Linux)
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup Godot ${{ env.GODOT_VERSION }}
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+
+      - name: Install export templates
+        run: |
+          TEMPLATE_DIR="${GODOT_VERSION//-/.}"
+          curl -fL -o /tmp/godot-export-templates.tpz \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz"
+          python3 -m zipfile -e /tmp/godot-export-templates.tpz /tmp/godot-templates
+          mkdir -p "$HOME/.local/share/godot/export_templates"
+          rm -rf "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR}"
+          mv /tmp/godot-templates/templates "$HOME/.local/share/godot/export_templates/${TEMPLATE_DIR}"
+
+      - name: Import assets (headless)
+        run: godot --headless --import
+
+      - name: Export release candidate
+        run: |
+          mkdir -p build/rc/windows build/rc/linux
+          godot --headless --export-release "Windows RC" build/rc/windows/911-the-last-call-rc.exe
+          godot --headless --export-release "Linux RC" build/rc/linux/911-the-last-call-rc.x86_64
+
+      - name: Write manifest and checksums
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            python3 docs/scripts/rc_manifest.py --build-dir build/rc --version "$GITHUB_REF_NAME"
+          else
+            python3 docs/scripts/rc_manifest.py --build-dir build/rc
+          fi
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 911-the-last-call-rc
+          path: build/rc/**
+          if-no-files-found: error
+
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/rc/**
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-rc.') }}

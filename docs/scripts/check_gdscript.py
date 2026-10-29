@@ -10,7 +10,9 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 TARGETS = [ROOT / "autoload/localization.gd", ROOT / "tests/test_localization.gd",
            ROOT / "ui/settings/settings_menu.gd", ROOT / "autoload/game_settings.gd",
            ROOT / "tests/test_net_matrix.gd", ROOT / "autoload/net_manager.gd",
-           ROOT / "autoload/lag_compensation.gd"]
+           ROOT / "autoload/lag_compensation.gd", ROOT / "core/build_info.gd",
+           ROOT / "core/diagnostics/bug_report.gd", ROOT / "ui/menu/bug_report_dialog.gd",
+           ROOT / "tests/test_release_readiness.gd"]
 
 errors = []
 

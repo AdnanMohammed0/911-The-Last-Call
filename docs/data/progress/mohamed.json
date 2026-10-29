@@ -1,6 +1,6 @@
 {
   "member": "mohamed",
-  "updated_at": "2026-10-09",
+  "updated_at": "2026-10-29",
   "tasks": {
     "P1-02": {
       "status": "done",
@@ -101,6 +101,11 @@
       "status": "progress",
       "updated_at": "2026-10-09",
       "note": "Starting Steam Next Fest demo build. Requires Training Night (P4-15, owned by Ali, not yet done) + Shift 1. First steps: create demo export preset, document content selection, assess Steam integration (P1-09 not done)."
+    },
+    "P5-10": {
+      "status": "done",
+      "updated_at": "2026-10-29",
+      "note": "Release candidate packaging, day-one plan and community/bug-report flow are in place. Added Windows/Linux RC export presets (rc feature tag), config/version 1.0.0-rc.1, BuildInfo version/channel surfaced in the menu and reports, a tag-driven release.yml with rc_manifest.py (manifest + SHA256SUMS + tag/version gate), a GitHub bug issue form, and an in-game Report a bug dialog (anonymous diagnostics, clipboard + local JSON, GitHub link, Discord button hidden until the invite is configured). Docs cover RC gates/smoke/sign-off/rollback, day-one severity/hotfix/SteamPipe/comms, and Discord channels/roles/triage/privacy. Validators pass. GUT suites test_release_readiness 9/9, test_lobby_ui 4/4 and test_settings 9/9 passed on local Godot 4.6 (project targets 4.7.2; full suite not run here). Fixed the stale settings tab-count assertion. No RC tag or SteamPipe upload was performed, and P5-07/P5-09/Steamworks gates remain open."
     }
   },
   "log": [
@@ -576,6 +581,35 @@
     {
       "date": "2026-10-09",
       "summary": "started Steam Next Fest demo build (P5-09)"
+    },
+    {
+      "date": "2026-10-29",
+      "tasks": [
+        "P5-10"
+      ],
+      "summary": "P5-10 release candidate & community flow: RC export presets + tag-driven release workflow with SHA256 manifest and version gate; BuildInfo version/channel; in-game bug reporter with anonymous diagnostics, clipboard/local JSON and GitHub/Discord links; GitHub bug issue form; docs for RC gates/smoke/sign-off/rollback, day-one patch plan, and Discord server/roles/bug triage/privacy. Validators pass; GUT release_readiness 9/9, lobby_ui 4/4 and settings 9/9 passed on local Godot 4.6 (project targets 4.7.2). Fixed stale settings tab-count test. No RC tag/Steam upload; P5-07/P5-09/Steamworks gates still open.",
+      "files": [
+        "core/build_info.gd",
+        "core/diagnostics/bug_report.gd",
+        "ui/menu/bug_report_dialog.gd",
+        "ui/hud/pause_menu.gd",
+        "scenes/boot/main_menu.gd",
+        "tests/test_release_readiness.gd",
+        "export_presets.cfg",
+        "project.godot",
+        ".github/workflows/release.yml",
+        ".github/ISSUE_TEMPLATE/bug_report.yml",
+        ".github/ISSUE_TEMPLATE/config.yml",
+        "docs/scripts/rc_manifest.py",
+        "docs/scripts/check_gdscript.py",
+        "docs/release/P5-10_RELEASE_CANDIDATE.md",
+        "docs/release/DAY_ONE_PATCH_PLAN.md",
+        "docs/community/DISCORD_AND_BUG_REPORTS.md",
+        "data/localization/ui_en.loc",
+        "data/localization/ui_ar.loc",
+        "docs/data/progress/mohamed.json",
+        "tests/test_settings.gd"
+      ]
     }
   ]
 }

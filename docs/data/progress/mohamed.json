@@ -105,7 +105,7 @@
     "P5-10": {
       "status": "done",
       "updated_at": "2026-10-29",
-      "note": "Release candidate packaging, day-one plan and community/bug-report flow are in place. Added Windows/Linux RC export presets (rc feature tag), config/version 1.0.0-rc.1, BuildInfo version/channel surfaced in the menu and reports, a tag-driven release.yml with rc_manifest.py (manifest + SHA256SUMS + tag/version gate), a GitHub bug issue form, and an in-game Report a bug dialog (anonymous diagnostics, clipboard + local JSON, GitHub link, Discord button hidden until the invite is configured). Docs cover RC gates/smoke/sign-off/rollback, day-one severity/hotfix/SteamPipe/comms, and Discord channels/roles/triage/privacy. Validators pass. GUT suites test_release_readiness 9/9, test_lobby_ui 4/4 and test_settings 9/9 passed on local Godot 4.6 (project targets 4.7.2; full suite not run here). Fixed the stale settings tab-count assertion. No RC tag or SteamPipe upload was performed, and P5-07/P5-09/Steamworks gates remain open."
+      "note": "Release candidate packaging, day-one plan and community/bug-report flow are in place. Added Windows/Linux RC export presets (rc feature tag), config/version 1.0.0-rc.1, BuildInfo version/channel surfaced in the menu and reports, a tag-driven release.yml with rc_manifest.py (manifest + SHA256SUMS + tag/version gate), a GitHub bug issue form, and an in-game Report a bug dialog (anonymous diagnostics, clipboard + local JSON, GitHub link, Discord button hidden until the invite is configured). Docs cover RC gates/smoke/sign-off/rollback, day-one severity/hotfix/SteamPipe/comms, and Discord channels/roles/triage/privacy. Validators pass. GUT suites test_release_readiness 9/9, test_lobby_ui 4/4 and test_settings 9/9 passed on local Godot 4.6 (project targets 4.7.2; full suite not run here). Fixed the stale settings tab-count assertion. Synced the 46 station-art strings surfaced after rebasing on main into both locale tables. No RC tag or SteamPipe upload was performed, and P5-07/P5-09/Steamworks gates remain open."
     }
   },
   "log": [
@@ -587,7 +587,7 @@
       "tasks": [
         "P5-10"
       ],
-      "summary": "P5-10 release candidate & community flow: RC export presets + tag-driven release workflow with SHA256 manifest and version gate; BuildInfo version/channel; in-game bug reporter with anonymous diagnostics, clipboard/local JSON and GitHub/Discord links; GitHub bug issue form; docs for RC gates/smoke/sign-off/rollback, day-one patch plan, and Discord server/roles/bug triage/privacy. Validators pass; GUT release_readiness 9/9, lobby_ui 4/4 and settings 9/9 passed on local Godot 4.6 (project targets 4.7.2). Fixed stale settings tab-count test. No RC tag/Steam upload; P5-07/P5-09/Steamworks gates still open.",
+      "summary": "P5-10 release candidate & community flow: RC export presets + tag-driven release workflow with SHA256 manifest and version gate; BuildInfo version/channel; in-game bug reporter with anonymous diagnostics, clipboard/local JSON and GitHub/Discord links; GitHub bug issue form; docs for RC gates/smoke/sign-off/rollback, day-one patch plan, and Discord server/roles/bug triage/privacy. Validators pass; GUT release_readiness 9/9, lobby_ui 4/4 and settings 9/9 passed on local Godot 4.6 (project targets 4.7.2). Fixed stale settings tab-count test and synced 46 station-art strings into both locale tables after rebase. No RC tag/Steam upload; P5-07/P5-09/Steamworks gates still open.",
       "files": [
         "core/build_info.gd",
         "core/diagnostics/bug_report.gd",

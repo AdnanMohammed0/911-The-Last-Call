@@ -1,0 +1,1611 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://core/ai/mission_navigation.gd" id="1_w56qa"]
+[ext_resource type="Material" path="res://assets/materials/grass.tres" id="2_5buxl"]
+[ext_resource type="Material" path="res://assets/materials/asphalt.tres" id="3_b2r3f"]
+[ext_resource type="Material" path="res://assets/materials/highway_gravel.tres" id="4_68pbo"]
+[ext_resource type="Material" path="res://assets/materials/highway_dirt.tres" id="5_tpl7m"]
+[ext_resource type="Material" path="res://assets/materials/highway_stripe.tres" id="6_b3u2a"]
+[ext_resource type="Material" path="res://assets/materials/steel.tres" id="7_irlkv"]
+[ext_resource type="Material" path="res://assets/materials/metal_painted.tres" id="8_pjy5a"]
+[ext_resource type="Material" path="res://assets/materials/highway_sign.tres" id="9_8btdf"]
+[ext_resource type="Material" path="res://assets/materials/rust_red.tres" id="10_x15lo"]
+[ext_resource type="Material" path="res://assets/materials/glass_dark.tres" id="11_aofcy"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="12_fkvld"]
+[ext_resource type="Material" path="res://assets/materials/rubber.tres" id="13_3062j"]
+[ext_resource type="Material" path="res://assets/materials/car_white.tres" id="14_a16u8"]
+[ext_resource type="Material" path="res://assets/materials/car_black.tres" id="15_83b2h"]
+[ext_resource type="Material" path="res://assets/materials/led_red.tres" id="16_4c0yj"]
+[ext_resource type="Material" path="res://assets/materials/led_blue.tres" id="17_nh51a"]
+[ext_resource type="Material" path="res://assets/materials/diffuser_cool.tres" id="18_ajleq"]
+[ext_resource type="Material" path="res://assets/materials/concrete.tres" id="19_dv455"]
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="20_j0pnd"]
+[ext_resource type="Material" path="res://assets/materials/concrete_dark.tres" id="21_hsd07"]
+[ext_resource type="Material" path="res://assets/materials/sodium_lens.tres" id="22_qb8km"]
+[ext_resource type="Script" path="res://core/net/player_spawner.gd" id="23_fi4dl"]
+[ext_resource type="Script" path="res://core/ai/ai_squad.gd" id="24_hmim3"]
+[ext_resource type="Script" path="res://core/ai/enemy_spawn_point.gd" id="25_f5xui"]
+[ext_resource type="Resource" path="res://data/ai/archetypes/ambush_leader.tres" id="26_mun26"]
+[ext_resource type="Resource" path="res://data/ai/archetypes/cultist_gunman.tres" id="27_yfdff"]
+[ext_resource type="Resource" path="res://data/ai/archetypes/thug.tres" id="28_u21sf"]
+[ext_resource type="Script" path="res://core/ai/enemy_spawner.gd" id="29_fbju1"]
+[ext_resource type="Script" path="res://scenes/field/missions/mission_controller.gd" id="30_tyxw7"]
+[ext_resource type="Script" path="res://scenes/field/missions/highway_rpg_set_piece.gd" id="31_byu4y"]
+[ext_resource type="Script" path="res://scenes/field/missions/highway_decoy_control.gd" id="32_yjlrl"]
+[ext_resource type="Material" path="res://assets/materials/diffuser_warm.tres" id="33_i1kx1"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_b52bk"]
+sky_top_color = Color(0.015, 0.025, 0.05, 1)
+sky_horizon_color = Color(0.07, 0.08, 0.11, 1)
+sky_energy_multiplier = 0.3
+ground_bottom_color = Color(0.01, 0.01, 0.015, 1)
+ground_horizon_color = Color(0.05, 0.05, 0.06, 1)
+sun_angle_max = 1.0
+
+[sub_resource type="Sky" id="Sky_ac04b"]
+sky_material = SubResource("ProceduralSkyMaterial_b52bk")
+
+[sub_resource type="Environment" id="Environment_15vhc"]
+background_mode = 2
+sky = SubResource("Sky_ac04b")
+ambient_light_source = 3
+ambient_light_sky_contribution = 0.35
+ambient_light_energy = 0.1
+reflected_light_source = 2
+tonemap_mode = 3
+tonemap_exposure = 1.9
+tonemap_white = 6.0
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 2.2
+ssao_power = 1.6
+ssil_enabled = true
+ssil_intensity = 0.8
+sdfgi_use_occlusion = true
+sdfgi_energy = 0.8
+glow_enabled = true
+glow_levels/2 = 1.0
+glow_levels/4 = 0.6
+glow_levels/6 = 0.3
+glow_intensity = 0.6
+glow_strength = 0.9
+glow_bloom = 0.04
+glow_blend_mode = 2
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.018
+volumetric_fog_albedo = Color(0.55, 0.6, 0.7, 1)
+volumetric_fog_emission = Color(0.004, 0.006, 0.01, 1)
+volumetric_fog_anisotropy = 0.5
+volumetric_fog_length = 80.0
+volumetric_fog_ambient_inject = 0.15
+adjustment_enabled = true
+adjustment_contrast = 1.08
+adjustment_saturation = 0.9
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8x1lo"]
+size = Vector3(72, 0.35, 105)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6onc2"]
+size = Vector3(72, 0.35, 105)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mx6di"]
+size = Vector3(11, 0.06, 105)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qwxt8"]
+size = Vector3(11, 0.06, 105)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ssrjy"]
+size = Vector3(3, 0.05, 105)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kn4kv"]
+size = Vector3(3, 0.05, 105)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_r5amf"]
+size = Vector3(3, 0.05, 105)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3q1cw"]
+size = Vector3(3, 0.05, 105)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xkoas"]
+size = Vector3(4, 0.05, 82)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2atbx"]
+size = Vector3(4, 0.05, 82)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bmufj"]
+size = Vector3(11, 0.05, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gss7b"]
+size = Vector3(11, 0.05, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gdu0q"]
+size = Vector3(11, 0.05, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sackg"]
+size = Vector3(11, 0.05, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vgrfi"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lm7a3"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_n1lek"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bsa54"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dusfl"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_q54tg"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_j6jal"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_u5km3"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_glges"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_huw47"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_otpeu"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3rvyw"]
+size = Vector3(0.15, 0.01, 3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gfqe1"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_m0ooi"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_in22g"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tadgd"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2r0hp"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_drqxp"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kcp1m"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_yvxij"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tptoe"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_61chv"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_yx608"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fyf2u"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kvhht"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_s1q5f"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_761pc"]
+size = Vector3(0.12, 0.22, 87)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qkr8i"]
+size = Vector3(0.12, 0.22, 87)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_o47ei"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_a42w3"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ny61o"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_v845v"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_01jcb"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_45ypt"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k1g6c"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6ym2h"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_46mje"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jvrqh"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_unfly"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_djwqy"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kelef"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_psn3p"]
+size = Vector3(0.12, 0.9, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k5n54"]
+size = Vector3(0.12, 0.22, 87)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lluxy"]
+size = Vector3(0.12, 0.22, 87)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_knytt"]
+size = Vector3(0.12, 2, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ndq4s"]
+size = Vector3(0.12, 2, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fpw1b"]
+size = Vector3(0.9, 0.65, 0.08)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vps46"]
+size = Vector3(2.6, 2.9, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_g5ooa"]
+size = Vector3(2.6, 2.9, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ww6bp"]
+size = Vector3(2.2, 0.9, 0.06)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2h0e6"]
+size = Vector3(2.65, 3.5, 8.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jh8ah"]
+size = Vector3(2.65, 3.5, 8.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_43tnn"]
+size = Vector3(1.3, 3.35, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wwgds"]
+size = Vector3(1.3, 3.35, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3crq8"]
+size = Vector3(2.3, 0.8, 0.7)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_gys4e"]
+top_radius = 0.48
+bottom_radius = 0.48
+height = 0.25
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_g20kf"]
+top_radius = 0.48
+bottom_radius = 0.48
+height = 0.25
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jl732"]
+top_radius = 0.48
+bottom_radius = 0.48
+height = 0.25
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pgnow"]
+top_radius = 0.48
+bottom_radius = 0.48
+height = 0.25
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_07m8m"]
+top_radius = 0.48
+bottom_radius = 0.48
+height = 0.25
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7m2lj"]
+top_radius = 0.48
+bottom_radius = 0.48
+height = 0.25
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uubyw"]
+size = Vector3(1.9, 0.75, 4.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_km2ac"]
+size = Vector3(1.9, 0.75, 4.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3532d"]
+size = Vector3(1.72, 0.55, 2.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_312wn"]
+size = Vector3(1.68, 0.5, 0.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wnrmw"]
+size = Vector3(0.55, 0.1, 0.25)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_xmvm0"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7kucc"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_km0ec"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jsnoi"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="BoxMesh" id="BoxMesh_kap2p"]
+size = Vector3(0.35, 0.1, 0.02)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y1hph"]
+size = Vector3(0.6, 0.6, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_0g56r"]
+size = Vector3(0.6, 0.6, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_v0ril"]
+size = Vector3(0.24, 0.3, 3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_l7nkn"]
+size = Vector3(0.6, 0.6, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_p8xxt"]
+size = Vector3(0.6, 0.6, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_miqt5"]
+size = Vector3(0.24, 0.3, 3)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_nd1s4"]
+height = 0.9
+radius = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_titjk"]
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.9
+radial_segments = 20
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_raqpl"]
+height = 0.9
+radius = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_uxmnj"]
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.9
+radial_segments = 20
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_f7v1s"]
+height = 0.9
+radius = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_02yof"]
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.9
+radial_segments = 20
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_7i3sf"]
+height = 0.9
+radius = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_vqocv"]
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.9
+radial_segments = 20
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8iree"]
+size = Vector3(1.2, 0.14, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d8tvp"]
+size = Vector3(1.2, 0.14, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y0kpm"]
+size = Vector3(1.1, 0.9, 0.95)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3shjp"]
+size = Vector3(1.1, 0.9, 0.95)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qublv"]
+size = Vector3(1.2, 0.14, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kmb0i"]
+size = Vector3(1.2, 0.14, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cc2aj"]
+size = Vector3(1.1, 0.9, 0.95)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qcwde"]
+size = Vector3(1.1, 0.9, 0.95)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tchn6"]
+size = Vector3(1.2, 0.14, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_o8if1"]
+size = Vector3(1.2, 0.14, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_p6xup"]
+size = Vector3(1.1, 0.9, 0.95)
+
+[sub_resource type="BoxMesh" id="BoxMesh_b2hpr"]
+size = Vector3(1.1, 0.9, 0.95)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_l5v8s"]
+height = 7.0
+radius = 0.09
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ttnxv"]
+top_radius = 0.06
+bottom_radius = 0.09
+height = 7.0
+radial_segments = 20
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ewbo7"]
+top_radius = 0.2
+bottom_radius = 0.2
+height = 0.5
+radial_segments = 20
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_bvso8"]
+top_radius = 0.04
+bottom_radius = 0.05
+height = 1.9
+radial_segments = 10
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_vyfre"]
+radius = 0.17
+height = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_riqgp"]
+top_radius = 0.13
+bottom_radius = 0.13
+height = 0.02
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_bjkno"]
+height = 7.0
+radius = 0.09
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_13rro"]
+top_radius = 0.06
+bottom_radius = 0.09
+height = 7.0
+radial_segments = 20
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_bglnr"]
+top_radius = 0.2
+bottom_radius = 0.2
+height = 0.5
+radial_segments = 20
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_m8sq4"]
+top_radius = 0.04
+bottom_radius = 0.05
+height = 1.9
+radial_segments = 10
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_8hs4p"]
+radius = 0.17
+height = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_an5ba"]
+top_radius = 0.13
+bottom_radius = 0.13
+height = 0.02
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1oksk"]
+size = Vector3(1.9, 1.5, 5.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2or4k"]
+size = Vector3(1.9, 1.5, 5.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_msi0a"]
+size = Vector3(0.55, 0.1, 0.25)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_j8n40"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_aniak"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_17hut"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_igowi"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="BoxMesh" id="BoxMesh_r1v2k"]
+size = Vector3(0.35, 0.1, 0.02)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3h7s3"]
+size = Vector3(1.9, 0.75, 4.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_17nu1"]
+size = Vector3(1.9, 0.75, 4.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_yyfr1"]
+size = Vector3(1.72, 0.55, 2.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_n12tn"]
+size = Vector3(1.68, 0.5, 0.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fu8e8"]
+size = Vector3(0.55, 0.1, 0.25)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_xxcmd"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_yfpts"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hk2a1"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ottso"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="BoxMesh" id="BoxMesh_kbqax"]
+size = Vector3(0.35, 0.1, 0.02)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7h5uf"]
+size = Vector3(40, 3, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1hcii"]
+size = Vector3(0.7, 1, 0.35)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5bpdm"]
+size = Vector3(0.5, 1, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4wdnj"]
+size = Vector3(0.5, 1, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3p3fb"]
+size = Vector3(0.45, 0.3, 0.04)
+
+[sub_resource type="SphereMesh" id="SphereMesh_ots3p"]
+radius = 0.15
+height = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_r0vkt"]
+radius = 1.7
+height = 3.4
+
+[node name="OldHighway9" type="Node3D" unique_id=2099658787]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=315221066]
+environment = SubResource("Environment_15vhc")
+
+[node name="Moonlight" type="DirectionalLight3D" parent="." unique_id=1010546799]
+transform = Transform3D(0.81915206, 0.35312894, -0.45198444, 0, 0.7880108, 0.6156615, 0.57357645, -0.5043204, 0.64550066, 0, 0, 0)
+light_color = Color(0.62, 0.72, 0.95, 1)
+light_energy = 0.24
+light_volumetric_fog_energy = 0.4
+light_angular_distance = 1.2
+shadow_enabled = true
+shadow_blur = 1.5
+directional_shadow_max_distance = 80.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="." unique_id=784226021]
+script = ExtResource("1_w56qa")
+
+[node name="Highway" type="Node3D" parent="Navigation" unique_id=1253939678]
+
+[node name="Ground" type="StaticBody3D" parent="Navigation/Highway" unique_id=252105177]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/Ground" unique_id=3568079]
+shape = SubResource("BoxShape3D_8x1lo")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/Ground" unique_id=652299290]
+material_override = ExtResource("2_5buxl")
+mesh = SubResource("BoxMesh_6onc2")
+
+[node name="OldHighway9" type="StaticBody3D" parent="Navigation/Highway" unique_id=1368224652]
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/OldHighway9" unique_id=661077274]
+shape = SubResource("BoxShape3D_mx6di")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/OldHighway9" unique_id=521868219]
+material_override = ExtResource("3_b2r3f")
+mesh = SubResource("BoxMesh_qwxt8")
+
+[node name="WestShoulder" type="StaticBody3D" parent="Navigation/Highway" unique_id=2093804712]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.01, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/WestShoulder" unique_id=1009676654]
+shape = SubResource("BoxShape3D_ssrjy")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/WestShoulder" unique_id=836601521]
+material_override = ExtResource("4_68pbo")
+mesh = SubResource("BoxMesh_kn4kv")
+
+[node name="EastShoulder" type="StaticBody3D" parent="Navigation/Highway" unique_id=474048519]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.01, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/EastShoulder" unique_id=48939973]
+shape = SubResource("BoxShape3D_r5amf")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/EastShoulder" unique_id=1139779612]
+material_override = ExtResource("4_68pbo")
+mesh = SubResource("BoxMesh_3q1cw")
+
+[node name="FlankDirtRoad" type="StaticBody3D" parent="Navigation/Highway" unique_id=1719990310]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.5, 0.02, -1)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/FlankDirtRoad" unique_id=273749469]
+shape = SubResource("BoxShape3D_xkoas")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/FlankDirtRoad" unique_id=574906671]
+material_override = ExtResource("5_tpl7m")
+mesh = SubResource("BoxMesh_2atbx")
+
+[node name="SouthFlankLink" type="StaticBody3D" parent="Navigation/Highway" unique_id=1600988396]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.025, 30)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/SouthFlankLink" unique_id=1035918982]
+shape = SubResource("BoxShape3D_bmufj")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/SouthFlankLink" unique_id=1724184524]
+material_override = ExtResource("5_tpl7m")
+mesh = SubResource("BoxMesh_gss7b")
+
+[node name="NorthFlankLink" type="StaticBody3D" parent="Navigation/Highway" unique_id=451900064]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.025, -33)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/NorthFlankLink" unique_id=1118976673]
+shape = SubResource("BoxShape3D_gdu0q")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/NorthFlankLink" unique_id=977139117]
+material_override = ExtResource("5_tpl7m")
+mesh = SubResource("BoxMesh_sackg")
+
+[node name="CenterStripe-44" type="Node3D" parent="Navigation/Highway" unique_id=1041114849]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, -44)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe-44" unique_id=850918815]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_vgrfi")
+
+[node name="CenterStripe-36" type="Node3D" parent="Navigation/Highway" unique_id=1648074531]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, -36)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe-36" unique_id=1080860362]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_lm7a3")
+
+[node name="CenterStripe-28" type="Node3D" parent="Navigation/Highway" unique_id=1296522258]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, -28)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe-28" unique_id=1128178334]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_n1lek")
+
+[node name="CenterStripe-20" type="Node3D" parent="Navigation/Highway" unique_id=102208327]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, -20)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe-20" unique_id=359509076]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_bsa54")
+
+[node name="CenterStripe-12" type="Node3D" parent="Navigation/Highway" unique_id=382360257]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, -12)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe-12" unique_id=1005573798]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_dusfl")
+
+[node name="CenterStripe-4" type="Node3D" parent="Navigation/Highway" unique_id=1610740658]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, -4)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe-4" unique_id=680351730]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_q54tg")
+
+[node name="CenterStripe4" type="Node3D" parent="Navigation/Highway" unique_id=1535330921]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, 4)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe4" unique_id=67193588]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_j6jal")
+
+[node name="CenterStripe12" type="Node3D" parent="Navigation/Highway" unique_id=1547349483]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, 12)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe12" unique_id=1688969971]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_u5km3")
+
+[node name="CenterStripe20" type="Node3D" parent="Navigation/Highway" unique_id=1511303309]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, 20)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe20" unique_id=1675368120]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_glges")
+
+[node name="CenterStripe28" type="Node3D" parent="Navigation/Highway" unique_id=534511620]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, 28)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe28" unique_id=707644537]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_huw47")
+
+[node name="CenterStripe36" type="Node3D" parent="Navigation/Highway" unique_id=1306066207]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, 36)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe36" unique_id=1645774398]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_otpeu")
+
+[node name="CenterStripe44" type="Node3D" parent="Navigation/Highway" unique_id=571086402]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, 44)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/CenterStripe44" unique_id=1734216397]
+material_override = ExtResource("6_b3u2a")
+mesh = SubResource("BoxMesh_3rvyw")
+
+[node name="GuardPost-1_0" type="StaticBody3D" parent="Navigation/Highway" unique_id=1403170372]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4, 0.45, -42)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost-1_0" unique_id=1400836227]
+shape = SubResource("BoxShape3D_gfqe1")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost-1_0" unique_id=2057096652]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_m0ooi")
+
+[node name="GuardPost-1_1" type="StaticBody3D" parent="Navigation/Highway" unique_id=567012730]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4, 0.45, -28)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost-1_1" unique_id=1421726301]
+shape = SubResource("BoxShape3D_in22g")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost-1_1" unique_id=1706567836]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_tadgd")
+
+[node name="GuardPost-1_2" type="StaticBody3D" parent="Navigation/Highway" unique_id=1249214536]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4, 0.45, -14)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost-1_2" unique_id=246097755]
+shape = SubResource("BoxShape3D_2r0hp")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost-1_2" unique_id=771213123]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_drqxp")
+
+[node name="GuardPost-1_3" type="StaticBody3D" parent="Navigation/Highway" unique_id=1735498116]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4, 0.45, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost-1_3" unique_id=1653706675]
+shape = SubResource("BoxShape3D_kcp1m")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost-1_3" unique_id=2049864007]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_yvxij")
+
+[node name="GuardPost-1_4" type="StaticBody3D" parent="Navigation/Highway" unique_id=1327851050]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4, 0.45, 14)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost-1_4" unique_id=14407510]
+shape = SubResource("BoxShape3D_tptoe")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost-1_4" unique_id=587320177]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_61chv")
+
+[node name="GuardPost-1_5" type="StaticBody3D" parent="Navigation/Highway" unique_id=455285073]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4, 0.45, 28)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost-1_5" unique_id=561689973]
+shape = SubResource("BoxShape3D_yx608")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost-1_5" unique_id=875524480]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_fyf2u")
+
+[node name="GuardPost-1_6" type="StaticBody3D" parent="Navigation/Highway" unique_id=644279376]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4, 0.45, 42)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost-1_6" unique_id=850123440]
+shape = SubResource("BoxShape3D_kvhht")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost-1_6" unique_id=1768990992]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_s1q5f")
+
+[node name="GuardRail-1" type="StaticBody3D" parent="Navigation/Highway" unique_id=858158410]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4, 0.68, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardRail-1" unique_id=1729408152]
+shape = SubResource("BoxShape3D_761pc")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardRail-1" unique_id=594072881]
+material_override = ExtResource("8_pjy5a")
+mesh = SubResource("BoxMesh_qkr8i")
+
+[node name="GuardPost1_0" type="StaticBody3D" parent="Navigation/Highway" unique_id=1900992587]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4, 0.45, -42)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost1_0" unique_id=1504509573]
+shape = SubResource("BoxShape3D_o47ei")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost1_0" unique_id=158578729]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_a42w3")
+
+[node name="GuardPost1_1" type="StaticBody3D" parent="Navigation/Highway" unique_id=1930046145]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4, 0.45, -28)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost1_1" unique_id=843720819]
+shape = SubResource("BoxShape3D_ny61o")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost1_1" unique_id=1910378937]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_v845v")
+
+[node name="GuardPost1_2" type="StaticBody3D" parent="Navigation/Highway" unique_id=2086572395]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4, 0.45, -14)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost1_2" unique_id=389976582]
+shape = SubResource("BoxShape3D_01jcb")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost1_2" unique_id=1860767417]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_45ypt")
+
+[node name="GuardPost1_3" type="StaticBody3D" parent="Navigation/Highway" unique_id=1224285231]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4, 0.45, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost1_3" unique_id=1257902792]
+shape = SubResource("BoxShape3D_k1g6c")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost1_3" unique_id=118885226]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_6ym2h")
+
+[node name="GuardPost1_4" type="StaticBody3D" parent="Navigation/Highway" unique_id=1780186643]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4, 0.45, 14)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost1_4" unique_id=498183155]
+shape = SubResource("BoxShape3D_46mje")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost1_4" unique_id=1309485946]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_jvrqh")
+
+[node name="GuardPost1_5" type="StaticBody3D" parent="Navigation/Highway" unique_id=88091158]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4, 0.45, 28)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost1_5" unique_id=701189700]
+shape = SubResource("BoxShape3D_unfly")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost1_5" unique_id=475064543]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_djwqy")
+
+[node name="GuardPost1_6" type="StaticBody3D" parent="Navigation/Highway" unique_id=108212227]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4, 0.45, 42)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardPost1_6" unique_id=699796187]
+shape = SubResource("BoxShape3D_kelef")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardPost1_6" unique_id=2080214317]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_psn3p")
+
+[node name="GuardRail1" type="StaticBody3D" parent="Navigation/Highway" unique_id=1390663717]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4, 0.68, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/Highway/GuardRail1" unique_id=441963639]
+shape = SubResource("BoxShape3D_k5n54")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/Highway/GuardRail1" unique_id=1326634344]
+material_override = ExtResource("8_pjy5a")
+mesh = SubResource("BoxMesh_lluxy")
+
+[node name="MileMarker47" type="Node3D" parent="Navigation" unique_id=1797005127]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 25)
+
+[node name="Post" type="StaticBody3D" parent="Navigation/MileMarker47" unique_id=76796242]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/MileMarker47/Post" unique_id=416583298]
+shape = SubResource("BoxShape3D_knytt")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/MileMarker47/Post" unique_id=425723959]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_ndq4s")
+
+[node name="Plate" type="Node3D" parent="Navigation/MileMarker47" unique_id=503576434]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/MileMarker47/Plate" unique_id=453361669]
+material_override = ExtResource("9_8btdf")
+mesh = SubResource("BoxMesh_fpw1b")
+
+[node name="Text" type="Label3D" parent="Navigation/MileMarker47" unique_id=11295623]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0.052)
+pixel_size = 0.004
+modulate = Color(0.9, 0.9, 0.8, 1)
+text = "OLD HWY 9
+MILE 47"
+font_size = 36
+
+[node name="MeatTruck" type="Node3D" parent="Navigation" unique_id=328895491]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -17)
+
+[node name="Cab" type="StaticBody3D" parent="Navigation/MeatTruck" unique_id=1453482204]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, -4.3)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/MeatTruck/Cab" unique_id=1173646139]
+shape = SubResource("BoxShape3D_vps46")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/MeatTruck/Cab" unique_id=224611670]
+material_override = ExtResource("10_x15lo")
+mesh = SubResource("BoxMesh_g5ooa")
+
+[node name="Windshield" type="Node3D" parent="Navigation/MeatTruck" unique_id=278299234]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, -5.83)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/MeatTruck/Windshield" unique_id=2060633800]
+material_override = ExtResource("11_aofcy")
+mesh = SubResource("BoxMesh_ww6bp")
+
+[node name="ReeferBox" type="StaticBody3D" parent="Navigation/MeatTruck" unique_id=442400400]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 1.6)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/MeatTruck/ReeferBox" unique_id=806887758]
+shape = SubResource("BoxShape3D_2h0e6")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/MeatTruck/ReeferBox" unique_id=1810919220]
+material_override = ExtResource("8_pjy5a")
+mesh = SubResource("BoxMesh_jh8ah")
+
+[node name="RearDoorLeft" type="Node3D" parent="Navigation/MeatTruck" unique_id=2124255274]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.66, 1.75, 5.85)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/MeatTruck/RearDoorLeft" unique_id=154949473]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_43tnn")
+
+[node name="RearDoorRight" type="Node3D" parent="Navigation/MeatTruck" unique_id=244015810]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.66, 1.75, 5.85)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/MeatTruck/RearDoorRight" unique_id=739066188]
+material_override = ExtResource("7_irlkv")
+mesh = SubResource("BoxMesh_wwgds")
+
+[node name="CoolingUnit" type="Node3D" parent="Navigation/MeatTruck" unique_id=1533041698]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -2.85)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/MeatTruck/CoolingUnit" unique_id=1871407586]
+material_override = ExtResource("12_fkvld")
+mesh = SubResource("BoxMesh_3crq8")
+
+[node name="Wheel-14_-40" type="MeshInstance3D" parent="Navigation/MeatTruck" unique_id=1266734088]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -1.4, 0.5, -4)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_gys4e")
+
+[node name="Wheel14_-40" type="MeshInstance3D" parent="Navigation/MeatTruck" unique_id=1095649662]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 1.4, 0.5, -4)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_g20kf")
+
+[node name="Wheel-14_-10" type="MeshInstance3D" parent="Navigation/MeatTruck" unique_id=837534842]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -1.4, 0.5, -1)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_jl732")
+
+[node name="Wheel14_-10" type="MeshInstance3D" parent="Navigation/MeatTruck" unique_id=1185072702]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 1.4, 0.5, -1)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_pgnow")
+
+[node name="Wheel-14_36" type="MeshInstance3D" parent="Navigation/MeatTruck" unique_id=1394078290]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -1.4, 0.5, 3.6)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_07m8m")
+
+[node name="Wheel14_36" type="MeshInstance3D" parent="Navigation/MeatTruck" unique_id=1315824843]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 1.4, 0.5, 3.6)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_7m2lj")
+
+[node name="DeadHazardLamp" type="OmniLight3D" parent="Navigation/MeatTruck" unique_id=2111538179]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 1.3, 5.95)
+light_color = Color(1, 0.08, 0.015, 1)
+light_energy = 0.8
+
+[node name="RoadsideCover" type="Node3D" parent="Navigation" unique_id=1688616919]
+
+[node name="AbandonedCivilianCar" type="Node3D" parent="Navigation/RoadsideCover" unique_id=1211839052]
+transform = Transform3D(0.92718387, 0, 0.37460658, 0, 1, 0, -0.37460658, 0, 0.92718387, 7, 0, -31)
+
+[node name="Body" type="StaticBody3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar" unique_id=2118944602]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar/Body" unique_id=1829642995]
+shape = SubResource("BoxShape3D_uubyw")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar/Body" unique_id=1340518429]
+material_override = ExtResource("14_a16u8")
+mesh = SubResource("BoxMesh_km2ac")
+
+[node name="Cabin" type="Node3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar" unique_id=517626983]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.38, 0.25)
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar/Cabin" unique_id=1668035074]
+material_override = ExtResource("15_83b2h")
+mesh = SubResource("BoxMesh_3532d")
+
+[node name="Windshield" type="MeshInstance3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar" unique_id=1329175039]
+transform = Transform3D(1, 0, 0, 0, 0.90630776, 0.42261827, 0, -0.42261827, 0.90630776, 0, 1.36, -0.96)
+material_override = ExtResource("11_aofcy")
+mesh = SubResource("BoxMesh_312wn")
+
+[node name="BarRed" type="MeshInstance3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar" unique_id=282685373]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1.7, 0.3)
+material_override = ExtResource("16_4c0yj")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_wnrmw")
+
+[node name="BarBlue" type="MeshInstance3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar" unique_id=1559662420]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.7, 0.3)
+material_override = ExtResource("17_nh51a")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_wnrmw")
+
+[node name="Wheel00" type="MeshInstance3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar" unique_id=171937181]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.9, 0.36, -1.55)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_xmvm0")
+
+[node name="Wheel02" type="MeshInstance3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar" unique_id=1004477216]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.9, 0.36, 1.55)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_7kucc")
+
+[node name="Wheel20" type="MeshInstance3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar" unique_id=1700852307]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.9, 0.36, -1.55)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_km0ec")
+
+[node name="Wheel22" type="MeshInstance3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar" unique_id=598876085]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.9, 0.36, 1.55)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_jsnoi")
+
+[node name="Headlight4" type="MeshInstance3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar" unique_id=1941663104]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.8, -2.46)
+material_override = ExtResource("18_ajleq")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_kap2p")
+
+[node name="Headlight16" type="MeshInstance3D" parent="Navigation/RoadsideCover/AbandonedCivilianCar" unique_id=1165326755]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.8, -2.46)
+material_override = ExtResource("18_ajleq")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_kap2p")
+
+[node name="BlockedLaneA" type="StaticBody3D" parent="Navigation/RoadsideCover" unique_id=1490194047]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8, 0.3, -38)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/BlockedLaneA" unique_id=298444645]
+shape = SubResource("BoxShape3D_y1hph")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/BlockedLaneA" unique_id=483768153]
+material_override = ExtResource("19_dv455")
+mesh = SubResource("BoxMesh_0g56r")
+
+[node name="Top" type="MeshInstance3D" parent="Navigation/RoadsideCover/BlockedLaneA" unique_id=197326855]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+material_override = ExtResource("19_dv455")
+mesh = SubResource("BoxMesh_v0ril")
+
+[node name="BlockedLaneB" type="StaticBody3D" parent="Navigation/RoadsideCover" unique_id=2104084251]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 0.3, -38)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/BlockedLaneB" unique_id=1258310170]
+shape = SubResource("BoxShape3D_l7nkn")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/BlockedLaneB" unique_id=1610128761]
+material_override = ExtResource("19_dv455")
+mesh = SubResource("BoxMesh_p8xxt")
+
+[node name="Top" type="MeshInstance3D" parent="Navigation/RoadsideCover/BlockedLaneB" unique_id=946054323]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+material_override = ExtResource("19_dv455")
+mesh = SubResource("BoxMesh_miqt5")
+
+[node name="RustBarrel0" type="StaticBody3D" parent="Navigation/RoadsideCover" unique_id=1095112804]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.45, -18)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/RustBarrel0" unique_id=2064272555]
+shape = SubResource("CylinderShape3D_nd1s4")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/RustBarrel0" unique_id=1607187873]
+material_override = ExtResource("10_x15lo")
+mesh = SubResource("CylinderMesh_titjk")
+
+[node name="RustBarrel1" type="StaticBody3D" parent="Navigation/RoadsideCover" unique_id=391469308]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.45, -18)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/RustBarrel1" unique_id=1017470014]
+shape = SubResource("CylinderShape3D_raqpl")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/RustBarrel1" unique_id=320579625]
+material_override = ExtResource("10_x15lo")
+mesh = SubResource("CylinderMesh_uxmnj")
+
+[node name="RustBarrel2" type="StaticBody3D" parent="Navigation/RoadsideCover" unique_id=1613652821]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.45, -22)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/RustBarrel2" unique_id=1866985021]
+shape = SubResource("CylinderShape3D_f7v1s")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/RustBarrel2" unique_id=82706660]
+material_override = ExtResource("10_x15lo")
+mesh = SubResource("CylinderMesh_02yof")
+
+[node name="RustBarrel3" type="StaticBody3D" parent="Navigation/RoadsideCover" unique_id=1603052535]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.45, -22)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/RustBarrel3" unique_id=138507014]
+shape = SubResource("CylinderShape3D_7i3sf")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/RustBarrel3" unique_id=1712214462]
+material_override = ExtResource("10_x15lo")
+mesh = SubResource("CylinderMesh_vqocv")
+
+[node name="Cargo0" type="Node3D" parent="Navigation/RoadsideCover" unique_id=1597277883]
+transform = Transform3D(0.9848077, 0, 0.17364818, 0, 1, 0, -0.17364818, 0, 0.9848077, 8, 0, -9)
+
+[node name="Pallet" type="StaticBody3D" parent="Navigation/RoadsideCover/Cargo0" unique_id=29235117]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/Cargo0/Pallet" unique_id=137300882]
+shape = SubResource("BoxShape3D_8iree")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/Cargo0/Pallet" unique_id=218285848]
+material_override = ExtResource("20_j0pnd")
+mesh = SubResource("BoxMesh_d8tvp")
+
+[node name="Crate0" type="StaticBody3D" parent="Navigation/RoadsideCover/Cargo0" unique_id=490888606]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.59, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/Cargo0/Crate0" unique_id=2114396543]
+shape = SubResource("BoxShape3D_y0kpm")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/Cargo0/Crate0" unique_id=1390636861]
+material_override = ExtResource("20_j0pnd")
+mesh = SubResource("BoxMesh_3shjp")
+
+[node name="Cargo1" type="Node3D" parent="Navigation/RoadsideCover" unique_id=1007310611]
+transform = Transform3D(0.9848077, 0, 0.17364818, 0, 1, 0, -0.17364818, 0, 0.9848077, 9, 0, -12)
+
+[node name="Pallet" type="StaticBody3D" parent="Navigation/RoadsideCover/Cargo1" unique_id=1062330395]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/Cargo1/Pallet" unique_id=1451248834]
+shape = SubResource("BoxShape3D_qublv")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/Cargo1/Pallet" unique_id=749304324]
+material_override = ExtResource("20_j0pnd")
+mesh = SubResource("BoxMesh_kmb0i")
+
+[node name="Crate0" type="StaticBody3D" parent="Navigation/RoadsideCover/Cargo1" unique_id=807392229]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.59, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/Cargo1/Crate0" unique_id=878446470]
+shape = SubResource("BoxShape3D_cc2aj")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/Cargo1/Crate0" unique_id=300660216]
+material_override = ExtResource("20_j0pnd")
+mesh = SubResource("BoxMesh_qcwde")
+
+[node name="Cargo2" type="Node3D" parent="Navigation/RoadsideCover" unique_id=318665260]
+transform = Transform3D(0.9848077, 0, 0.17364818, 0, 1, 0, -0.17364818, 0, 0.9848077, 10, 0, -15)
+
+[node name="Pallet" type="StaticBody3D" parent="Navigation/RoadsideCover/Cargo2" unique_id=211516427]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/Cargo2/Pallet" unique_id=871633103]
+shape = SubResource("BoxShape3D_tchn6")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/Cargo2/Pallet" unique_id=1209624943]
+material_override = ExtResource("20_j0pnd")
+mesh = SubResource("BoxMesh_o8if1")
+
+[node name="Crate0" type="StaticBody3D" parent="Navigation/RoadsideCover/Cargo2" unique_id=532827618]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.59, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Navigation/RoadsideCover/Cargo2/Crate0" unique_id=43657681]
+shape = SubResource("BoxShape3D_p6xup")
+
+[node name="Mesh" type="MeshInstance3D" parent="Navigation/RoadsideCover/Cargo2/Crate0" unique_id=2083887178]
+material_override = ExtResource("20_j0pnd")
+mesh = SubResource("BoxMesh_b2hpr")
+
+[node name="Lighting" type="Node3D" parent="." unique_id=1747614279]
+
+[node name="SouthSodium" type="Node3D" parent="Lighting" unique_id=1701289381]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 31)
+
+[node name="Pole" type="StaticBody3D" parent="Lighting/SouthSodium" unique_id=1942240929]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Lighting/SouthSodium/Pole" unique_id=1385990815]
+shape = SubResource("CylinderShape3D_l5v8s")
+
+[node name="Mesh" type="MeshInstance3D" parent="Lighting/SouthSodium/Pole" unique_id=1072328631]
+material_override = ExtResource("12_fkvld")
+mesh = SubResource("CylinderMesh_ttnxv")
+
+[node name="Base" type="Node3D" parent="Lighting/SouthSodium" unique_id=1890847707]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Lighting/SouthSodium/Base" unique_id=1994921017]
+material_override = ExtResource("21_hsd07")
+mesh = SubResource("CylinderMesh_ewbo7")
+
+[node name="Arm" type="MeshInstance3D" parent="Lighting/SouthSodium" unique_id=2007464241]
+transform = Transform3D(1, 0, 0, 0, 0.17364822, 0.9848077, 0, -0.9848077, 0.17364822, 0, 6.95, -0.9)
+material_override = ExtResource("12_fkvld")
+mesh = SubResource("CylinderMesh_bvso8")
+
+[node name="Head" type="MeshInstance3D" parent="Lighting/SouthSodium" unique_id=423678169]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 7.05, -1.85)
+material_override = ExtResource("12_fkvld")
+mesh = SubResource("CapsuleMesh_vyfre")
+
+[node name="Lens" type="MeshInstance3D" parent="Lighting/SouthSodium" unique_id=111229820]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.88, -1.9)
+material_override = ExtResource("22_qb8km")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_riqgp")
+
+[node name="Light" type="SpotLight3D" parent="Lighting/SouthSodium" unique_id=2024875323]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 6.8, -1.9)
+light_color = Color(1, 0.72, 0.42, 1)
+light_energy = 5.0
+light_volumetric_fog_energy = 0.7
+light_size = 0.25
+shadow_bias = 0.06
+spot_range = 18.2
+spot_angle = 64.0
+spot_angle_attenuation = 0.7
+
+[node name="NorthSodium" type="Node3D" parent="Lighting" unique_id=1458764348]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 9, 0, -34)
+
+[node name="Pole" type="StaticBody3D" parent="Lighting/NorthSodium" unique_id=348505884]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Lighting/NorthSodium/Pole" unique_id=889795742]
+shape = SubResource("CylinderShape3D_bjkno")
+
+[node name="Mesh" type="MeshInstance3D" parent="Lighting/NorthSodium/Pole" unique_id=696057742]
+material_override = ExtResource("12_fkvld")
+mesh = SubResource("CylinderMesh_13rro")
+
+[node name="Base" type="Node3D" parent="Lighting/NorthSodium" unique_id=373441809]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Lighting/NorthSodium/Base" unique_id=733889408]
+material_override = ExtResource("21_hsd07")
+mesh = SubResource("CylinderMesh_bglnr")
+
+[node name="Arm" type="MeshInstance3D" parent="Lighting/NorthSodium" unique_id=1255339727]
+transform = Transform3D(1, 0, 0, 0, 0.17364822, 0.9848077, 0, -0.9848077, 0.17364822, 0, 6.95, -0.9)
+material_override = ExtResource("12_fkvld")
+mesh = SubResource("CylinderMesh_m8sq4")
+
+[node name="Head" type="MeshInstance3D" parent="Lighting/NorthSodium" unique_id=1726471684]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 7.05, -1.85)
+material_override = ExtResource("12_fkvld")
+mesh = SubResource("CapsuleMesh_8hs4p")
+
+[node name="Lens" type="MeshInstance3D" parent="Lighting/NorthSodium" unique_id=520462197]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.88, -1.9)
+material_override = ExtResource("22_qb8km")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_an5ba")
+
+[node name="Light" type="SpotLight3D" parent="Lighting/NorthSodium" unique_id=1100804082]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 6.8, -1.9)
+light_color = Color(1, 0.72, 0.42, 1)
+light_energy = 4.0
+light_volumetric_fog_energy = 0.7
+light_size = 0.25
+shadow_bias = 0.06
+spot_range = 18.2
+spot_angle = 64.0
+spot_angle_attenuation = 0.7
+
+[node name="Extraction" type="Node3D" parent="." unique_id=1690814135]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 42)
+
+[node name="PoliceVan" type="Node3D" parent="Extraction" unique_id=1785112146]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+
+[node name="Body" type="StaticBody3D" parent="Extraction/PoliceVan" unique_id=1231554722]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Extraction/PoliceVan/Body" unique_id=1602480791]
+shape = SubResource("BoxShape3D_1oksk")
+
+[node name="Mesh" type="MeshInstance3D" parent="Extraction/PoliceVan/Body" unique_id=635487228]
+material_override = ExtResource("15_83b2h")
+mesh = SubResource("BoxMesh_2or4k")
+
+[node name="BarRed" type="MeshInstance3D" parent="Extraction/PoliceVan" unique_id=1711333125]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1.9, 0.3)
+material_override = ExtResource("16_4c0yj")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_msi0a")
+
+[node name="BarBlue" type="MeshInstance3D" parent="Extraction/PoliceVan" unique_id=1049388462]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.9, 0.3)
+material_override = ExtResource("17_nh51a")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_msi0a")
+
+[node name="Wheel00" type="MeshInstance3D" parent="Extraction/PoliceVan" unique_id=1823436868]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.9, 0.36, -1.9)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_j8n40")
+
+[node name="Wheel02" type="MeshInstance3D" parent="Extraction/PoliceVan" unique_id=443007493]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.9, 0.36, 1.9)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_aniak")
+
+[node name="Wheel20" type="MeshInstance3D" parent="Extraction/PoliceVan" unique_id=1580733099]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.9, 0.36, -1.9)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_17hut")
+
+[node name="Wheel22" type="MeshInstance3D" parent="Extraction/PoliceVan" unique_id=1707815336]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.9, 0.36, 1.9)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_igowi")
+
+[node name="Headlight4" type="MeshInstance3D" parent="Extraction/PoliceVan" unique_id=1972690428]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.8, -2.81)
+material_override = ExtResource("18_ajleq")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_r1v2k")
+
+[node name="Headlight16" type="MeshInstance3D" parent="Extraction/PoliceVan" unique_id=1502348720]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.8, -2.81)
+material_override = ExtResource("18_ajleq")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_r1v2k")
+
+[node name="Players" type="Node3D" parent="." unique_id=1380379551]
+
+[node name="SpawnPoints" type="Node3D" parent="." unique_id=1951757285]
+
+[node name="Spawn1" type="Marker3D" parent="SpawnPoints" unique_id=613130755]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 0.05, 37)
+
+[node name="Spawn2" type="Marker3D" parent="SpawnPoints" unique_id=1945632546]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -4.6, 0.05, 37)
+
+[node name="Spawn3" type="Marker3D" parent="SpawnPoints" unique_id=660448562]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -3.2, 0.05, 37)
+
+[node name="Spawn4" type="Marker3D" parent="SpawnPoints" unique_id=2029312437]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -1.8, 0.05, 37)
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="." unique_id=1995387128 node_paths=PackedStringArray("spawn_points")]
+spawn_path = NodePath("../Players")
+script = ExtResource("23_fi4dl")
+spawn_points = NodePath("../SpawnPoints")
+
+[node name="HighwayCultSquad" type="Node" parent="." unique_id=355364428]
+script = ExtResource("24_hmim3")
+
+[node name="Enemies" type="Node3D" parent="." unique_id=761705782]
+
+[node name="EnemySpawnPoints" type="Node3D" parent="." unique_id=999038111]
+
+[node name="AmbushLeader" type="Marker3D" parent="EnemySpawnPoints" unique_id=1365421461]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.05, -29)
+script = ExtResource("25_f5xui")
+archetype = ExtResource("26_mun26")
+squad = NodePath("../../HighwayCultSquad")
+mission_kinds = Array[StringName]([&"ambush", &"raid"])
+
+[node name="RpgGunner" type="Marker3D" parent="EnemySpawnPoints" unique_id=383851664]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.05, -35)
+script = ExtResource("25_f5xui")
+archetype = ExtResource("27_yfdff")
+squad = NodePath("../../HighwayCultSquad")
+mission_kinds = Array[StringName]([&"ambush", &"raid"])
+
+[node name="TruckGuard" type="Marker3D" parent="EnemySpawnPoints" unique_id=60429526]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.05, -20)
+script = ExtResource("25_f5xui")
+archetype = ExtResource("27_yfdff")
+squad = NodePath("../../HighwayCultSquad")
+mission_kinds = Array[StringName]([&"ambush", &"raid"])
+
+[node name="FlankGuard" type="Marker3D" parent="EnemySpawnPoints" unique_id=1690730195]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0.05, -27)
+script = ExtResource("25_f5xui")
+archetype = ExtResource("28_u21sf")
+squad = NodePath("../../HighwayCultSquad")
+mission_kinds = Array[StringName]([&"ambush", &"raid"])
+
+[node name="EnemySpawner" type="MultiplayerSpawner" parent="." unique_id=2091398438 node_paths=PackedStringArray("spawn_points", "navigation")]
+spawn_path = NodePath("../Enemies")
+script = ExtResource("29_fbju1")
+spawn_points = NodePath("../EnemySpawnPoints")
+navigation = NodePath("../Navigation")
+
+[node name="MissionController" type="Node3D" parent="." unique_id=533066703 node_paths=PackedStringArray("extraction_point")]
+script = ExtResource("30_tyxw7")
+extraction_point = NodePath("../Extraction/PoliceVan")
+extraction_radius = 4.5
+
+[node name="RpgSetPiece" type="Node3D" parent="." unique_id=251503879 node_paths=PackedStringArray("trigger", "cruiser", "projectile", "blast", "launch_point")]
+script = ExtResource("31_byu4y")
+trigger = NodePath("ApproachTrigger")
+cruiser = NodePath("EmptyDecoyCruiser")
+projectile = NodePath("RpgProjectile")
+blast = NodePath("RpgBlast")
+launch_point = NodePath("RpgLaunch")
+
+[node name="EmptyDecoyCruiser" type="Node3D" parent="RpgSetPiece" unique_id=2057163531]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 8)
+
+[node name="Body" type="StaticBody3D" parent="RpgSetPiece/EmptyDecoyCruiser" unique_id=1467160368]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="RpgSetPiece/EmptyDecoyCruiser/Body" unique_id=649007178]
+shape = SubResource("BoxShape3D_3h7s3")
+
+[node name="Mesh" type="MeshInstance3D" parent="RpgSetPiece/EmptyDecoyCruiser/Body" unique_id=294949039]
+material_override = ExtResource("14_a16u8")
+mesh = SubResource("BoxMesh_17nu1")
+
+[node name="Cabin" type="Node3D" parent="RpgSetPiece/EmptyDecoyCruiser" unique_id=262576126]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.38, 0.25)
+
+[node name="Mesh" type="MeshInstance3D" parent="RpgSetPiece/EmptyDecoyCruiser/Cabin" unique_id=865701997]
+material_override = ExtResource("15_83b2h")
+mesh = SubResource("BoxMesh_yyfr1")
+
+[node name="Windshield" type="MeshInstance3D" parent="RpgSetPiece/EmptyDecoyCruiser" unique_id=20102483]
+transform = Transform3D(1, 0, 0, 0, 0.90630776, 0.42261827, 0, -0.42261827, 0.90630776, 0, 1.36, -0.96)
+material_override = ExtResource("11_aofcy")
+mesh = SubResource("BoxMesh_n12tn")
+
+[node name="BarRed" type="MeshInstance3D" parent="RpgSetPiece/EmptyDecoyCruiser" unique_id=583439545]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1.7, 0.3)
+material_override = ExtResource("16_4c0yj")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_fu8e8")
+
+[node name="BarBlue" type="MeshInstance3D" parent="RpgSetPiece/EmptyDecoyCruiser" unique_id=1257550089]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.7, 0.3)
+material_override = ExtResource("17_nh51a")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_fu8e8")
+
+[node name="Wheel00" type="MeshInstance3D" parent="RpgSetPiece/EmptyDecoyCruiser" unique_id=515975830]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.9, 0.36, -1.55)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_xxcmd")
+
+[node name="Wheel02" type="MeshInstance3D" parent="RpgSetPiece/EmptyDecoyCruiser" unique_id=1511994676]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.9, 0.36, 1.55)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_yfpts")
+
+[node name="Wheel20" type="MeshInstance3D" parent="RpgSetPiece/EmptyDecoyCruiser" unique_id=1542724141]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.9, 0.36, -1.55)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_hk2a1")
+
+[node name="Wheel22" type="MeshInstance3D" parent="RpgSetPiece/EmptyDecoyCruiser" unique_id=1080628948]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.9, 0.36, 1.55)
+material_override = ExtResource("13_3062j")
+mesh = SubResource("CylinderMesh_ottso")
+
+[node name="Headlight4" type="MeshInstance3D" parent="RpgSetPiece/EmptyDecoyCruiser" unique_id=423171935]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.8, -2.46)
+material_override = ExtResource("18_ajleq")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_kbqax")
+
+[node name="Headlight16" type="MeshInstance3D" parent="RpgSetPiece/EmptyDecoyCruiser" unique_id=940045626]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.8, -2.46)
+material_override = ExtResource("18_ajleq")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_kbqax")
+
+[node name="ApproachTrigger" type="Area3D" parent="RpgSetPiece" unique_id=1048366115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 25)
+collision_layer = 0
+
+[node name="Shape" type="CollisionShape3D" parent="RpgSetPiece/ApproachTrigger" unique_id=1489707563]
+shape = SubResource("BoxShape3D_7h5uf")
+
+[node name="RemoteDriveUplink" type="Area3D" parent="RpgSetPiece" unique_id=2146146828 node_paths=PackedStringArray("set_piece")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1, 22.4)
+script = ExtResource("32_yjlrl")
+set_piece = NodePath("..")
+
+[node name="Shape" type="CollisionShape3D" parent="RpgSetPiece/RemoteDriveUplink" unique_id=1700283636]
+shape = SubResource("BoxShape3D_1hcii")
+
+[node name="UplinkStand" type="StaticBody3D" parent="RpgSetPiece" unique_id=79720737]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.5, 22)
+
+[node name="Shape" type="CollisionShape3D" parent="RpgSetPiece/UplinkStand" unique_id=1896730785]
+shape = SubResource("BoxShape3D_5bpdm")
+
+[node name="Mesh" type="MeshInstance3D" parent="RpgSetPiece/UplinkStand" unique_id=2041915517]
+material_override = ExtResource("12_fkvld")
+mesh = SubResource("BoxMesh_4wdnj")
+
+[node name="UplinkScreen" type="Node3D" parent="RpgSetPiece" unique_id=1059719394]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1.1, 22.23)
+
+[node name="Mesh" type="MeshInstance3D" parent="RpgSetPiece/UplinkScreen" unique_id=636416773]
+material_override = ExtResource("17_nh51a")
+mesh = SubResource("BoxMesh_3p3fb")
+
+[node name="RpgLaunch" type="Marker3D" parent="RpgSetPiece" unique_id=188194835]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.8, -35)
+
+[node name="RpgProjectile" type="MeshInstance3D" parent="RpgSetPiece" unique_id=1264295964]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.8, -35)
+material_override = ExtResource("16_4c0yj")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_ots3p")
+
+[node name="RpgBlast" type="MeshInstance3D" parent="RpgSetPiece" unique_id=1837807346]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.2, 8)
+material_override = ExtResource("33_i1kx1")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_r0vkt")

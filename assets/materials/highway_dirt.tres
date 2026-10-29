@@ -1,0 +1,48 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_i07i1"]
+colors = PackedColorArray(0.7, 0.7, 0.7, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_lobl0"]
+seed = 16808
+frequency = 0.045
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_jsc45"]
+noise = SubResource("FastNoiseLite_lobl0")
+color_ramp = SubResource("Gradient_i07i1")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_a1wgb"]
+seed = 16815
+frequency = 0.135
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tgos6"]
+noise = SubResource("FastNoiseLite_a1wgb")
+seamless = true
+as_normal_map = true
+bump_strength = 3.5
+
+[sub_resource type="Gradient" id="Gradient_sqni6"]
+colors = PackedColorArray(0.5, 0.5, 0.5, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_jpy7f"]
+seed = 16821
+frequency = 0.09
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cbbxm"]
+noise = SubResource("FastNoiseLite_jpy7f")
+color_ramp = SubResource("Gradient_sqni6")
+seamless = true
+
+[resource]
+resource_name = "highway_dirt"
+albedo_color = Color(0.23, 0.17, 0.12, 1)
+albedo_texture = SubResource("NoiseTexture2D_jsc45")
+roughness_texture = SubResource("NoiseTexture2D_cbbxm")
+normal_enabled = true
+normal_scale = 0.35
+normal_texture = SubResource("NoiseTexture2D_tgos6")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

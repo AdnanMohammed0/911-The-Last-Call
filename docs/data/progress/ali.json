@@ -61,6 +61,11 @@
    "status": "done",
    "note": "بناء خريطة Flooded Lake House لقضية Call From a Cut Line على 14 Blackwater Drive: طريق وبيت مهجور مؤثث وقبو مغمور ورصيف وبحيرة ونقاط دخول واستخراج. ربط Drowned Woman ومحفز القبو ودفن البقايا، مع شيدر ماء متحرك يرتفع ويتراجع بعد طرد الشذوذ ومزامنة الشبكة. اختُبر مسار الملاحة من الطريق إلى القبو وربط الإشارات؛ نجحت 67 تجربة GUT مرتبطة وفحص ترجمة Godot.",
    "updated_at": "2026-10-29"
+  },
+  "P3-18": {
+   "status": "done",
+   "note": "بناء خريطة Old Highway 9 لقضية The Meat Truck: طريق سريع مهجور ومسار ترابي للتسلل وشاحنة مبردة وحواجز وغطاء ونقاط ظهور للكمين واستخراج. مشهد RPG متزامن بقرار الخادم يضرب طراداً فارغاً بعد مهلة؛ يقدر Tech يبعده من جهاز تحكم، وإلا تنخصم $3,000 من ميزانية المحطة. اختُبرت الملاحة للمسارين وحالتا إنقاذ الطراد وخسارته؛ نجحت 38 تجربة GUT مرتبطة وفحص Godot.",
+   "updated_at": "2026-10-29"
   }
  },
  "log": [
@@ -786,6 +791,12 @@
    "tasks": ["P3-17"],
    "summary": "بناء Lake House المهجور وقبوه المغمور، مع شيدر ارتفاع الماء وربط Drowned Woman بالمحفزات والبقايا والملاحة. نجاح 67 اختباراً مرتبطاً.",
    "files": ["tools/level_kit/build_lake_house.gd", "tools/level_kit/build_levels.gd", "scenes/field/missions/lake_house.tscn", "scenes/field/missions/lake_house_events.gd", "scenes/field/missions/lake_water.gd", "scenes/field/missions/lake_water.gdshader", "autoload/mission_director.gd", "tests/test_lake_house.gd", "docs/data/progress/ali.json"]
+  },
+  {
+   "date": "2026-10-29",
+   "tasks": ["P3-18"],
+   "summary": "بناء خريطة Abandoned Highway ومسار التفاف حول شاحنة Meat Truck، مع مشهد RPG يضرب الطراد الوهمي إلا إذا أبعده Tech، وربط المكالمة والخادم وميزانية المحطة. نجاح 38 اختباراً مرتبطاً.",
+   "files": ["tools/level_kit/build_highway.gd", "tools/level_kit/build_levels.gd", "tools/level_kit/level_kit.gd", "scenes/field/missions/abandoned_highway.tscn", "scenes/field/missions/highway_decoy_control.gd", "scenes/field/missions/highway_rpg_set_piece.gd", "assets/materials/highway_dirt.tres", "assets/materials/highway_gravel.tres", "assets/materials/highway_sign.tres", "assets/materials/highway_stripe.tres", "autoload/mission_director.gd", "tests/test_abandoned_highway.gd", "docs/data/progress/ali.json"]
   }
  ]
 }

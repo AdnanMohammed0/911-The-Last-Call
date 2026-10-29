@@ -16,4 +16,6 @@ func _ready() -> void:
 	print("BUILD farmhouse: ", error_string(farmhouse))
 	var lake_house: Error = BuildLakeHouse.build()
 	print("BUILD lake_house: ", error_string(lake_house))
-	get_tree().quit(0 if station == OK and warehouse == OK and suburb == OK and farmhouse == OK and lake_house == OK else 1)
+	var highway: Error = BuildHighway.build()
+	print("BUILD abandoned_highway: ", error_string(highway))
+	get_tree().quit(0 if station == OK and warehouse == OK and suburb == OK and farmhouse == OK and lake_house == OK and highway == OK else 1)

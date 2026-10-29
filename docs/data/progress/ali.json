@@ -1,6 +1,6 @@
 {
  "member": "ali",
- "updated_at": "2026-10-28",
+ "updated_at": "2026-10-29",
  "tasks": {
   "P1-14": {
    "status": "done",
@@ -56,6 +56,11 @@
    "status": "done",
    "note": "خريطة Farmhouse مستقلة لقضية Scratching Behind the Wall على 14 Birch Lane: أرض ريفية وطريق وصول، بيت مؤثث بغرفة جلوس ومطبخ وغرفة نوم وخزانة الرهينة، حظيرة وسياج ومولد، باب أمامي مقفل وخلفي لدخول هادئ، نقاط لاعبين وأعداء واستخراج. ربط المكالمة بالخريطة وإصلاح تفعيل شبكة الملاحة بعد الخبز؛ اختُبرت مسارات الشارع والباب الخلفي والداخل وموقع الرهينة، ونجحت 35 تجربة GUT مرتبطة.",
    "updated_at": "2026-10-28"
+  },
+  "P3-17": {
+   "status": "done",
+   "note": "بناء خريطة Flooded Lake House لقضية Call From a Cut Line على 14 Blackwater Drive: طريق وبيت مهجور مؤثث وقبو مغمور ورصيف وبحيرة ونقاط دخول واستخراج. ربط Drowned Woman ومحفز القبو ودفن البقايا، مع شيدر ماء متحرك يرتفع ويتراجع بعد طرد الشذوذ ومزامنة الشبكة. اختُبر مسار الملاحة من الطريق إلى القبو وربط الإشارات؛ نجحت 67 تجربة GUT مرتبطة وفحص ترجمة Godot.",
+   "updated_at": "2026-10-29"
   }
  },
  "log": [
@@ -775,6 +780,12 @@
     "tests/test_farmhouse.gd",
     "docs/data/progress/ali.json"
    ]
+  },
+  {
+   "date": "2026-10-29",
+   "tasks": ["P3-17"],
+   "summary": "بناء Lake House المهجور وقبوه المغمور، مع شيدر ارتفاع الماء وربط Drowned Woman بالمحفزات والبقايا والملاحة. نجاح 67 اختباراً مرتبطاً.",
+   "files": ["tools/level_kit/build_lake_house.gd", "tools/level_kit/build_levels.gd", "scenes/field/missions/lake_house.tscn", "scenes/field/missions/lake_house_events.gd", "scenes/field/missions/lake_water.gd", "scenes/field/missions/lake_water.gdshader", "autoload/mission_director.gd", "tests/test_lake_house.gd", "docs/data/progress/ali.json"]
   }
  ]
 }

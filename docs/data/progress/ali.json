@@ -825,6 +825,12 @@
    "tasks": ["P1-12"],
    "summary": "تحسين إضافي لحركة اللاعب بطلب مباشر: تسارع وفرملة والتفاف منفصلون، حركة جسم إجرائية بنابض وتمايل وخطوات مرتدة وميلان وارتداد هبوط، وتحريك السلاح المرئي دون اهتزاز الكاميرا أو تغيير التصويب. نجحت 67 تجربة مرتبطة (5 حركة، 25 مهمة، 19 سلاح، 4 أشكال، 14 خصائص). التشغيل الشامل أظهر فشلين خارج نطاق الحركة في فحوص المكالمات والعدادات العامة.",
    "files": ["scenes/shared/player/player.gd", "scenes/shared/player/player_body.gd", "scenes/shared/characters/humanoid_rig.gd", "scenes/shared/weapons/weapon_holder.gd", "tests/test_expressive_movement.gd", "docs/data/progress/ali.json"]
+  },
+  {
+   "date": "2026-10-29",
+   "tasks": ["P1-12"],
+   "summary": "جولة ثانية بطلب Ali لرفع وضوح الطابع الكوميدي: ركض حقيقي بسرعة 6 م/ث بدل المشي السريع 4.75، وخطوة أطول ورفع ركبة وضخ ذراعين وميلان وارتداد أقوى للاعب فقط. أضيفت يدان إجرائيتان بمنظور أول عند عدم حمل السلاح، وحركة ركض أقوى للسلاح؛ تختفي اليدان عند حمل السلاح أو فتح واجهة. بقيت الكاميرا والتصويب ثابتين. نجحت 69 تجربة مرتبطة وفحص ترجمة Godot.",
+   "files": ["scenes/shared/player/player.gd", "scenes/shared/player/player.tscn", "scenes/shared/player/player_body.gd", "scenes/shared/player/player_motion_view.gd", "scenes/shared/characters/humanoid_rig.gd", "scenes/shared/weapons/weapon_holder.gd", "tests/test_expressive_movement.gd", "docs/data/progress/ali.json"]
   }
  ]
 }

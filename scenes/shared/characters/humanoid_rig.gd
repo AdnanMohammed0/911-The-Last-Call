@@ -83,6 +83,7 @@ var render_layers: int = 1
 @export_range(0.3, 1.5, 0.05) var spring_damping: float = 0.78
 @export_range(0.0, 0.03, 0.001) var idle_breathing: float = 0.008
 @export_range(0.0, 0.1, 0.005) var squash_strength: float = 0.045
+@export_range(0.5, 2.0, 0.05) var run_exaggeration: float = 1.0
 
 var _look: Dictionary = {}
 var look_id: StringName = &""
@@ -100,6 +101,7 @@ var _yaw_spring: Vector2 = Vector2.ZERO
 var _landing_impulse: float = 0.0
 var _phase: float = 0.0
 var _gait: float = 0.0
+var _run_blend: float = 0.0
 var _crouch_smooth: float = 0.0
 var _pose_blend: Dictionary[StringName, float] = {}
 var _melee_time: float = -10.0
@@ -231,31 +233,32 @@ func _solve(delta: float) -> void:
 	var kneel: float = maxf(arrested, surrender * 0.85)
 	var amount: float = clampf(speed / 3.5, 0.0, 1.5) * (1.0 - kneel)
 	_gait = lerpf(_gait, amount, 1.0 - exp(-8.0 * delta))
+	_run_blend = lerpf(_run_blend, 1.0 if sprinting and speed > 3.0 else 0.0, 1.0 - exp(-10.0 * delta))
+	var run: float = _run_blend * run_exaggeration
 	if _gait > 0.03:
-		_phase += delta * TAU * (1.25 + speed * 0.32)
+		_phase += delta * TAU * (1.0 + speed * 0.29 + run * 0.3)
 	var crouch_amount: float = maxf(_crouch_smooth, 0.0)
-	var stride: float = clampf(speed * 0.19, 0.0, 0.6) * (1.0 - crouch_amount * 0.4)
+	var stride: float = clampf(speed * 0.16, 0.0, 0.68) * (1.0 + run * 0.28) * (1.0 - crouch_amount * 0.4)
 	var move_dir: Vector3 = _velocity.normalized() if speed > 0.05 else Vector3.FORWARD
 	var motion_scale: float = (0.3 if aiming else 1.0) * (0.65 if crouch_amount > 0.1 else 1.0)
-	var bob: float = absf(sin(_phase)) * bounce_strength * _gait * motion_scale
+	var bob: float = minf(absf(sin(_phase)) * bounce_strength * _gait * motion_scale * (1.0 + run * 0.65), 0.16)
 	var idle_weight: float = 1.0 - clampf(speed / 0.6, 0.0, 1.0)
 	var breath: float = sin(_time * 2.0) * idle_breathing * idle_weight
 
 	# Hips.
 	var hip_y: float = HIP_HEIGHT - crouch_amount * CROUCH_DROP - kneel * 0.5 + bob + breath - 0.02 * _gait - _landing_impulse * 0.045
 	var hips: Vector3 = Vector3(0.0, hip_y, 0.0)
-	var hip_yaw: float = sin(_phase) * wobble_strength * _gait * motion_scale
+	var hip_yaw: float = sin(_phase) * wobble_strength * _gait * motion_scale * (1.0 + run * 0.5)
 	# Torso: leans into the run, forward in a crouch, twists with the stride, rolls with lean.
 	var torso_pitch: float = -0.09 * _gait - 0.3 * crouch_amount + _pitch_spring.x + (aim_pitch * 0.25 if stance != Stance.UNARMED else 0.0)
-	if sprinting:
-		torso_pitch -= 0.12
-	var wobble: float = sin(_phase) * wobble_strength * _gait * motion_scale
+	torso_pitch -= run * 0.14
+	var wobble: float = sin(_phase) * wobble_strength * _gait * motion_scale * (1.0 + run * 0.5)
 	var idle_sway: float = sin(_time * 0.85) * 0.012 * idle_weight
 	var chest_basis: Basis = Basis.from_euler(Vector3(torso_pitch, -hip_yaw * 0.7 + _yaw_spring.x,
 		-lean * 0.22 + _roll_spring.x + wobble + idle_sway))
 	if stance == Stance.RIFLE and pose != &"surrender":
 		chest_basis = chest_basis * Basis(Vector3.UP, -0.22)
-	var squash: float = clampf((absf(sin(_phase)) * _gait * 0.45 + _landing_impulse) * squash_strength * motion_scale, 0.0, 0.08)
+	var squash: float = clampf((absf(sin(_phase)) * _gait * (0.45 + run * 0.4) + _landing_impulse) * squash_strength * motion_scale, 0.0, 0.12)
 	_chest.transform = Transform3D(chest_basis.scaled(Vector3(1.0 + squash * 0.45, 1.0 - squash + breath * 0.35,
 		1.0 + squash * 0.45)), hips)
 	var head_pitch: float = aim_pitch * 0.65 - torso_pitch * 0.5
@@ -268,7 +271,7 @@ func _solve(delta: float) -> void:
 		var hip_joint: Vector3 = hips + Basis(Vector3.UP, hip_yaw) * Vector3(side * HIP_WIDTH, -0.04, 0.0)
 		var phase: float = _phase + (PI if side > 0 else 0.0)
 		var swing: Vector3 = move_dir * sin(phase) * stride * 0.5
-		var lift: float = maxf(0.0, cos(phase)) * 0.13 * minf(_gait, 1.0)
+		var lift: float = maxf(0.0, cos(phase)) * (0.13 + run * 0.08) * minf(_gait, 1.0)
 		var foot: Vector3 = Vector3(side * (HIP_WIDTH + 0.02 + crouch_amount * 0.05), ANKLE_HEIGHT + lift, 0.0) + swing
 		if crouch_amount > 0.05 and _gait < 0.2:
 			foot.z += (0.12 if side < 0 else -0.08) * crouch_amount
@@ -311,7 +314,7 @@ func _solve(delta: float) -> void:
 
 ## Where each hand goes this frame: on the weapon, swinging, raised or cuffed behind the back.
 func _hand_targets(shoulders: Array[Vector3], hips: Vector3, surrender: float, arrested: float) -> Array[Vector3]:
-	var swing: float = sin(_phase) * 0.22 * minf(_gait, 1.2)
+	var swing: float = sin(_phase) * (0.22 + _run_blend * run_exaggeration * 0.18) * minf(_gait, 1.2)
 	var relaxed: Array[Vector3] = [
 		shoulders[0] + Vector3(-0.05, -0.53, -swing * 0.9),
 		shoulders[1] + Vector3(0.05, -0.53, swing * 0.9),

@@ -12,14 +12,15 @@ const RENDER_LAYER_FIRST_PERSON: int = 1 << 10
 const CROUCH_RATIO: float = 1.1 / 1.8
 
 @export_group("Movement Personality")
-@export_range(0.0, 0.15, 0.005) var wobble_strength: float = 0.055
-@export_range(0.0, 0.15, 0.005) var bounce_strength: float = 0.06
-@export_range(0.0, 0.015, 0.0005) var acceleration_lean: float = 0.004
-@export_range(0.0, 0.05, 0.001) var turn_lean: float = 0.022
+@export_range(0.0, 0.2, 0.005) var wobble_strength: float = 0.11
+@export_range(0.0, 0.2, 0.005) var bounce_strength: float = 0.11
+@export_range(0.0, 0.015, 0.0005) var acceleration_lean: float = 0.007
+@export_range(0.0, 0.08, 0.001) var turn_lean: float = 0.04
 @export_range(1.0, 10.0, 0.25) var spring_frequency: float = 4.5
 @export_range(0.3, 1.5, 0.05) var spring_damping: float = 0.78
 @export_range(0.0, 0.03, 0.001) var idle_breathing: float = 0.008
-@export_range(0.0, 0.1, 0.005) var squash_strength: float = 0.045
+@export_range(0.0, 0.15, 0.005) var squash_strength: float = 0.07
+@export_range(0.5, 2.0, 0.05) var run_exaggeration: float = 1.5
 
 var rig: HumanoidRig
 var _player: Player
@@ -40,6 +41,7 @@ func _ready() -> void:
 	rig.spring_damping = spring_damping
 	rig.idle_breathing = idle_breathing
 	rig.squash_strength = squash_strength
+	rig.run_exaggeration = run_exaggeration
 	_apply_class_look()
 	add_child(rig)
 

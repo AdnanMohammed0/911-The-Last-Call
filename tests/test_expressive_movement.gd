@@ -62,3 +62,30 @@ func test_landing_impulse_affects_only_visual_nodes() -> void:
 	body.land(5.0)
 	assert_gt(body.rig._landing_impulse, 0.0)
 	assert_eq(camera.transform, before)
+
+
+func test_run_has_distinct_speed_and_player_only_exaggeration() -> void:
+	var player: Player = (load("res://scenes/shared/player/player.tscn") as PackedScene).instantiate() as Player
+	add_child_autofree(player)
+	player.set_physics_process(false)
+	assert_gt(player.sprint_speed / player.walk_speed, 1.6)
+	var body: PlayerBody = player.get_node(^"Body") as PlayerBody
+	assert_eq(body.rig.run_exaggeration, body.run_exaggeration)
+	assert_gt(body.rig.run_exaggeration, 1.0)
+
+
+func test_unarmed_hands_show_only_for_local_play_without_weapon_or_menu() -> void:
+	var player: Player = (load("res://scenes/shared/player/player.tscn") as PackedScene).instantiate() as Player
+	add_child_autofree(player)
+	player.set_physics_process(false)
+	var view: PlayerMotionView = player.get_node(^"Head/Camera3D/MotionView") as PlayerMotionView
+	view._process(1.0 / 60.0)
+	assert_true(view.visible)
+	assert_eq(view.get_child_count(), 2)
+	player.get_input().enabled = false
+	view._process(1.0 / 60.0)
+	assert_false(view.visible)
+	player.get_input().enabled = true
+	player.get_weapons().set_weapon(WeaponData.Slot.SIDEARM, &"pistol")
+	view._process(1.0 / 60.0)
+	assert_false(view.visible)

@@ -28,8 +28,9 @@ const VIEWMODEL_SCALE: float = 0.62
 const AIM_POSITION: Vector3 = Vector3(0.0, 0.0, -0.34)
 
 @export_group("Viewmodel Motion")
-@export_range(0.0, 0.03, 0.001) var step_bob: float = 0.012
-@export_range(0.0, 0.04, 0.001) var motion_sway: float = 0.018
+@export_range(0.0, 0.06, 0.001) var step_bob: float = 0.019
+@export_range(0.0, 0.06, 0.001) var motion_sway: float = 0.027
+@export_range(0.0, 0.12, 0.005) var run_bob: float = 0.075
 @export_range(4.0, 30.0, 1.0) var settle_speed: float = 14.0
 @export_range(0.0, 0.04, 0.001) var landing_bounce: float = 0.022
 
@@ -75,6 +76,7 @@ var _kick: float = 0.0
 var _draw_left: float = 0.0
 var _base_fov: float = 75.0
 var _bob_time: float = 0.0
+var _run_blend: float = 0.0
 var _last_view_velocity: Vector2 = Vector2.ZERO
 var _view_sway: Vector2 = Vector2.ZERO
 var _landing_visual: float = 0.0
@@ -640,20 +642,23 @@ func _update_owner_view(delta: float) -> void:
 	if _model == null:
 		return
 	var speed: float = _player.get_horizontal_speed()
-	var gait: float = clampf(speed / 4.75, 0.0, 1.2)
-	_bob_time += delta * (7.0 + speed * 1.3) * gait
+	var gait: float = clampf(speed / maxf(_player.walk_speed, 0.1), 0.0, 1.0)
+	var weight: float = 1.0 - exp(-settle_speed * delta)
+	_run_blend = lerpf(_run_blend, 1.0 if _player.is_sprinting and speed > 3.0 else 0.0, weight)
+	_bob_time += delta * (7.0 + speed * 1.3 + _run_blend * 3.0) * gait
 	var local_velocity: Vector3 = _player.global_basis.inverse() * _player.velocity
 	var planar: Vector2 = Vector2(local_velocity.x, local_velocity.z)
 	var acceleration: Vector2 = (planar - _last_view_velocity) / maxf(delta, 0.001)
 	_last_view_velocity = planar
 	var target_sway: Vector2 = Vector2(clampf(-acceleration.x * 0.035, -1.0, 1.0),
 		clampf(acceleration.y * 0.025, -1.0, 1.0))
-	var weight: float = 1.0 - exp(-settle_speed * delta)
 	_view_sway = _view_sway.lerp(target_sway, weight)
 	_landing_visual *= exp(-10.0 * delta)
 	var freedom: float = 0.18 if aiming else 1.0
 	var bob: Vector3 = Vector3(sin(_bob_time) * step_bob * 0.65,
 		absf(cos(_bob_time)) * step_bob, 0.0) * gait * freedom
+	bob += Vector3(sin(_bob_time) * run_bob * 0.7,
+		absf(cos(_bob_time)) * run_bob, -sin(_bob_time) * run_bob * 0.35) * _run_blend
 	bob += Vector3(_view_sway.x * motion_sway, -_landing_visual * landing_bounce,
 		_view_sway.y * motion_sway * 0.35) * freedom
 	var target: Vector3 = (AIM_POSITION - Vector3(0, WeaponModel.sight_height(weapon) * VIEWMODEL_SCALE, 0) if aiming and weapon != null else HIP_POSITION) + bob
@@ -663,12 +668,13 @@ func _update_owner_view(delta: float) -> void:
 		target.y -= 0.12
 		tilt = -0.8
 	target.y -= _draw_left / DRAW_SECONDS * 0.25
-	if _player.is_sprinting:
-		target += Vector3(-0.05, -0.05, 0.02)
-		tilt = -0.35
+	if _run_blend > 0.01:
+		target += Vector3(-0.065, -0.07, 0.035) * _run_blend
+		tilt = -0.43 * _run_blend
 	_model.position = _model.position.lerp(target, weight)
 	_model.rotation.x = lerpf(_model.rotation.x, tilt + _kick * 0.08 + _view_sway.y * 0.025 * freedom, weight)
-	_model.rotation.z = lerpf(_model.rotation.z, -_view_sway.x * 0.045 * freedom, weight)
+	_model.rotation.z = lerpf(_model.rotation.z, -_view_sway.x * 0.045 * freedom
+		+ sin(_bob_time) * _run_blend * 0.12, weight)
 
 
 func _on_loadout_replicated() -> void:

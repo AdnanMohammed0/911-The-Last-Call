@@ -29,12 +29,12 @@ signal shouted()
 
 @export_group("Speed")
 @export var walk_speed: float = 3.5            # Drowned Woman hunt speed (3.8) = 1.1x walk
-@export var sprint_speed: float = 4.75         # ...and 0.8x sprint (GAMEPLAY_MECHANICS §9)
+@export var sprint_speed: float = 6.0          # A distinct run, rather than a slightly faster walk.
 @export var crouch_speed: float = 1.75
 ## Class multiplier (GAMEPLAY_MECHANICS §2) x trait modifiers such as Limping (0.7).
 @export var move_speed_multiplier: float = 1.0
 ## Metres per second squared: fast launch, stronger reversals, and firm but short stops.
-@export var ground_acceleration: float = 20.0
+@export var ground_acceleration: float = 24.0
 @export var turn_acceleration: float = 26.0
 @export var reverse_acceleration: float = 30.0
 @export var ground_friction: float = 14.0

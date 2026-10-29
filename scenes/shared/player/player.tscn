@@ -16,6 +16,7 @@
 [ext_resource type="Script" uid="uid://5bsbv6tuqrpa" path="res://ui/hud/objective_hud.gd" id="13_objective"]
 [ext_resource type="Script" uid="uid://d2c1kss8feuyg" path="res://ui/hud/status_hud.gd" id="14_status"]
 [ext_resource type="Script" uid="uid://bbf5vd2umsrfs" path="res://ui/hud/field_bodycam_hud.gd" id="15_bodycam"]
+[ext_resource type="Script" path="res://scenes/shared/player/player_motion_view.gd" id="16_motion_view"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 resource_local_to_scene = true
@@ -141,6 +142,9 @@ spot_range = 22.0
 spot_angle = 28.0
 
 [node name="HeadVisual" type="Node3D" parent="Head/Camera3D" unique_id=2091410783]
+
+[node name="MotionView" type="Node3D" parent="Head/Camera3D"]
+script = ExtResource("16_motion_view")
 
 [node name="VoiceEmitter" type="AudioStreamPlayer3D" parent="Head" unique_id=1649450775]
 stream = SubResource("AudioStreamGenerator_voice")

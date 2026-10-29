@@ -70,6 +70,7 @@ var _shift_start_meters: Dictionary = {}
 var _report_events: Array[Dictionary] = []
 var _report_traits: Array[String] = []
 var _report_leads: Array[String] = []
+var _mission_outcomes: Dictionary[StringName, Dictionary] = {}
 
 ## Host: peer id -> {primary, sidearm, primary_mag, primary_reserve, sidearm_mag, sidearm_reserve, armor}
 var _loadouts: Dictionary[int, Dictionary] = {}
@@ -196,6 +197,7 @@ func extract() -> bool:
 	Career.award_team(xp, "Mission report", "missions")
 	var lines: PackedStringArray = report["lines"]
 	lines.append("%+d XP  ·  Public trust %+d" % [xp, trust])
+	_mission_outcomes[mission_call_id] = {"state": "resolved", "detail": "; ".join(lines)}
 	_record_report_event("FIELD RESPONSE", "%s — %s" % [mission_name(), "; ".join(lines)], CallDirector.shift_clock_minutes)
 	_finish("MISSION REPORT", "\n".join(lines))
 	return true
@@ -208,6 +210,7 @@ func fail(reason: String) -> void:
 	Career.award_team(-80, "Mission failed")
 	_sync_state.rpc(State.FAILED, mission_scene, mission_call_id, mission_kind, difficulty, "Mission failed — returning to Station 4")
 	_announce.rpc("MISSION FAILED", "%s  ·  Public trust %d  ·  -80 XP" % [reason, TRUST_FAILURE])
+	_mission_outcomes[mission_call_id] = {"state": "failed", "detail": reason}
 	_record_report_event("FIELD RESPONSE FAILED", "%s — %s" % [mission_name(), reason], CallDirector.shift_clock_minutes)
 	_return_timer = RETURN_DELAY_SEC
 
@@ -344,6 +347,7 @@ func continue_after_report() -> void:
 	_report_events.clear()
 	_report_traits.clear()
 	_report_leads.clear()
+	_mission_outcomes.clear()
 	_capture_shift_start()
 	_go_to(GameState.Phase.DISPATCH, STATION_SCENE)
 
@@ -351,6 +355,7 @@ func continue_after_report() -> void:
 ## Host-owned data snapshot. It is safe to display even after CallDirector clears its history.
 func build_shift_report() -> Dictionary:
 	var events: Array[Dictionary] = _report_events.duplicate(true)
+	var branches: Array[Dictionary] = []
 	for call_id: StringName in CallDirector.call_history:
 		var entry: Dictionary = CallDirector.call_history[call_id]
 		var call: CallData = CallDirector.registered_calls.get(call_id, null)
@@ -359,7 +364,21 @@ func build_shift_report() -> Dictionary:
 		var result: String = "Missed call" if entry.get("state", "") == "missed" else "Classified: %s" % verdict
 		var minute: int = entry.get("minute", 0)
 		events.append({"minute": minute, "title": title, "detail": result})
+		var missed: bool = entry.get("state", "") == "missed"
+		var actual: String = ""
+		if not missed:
+			var truth: CallData.Truth = entry.get("truth", call.truth if call != null else CallData.Truth.GENUINE)
+			actual = String(verdict_for_truth(truth))
+		var outcome: Dictionary = _mission_outcomes.get(call_id, {})
+		var outcome_detail: String = outcome.get("detail", "")
+		if outcome_detail.is_empty():
+			outcome_detail = "No field response recorded" if not missed else "The line was not answered"
+		branches.append({"id": String(call_id), "title": title, "minute": minute,
+			"verdict": "" if missed else str(entry.get("verdict", &"")),
+			"actual": actual, "outcome": outcome_detail,
+			"outcome_state": outcome.get("state", "missed" if missed else "classified")})
 	events.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["minute"] < b["minute"])
+	branches.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["minute"] < b["minute"])
 	var current: Dictionary = _meter_snapshot()
 	var start: Dictionary = _shift_start_meters if not _shift_start_meters.is_empty() else current
 	return {
@@ -367,6 +386,7 @@ func build_shift_report() -> Dictionary:
 		"handled": calls_handled,
 		"total": calls_total,
 		"events": events,
+		"branches": branches,
 		"meters": current,
 		"deltas": {
 			"trust": current["trust"] - start.get("trust", current["trust"]),
@@ -604,4 +624,5 @@ func reset() -> void:
 	_report_events.clear()
 	_report_traits.clear()
 	_report_leads.clear()
+	_mission_outcomes.clear()
 	_capture_shift_start()

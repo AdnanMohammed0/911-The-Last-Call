@@ -11,6 +11,7 @@ const AMBER: Color = Color("f4b65a")
 const CYAN: Color = Color("67d4d5")
 
 var _continue_button: Button
+var _flowchart_button: Button
 
 
 func _ready() -> void:
@@ -103,6 +104,11 @@ func _build(report: Dictionary) -> void:
 	var next_text: Label = _label("The next shift begins when the team leader continues.", 14, MUTED)
 	next_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	footer.add_child(next_text)
+	_flowchart_button = Button.new()
+	_flowchart_button.text = "VIEW FLOWCHART"
+	_flowchart_button.custom_minimum_size = Vector2(175, 48)
+	_flowchart_button.pressed.connect(_open_flowchart)
+	footer.add_child(_flowchart_button)
 	_continue_button = Button.new()
 	_continue_button.text = "CONTINUE TO NEXT SHIFT  →"
 	_continue_button.custom_minimum_size = Vector2(270, 48)
@@ -111,6 +117,14 @@ func _build(report: Dictionary) -> void:
 	_continue_button.add_theme_stylebox_override("hover", _style(Color("ffd07b"), Color("ffd07b")))
 	_continue_button.pressed.connect(MissionDirector.continue_after_report)
 	footer.add_child(_continue_button)
+
+
+func _open_flowchart() -> void:
+	var scene: PackedScene = load("res://scenes/aftermath/shift_flowchart.tscn") as PackedScene
+	var view: ShiftFlowchart = scene.instantiate() as ShiftFlowchart
+	view.report_data = MissionDirector.last_shift_report
+	add_child(view)
+	view.closed.connect(func() -> void: view.queue_free())
 
 
 func _meter_card(parent: HBoxContainer, title: String, value: int, delta: int, prefix: String, danger_up: bool) -> void:

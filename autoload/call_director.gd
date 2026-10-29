@@ -967,7 +967,7 @@ func apply_snapshot(data: Dictionary) -> void:
 func _on_phase_changed(new_phase: StringName) -> void:
 	if new_phase == &"dispatch":
 		start_shift()
-	elif new_phase == &"field" or new_phase == &"loadout_vote":
+	elif new_phase == &"field" or new_phase == &"loadout_vote" or new_phase == &"aftermath":
 		pause_shift()
 
 func _on_trust_threshold_crossed(threshold_id: StringName, current_trust: int) -> void:

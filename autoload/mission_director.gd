@@ -15,6 +15,7 @@ enum State { IDLE, RESPONSE, DEPLOYED, SECURED, FAILED }
 
 const RESPONSE_VERDICTS: Array[StringName] = [&"genuine", &"ambush"]
 const STATION_SCENE: String = "res://scenes/dispatch/operations_room.tscn"
+const REPORT_SCENE: String = "res://scenes/aftermath/shift_report.tscn"
 const WAREHOUSE: String = "res://scenes/field/missions/warehouse_raid.tscn"
 const SUBURB: String = "res://scenes/field/missions/aspen_drive.tscn"
 const FARMHOUSE: String = "res://scenes/field/missions/farmhouse.tscn"
@@ -63,6 +64,12 @@ var _counter_ambush_active: bool = false
 var _station_siege_triggered: bool = false
 ## Tests turn this off to exercise the loop without leaving the test scene.
 var scene_changes_enabled: bool = true
+## Replicated snapshot shown after the last call, before the next shift starts.
+var last_shift_report: Dictionary = {}
+var _shift_start_meters: Dictionary = {}
+var _report_events: Array[Dictionary] = []
+var _report_traits: Array[String] = []
+var _report_leads: Array[String] = []
 
 ## Host: peer id -> {primary, sidearm, primary_mag, primary_reserve, sidearm_mag, sidearm_reserve, armor}
 var _loadouts: Dictionary[int, Dictionary] = {}
@@ -79,6 +86,9 @@ func _ready() -> void:
 	EventBus.call_classified.connect(_on_call_classified)
 	EventBus.call_event.connect(_on_call_event)
 	EventBus.call_missed.connect(_on_call_missed)
+	TraitSystem.trait_applied.connect(_on_report_trait_applied)
+	EventBus.evidence_unlocked.connect(_on_report_evidence_unlocked)
+	EventBus.flag_changed.connect(_on_report_flag_changed)
 	EventBus.hostile_killed.connect(_on_hostile_killed)
 	EventBus.suspect_arrested.connect(_on_suspect_arrested)
 	EventBus.player_downed.connect(func(_peer: int) -> void:
@@ -92,6 +102,7 @@ func _ready() -> void:
 		# Sync cult awareness from GameState
 		if GameState != null:
 			cult_awareness = GameState.cult_awareness
+	_capture_shift_start()
 
 
 func mission_name() -> String:
@@ -185,6 +196,7 @@ func extract() -> bool:
 	Career.award_team(xp, "Mission report", "missions")
 	var lines: PackedStringArray = report["lines"]
 	lines.append("%+d XP  ·  Public trust %+d" % [xp, trust])
+	_record_report_event("FIELD RESPONSE", "%s — %s" % [mission_name(), "; ".join(lines)], CallDirector.shift_clock_minutes)
 	_finish("MISSION REPORT", "\n".join(lines))
 	return true
 
@@ -196,6 +208,7 @@ func fail(reason: String) -> void:
 	Career.award_team(-80, "Mission failed")
 	_sync_state.rpc(State.FAILED, mission_scene, mission_call_id, mission_kind, difficulty, "Mission failed — returning to Station 4")
 	_announce.rpc("MISSION FAILED", "%s  ·  Public trust %d  ·  -80 XP" % [reason, TRUST_FAILURE])
+	_record_report_event("FIELD RESPONSE FAILED", "%s — %s" % [mission_name(), reason], CallDirector.shift_clock_minutes)
 	_return_timer = RETURN_DELAY_SEC
 
 
@@ -310,12 +323,103 @@ func set_calls_total(total: int) -> void:
 func complete_shift() -> void:
 	if not multiplayer.is_server():
 		return
+	last_shift_report = build_shift_report()
+	_sync_report.rpc(last_shift_report)
+	CallDirector.pause_shift()
 	var bonus: int = XP_SHIFT_COMPLETE + public_trust * 2
 	Career.award_team(bonus, "Shift %d complete" % shift_number, "shifts")
 	_announce.rpc("SHIFT %d COMPLETE" % shift_number, "Public trust %d  ·  +%d XP  ·  The next shift will be harder" % [public_trust, bonus])
 	shift_number += 1
 	calls_handled = 0
 	_push_shift()
+	_go_to(GameState.Phase.AFTERMATH, REPORT_SCENE)
+
+
+## Host: the report remains visible until the team leader continues.
+func continue_after_report() -> void:
+	if not multiplayer.is_server() or GameState.phase != GameState.Phase.AFTERMATH:
+		return
+	CallDirector.call_history.clear()
+	CallDirector.set_shift_time(0)
+	_report_events.clear()
+	_report_traits.clear()
+	_report_leads.clear()
+	_capture_shift_start()
+	_go_to(GameState.Phase.DISPATCH, STATION_SCENE)
+
+
+## Host-owned data snapshot. It is safe to display even after CallDirector clears its history.
+func build_shift_report() -> Dictionary:
+	var events: Array[Dictionary] = _report_events.duplicate(true)
+	for call_id: StringName in CallDirector.call_history:
+		var entry: Dictionary = CallDirector.call_history[call_id]
+		var call: CallData = CallDirector.registered_calls.get(call_id, null)
+		var title: String = call.title if call != null else String(call_id).replace("call_", "").replace("_", " ").capitalize()
+		var verdict: String = str(entry.get("verdict", &"unclassified")).replace("_", " ").capitalize()
+		var result: String = "Missed call" if entry.get("state", "") == "missed" else "Classified: %s" % verdict
+		var minute: int = entry.get("minute", 0)
+		events.append({"minute": minute, "title": title, "detail": result})
+	events.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["minute"] < b["minute"])
+	var current: Dictionary = _meter_snapshot()
+	var start: Dictionary = _shift_start_meters if not _shift_start_meters.is_empty() else current
+	return {
+		"shift": shift_number,
+		"handled": calls_handled,
+		"total": calls_total,
+		"events": events,
+		"meters": current,
+		"deltas": {
+			"trust": current["trust"] - start.get("trust", current["trust"]),
+			"budget": current["budget"] - start.get("budget", current["budget"]),
+			"awareness": current["awareness"] - start.get("awareness", current["awareness"]),
+		},
+		"traits": _report_traits.duplicate(),
+		"leads": _report_leads.duplicate(),
+	}
+
+
+func _meter_snapshot() -> Dictionary:
+	return {"trust": public_trust, "budget": GameState.station_budget, "awareness": GameState.cult_awareness}
+
+
+func _capture_shift_start() -> void:
+	_shift_start_meters = _meter_snapshot()
+
+
+func _record_report_event(title: String, detail: String, minute: int) -> void:
+	_report_events.append({"minute": minute, "title": title, "detail": detail})
+
+
+func _on_report_trait_applied(peer_id: int, trait_id: StringName) -> void:
+	if not multiplayer.is_server():
+		return
+	var trait_data: TraitData = TraitSystem.get_trait(trait_id)
+	var name: String = trait_data.display_name if trait_data != null else String(trait_id).replace("_", " ").capitalize()
+	var item: String = "%s — Officer %d" % [name, peer_id]
+	if not item in _report_traits:
+		_report_traits.append(item)
+		_record_report_event("TRAIT GAINED", item, CallDirector.shift_clock_minutes)
+
+
+func _on_report_evidence_unlocked(evidence_key: StringName) -> void:
+	if multiplayer.is_server():
+		_add_report_lead(String(evidence_key).replace("evidence_", "").replace("_", " ").capitalize())
+
+
+func _on_report_flag_changed(key: StringName, _old_value: Variant, new_value: Variant) -> void:
+	if multiplayer.is_server() and new_value == true and (String(key).contains("unlocked") or String(key).contains("intel")):
+		_add_report_lead(String(key).replace("_", " ").capitalize())
+
+
+func _add_report_lead(lead: String) -> void:
+	if not lead in _report_leads:
+		_report_leads.append(lead)
+		_record_report_event("LEAD UNLOCKED", lead, CallDirector.shift_clock_minutes)
+
+
+@rpc("authority", "call_local", "reliable")
+func _sync_report(report: Dictionary) -> void:
+	last_shift_report = report.duplicate(true)
 
 
 func _change_trust(amount: int) -> void:
@@ -496,3 +600,8 @@ func reset() -> void:
 	_downed = 0
 	_wipe_timer = 0.0
 	_return_timer = -1.0
+	last_shift_report.clear()
+	_report_events.clear()
+	_report_traits.clear()
+	_report_leads.clear()
+	_capture_shift_start()

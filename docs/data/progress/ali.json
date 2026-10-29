@@ -76,6 +76,11 @@
    "status": "done",
    "note": "تطوير سبعة أشكال شخصية على HumanoidRig المتحرك بـIK: أربعة أدوار شرطة بملابس وتجهيزات مميزة (Tech، Profiler، Breacher، Medic) وثلاثة خصوم (Thug، Cultist Gunman، Ambush Leader). تفاصيل الرأس والصدر والأطراف تتحرك مع الهيكل، والزي يتبدل حسب الدور المتزامن عبر الشبكة. أُضيف مشهد عرض قابل للتشغيل وفُحص بصرياً من الأمام داخل Godot؛ نجحت 58 تجربة GUT مرتبطة وفحص ترجمة Godot.",
    "updated_at": "2026-10-29"
+  },
+  "P4-06": {
+   "status": "done",
+   "note": "بناء شاشة تقرير نهاية النوبة Aftermath بخط أحداث المكالمات والمهام والسمات والأدلة الجديدة، وتغير الثقة العامة والميزانية ووعي الطائفة. يجمد الخادم التقرير ويرسله للفريق قبل مسح السجل، ويوقف الساعة حتى يضغط قائد الفريق متابعة للنوبة التالية. تحقق بصري بدقة 1280×720، ونجحت 3 اختبارات تقرير و25 اختبار دورة مهمة وفحص ترجمة Godot.",
+   "updated_at": "2026-10-29"
   }
  },
  "log": [
@@ -911,6 +916,12 @@
     "tests/test_expressive_movement.gd",
     "docs/design/PLAYER_BODY_MOTION.md"
    ]
+  },
+  {
+   "date": "2026-10-29",
+   "tasks": ["P4-06"],
+   "summary": "إكمال شاشة تقرير نهاية النوبة: أحداث المكالمات والاستجابة، تغيّر المؤشرات، السمات والأدلة، مع انتقال مضبوظ من المحطة إلى التقرير ثم النوبة التالية بأمر قائد الفريق. تحقق بصري بدقة 1280×720 ونجاح 28 اختباراً مرتبطاً وفحص Godot.",
+   "files": ["autoload/mission_director.gd", "autoload/call_director.gd", "scenes/dispatch/dispatch_setup.gd", "scenes/aftermath/shift_report.gd", "scenes/aftermath/shift_report.tscn", "tests/test_shift_report.gd", "docs/data/progress/ali.json"]
   }
  ]
 }

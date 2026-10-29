@@ -83,10 +83,7 @@ func _pace_calls(delta: float) -> void:
 	elif not _shift_done and _quiet_seconds >= 6.0 and CallDirector.call_history.size() >= CallDirector.registered_calls.size():
 		_shift_done = true
 		MissionDirector.complete_shift()
-		CallDirector.call_history.clear()
-		CallDirector.set_shift_time(0)
 		_quiet_seconds = -20.0
-		queue_shift_calls()
 
 
 ## Any peer: ask the host to ring the test call.

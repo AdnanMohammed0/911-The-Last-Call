@@ -17,7 +17,6 @@
 [ext_resource type="Script" uid="uid://d2c1kss8feuyg" path="res://ui/hud/status_hud.gd" id="14_status"]
 [ext_resource type="Script" uid="uid://bbf5vd2umsrfs" path="res://ui/hud/field_bodycam_hud.gd" id="15_bodycam"]
 [ext_resource type="Script" path="res://scenes/shared/player/player_motion_view.gd" id="16_motion_view"]
-[ext_resource type="Script" path="res://ui/hud/dialogue_subtitles.gd" id="17_subtitles"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 resource_local_to_scene = true
@@ -231,14 +230,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("13_objective")
-
-[node name="DialogueSubtitles" type="Control" parent="HUD"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-script = ExtResource("17_subtitles")
 
 [node name="VoiceHud" parent="HUD" unique_id=806692191 instance=ExtResource("8_voice")]
 

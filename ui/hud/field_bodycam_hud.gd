@@ -34,6 +34,9 @@ func _ready() -> void:
 	_build_frame()
 	_build_labels()
 	_update_visibility()
+	GameSettings.changed.connect(func(_key: String) -> void:
+		_apply_post_settings()
+		_last_intensity = -1.0)
 
 
 func _build_overlay() -> void:
@@ -108,7 +111,7 @@ func _process(_delta: float) -> void:
 		_timestamp.text = Time.get_datetime_string_from_system(false, true).replace("T", "  ")
 	if player == null or not is_instance_valid(player):
 		return
-	var strength: float = 0.0 if GameSettings.reduced_horror_effects else sanity_intensity(player.sanity)
+	var strength: float = 0.0 if GameSettings.reduced_horror_effects else sanity_intensity(player.sanity) * GameSettings.screen_effects
 	_sanity_overlay.visible = strength > 0.005
 	if absf(strength - _last_intensity) > 0.005:
 		_last_intensity = strength
@@ -129,10 +132,12 @@ func _update_visibility() -> void:
 func _apply_post_settings() -> void:
 	if _post_material == null:
 		return
-	_post_material.set_shader_parameter(&"film_strength", film_strength)
-	_post_material.set_shader_parameter(&"grain_strength", grain_strength)
-	_post_material.set_shader_parameter(&"scanline_strength", scanline_strength)
-	_post_material.set_shader_parameter(&"aberration_px", aberration_px)
+	# The accessibility "bodycam effects" slider scales the whole film look.
+	var amount: float = clampf(GameSettings.screen_effects, 0.0, 1.0)
+	_post_material.set_shader_parameter(&"film_strength", film_strength * amount)
+	_post_material.set_shader_parameter(&"grain_strength", grain_strength * amount)
+	_post_material.set_shader_parameter(&"scanline_strength", scanline_strength * amount)
+	_post_material.set_shader_parameter(&"aberration_px", aberration_px * amount)
 
 
 static func sanity_intensity(sanity: float) -> float:

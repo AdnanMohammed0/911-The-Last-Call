@@ -1,18 +1,29 @@
 ## Player-facing settings saved to user://settings.cfg: video (window mode, V-Sync, FPS cap, quality preset,
-## render scale, FOV, brightness), audio bus volumes, controls (sensitivity, ADS sensitivity, invert Y,
-## crouch toggle, key bindings), voice, language, and privacy (telemetry/crash reporting opt-in).
+## render scale, FOV, brightness), audio (bus volumes, output device), controls (sensitivity, ADS sensitivity,
+## invert Y, crouch / sprint / aim toggles, key bindings), voice, language, accessibility (subtitles and sound
+## captions, colour-vision assist, interface scale, reduced flashing, bodycam effect strength, jump-scare
+## stingers, apparitions) and privacy (telemetry/crash reporting opt-in).
+## Owns the subtitle overlay and the colour-vision filter layer.
 ## Applies graphics quality to every WorldEnvironment that enters the tree, and installs the shared UI theme on the root window.
 ## Authority: LOCAL
 extends Node
 
 enum WindowMode { WINDOWED, BORDERLESS, FULLSCREEN }
 enum Quality { LOW, MEDIUM, HIGH, ULTRA }
+enum ColorBlind { OFF, PROTANOPIA, DEUTERANOPIA, TRITANOPIA }
+enum ScareStingers { FULL, REDUCED, OFF }
 
 const PATH: String = "user://settings.cfg"
 const QUALITY_NAMES: PackedStringArray = ["Low", "Medium", "High", "Ultra"]
 const WINDOW_MODE_NAMES: PackedStringArray = ["Windowed", "Borderless fullscreen", "Exclusive fullscreen"]
-const SUBTITLE_SIZE_NAMES: PackedStringArray = ["Small", "Normal", "Large"]
+const SUBTITLE_SIZE_NAMES: PackedStringArray = ["Small", "Normal", "Large", "Extra large"]
 const COLOR_MODE_NAMES: PackedStringArray = ["Standard", "Blue / orange", "High contrast"]
+const COLORBLIND_NAMES: PackedStringArray = ["Off", "Protanopia (red-weak)", "Deuteranopia (green-weak)", "Tritanopia (blue-weak)"]
+const SCARE_NAMES: PackedStringArray = ["Full", "Reduced", "Off"]
+## Reduced jump-scare stingers play this much quieter, and the strongest ones are skipped.
+const REDUCED_SCARE_DB: float = -9.0
+const REDUCED_SCARE_MAX_INTENSITY: float = 0.75
+const COLORBLIND_SHADER: Shader = preload("res://ui/shaders/colorblind.gdshader")
 const AUDIO_BUSES: Dictionary[StringName, String] = {
 	&"Master": "Master volume", &"Music": "Music", &"SFX": "Effects",
 	&"VoiceProximity": "Voice chat", &"VoiceRadio": "Radio", &"Phone": "Phone calls",
@@ -54,12 +65,35 @@ var color_mode: int = 0
 var reduced_horror_effects: bool = false
 ## UI language, applied by the Localization autoload (see data/localization/ui_*.loc).
 var language: String = "en"
+var toggle_sprint: bool = false
+var toggle_aim: bool = false
+
+# --- Accessibility (subtitles_enabled, subtitle_size, color_mode, reduced_horror_effects are above) ---
+var subtitle_background: float = 0.6
+var subtitle_speaker_names: bool = true
+var sound_captions: bool = true
+var colorblind_mode: ColorBlind = ColorBlind.OFF
+var colorblind_strength: float = 1.0
+## Multiplies every 2D interface (window content scale).
+var ui_scale: float = 1.0
+## Stops strobing and flickering lights (faulty fluorescents, ringing phone lamps, ON AIR blink).
+var reduce_flashing: bool = false
+## 0..1 strength of the bodycam film look and the sanity distortion.
+var screen_effects: float = 1.0
+var scare_stingers: ScareStingers = ScareStingers.FULL
+## Shadow-figure hallucinations; off turns them into a sound cue only.
+var apparitions: bool = true
+
+## Subtitles and sound captions (always present; hidden when there is nothing to show).
+var subtitle_overlay: SubtitleOverlay
 
 ## Shared UI theme. Controls under a CanvasLayer do not inherit the window theme, so menus assign it.
 var ui_theme: Theme
 
 var _default_events: Dictionary[StringName, Array] = {}
 var _fps_label: Label
+var _colorblind_layer: CanvasLayer
+var _colorblind_rect: ColorRect
 
 
 func _ready() -> void:
@@ -75,6 +109,20 @@ func _ready() -> void:
 	if DisplayServer.get_name() != "headless":
 		get_tree().root.theme = ui_theme
 	get_tree().node_added.connect(_on_node_added)
+	subtitle_overlay = SubtitleOverlay.new()
+	subtitle_overlay.name = "SubtitleOverlay"
+	add_child(subtitle_overlay)
+	_colorblind_layer = CanvasLayer.new()
+	_colorblind_layer.name = "ColorVision"
+	_colorblind_layer.layer = 126
+	add_child(_colorblind_layer)
+	_colorblind_rect = ColorRect.new()
+	_colorblind_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_colorblind_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var colorblind_material: ShaderMaterial = ShaderMaterial.new()
+	colorblind_material.shader = COLORBLIND_SHADER
+	_colorblind_rect.material = colorblind_material
+	_colorblind_layer.add_child(_colorblind_rect)
 	apply_all()
 
 
@@ -96,7 +144,7 @@ func load_settings() -> void:
 	subtitles_enabled = config.get_value("accessibility", "subtitles_enabled", subtitles_enabled)
 	var stored_subtitle_size: int = config.get_value("accessibility", "subtitle_size", subtitle_size)
 	var stored_color_mode: int = config.get_value("accessibility", "color_mode", color_mode)
-	subtitle_size = clampi(stored_subtitle_size, 0, 2)
+	subtitle_size = clampi(stored_subtitle_size, 0, SUBTITLE_SIZE_NAMES.size() - 1)
 	color_mode = clampi(stored_color_mode, 0, 2)
 	reduced_horror_effects = config.get_value("accessibility", "reduced_horror_effects", reduced_horror_effects)
 	for bus: StringName in AUDIO_BUSES:
@@ -105,6 +153,18 @@ func load_settings() -> void:
 	ads_sensitivity = config.get_value("controls", "ads_sensitivity", ads_sensitivity)
 	invert_y = config.get_value("controls", "invert_y", invert_y)
 	crouch_toggle = config.get_value("controls", "crouch_toggle", crouch_toggle)
+	toggle_sprint = config.get_value("controls", "toggle_sprint", toggle_sprint)
+	toggle_aim = config.get_value("controls", "toggle_aim", toggle_aim)
+	subtitle_background = config.get_value("accessibility", "subtitle_background", subtitle_background)
+	subtitle_speaker_names = config.get_value("accessibility", "subtitle_speaker_names", subtitle_speaker_names)
+	sound_captions = config.get_value("accessibility", "sound_captions", sound_captions)
+	colorblind_mode = config.get_value("accessibility", "colorblind_mode", colorblind_mode)
+	colorblind_strength = config.get_value("accessibility", "colorblind_strength", colorblind_strength)
+	ui_scale = config.get_value("accessibility", "ui_scale", ui_scale)
+	reduce_flashing = config.get_value("accessibility", "reduce_flashing", reduce_flashing)
+	screen_effects = config.get_value("accessibility", "screen_effects", screen_effects)
+	scare_stingers = config.get_value("accessibility", "scare_stingers", scare_stingers)
+	apparitions = config.get_value("accessibility", "apparitions", apparitions)
 	if config.has_section("keybinds"):
 		for key: String in config.get_section_keys("keybinds"):
 			var events: Array = config.get_value("keybinds", key, [])
@@ -125,6 +185,7 @@ func load_settings() -> void:
 			VoiceManager.set_input_device(mic)
 		var auto_gain: bool = config.get_value("voice", "auto_gain", VoiceManager.auto_gain)
 		VoiceManager.set_auto_gain(auto_gain)
+		VoiceManager.manual_gain_db = config.get_value("voice", "mic_gain_db", VoiceManager.manual_gain_db)
 		var push_to_talk: bool = config.get_value("voice", "push_to_talk", false)
 		if push_to_talk != (VoiceManager.mode != VoiceManager.Mode.VOICE_ACTIVITY):
 			VoiceManager.toggle_mode()
@@ -166,12 +227,25 @@ func save_settings() -> void:
 	config.set_value("controls", "ads_sensitivity", ads_sensitivity)
 	config.set_value("controls", "invert_y", invert_y)
 	config.set_value("controls", "crouch_toggle", crouch_toggle)
+	config.set_value("controls", "toggle_sprint", toggle_sprint)
+	config.set_value("controls", "toggle_aim", toggle_aim)
+	config.set_value("accessibility", "subtitle_background", subtitle_background)
+	config.set_value("accessibility", "subtitle_speaker_names", subtitle_speaker_names)
+	config.set_value("accessibility", "sound_captions", sound_captions)
+	config.set_value("accessibility", "colorblind_mode", colorblind_mode)
+	config.set_value("accessibility", "colorblind_strength", colorblind_strength)
+	config.set_value("accessibility", "ui_scale", ui_scale)
+	config.set_value("accessibility", "reduce_flashing", reduce_flashing)
+	config.set_value("accessibility", "screen_effects", screen_effects)
+	config.set_value("accessibility", "scare_stingers", scare_stingers)
+	config.set_value("accessibility", "apparitions", apparitions)
 	for entry: Array in ACTIONS:
 		var action: StringName = entry[0]
 		if InputMap.has_action(action):
 			config.set_value("keybinds", String(action), InputMap.action_get_events(action))
 	config.set_value("voice", "input_device", VoiceManager.get_input_device())
 	config.set_value("voice", "auto_gain", VoiceManager.auto_gain)
+	config.set_value("voice", "mic_gain_db", VoiceManager.manual_gain_db)
 	config.set_value("voice", "push_to_talk", VoiceManager.mode != VoiceManager.Mode.VOICE_ACTIVITY)
 	config.set_value("language", "locale", language)
 	config.set_value("privacy", "telemetry_enabled", telemetry_enabled)
@@ -299,6 +373,32 @@ func apply_all() -> void:
 	for node: Node in get_tree().root.find_children("*", "WorldEnvironment", true, false):
 		_apply_environment(node as WorldEnvironment)
 	_apply_fps_counter()
+	_apply_accessibility()
+
+
+## Audio output devices the driver offers ("Default" follows the system device).
+func get_output_devices() -> PackedStringArray:
+	return AudioServer.get_output_device_list()
+
+
+## Linear volume a scare stinger should play at (0 = skip it) under the current stinger setting.
+func scare_stinger_gain(intensity: float) -> float:
+	match scare_stingers:
+		ScareStingers.OFF:
+			return 0.0
+		ScareStingers.REDUCED:
+			return 0.0 if intensity > REDUCED_SCARE_MAX_INTENSITY else db_to_linear(REDUCED_SCARE_DB)
+	return 1.0
+
+
+func _apply_accessibility() -> void:
+	if DisplayServer.get_name() != "headless":
+		get_tree().root.content_scale_factor = clampf(ui_scale, 0.8, 1.5)
+	if _colorblind_rect != null:
+		_colorblind_layer.visible = colorblind_mode != ColorBlind.OFF and colorblind_strength > 0.0
+		var material: ShaderMaterial = _colorblind_rect.material as ShaderMaterial
+		material.set_shader_parameter(&"mode", int(colorblind_mode))
+		material.set_shader_parameter(&"strength", clampf(colorblind_strength, 0.0, 1.0))
 
 
 func _apply_display() -> void:

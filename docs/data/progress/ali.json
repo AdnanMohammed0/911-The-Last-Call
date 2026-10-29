@@ -99,7 +99,7 @@
   },
   "P4-14": {
    "status": "done",
-   "note": "إكمال شاشة الإعدادات بإخراج صوت قابل للاختيار، وترجمة نصية لحوار المكالمات خارج الكمبيوتر مع حجم قابل للضبط، وثلاثة أنماط ألوان لمؤشرات الخطر والنجاح، وخيار راحة بصرية يوقف تشويش Bodycam ووميض الضرر ويهدئ أضواء القائمة ووميض السلاح. حفظ الخيارات واسترجاعها، وترجمة عربية للواجهة. راجعنا الشكل بالعربية والإنجليزية بدقة 1280×720؛ نجحت 51 تجربة مرتبطة وفحص Godot.",
+   "note": "إكمال شاشة الإعدادات بإخراج صوت قابل للاختيار، وترجمة نصية لحوار المكالمات خارج الكمبيوتر مع حجم قابل للضبط، وثلاثة أنماط ألوان لمؤشرات الخطر والنجاح، وخيار راحة بصرية يوقف تشويش Bodycam ووميض الضرر ويهدئ أضواء القائمة ووميض السلاح. حفظ الخيارات واسترجاعها، وترجمة عربية للواجهة. راجعنا الشكل بالعربية والإنجليزية بدقة 1280×720؛ نجحت 51 تجربة مرتبطة وفحص Godot. دمج جولة ثانية: ترجمة موحدة على طبقة SubtitleOverlay مع وصف الأصوات وأسماء المتحدثين وخلفية قابلة للضبط، مرشّح عمى الألوان، حجم الواجهة، تقليل الوميض، شدة تأثيرات كاميرا الجسد، مؤثرات الإخافة، إيقاف الأشباح، تبديل الركض والتصويب، صوت تجريبي للإخراج، ومستوى ومؤشر الميكروفون، وإصلاح أزرار التبديل بالعربية.",
    "updated_at": "2026-10-30"
   }
  },
@@ -939,33 +939,116 @@
   },
   {
    "date": "2026-10-29",
-   "tasks": ["P4-06"],
+   "tasks": [
+    "P4-06"
+   ],
    "summary": "إكمال شاشة تقرير نهاية النوبة: أحداث المكالمات والاستجابة، تغيّر المؤشرات، السمات والأدلة، مع انتقال مضبوظ من المحطة إلى التقرير ثم النوبة التالية بأمر قائد الفريق. تحقق بصري بدقة 1280×720 ونجاح 28 اختباراً مرتبطاً وفحص Godot.",
-   "files": ["autoload/mission_director.gd", "autoload/call_director.gd", "scenes/dispatch/dispatch_setup.gd", "scenes/aftermath/shift_report.gd", "scenes/aftermath/shift_report.tscn", "tests/test_shift_report.gd", "docs/data/progress/ali.json"]
+   "files": [
+    "autoload/mission_director.gd",
+    "autoload/call_director.gd",
+    "scenes/dispatch/dispatch_setup.gd",
+    "scenes/aftermath/shift_report.gd",
+    "scenes/aftermath/shift_report.tscn",
+    "tests/test_shift_report.gd",
+    "docs/data/progress/ali.json"
+   ]
   },
   {
    "date": "2026-10-29",
-   "tasks": ["P4-07"],
+   "tasks": [
+    "P4-07"
+   ],
    "summary": "تنفيذ مخطط تفرعات النوبة مع قائمة المكالمات، خطوط الخيارات الخمسة، إبراز القرار المتخذ، قفل المسارات غير المستكشفة، وبيان النتيجة الفعلية والاستجابة الميدانية. مرتبط بزر من تقرير نهاية النوبة؛ نجاح 31 اختباراً مرتبطاً ومراجعة بصرية 1280×720.",
-   "files": ["autoload/mission_director.gd", "scenes/aftermath/shift_report.gd", "scenes/aftermath/shift_flowchart.gd", "scenes/aftermath/shift_flowchart.tscn", "scenes/aftermath/shift_branch_graph.gd", "tests/test_shift_flowchart.gd", "docs/data/progress/ali.json"]
+   "files": [
+    "autoload/mission_director.gd",
+    "scenes/aftermath/shift_report.gd",
+    "scenes/aftermath/shift_flowchart.gd",
+    "scenes/aftermath/shift_flowchart.tscn",
+    "scenes/aftermath/shift_branch_graph.gd",
+    "tests/test_shift_flowchart.gd",
+    "docs/data/progress/ali.json"
+   ]
   },
   {
    "date": "2026-10-30",
-   "tasks": ["P4-11"],
+   "tasks": [
+    "P4-11"
+   ],
    "summary": "إكمال معالجة صورة الـBodycam في الميدان: RGB aberration عند الحواف، scanlines وحبيبات، ختم تاريخ ووقت، واستجابة للشدة النفسية مع تعطيل اختياري للأداء. إطار الزوايا ونصوص HUD فوق المعالجة. تحقق بصري بموضعي Sanity ونجاح 36 اختباراً مرتبطاً.",
-   "files": ["ui/shaders/bodycam_post.gdshader", "ui/hud/field_bodycam_hud.gd", "ui/hud/bodycam_frame.gd", "tests/test_field_bodycam_hud.gd", "docs/data/progress/ali.json"]
+   "files": [
+    "ui/shaders/bodycam_post.gdshader",
+    "ui/hud/field_bodycam_hud.gd",
+    "ui/hud/bodycam_frame.gd",
+    "tests/test_field_bodycam_hud.gd",
+    "docs/data/progress/ali.json"
+   ]
   },
   {
    "date": "2026-10-30",
-   "tasks": ["P4-12"],
+   "tasks": [
+    "P4-12"
+   ],
    "summary": "إضاءة مخصصة للمستودع وAspen Drive وFarmhouse وLake House والطريق السريع، مع ضباب مختلف لكل خريطة وخفض عدد الظلال المحلية والمؤثرات المتراكبة. بقيت إعدادات الجودة العامة ومصباح اللاعب متوافقة؛ نجاح 16 اختباراً مرتبطاً وفحص Godot.",
-   "files": ["scenes/field/missions/mission_lighting.gd", "scenes/field/missions/warehouse_raid.tscn", "scenes/field/missions/aspen_drive.tscn", "scenes/field/missions/farmhouse.tscn", "scenes/field/missions/lake_house.tscn", "scenes/field/missions/abandoned_highway.tscn", "tools/level_kit/level_kit.gd", "tools/level_kit/build_warehouse_raid.gd", "tools/level_kit/build_aspen_drive.gd", "tools/level_kit/build_farmhouse.gd", "tools/level_kit/build_lake_house.gd", "tools/level_kit/build_highway.gd", "tests/test_mission_lighting.gd", "docs/data/progress/ali.json"]
+   "files": [
+    "scenes/field/missions/mission_lighting.gd",
+    "scenes/field/missions/warehouse_raid.tscn",
+    "scenes/field/missions/aspen_drive.tscn",
+    "scenes/field/missions/farmhouse.tscn",
+    "scenes/field/missions/lake_house.tscn",
+    "scenes/field/missions/abandoned_highway.tscn",
+    "tools/level_kit/level_kit.gd",
+    "tools/level_kit/build_warehouse_raid.gd",
+    "tools/level_kit/build_aspen_drive.gd",
+    "tools/level_kit/build_farmhouse.gd",
+    "tools/level_kit/build_lake_house.gd",
+    "tools/level_kit/build_highway.gd",
+    "tests/test_mission_lighting.gd",
+    "docs/data/progress/ali.json"
+   ]
   },
   {
    "date": "2026-10-30",
-   "tasks": ["P4-14"],
+   "tasks": [
+    "P4-14"
+   ],
    "summary": "إكمال الإعدادات وإمكانية الوصول: اختيار مخرج الصوت، ترجمة حوار المكالمات وحجمها، ألوان مؤشرات بديلة، تخفيف التشويش والومضات، مع حفظ الخيارات وترجمة عربية. مراجعة بصرية بالعربية والإنجليزية ونجاح 51 اختباراً مرتبطاً وفحص Godot.",
-   "files": ["autoload/game_settings.gd", "ui/settings/settings_menu.gd", "ui/hud/dialogue_subtitles.gd", "ui/hud/field_bodycam_hud.gd", "ui/hud/status_hud.gd", "ui/hud/objective_hud.gd", "ui/menu/menu_backdrop.gd", "scenes/shared/player/player.tscn", "scenes/shared/weapons/weapon_fx.gd", "data/localization/ui_en.loc", "data/localization/ui_ar.loc", "tests/test_settings.gd", "tests/test_localization.gd", "tests/test_field_bodycam_hud.gd", "docs/data/progress/ali.json"]
+   "files": [
+    "autoload/game_settings.gd",
+    "ui/settings/settings_menu.gd",
+    "ui/hud/dialogue_subtitles.gd",
+    "ui/hud/field_bodycam_hud.gd",
+    "ui/hud/status_hud.gd",
+    "ui/hud/objective_hud.gd",
+    "ui/menu/menu_backdrop.gd",
+    "scenes/shared/player/player.tscn",
+    "scenes/shared/weapons/weapon_fx.gd",
+    "data/localization/ui_en.loc",
+    "data/localization/ui_ar.loc",
+    "tests/test_settings.gd",
+    "tests/test_localization.gd",
+    "tests/test_field_bodycam_hud.gd",
+    "docs/data/progress/ali.json"
+   ]
+  },
+  {
+   "date": "2026-10-30",
+   "tasks": [
+    "P4-14"
+   ],
+   "summary": "توسيع ودمج P4-14: نظام ترجمة واحد (SubtitleOverlay) يشمل وصف الأصوات ويتجنب التكرار لحامل السماعة، مرشّح عمى الألوان بجانب ألوان الواجهة، حجم الواجهة، تقليل الوميض، شدة تأثيرات الكاميرا، مؤثرات الإخافة، إيقاف الأشباح، تبديل الركض والتصويب، صوت تجريبي ومستوى الميكروفون، وإصلاح أزرار التبديل بالعربي.",
+   "files": [
+    "autoload/game_settings.gd",
+    "ui/settings/settings_menu.gd",
+    "ui/hud/subtitle_overlay.gd",
+    "ui/shaders/colorblind.gdshader",
+    "ui/theme/game_theme.gd",
+    "scenes/shared/player/player_input.gd",
+    "autoload/audio_server.gd",
+    "data/localization/ui_en.loc",
+    "data/localization/ui_ar.loc",
+    "tests/test_settings.gd",
+    "docs/design/SETTINGS_ACCESSIBILITY.md"
+   ]
   }
  ]
 }

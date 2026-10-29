@@ -129,6 +129,12 @@ static func build() -> Theme:
 	theme.set_icon(&"unchecked", &"CheckButton", _switch_icon(false))
 	theme.set_icon(&"checked_disabled", &"CheckButton", _switch_icon(true, 0.4))
 	theme.set_icon(&"unchecked_disabled", &"CheckButton", _switch_icon(false, 0.4))
+	# Right-to-left layouts (Arabic) use the *_mirrored icons; without them the switch falls back to the engine
+	# default and every toggle looks off.
+	theme.set_icon(&"checked_mirrored", &"CheckButton", _switch_icon(true, 1.0, true))
+	theme.set_icon(&"unchecked_mirrored", &"CheckButton", _switch_icon(false, 1.0, true))
+	theme.set_icon(&"checked_disabled_mirrored", &"CheckButton", _switch_icon(true, 0.4, true))
+	theme.set_icon(&"unchecked_disabled_mirrored", &"CheckButton", _switch_icon(false, 0.4, true))
 	theme.set_icon(&"checked", &"CheckBox", _check_icon(true))
 	theme.set_icon(&"unchecked", &"CheckBox", _check_icon(false))
 
@@ -245,8 +251,8 @@ static func _dot_texture(size: int, colour: Color, radius: float) -> ImageTextur
 	return ImageTexture.create_from_image(image)
 
 
-## Pill-shaped toggle switch (Windows 11 style) for CheckButton.
-static func _switch_icon(on: bool, alpha: float = 1.0) -> ImageTexture:
+## Pill-shaped toggle switch (Windows 11 style) for CheckButton; `mirrored` puts the "on" knob on the left.
+static func _switch_icon(on: bool, alpha: float = 1.0, mirrored: bool = false) -> ImageTexture:
 	var width: int = 44
 	var height: int = 24
 	var image: Image = Image.create(width, height, false, Image.FORMAT_RGBA8)
@@ -267,6 +273,8 @@ static func _switch_icon(on: bool, alpha: float = 1.0) -> ImageTexture:
 			var kd: float = px.distance_to(Vector2(knob_x, height * 0.5))
 			colour = colour.blend(Color(knob, clampf((radius - 4.0) - kd + 0.5, 0.0, 1.0)))
 			image.set_pixel(x, y, Color(colour, colour.a * alpha))
+	if mirrored:
+		image.flip_x()
 	return ImageTexture.create_from_image(image)
 
 

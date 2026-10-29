@@ -75,7 +75,7 @@ func test_player_keeps_radio_and_existing_vitals() -> void:
 	assert_not_null(player.get_node_or_null("HUD/StatusHud"))
 	assert_not_null(player.get_node_or_null("HUD/HealthHud"))
 	assert_not_null(player.get_node_or_null("HUD/ObjectiveHud"))
-	assert_not_null(player.get_node_or_null("HUD/DialogueSubtitles"))
+	assert_not_null(GameSettings.subtitle_overlay, "subtitles render on the shared overlay")
 
 
 func test_reduced_horror_effects_hide_distortion_but_keep_field_frame() -> void:

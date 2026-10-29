@@ -24,7 +24,7 @@ func _process(delta: float) -> void:
 	var active: bool = ringing or state == CallDirector.CallState.CONNECTED or state == CallDirector.CallState.ASSESSMENT
 	var pulse: float = 0.5 + 0.5 * sin(_time * (9.0 if ringing else 2.5))
 	if _lit != null:
-		_lit.visible = active and (not ringing or pulse > 0.35)
+		_lit.visible = active and (not ringing or pulse > 0.35 or GameSettings.reduce_flashing)
 	if _glow != null:
 		_glow.visible = active
-		_glow.light_energy = _energy * (0.55 + 0.45 * pulse)
+		_glow.light_energy = _energy * (0.8 if GameSettings.reduce_flashing else 0.55 + 0.45 * pulse)

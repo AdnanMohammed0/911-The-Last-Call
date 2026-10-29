@@ -48,7 +48,7 @@ func _process(delta: float) -> void:
 	if ring_light != null:
 		if ringing:
 			_blink += delta
-			ring_light.visible = fmod(_blink, BLINK_SECONDS * 2.0) < BLINK_SECONDS
+			ring_light.visible = GameSettings.reduce_flashing or fmod(_blink, BLINK_SECONDS * 2.0) < BLINK_SECONDS
 		else:
 			ring_light.visible = false
 	if status_label != null:

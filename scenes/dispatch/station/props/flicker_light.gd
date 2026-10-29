@@ -1,4 +1,5 @@
 ## Faulty fluorescent fixture: steady most of the time, then a short burst of flickering every few seconds.
+## Stays steady when the "Reduce flashing" accessibility option is on.
 ## Add as a child of a light fixture; it drives every Light3D and every "Tube*" mesh under that fixture.
 ## Authority: LOCAL (purely visual, unsynchronised on purpose)
 class_name FlickerLight
@@ -30,6 +31,11 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if GameSettings.reduce_flashing:
+		if not _lit:
+			_set_lit(true)
+		_burst = 0.0
+		return
 	if _burst <= 0.0:
 		_wait -= delta
 		if _wait <= 0.0:

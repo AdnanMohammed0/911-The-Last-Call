@@ -193,22 +193,30 @@ func request_stinger(stinger_id: StringName, force: bool = false) -> bool:
 	if not force and _stinger_cooldowns[stinger_id] > 0.0:
 		return false
 
+	# Accessibility: jump-scare stingers can be reduced or switched off.
+	var gain: float = 1.0
+	if stinger.category == MusicStinger.Category.SCARE:
+		gain = GameSettings.scare_stinger_gain(stinger.intensity)
+		if gain <= 0.0:
+			return false
+
 	# Check priority: stop lower-priority stingers if not layerable
 	if not stinger.layerable:
 		_stop_stingers_below_priority(stinger.priority)
 
 	# Play
-	_play_stinger(stinger)
+	_play_stinger(stinger, linear_to_db(gain))
 	_stinger_cooldowns[stinger_id] = stinger.cooldown_sec
 	return true
 
 
-func _play_stinger(stinger: MusicStinger) -> void:
+func _play_stinger(stinger: MusicStinger, offset_db: float = 0.0) -> void:
 	var file: String = stinger.get_file_to_play()
 	var player: AudioStreamPlayer = AudioStreamPlayer.new()
 	player.stream = load(file)
 	player.bus = &"Music"
-	player.volume_db = stinger.volume_db
+	var target_db: float = stinger.volume_db + offset_db
+	player.volume_db = target_db
 	player.autoplay = false
 
 	add_child(player)
@@ -217,7 +225,7 @@ func _play_stinger(stinger: MusicStinger) -> void:
 	# Fade in
 	var tween: Tween = create_tween()
 	tween.tween_property(player, "volume_db", -80.0, 0.0)  # Start silent
-	tween.tween_property(player, "volume_db", stinger.volume_db, stinger.fade_in).set_trans(Tween.TRANS_LINEAR)
+	tween.tween_property(player, "volume_db", target_db, stinger.fade_in).set_trans(Tween.TRANS_LINEAR)
 
 	player.play()
 

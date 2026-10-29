@@ -27,6 +27,9 @@ var shout_just_pressed: bool = false
 var enabled: bool = true
 
 var _look_delta: Vector2 = Vector2.ZERO
+## Latched states for the accessibility "toggle sprint" / "toggle aim" options.
+var _sprint_latched: bool = false
+var _aim_latched: bool = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -60,9 +63,19 @@ func sample() -> void:
 		drop_just_pressed = false
 		jump_just_pressed = false
 		shout_just_pressed = false
+		_sprint_latched = false
+		_aim_latched = false
 		return
 	move = Input.get_vector(&"move_left", &"move_right", &"move_forward", &"move_back")
-	sprint = Input.is_action_pressed(&"sprint")
+	if GameSettings.toggle_sprint:
+		# One press latches sprint; it releases on the next press or when the player stops moving.
+		if Input.is_action_just_pressed(&"sprint"):
+			_sprint_latched = not _sprint_latched
+		if move.length_squared() < 0.01:
+			_sprint_latched = false
+		sprint = _sprint_latched
+	else:
+		sprint = Input.is_action_pressed(&"sprint")
 	crouch_held = Input.is_action_pressed(&"crouch")
 	crouch_just_pressed = Input.is_action_just_pressed(&"crouch")
 	lean = Input.get_axis(&"lean_left", &"lean_right")
@@ -74,7 +87,12 @@ func sample() -> void:
 	var captured: bool = Input.mouse_mode == Input.MOUSE_MODE_CAPTURED or DisplayServer.get_name() == "headless"
 	fire_held = captured and Input.is_action_pressed(&"fire")
 	fire_just_pressed = captured and Input.is_action_just_pressed(&"fire")
-	aim_held = captured and Input.is_action_pressed(&"aim")
+	if GameSettings.toggle_aim:
+		if captured and Input.is_action_just_pressed(&"aim"):
+			_aim_latched = not _aim_latched
+		aim_held = captured and _aim_latched
+	else:
+		aim_held = captured and Input.is_action_pressed(&"aim")
 	reload_just_pressed = Input.is_action_just_pressed(&"reload")
 	weapon_primary_just_pressed = Input.is_action_just_pressed(&"weapon_primary")
 	weapon_sidearm_just_pressed = Input.is_action_just_pressed(&"weapon_sidearm")

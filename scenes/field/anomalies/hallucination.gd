@@ -25,6 +25,8 @@ static func create(scare_kind: StringName, at: Vector3) -> Hallucination:
 func _ready() -> void:
 	add_to_group(GROUP)
 	top_level = true
+	if kind == &"shadow_figure" and not GameSettings.apparitions:
+		kind = &"radio_whisper"   # Accessibility: apparitions become a sound cue only.
 	match kind:
 		&"phantom_steps":
 			lifetime = 3.2

@@ -54,7 +54,7 @@ func _process(delta: float) -> void:
 	var target: Vector3 = Vector3(0.4, 0.9, 0.0)
 	_camera.position = target + Vector3(sin(angle) * radius, 1.35 + sin(_time * 0.11) * 0.15, cos(angle) * radius)
 	_camera.look_at(target, Vector3.UP)
-	if GameSettings.reduced_horror_effects:
+	if GameSettings.reduced_horror_effects or GameSettings.reduce_flashing:
 		for light: OmniLight3D in _red:
 			light.light_energy = 1.4
 		for light: OmniLight3D in _blue:

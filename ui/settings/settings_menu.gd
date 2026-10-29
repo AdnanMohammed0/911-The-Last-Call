@@ -1,4 +1,5 @@
-## Full-screen settings menu (Video · Audio · Voice · Controls) shared by the main menu and the pause menu.
+## Full-screen settings menu (General · Video · Audio · Voice · Controls · Accessibility) shared by the main
+## menu and the pause menu.
 ## Every change applies immediately and is saved by GameSettings. Esc or "Back" closes it.
 ## Authority: LOCAL
 class_name SettingsMenu
@@ -13,6 +14,8 @@ var _rebinding_action: StringName = &""
 var _rebinding_button: Button
 var _bind_buttons: Dictionary[StringName, Button] = {}
 var _mic_bar: ProgressBar
+var _mic_state: Label
+var _test_player: AudioStreamPlayer
 var _tabs: TabContainer
 var _page_title: Label
 var _rail_pages: PackedStringArray = PackedStringArray()
@@ -168,6 +171,10 @@ func _input(event: InputEvent) -> void:
 func _process(_delta: float) -> void:
 	if _mic_bar != null and is_instance_valid(_mic_bar):
 		_mic_bar.value = clampf(inverse_lerp(-60.0, 0.0, VoiceManager.local_level_db), 0.0, 1.0)
+	if _mic_state != null and is_instance_valid(_mic_state):
+		var talking: bool = VoiceManager.local_transmitting
+		_mic_state.text = tr("● Voice detected") if talking else tr("○ Silent")
+		_mic_state.add_theme_color_override(&"font_color", GameTheme.ACCENT if talking else GameTheme.TEXT_DIM)
 
 
 # --- Layout helpers -----------------------------------------------------------------------------
@@ -301,6 +308,10 @@ func _audio_tab(page: VBoxContainer) -> void:
 		devices = PackedStringArray(["Default"])
 	_row(page, "Output device", _option(devices, maxi(devices.find(GameSettings.output_device), 0),
 		func(index: int) -> void: GameSettings.set_value("output_device", devices[index])))
+	var test: Button = Button.new()
+	test.text = tr("Play test sound")
+	test.pressed.connect(play_test_tone)
+	_row(page, "Speaker test", test, "Short chime on the selected output")
 	_section(page, "Volume")
 	for bus: StringName in GameSettings.AUDIO_BUSES:
 		var bus_name: StringName = bus
@@ -330,8 +341,20 @@ func _voice_tab(page: VBoxContainer) -> void:
 	_mic_bar.show_percentage = false
 	_mic_bar.custom_minimum_size = Vector2(0, 10)
 	_mic_bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	_row(page, "Input level", _mic_bar)
-	_row(page, "Hear myself", _toggle(VoiceManager.loopback, func(on: bool) -> void: VoiceManager.loopback = on), "Mic test")
+	_row(page, "Microphone volume", _slider(-12, 18, 1, VoiceManager.manual_gain_db, "%+d dB", func(value: float) -> void:
+		VoiceManager.manual_gain_db = value
+		GameSettings.save_settings()), "On top of automatic gain")
+	var meter: HBoxContainer = HBoxContainer.new()
+	meter.add_theme_constant_override(&"separation", 16)
+	_mic_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	meter.add_child(_mic_bar)
+	_mic_state = Label.new()
+	_mic_state.custom_minimum_size = Vector2(150, 0)
+	_mic_state.text = tr("○ Silent")
+	meter.add_child(_mic_state)
+	_row(page, "Input level", meter, "Speak: the light shows when others would hear you")
+	_row(page, "Hear myself", _toggle(VoiceManager.loopback, func(on: bool) -> void: VoiceManager.loopback = on),
+		"Mic test: plays your voice back through your speakers")
 
 
 func _controls_tab(page: VBoxContainer) -> void:
@@ -368,19 +391,92 @@ func _controls_tab(page: VBoxContainer) -> void:
 
 
 func _accessibility_tab(page: VBoxContainer) -> void:
-	_section(page, "Captions")
-	_row(page, "Dialogue subtitles", _toggle(GameSettings.subtitles_enabled,
-		func(on: bool) -> void: GameSettings.set_value("subtitles_enabled", on)),
-		"Shows scripted call dialogue outside the computer")
-	_row(page, "Subtitle size", _option(GameSettings.SUBTITLE_SIZE_NAMES, GameSettings.subtitle_size,
-		func(index: int) -> void: GameSettings.set_value("subtitle_size", index)))
-	_section(page, "Visual comfort")
+	_section(page, "Subtitles")
+	_row(page, "Dialogue subtitles", _toggle(GameSettings.subtitles_enabled, func(on: bool) -> void:
+		GameSettings.set_value("subtitles_enabled", on)), "Voiced call lines (the handset holder reads them on the phone)")
+	_row(page, "Sound captions", _toggle(GameSettings.sound_captions, func(on: bool) -> void:
+		GameSettings.set_value("sound_captions", on)), "Describes sounds such as a phone ringing")
+	_row(page, "Speaker names", _toggle(GameSettings.subtitle_speaker_names, func(on: bool) -> void:
+		GameSettings.set_value("subtitle_speaker_names", on)))
+	_row(page, "Subtitle size", _option(GameSettings.SUBTITLE_SIZE_NAMES, GameSettings.subtitle_size, func(index: int) -> void:
+		GameSettings.set_value("subtitle_size", index)))
+	_row(page, "Background", _slider(0, 100, 5, GameSettings.subtitle_background * 100.0, "%d%%", func(value: float) -> void:
+		GameSettings.set_value("subtitle_background", value / 100.0)))
+	var preview: Button = Button.new()
+	preview.text = tr("Show a sample subtitle")
+	preview.pressed.connect(preview_subtitles)
+	_row(page, "Preview", preview)
+
+	_section(page, "Vision")
 	_row(page, "HUD colour palette", _option(GameSettings.COLOR_MODE_NAMES, GameSettings.color_mode,
 		func(index: int) -> void: GameSettings.set_value("color_mode", index)),
 		"Changes critical status and success colours")
+	_row(page, "Colour-vision filter", _option(GameSettings.COLORBLIND_NAMES, GameSettings.colorblind_mode, func(index: int) -> void:
+		GameSettings.set_value("colorblind_mode", index)), "Shifts colours you can't tell apart across the whole screen")
+	_row(page, "Filter strength", _slider(0, 100, 5, GameSettings.colorblind_strength * 100.0, "%d%%", func(value: float) -> void:
+		GameSettings.set_value("colorblind_strength", value / 100.0)))
+	_row(page, "Interface scale", _slider(80, 150, 5, GameSettings.ui_scale * 100.0, "%d%%", func(value: float) -> void:
+		GameSettings.set_value("ui_scale", value / 100.0)), "Menus, HUD and subtitles")
+
+	_section(page, "Comfort and content")
 	_row(page, "Reduce horror effects", _toggle(GameSettings.reduced_horror_effects,
 		func(on: bool) -> void: GameSettings.set_value("reduced_horror_effects", on)),
 		"Softens bodycam distortion and damage flashes")
+	_row(page, "Reduce flashing", _toggle(GameSettings.reduce_flashing, func(on: bool) -> void:
+		GameSettings.set_value("reduce_flashing", on)), "Steady lights instead of flicker and strobe")
+	_row(page, "Bodycam effects", _slider(0, 100, 5, GameSettings.screen_effects * 100.0, "%d%%", func(value: float) -> void:
+		GameSettings.set_value("screen_effects", value / 100.0)), "Film grain, distortion and the sanity overlay")
+	_row(page, "Jump-scare stingers", _option(GameSettings.SCARE_NAMES, GameSettings.scare_stingers, func(index: int) -> void:
+		GameSettings.set_value("scare_stingers", index)), "Reduced plays them quieter and skips the loudest")
+	_row(page, "Apparitions", _toggle(GameSettings.apparitions, func(on: bool) -> void:
+		GameSettings.set_value("apparitions", on)), "Off: shadow figures become a sound cue only")
+
+	_section(page, "Motor")
+	_row(page, "Toggle sprint", _toggle(GameSettings.toggle_sprint, func(on: bool) -> void:
+		GameSettings.set_value("toggle_sprint", on)), "Press once to run; stopping ends the sprint")
+	_row(page, "Toggle aim", _toggle(GameSettings.toggle_aim, func(on: bool) -> void:
+		GameSettings.set_value("toggle_aim", on)), "Press once to aim, again to lower")
+	_row(page, "Toggle crouch", _toggle(GameSettings.crouch_toggle, func(on: bool) -> void:
+		GameSettings.set_value("crouch_toggle", on)))
+
+
+## Shows a sample line and caption with the current subtitle settings.
+func preview_subtitles() -> void:
+	var overlay: SubtitleOverlay = GameSettings.subtitle_overlay
+	if overlay == null:
+		return
+	overlay.caption("[Phone ringing]")
+	overlay.show_line(tr("Caller"), tr("Please hurry, there's someone inside the house."))
+
+
+## Short two-tone chime on the Master bus so players can check the output device.
+func play_test_tone() -> void:
+	if _test_player == null:
+		_test_player = AudioStreamPlayer.new()
+		_test_player.bus = &"Master"
+		add_child(_test_player)
+	_test_player.stream = make_test_tone()
+	_test_player.play()
+
+
+static func make_test_tone() -> AudioStreamWAV:
+	var rate: int = 22050
+	var samples: int = int(rate * 0.7)
+	var data: PackedByteArray = PackedByteArray()
+	data.resize(samples * 2)
+	for i: int in samples:
+		var t: float = float(i) / rate
+		var pitch: float = 660.0 if t < 0.35 else 880.0
+		var local: float = fmod(t, 0.35)
+		var envelope: float = minf(local / 0.01, 1.0) * clampf((0.35 - local) / 0.12, 0.0, 1.0)
+		var value: int = int(sin(TAU * pitch * t) * envelope * 0.35 * 32767.0)
+		data.encode_s16(i * 2, value)
+	var stream: AudioStreamWAV = AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_16_BITS
+	stream.mix_rate = rate
+	stream.stereo = false
+	stream.data = data
+	return stream
 
 
 # --- Rebinding --------------------------------------------------------------------------------------

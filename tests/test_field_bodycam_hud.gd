@@ -1,0 +1,62 @@
+extends GutTest
+
+const PLAYER_SCENE: PackedScene = preload("res://scenes/shared/player/player.tscn")
+
+
+func before_each() -> void:
+	MissionDirector.reset()
+
+
+func after_each() -> void:
+	MissionDirector.reset()
+
+
+func test_bodycam_is_field_only_and_tracks_sanity() -> void:
+	var player: Player = PLAYER_SCENE.instantiate() as Player
+	add_child_autofree(player)
+	var bodycam: FieldBodycamHud = player.get_node("HUD/FieldBodycamHud") as FieldBodycamHud
+	assert_not_null(bodycam)
+	bodycam._process(0.0)
+	assert_false(bodycam.visible)
+	assert_eq(FieldBodycamHud.sanity_intensity(100.0), 0.0)
+	assert_gt(FieldBodycamHud.sanity_intensity(25.0), 0.0)
+	MissionDirector._sync_state(MissionDirector.State.DEPLOYED, MissionDirector.HIGHWAY,
+		&"call_meat_truck", &"ambush", 1.5, "Flank the gunmen")
+	player.sanity = 25.0
+	bodycam._process(0.0)
+	assert_true(bodycam.visible)
+	assert_true(bodycam._sanity_overlay.visible)
+	assert_string_contains(bodycam._site.text, "HIGHWAY")
+	player.sanity = 100.0
+	bodycam._process(0.0)
+	assert_false(bodycam._sanity_overlay.visible)
+	MissionDirector.reset()
+	bodycam._process(0.0)
+	assert_false(bodycam.visible)
+
+
+func test_objective_switches_to_field_ticker() -> void:
+	var hud: ObjectiveHud = ObjectiveHud.new()
+	add_child_autofree(hud)
+	assert_true(hud._tracker.visible)
+	assert_false(hud._field_ticker.visible)
+	MissionDirector._sync_state(MissionDirector.State.DEPLOYED, MissionDirector.FARMHOUSE,
+		&"call_closet_monster", &"raid", 1.0, "Rescue the hostage")
+	assert_false(hud._tracker.visible)
+	assert_true(hud._field_ticker.visible)
+	assert_string_contains(hud._field_text.text, "Rescue the hostage")
+	MissionDirector._sync_hostiles(2, 3)
+	assert_string_contains(hud._field_text.text, "Suspects 2/3")
+	MissionDirector.reset()
+	hud._refresh()
+	assert_true(hud._tracker.visible)
+	assert_false(hud._field_ticker.visible)
+
+
+func test_player_keeps_radio_and_existing_vitals() -> void:
+	var player: Player = PLAYER_SCENE.instantiate() as Player
+	autoqfree(player)
+	assert_not_null(player.get_node_or_null("HUD/VoiceHud"))
+	assert_not_null(player.get_node_or_null("HUD/StatusHud"))
+	assert_not_null(player.get_node_or_null("HUD/HealthHud"))
+	assert_not_null(player.get_node_or_null("HUD/ObjectiveHud"))

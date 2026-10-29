@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://ds6yd2ei741ww" path="res://scenes/shared/weapons/weapon_holder.gd" id="12_weapons"]
 [ext_resource type="Script" uid="uid://5bsbv6tuqrpa" path="res://ui/hud/objective_hud.gd" id="13_objective"]
 [ext_resource type="Script" uid="uid://d2c1kss8feuyg" path="res://ui/hud/status_hud.gd" id="14_status"]
+[ext_resource type="Script" uid="uid://bbf5vd2umsrfs" path="res://ui/hud/field_bodycam_hud.gd" id="15_bodycam"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 resource_local_to_scene = true
@@ -187,6 +188,17 @@ script = ExtResource("12_weapons")
 script = ExtResource("3_interactor")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1596156894]
+
+[node name="FieldBodycamHud" type="Control" parent="HUD" node_paths=PackedStringArray("player")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("15_bodycam")
+player = NodePath("../..")
 
 [node name="InteractionPrompt" parent="HUD" unique_id=92675865 node_paths=PackedStringArray("interactor") instance=ExtResource("4_prompt")]
 interactor = NodePath("../../PlayerInteractor")

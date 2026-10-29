@@ -66,6 +66,11 @@
    "status": "done",
    "note": "بناء خريطة Old Highway 9 لقضية The Meat Truck: طريق سريع مهجور ومسار ترابي للتسلل وشاحنة مبردة وحواجز وغطاء ونقاط ظهور للكمين واستخراج. مشهد RPG متزامن بقرار الخادم يضرب طراداً فارغاً بعد مهلة؛ يقدر Tech يبعده من جهاز تحكم، وإلا تنخصم $3,000 من ميزانية المحطة. اختُبرت الملاحة للمسارين وحالتا إنقاذ الطراد وخسارته؛ نجحت 38 تجربة GUT مرتبطة وفحص Godot.",
    "updated_at": "2026-10-29"
+  },
+  "P3-20": {
+   "status": "done",
+   "note": "إكمال HUD الميدان: إطار bodycam خفيف مع REC ومؤقت المهمة واسم الموقع، شريط هدف مخصص للميدان يحدّث عدد المشتبهين، ومؤثر حواف يتدرج مع انخفاض Sanity ويتعطل عند الحالة الطبيعية لتقليل كلفة الرسم. احتُفظ بمؤشرات الصحة والذخيرة والراديو الموجودة مع تجنب تداخلها؛ نجحت 55 تجربة GUT مرتبطة. فحص المحرر أظهر خطأ UID قديم متعلق بـ default_bus_layout.tres خارج هذه التغييرات.",
+   "updated_at": "2026-10-29"
   }
  },
  "log": [
@@ -797,6 +802,12 @@
    "tasks": ["P3-18"],
    "summary": "بناء خريطة Abandoned Highway ومسار التفاف حول شاحنة Meat Truck، مع مشهد RPG يضرب الطراد الوهمي إلا إذا أبعده Tech، وربط المكالمة والخادم وميزانية المحطة. نجاح 38 اختباراً مرتبطاً.",
    "files": ["tools/level_kit/build_highway.gd", "tools/level_kit/build_levels.gd", "tools/level_kit/level_kit.gd", "scenes/field/missions/abandoned_highway.tscn", "scenes/field/missions/highway_decoy_control.gd", "scenes/field/missions/highway_rpg_set_piece.gd", "assets/materials/highway_dirt.tres", "assets/materials/highway_gravel.tres", "assets/materials/highway_sign.tres", "assets/materials/highway_stripe.tres", "autoload/mission_director.gd", "tests/test_abandoned_highway.gd", "docs/data/progress/ali.json"]
+  },
+  {
+   "date": "2026-10-29",
+   "tasks": ["P3-20"],
+   "summary": "إكمال HUD الميدان بإطار bodycam ومؤقت، شريط هدف لا يتداخل مع مؤشرات اللاعب، ومؤثر Sanity متدرج؛ مؤشر الراديو الحالي يبقى مدمجاً. نجاح 55 اختباراً مرتبطاً.",
+   "files": ["ui/hud/field_bodycam_hud.gd", "ui/hud/objective_hud.gd", "scenes/shared/player/player.tscn", "tests/test_field_bodycam_hud.gd", "docs/data/progress/ali.json"]
   }
  ]
 }

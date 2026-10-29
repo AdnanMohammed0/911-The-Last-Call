@@ -13,6 +13,9 @@ const FEED_SECONDS: float = 3.5
 var _tracker: PanelContainer
 var _tracker_title: Label
 var _tracker_text: Label
+var _field_ticker: PanelContainer
+var _field_title: Label
+var _field_text: Label
 var _banner: PanelContainer
 var _banner_title: Label
 var _banner_subtitle: Label
@@ -62,6 +65,31 @@ func _build() -> void:
 	_tracker_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_tracker_text.custom_minimum_size = Vector2(320, 0)
 	column.add_child(_tracker_text)
+	# Field objectives sit below the bodycam metadata, clear of vitals and weapon readouts.
+	_field_ticker = PanelContainer.new()
+	var ticker_style: StyleBoxFlat = UiKit.style(Color(0.015, 0.02, 0.028, 0.68), 4, 18, 8)
+	ticker_style.border_color = Color(GameTheme.ACCENT, 0.75)
+	ticker_style.border_width_bottom = 2
+	_field_ticker.add_theme_stylebox_override(&"panel", ticker_style)
+	_field_ticker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_field_ticker.anchor_left = 0.0
+	_field_ticker.anchor_right = 0.0
+	_field_ticker.anchor_top = 0.0
+	_field_ticker.anchor_bottom = 0.0
+	_field_ticker.offset_left = 36
+	_field_ticker.offset_right = 596
+	_field_ticker.offset_top = 110
+	_field_ticker.offset_bottom = 184
+	add_child(_field_ticker)
+	var ticker_column: VBoxContainer = VBoxContainer.new()
+	ticker_column.add_theme_constant_override(&"separation", 2)
+	_field_ticker.add_child(ticker_column)
+	_field_title = UiKit.caps("", 11, GameTheme.ACCENT, &"bold", 2)
+	ticker_column.add_child(_field_title)
+	_field_text = UiKit.label("", 16, TEXT, &"medium")
+	_field_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_field_text.custom_minimum_size = Vector2(524, 0)
+	ticker_column.add_child(_field_text)
 
 	# Banner: cinematic title between two thin rules.
 	_banner = PanelContainer.new()
@@ -113,6 +141,17 @@ func _label(parent: Node, size: int, color: Color) -> Label:
 
 func _refresh() -> void:
 	var text: String = MissionDirector.objective_text
+	if MissionDirector.is_in_mission():
+		_tracker.visible = false
+		_field_ticker.visible = true
+		_banner.offset_top = 220
+		_field_title.text = "FIELD OBJECTIVE  //  %s" % MissionDirector.mission_name().to_upper()
+		if MissionDirector.state == MissionDirector.State.DEPLOYED and MissionDirector.hostiles_total > 0:
+			text += "  ·  Suspects %d/%d" % [MissionDirector.hostiles_left, MissionDirector.hostiles_total]
+		_field_text.text = text
+		return
+	_field_ticker.visible = false
+	_banner.offset_top = 150
 	if text == "":
 		# Between calls: the shift is the goal.
 		_tracker.visible = true

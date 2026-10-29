@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_47d16"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_fi8xo"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_5vth0"]
+
+[sub_resource type="Resource" id="Resource_k5gu3"]
+script = ExtResource("2_fi8xo")
+kind = 1
+key = &"public_trust"
+value = -10
+
+[sub_resource type="Resource" id="Resource_pc84u"]
+script = ExtResource("2_fi8xo")
+kind = 1
+key = &"guilt"
+value = 20
+
+[sub_resource type="Resource" id="Resource_d5qv7"]
+script = ExtResource("2_fi8xo")
+kind = 5
+key = &"guilt_raised"
+value = null
+
+[resource]
+script = ExtResource("3_5vth0")
+id = &"genuine_call_ignored"
+description = "An unanswered genuine emergency: the victim was on their own."
+trigger_event = &"call_ignored"
+trigger_payload = {
+"truth": &"genuine"
+}
+effects = Array[ExtResource("2_fi8xo")]([SubResource("Resource_k5gu3"), SubResource("Resource_pc84u"), SubResource("Resource_d5qv7")])
+once = false

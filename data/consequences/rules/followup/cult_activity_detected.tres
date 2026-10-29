@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_lsd4r"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_hjfgg"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_vxte4"]
+
+[sub_resource type="Resource" id="Resource_ygjhj"]
+script = ExtResource("2_hjfgg")
+key = &"cult_activity_detected"
+value = true
+
+[sub_resource type="Resource" id="Resource_v5wjq"]
+script = ExtResource("2_hjfgg")
+kind = 1
+key = &"evidence_collected"
+value = 1
+
+[resource]
+script = ExtResource("3_vxte4")
+id = &"cult_activity_detected"
+description = "A full response at the warehouse confirmed cult activity."
+trigger_event = &"cult_activity_detected"
+effects = Array[ExtResource("2_hjfgg")]([SubResource("Resource_ygjhj"), SubResource("Resource_v5wjq")])

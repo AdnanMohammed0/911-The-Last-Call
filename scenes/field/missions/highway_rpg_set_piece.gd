@@ -61,6 +61,8 @@ func _strike() -> void:
 	var hit: bool = not _diverted
 	if hit:
 		GameState.modify_station_budget(-CRUISER_LOSS)
+	FlagSystem.record_event(&"decoy_cruiser_destroyed" if hit else &"decoy_cruiser_saved",
+		{"call": MissionDirector.mission_call_id})
 	_sync_strike.rpc(hit)
 
 

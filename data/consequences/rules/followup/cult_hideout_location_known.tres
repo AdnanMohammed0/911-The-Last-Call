@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_5k6xp"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_n7l1j"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_5753n"]
+
+[sub_resource type="Resource" id="Resource_43oqu"]
+script = ExtResource("2_n7l1j")
+key = &"cult_hideout_location_known"
+value = true
+
+[sub_resource type="Resource" id="Resource_vr77p"]
+script = ExtResource("2_n7l1j")
+kind = 1
+key = &"evidence_collected"
+value = 1
+
+[resource]
+script = ExtResource("3_5753n")
+id = &"cult_hideout_location_known"
+description = "The Ambush Leader took the deal and gave up the hideout."
+trigger_event = &"mission_unlocked_cult_hideout"
+effects = Array[ExtResource("2_n7l1j")]([SubResource("Resource_43oqu"), SubResource("Resource_vr77p")])

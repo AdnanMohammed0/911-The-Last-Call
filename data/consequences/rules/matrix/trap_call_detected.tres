@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_fs5na"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_12sey"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_bbqko"]
+
+[sub_resource type="Resource" id="Resource_xdk8m"]
+script = ExtResource("2_12sey")
+kind = 1
+key = &"trap_calls_detected"
+value = 1
+
+[resource]
+script = ExtResource("3_bbqko")
+id = &"trap_call_detected"
+description = "A cult trap call was correctly identified as an ambush."
+trigger_event = &"call_classified"
+trigger_payload = {
+"truth": &"ambush",
+"verdict": &"ambush"
+}
+effects = Array[ExtResource("2_12sey")]([SubResource("Resource_xdk8m")])
+once = false

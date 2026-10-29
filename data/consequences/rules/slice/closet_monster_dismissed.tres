@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_xodr8"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_x2bnv"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_l87mh"]
+
+[sub_resource type="Resource" id="Resource_ofrit"]
+script = ExtResource("2_x2bnv")
+kind = 5
+key = &"closet_monster_abandoned"
+value = null
+
+[resource]
+script = ExtResource("3_l87mh")
+id = &"closet_monster_dismissed"
+description = "The closet monster call was closed with no response."
+trigger_event = &"call_classified"
+trigger_payload = {
+"call": &"call_closet_monster",
+"verdict": &"ignore"
+}
+effects = Array[ExtResource("2_x2bnv")]([SubResource("Resource_ofrit")])

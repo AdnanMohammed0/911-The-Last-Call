@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_ymrcr"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_byfvc"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_rj6tl"]
+
+[sub_resource type="Resource" id="Resource_mdfto"]
+script = ExtResource("1_ymrcr")
+key = &"ambushes_survived"
+op = 3
+value = 3
+
+[sub_resource type="Resource" id="Resource_wodwa"]
+script = ExtResource("2_byfvc")
+kind = 2
+key = &"hardened"
+value = null
+target = &"all_officers"
+
+[resource]
+script = ExtResource("3_rj6tl")
+id = &"hardened_officers"
+description = "Three ambushes survived: the team is Hardened."
+trigger_event = &"ambush_survived"
+conditions = Array[ExtResource("1_ymrcr")]([SubResource("Resource_mdfto")])
+effects = Array[ExtResource("2_byfvc")]([SubResource("Resource_wodwa")])

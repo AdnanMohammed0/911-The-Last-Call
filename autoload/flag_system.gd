@@ -35,13 +35,18 @@ func _ready() -> void:
 	load_rules()
 	EventBus.call_event.connect(_on_call_event)
 	EventBus.call_classified.connect(func(call_id: StringName, verdict: StringName) -> void:
-		_record_if_host(&"call_classified", {"call": call_id, "verdict": verdict}))
+		_record_if_host(&"call_classified", {"call": call_id, "verdict": verdict, "truth": call_truth(call_id)}))
 	EventBus.call_missed.connect(func(call_id: StringName) -> void:
-		_record_if_host(&"call_ignored", {"call": call_id}))
-	EventBus.suspect_arrested.connect(func(_hostile: Node, by_peer: int) -> void:
-		_record_if_host(&"suspect_arrested", {"peer_id": by_peer, "mission": MissionDirector.mission_call_id}))
-	EventBus.hostile_killed.connect(func(_hostile: Node, by_peer: int) -> void:
-		_record_if_host(&"hostile_killed", {"peer_id": by_peer, "mission": MissionDirector.mission_call_id}))
+		_record_if_host(&"call_ignored", {"call": call_id, "truth": call_truth(call_id)}))
+	EventBus.suspect_arrested.connect(func(hostile: Node, by_peer: int) -> void:
+		_record_if_host(&"suspect_arrested", {"peer_id": by_peer, "mission": MissionDirector.mission_call_id,
+			"archetype": archetype_of(hostile)}))
+	EventBus.hostile_killed.connect(func(hostile: Node, by_peer: int) -> void:
+		_record_if_host(&"hostile_killed", {"peer_id": by_peer, "mission": MissionDirector.mission_call_id,
+			"archetype": archetype_of(hostile)}))
+	EventBus.hostage_executed.connect(func(hostile: Node) -> void:
+		_record_if_host(&"civilian_killed", {"mission": MissionDirector.mission_call_id,
+			"archetype": archetype_of(hostile)}))
 	EventBus.player_downed.connect(func(peer_id: int) -> void:
 		_record_if_host(&"officer_downed", {"peer_id": peer_id, "mission": MissionDirector.mission_call_id}))
 	EventBus.shift_clock_updated.connect(func(minutes: int) -> void:
@@ -105,6 +110,27 @@ func current_shift() -> int:
 	return MissionDirector.shift_number
 
 
+## The call's hidden truth as a verdict-style name (&"prank", &"genuine", &"ambush", &"paranormal",
+## &"diversion"), or &"" for unknown calls. Lets rules react to e.g. any ignored genuine call.
+static func call_truth(call_id: StringName) -> StringName:
+	var call: CallData = CallDirector.registered_calls.get(call_id, null)
+	if call == null:
+		return &""
+	var names: PackedStringArray = CallData.Truth.keys()
+	return StringName(names[call.truth].to_lower())
+
+
+## Archetype id of a hostile (e.g. &"ambush_leader"), or &"".
+static func archetype_of(hostile: Node) -> StringName:
+	if hostile == null or not is_instance_valid(hostile):
+		return &""
+	var archetype: Variant = hostile.get("archetype")
+	if archetype is ArchetypeData:
+		var data: ArchetypeData = archetype
+		return data.id
+	return &""
+
+
 func get_rule(rule_id: StringName) -> ConsequenceRule:
 	return _rules_by_id.get(rule_id, null)
 
@@ -128,7 +154,7 @@ func record_event(event_id: StringName, payload: Dictionary = {}) -> void:
 	for rule: ConsequenceRule in _rules_by_trigger.get(event_id, []):
 		if rule.once and (fired_once.has(rule.id) or _is_pending(rule.id)):
 			continue
-		if rule.conditions_pass(self):
+		if rule.payload_matches(payload) and rule.conditions_pass(self):
 			_schedule(rule, payload)
 	_chain_depth -= 1
 

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_syrs5"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_hf7fb"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_jb2hh"]
+
+[sub_resource type="Resource" id="Resource_lc80w"]
+script = ExtResource("2_hf7fb")
+key = &"decoy_cruiser_saved"
+value = true
+
+[resource]
+script = ExtResource("3_jb2hh")
+id = &"decoy_cruiser_saved"
+description = "Tech drove the decoy cruiser out of the RPG's line of fire."
+trigger_event = &"decoy_cruiser_saved"
+effects = Array[ExtResource("2_hf7fb")]([SubResource("Resource_lc80w")])

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_fkjl5"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_synau"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_1yjaw"]
+
+[sub_resource type="Resource" id="Resource_o7kov"]
+script = ExtResource("2_synau")
+key = &"decoy_cruiser_lost"
+value = true
+
+[resource]
+script = ExtResource("3_1yjaw")
+id = &"decoy_cruiser_lost"
+description = "The cult's RPG destroyed the empty decoy cruiser (budget already −$3,000)."
+trigger_event = &"decoy_cruiser_destroyed"
+effects = Array[ExtResource("2_synau")]([SubResource("Resource_o7kov")])

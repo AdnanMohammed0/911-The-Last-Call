@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_pu3kv"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_537eb"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_7eob0"]
+
+[sub_resource type="Resource" id="Resource_2lgjh"]
+script = ExtResource("2_537eb")
+kind = 5
+key = &"cut_line_dismissed"
+value = null
+
+[resource]
+script = ExtResource("3_7eob0")
+id = &"cut_line_closed_as_fault"
+description = "The cut line call was written off as a prank / line fault."
+trigger_event = &"call_classified"
+trigger_payload = {
+"call": &"call_cut_line",
+"verdict": &"prank"
+}
+effects = Array[ExtResource("2_537eb")]([SubResource("Resource_2lgjh")])

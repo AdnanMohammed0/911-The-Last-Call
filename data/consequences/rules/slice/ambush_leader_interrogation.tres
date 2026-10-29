@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_64b1l"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_v6xui"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_kiwqt"]
+
+[sub_resource type="Resource" id="Resource_j2ah0"]
+script = ExtResource("2_v6xui")
+key = &"ambush_leader_arrested"
+value = true
+
+[resource]
+script = ExtResource("3_kiwqt")
+id = &"ambush_leader_interrogation"
+description = "Next shift the arrested Ambush Leader is ready to talk (unlocks call_interrogation)."
+trigger_event = &"suspect_arrested"
+trigger_payload = {
+"archetype": &"ambush_leader"
+}
+timing = 2
+delay = 1
+effects = Array[ExtResource("2_v6xui")]([SubResource("Resource_j2ah0")])

@@ -10,6 +10,9 @@ enum Timing { IMMEDIATE, DELAYED_MINUTES, NEXT_SHIFT, ENDING }
 @export_multiline var description: String = ""
 ## Event id that triggers this rule (e.g. &"call_ignored").
 @export var trigger_event: StringName = &""
+## The triggering event's payload must contain these key/value pairs (empty = any), e.g.
+## {"call": &"call_closet_monster"} or {"truth": &"genuine", "verdict": &"ignore"}.
+@export var trigger_payload: Dictionary = {}
 ## ALL must pass (evaluated against FlagSystem when the trigger is recorded).
 @export var conditions: Array[FlagCondition] = []
 @export var timing: Timing = Timing.IMMEDIATE
@@ -18,6 +21,14 @@ enum Timing { IMMEDIATE, DELAYED_MINUTES, NEXT_SHIFT, ENDING }
 @export var effects: Array[FlagEffect] = []
 ## Fire at most once per campaign.
 @export var once: bool = true
+
+
+## True when `payload` (the triggering event's) contains every pair of trigger_payload.
+func payload_matches(payload: Dictionary) -> bool:
+	for key: Variant in trigger_payload:
+		if not payload.has(key) or not FlagCondition.values_equal(payload[key], trigger_payload[key]):
+			return false
+	return true
 
 
 func conditions_pass(flag_system: Object) -> bool:

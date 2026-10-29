@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_8m4cc"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_11h4v"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_jd535"]
+
+[sub_resource type="Resource" id="Resource_uboy6"]
+script = ExtResource("2_11h4v")
+key = &"closet_teen_dead"
+value = true
+
+[sub_resource type="Resource" id="Resource_if4q8"]
+script = ExtResource("2_11h4v")
+key = &"closet_monster_resolved"
+value = &"teen_killed"
+
+[sub_resource type="Resource" id="Resource_im0mf"]
+script = ExtResource("2_11h4v")
+kind = 1
+key = &"guilt"
+value = 15
+
+[sub_resource type="Resource" id="Resource_4ai47"]
+script = ExtResource("2_11h4v")
+kind = 5
+key = &"guilt_raised"
+value = null
+
+[resource]
+script = ExtResource("3_jd535")
+id = &"closet_monster_failed"
+description = "The farmhouse response failed and the teen did not survive."
+trigger_event = &"mission_failed"
+trigger_payload = {
+"call": &"call_closet_monster"
+}
+effects = Array[ExtResource("2_11h4v")]([SubResource("Resource_uboy6"), SubResource("Resource_if4q8"), SubResource("Resource_im0mf"), SubResource("Resource_4ai47")])

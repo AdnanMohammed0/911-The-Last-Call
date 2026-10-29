@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_b614k"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_pljqr"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_kgnoq"]
+
+[sub_resource type="Resource" id="Resource_yt781"]
+script = ExtResource("2_pljqr")
+kind = 1
+key = &"trap_calls_total"
+value = 1
+
+[resource]
+script = ExtResource("3_kgnoq")
+id = &"trap_call_counted"
+description = "A cult trap call reached the line."
+trigger_event = &"call_classified"
+trigger_payload = {
+"truth": &"ambush"
+}
+effects = Array[ExtResource("2_pljqr")]([SubResource("Resource_yt781")])
+once = false

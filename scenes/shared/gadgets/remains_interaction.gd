@@ -127,11 +127,10 @@ func _complete_burial(peer_id: int) -> void:
 		_dig_timer.stop()
 		_dig_timer.queue_free()
 	
-	# Set the flag
-	if EventBus != null:
-		EventBus.flag_changed.emit(flag_on_complete, false, true)
-		if reward_evidence != &"":
-			EventBus.flag_changed.emit(reward_evidence, false, true)
+	# Story flags (host-authoritative; FlagSystem replicates them and emits flag_changed on every peer)
+	FlagSystem.set_flag(flag_on_complete, true)
+	if reward_evidence != &"":
+		FlagSystem.set_flag(reward_evidence, true)
 	
 	# Visual: remains disappear, peaceful effect
 	queue_free()
@@ -140,7 +139,7 @@ func _complete_burial(peer_id: int) -> void:
 	
 	# Notify anomaly system if needed
 	if EventBus != null:
-		EventBus.call_event.emit(&"", &"remains_buried")
+		EventBus.call_event.emit(MissionDirector.mission_call_id, &"remains_buried")
 
 
 ## Checks if remains are still present (not buried)

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_4lwr5"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_6vdqe"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_lilt7"]
+
+[sub_resource type="Resource" id="Resource_x2f78"]
+script = ExtResource("2_6vdqe")
+key = &"meat_truck_trap_sprung"
+value = true
+
+[resource]
+script = ExtResource("3_lilt7")
+id = &"meat_truck_trap_sprung"
+description = "Treated as a genuine breakdown, the team drives straight into the trap."
+trigger_event = &"call_classified"
+trigger_payload = {
+"call": &"call_meat_truck",
+"verdict": &"genuine"
+}
+effects = Array[ExtResource("2_6vdqe")]([SubResource("Resource_x2f78")])

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_67xgh"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_c6wtg"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_ku8fi"]
+
+[sub_resource type="Resource" id="Resource_w0xsa"]
+script = ExtResource("2_c6wtg")
+kind = 5
+key = &"meat_truck_abandoned"
+value = null
+
+[resource]
+script = ExtResource("3_ku8fi")
+id = &"meat_truck_dismissed"
+description = "The meat truck call was closed with no response."
+trigger_event = &"call_classified"
+trigger_payload = {
+"call": &"call_meat_truck",
+"verdict": &"ignore"
+}
+effects = Array[ExtResource("2_c6wtg")]([SubResource("Resource_w0xsa")])

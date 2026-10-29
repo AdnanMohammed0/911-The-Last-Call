@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_s1hhb"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_syuqx"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_0epic"]
+
+[sub_resource type="Resource" id="Resource_3ntrn"]
+script = ExtResource("2_syuqx")
+key = &"cult_movement_tracked"
+value = true
+
+[sub_resource type="Resource" id="Resource_ngwdi"]
+script = ExtResource("2_syuqx")
+kind = 1
+key = &"evidence_collected"
+value = 1
+
+[resource]
+script = ExtResource("3_0epic")
+id = &"cult_movement_tracked"
+description = "The Investigator tracked the cult van's movements."
+trigger_event = &"cult_movement_tracked"
+effects = Array[ExtResource("2_syuqx")]([SubResource("Resource_3ntrn"), SubResource("Resource_ngwdi")])

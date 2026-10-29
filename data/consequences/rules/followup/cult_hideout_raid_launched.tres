@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_rr5sq"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_sv6dp"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_tnq6o"]
+
+[sub_resource type="Resource" id="Resource_s7sna"]
+script = ExtResource("2_sv6dp")
+key = &"cult_hideout_raid_started"
+value = true
+
+[resource]
+script = ExtResource("3_tnq6o")
+id = &"cult_hideout_raid_launched"
+description = "The team was sent to raid the cult hideout."
+trigger_event = &"mission_cult_hideout_active"
+effects = Array[ExtResource("2_sv6dp")]([SubResource("Resource_s7sna")])

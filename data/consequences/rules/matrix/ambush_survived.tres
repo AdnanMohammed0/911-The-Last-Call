@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_x1f8b"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_vae7b"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_7uyes"]
+
+[sub_resource type="Resource" id="Resource_h0yop"]
+script = ExtResource("2_vae7b")
+kind = 1
+key = &"ambushes_survived"
+value = 1
+
+[sub_resource type="Resource" id="Resource_paw7r"]
+script = ExtResource("2_vae7b")
+kind = 5
+key = &"ambush_survived"
+value = null
+
+[resource]
+script = ExtResource("3_7uyes")
+id = &"ambush_survived"
+description = "The team came back from an ambush."
+trigger_event = &"mission_success"
+trigger_payload = {
+"kind": &"ambush"
+}
+effects = Array[ExtResource("2_vae7b")]([SubResource("Resource_h0yop"), SubResource("Resource_paw7r")])
+once = false

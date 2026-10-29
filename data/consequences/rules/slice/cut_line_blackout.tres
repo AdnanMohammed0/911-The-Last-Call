@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_e6eu8"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_6b0dh"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_f3jle"]
+
+[sub_resource type="Resource" id="Resource_dtmkt"]
+script = ExtResource("2_6b0dh")
+key = &"district_blackout"
+value = true
+
+[sub_resource type="Resource" id="Resource_nerte"]
+script = ExtResource("2_6b0dh")
+key = &"haunting_radio_bleed"
+value = true
+
+[sub_resource type="Resource" id="Resource_2ch6b"]
+script = ExtResource("2_6b0dh")
+kind = 1
+key = &"public_trust"
+value = -10
+
+[resource]
+script = ExtResource("3_f3jle")
+id = &"cut_line_blackout"
+description = "30 minutes later the district blacks out and her voice bleeds into the team radios."
+trigger_event = &"cut_line_dismissed"
+timing = 1
+delay = 30
+effects = Array[ExtResource("2_6b0dh")]([SubResource("Resource_dtmkt"), SubResource("Resource_nerte"), SubResource("Resource_2ch6b")])

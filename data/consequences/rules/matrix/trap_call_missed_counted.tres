@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_moifw"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_cnsai"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_ek3kr"]
+
+[sub_resource type="Resource" id="Resource_j7kcc"]
+script = ExtResource("2_cnsai")
+kind = 1
+key = &"trap_calls_total"
+value = 1
+
+[resource]
+script = ExtResource("3_ek3kr")
+id = &"trap_call_missed_counted"
+description = "A cult trap call went unanswered."
+trigger_event = &"call_ignored"
+trigger_payload = {
+"truth": &"ambush"
+}
+effects = Array[ExtResource("2_cnsai")]([SubResource("Resource_j7kcc")])
+once = false

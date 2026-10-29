@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_s4u2p"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_iycf6"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_ibutp"]
+
+[sub_resource type="Resource" id="Resource_6n7ik"]
+script = ExtResource("2_iycf6")
+key = &"meat_truck_lead_missed"
+value = true
+
+[sub_resource type="Resource" id="Resource_1geo5"]
+script = ExtResource("2_iycf6")
+kind = 1
+key = &"cult_awareness"
+value = -5
+
+[resource]
+script = ExtResource("3_ibutp")
+id = &"meat_truck_lead_missed"
+description = "The cult stayed quiet and the lead on the ambush crew was lost."
+trigger_event = &"meat_truck_abandoned"
+effects = Array[ExtResource("2_iycf6")]([SubResource("Resource_6n7ik"), SubResource("Resource_1geo5")])

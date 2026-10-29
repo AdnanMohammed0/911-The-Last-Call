@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_1ajjp"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_8k3em"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_rl5uq"]
+
+[sub_resource type="Resource" id="Resource_djoa3"]
+script = ExtResource("2_8k3em")
+kind = 4
+key = &"cult_hideout"
+value = null
+
+[resource]
+script = ExtResource("3_rl5uq")
+id = &"cult_hideout_unlocked"
+description = "Next shift the raid on the cult hideout can go ahead (unlocks call_cult_hideout)."
+trigger_event = &"mission_unlocked_cult_hideout"
+timing = 2
+delay = 1
+effects = Array[ExtResource("2_8k3em")]([SubResource("Resource_djoa3")])

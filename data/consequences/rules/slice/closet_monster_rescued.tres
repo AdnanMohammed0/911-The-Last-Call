@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_6712c"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_gpd55"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_xe3ig"]
+
+[sub_resource type="Resource" id="Resource_gco1v"]
+script = ExtResource("2_gpd55")
+key = &"closet_monster_resolved"
+value = &"hostage_rescued"
+
+[sub_resource type="Resource" id="Resource_jxmxl"]
+script = ExtResource("2_gpd55")
+key = &"station_ambush_intel"
+value = true
+
+[sub_resource type="Resource" id="Resource_pd05o"]
+script = ExtResource("2_gpd55")
+kind = 1
+key = &"public_trust"
+value = 10
+
+[sub_resource type="Resource" id="Resource_wpvu7"]
+script = ExtResource("2_gpd55")
+kind = 1
+key = &"victims_saved"
+value = 1
+
+[sub_resource type="Resource" id="Resource_o4x8h"]
+script = ExtResource("2_gpd55")
+kind = 1
+key = &"evidence_collected"
+value = 1
+
+[resource]
+script = ExtResource("3_xe3ig")
+id = &"closet_monster_rescued"
+description = "Silent approach worked: the teen is safe and the convict's notebook details the next ambush on the station."
+trigger_event = &"mission_success"
+trigger_payload = {
+"call": &"call_closet_monster"
+}
+effects = Array[ExtResource("2_gpd55")]([SubResource("Resource_gco1v"), SubResource("Resource_jxmxl"), SubResource("Resource_pd05o"), SubResource("Resource_wpvu7"), SubResource("Resource_o4x8h")])

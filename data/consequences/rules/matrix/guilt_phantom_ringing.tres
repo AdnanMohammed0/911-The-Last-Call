@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_gqkcd"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_gp5qb"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_qjv53"]
+
+[sub_resource type="Resource" id="Resource_71qa4"]
+script = ExtResource("1_gqkcd")
+key = &"guilt"
+op = 3
+value = 50
+
+[sub_resource type="Resource" id="Resource_pwdms"]
+script = ExtResource("2_gp5qb")
+kind = 2
+key = &"phantom_ringing"
+value = null
+target = &"all_officers"
+
+[resource]
+script = ExtResource("3_qjv53")
+id = &"guilt_phantom_ringing"
+description = "Guilt reached 50: the team starts hearing phones that are not there."
+trigger_event = &"guilt_raised"
+conditions = Array[ExtResource("1_gqkcd")]([SubResource("Resource_71qa4")])
+effects = Array[ExtResource("2_gp5qb")]([SubResource("Resource_pwdms")])

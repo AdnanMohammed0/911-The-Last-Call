@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_yyre1"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_2r12h"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_hr4qe"]
+
+[sub_resource type="Resource" id="Resource_q2jwj"]
+script = ExtResource("2_2r12h")
+kind = 1
+key = &"public_trust"
+value = -7
+
+[resource]
+script = ExtResource("3_hr4qe")
+id = &"prank_met_with_force"
+description = "A prank was answered as an armed ambush: heavy-handed response."
+trigger_event = &"call_classified"
+trigger_payload = {
+"truth": &"prank",
+"verdict": &"ambush"
+}
+effects = Array[ExtResource("2_2r12h")]([SubResource("Resource_q2jwj")])
+once = false

@@ -151,6 +151,11 @@
       "status": "done",
       "note": "FlagSystem autoload حسب ARCHITECTURE §7: رايات وسجل أحداث وقواعد عواقب (فورية، مؤجلة بدقائق الساعة، الشفت الجاي، النهاية) مع منع التكرار وسلسلة أحداث محدودة، تأثيرات SET_FLAG/ADD_METER/APPLY_TRAIT/QUEUE_CALL/UNLOCK_MISSION/SPAWN_EVENT، مزامنة الرايات والأحداث لكل اللاعبين ولقطة كاملة للي يدخل متأخر، وsnapshot/restore آمن لـ JSON لنظام الحفظ. ربط تلقائي: أحداث الحوار والتصنيف والمكالمات الفائتة والاعتقال والقتل والسقوط ونجاح/فشل المهمة ونهاية الشفت، وشروط خيارات الحوار، وتقفيل المكالمات بـ requires_flags. 16 اختبار + اختبار ENet بين هوست وكلاينت.",
       "updated_at": "2026-10-30"
+    },
+    "P4-02": {
+      "status": "done",
+      "note": "37 قاعدة عواقب (slice/followup/matrix) مولّدة بأداة ومُتحقق منها، مع trigger_payload وConsequenceValidator واختبارات للسلاسل كاملة",
+      "updated_at": "2026-10-30"
     }
   },
   "log": [
@@ -1054,6 +1059,24 @@
         "project.godot",
         "tests/test_flag_system.gd",
         "tests/test_flag_system_network.gd",
+        "docs/design/FLAG_SYSTEM.md"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "tasks": [
+        "P4-02"
+      ],
+      "summary": "تأليف قواعد العواقب للـ slice: trigger_payload بـ ConsequenceRule، إثراء أحداث FlagSystem بـ truth/archetype وcivilian_killed، ConsequenceValidator، أداة build_slice_rules تولّد 37 قاعدة (الوحش بالخزانة، الخط المقطوع، Ambush Leader → الاستجواب → وكر الطائفة، الذنب → phantom_ringing، مصفوفة التقييم)، ربط RemainsInteraction والـ decoy cruiser بالـ FlagSystem، و9 اختبارات جديدة.",
+      "files": [
+        "data/consequences/consequence_rule.gd",
+        "data/consequences/consequence_validator.gd",
+        "tools/consequences/build_slice_rules.gd",
+        "data/consequences/rules/",
+        "autoload/flag_system.gd",
+        "scenes/shared/gadgets/remains_interaction.gd",
+        "scenes/field/missions/highway_rpg_set_piece.gd",
+        "tests/test_consequence_rules.gd",
         "docs/design/FLAG_SYSTEM.md"
       ]
     }

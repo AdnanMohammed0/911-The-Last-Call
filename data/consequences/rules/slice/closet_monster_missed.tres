@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_eflrf"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_1rxsu"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_gse8j"]
+
+[sub_resource type="Resource" id="Resource_6xasl"]
+script = ExtResource("2_1rxsu")
+kind = 5
+key = &"closet_monster_abandoned"
+value = null
+
+[resource]
+script = ExtResource("3_gse8j")
+id = &"closet_monster_missed"
+description = "Nobody answered the closet monster call."
+trigger_event = &"call_ignored"
+trigger_payload = {
+"call": &"call_closet_monster"
+}
+effects = Array[ExtResource("2_1rxsu")]([SubResource("Resource_6xasl")])

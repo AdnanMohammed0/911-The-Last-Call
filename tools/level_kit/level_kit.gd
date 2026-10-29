@@ -465,8 +465,11 @@ func light_zone(parent: Node, node_name: String, center: Vector3, size: Vector3)
 # --- Environment ---------------------------------------------------------------------------
 
 ## Night exterior / interior environment: filmic tonemap, SSAO, SSIL, SDFGI bounce light, volumetric fog.
-func environment(parent: Node, fog_density: float = 0.012, ambient: float = 0.25, sdfgi: bool = true, exposure: float = 1.0) -> WorldEnvironment:
+func environment(parent: Node, fog_density: float = 0.012, ambient: float = 0.25, sdfgi: bool = true, exposure: float = 1.0, lighting_profile: String = "") -> WorldEnvironment:
 	var world: WorldEnvironment = own(WorldEnvironment.new(), parent, "WorldEnvironment") as WorldEnvironment
+	if lighting_profile != "":
+		world.set_script(load("res://scenes/field/missions/mission_lighting.gd"))
+		world.set("profile", lighting_profile)
 	var sky_material: ProceduralSkyMaterial = ProceduralSkyMaterial.new()
 	sky_material.sky_top_color = Color(0.015, 0.025, 0.05)
 	sky_material.sky_horizon_color = Color(0.07, 0.08, 0.11)

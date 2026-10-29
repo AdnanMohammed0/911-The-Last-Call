@@ -14,7 +14,7 @@ static func build() -> Error:
 	var root: Node3D = Node3D.new()
 	root.name = "WarehouseRaid"
 	var kit: LevelKit = LevelKit.new(root)
-	kit.environment(root, 0.01, 0.2, true, 1.8)
+	kit.environment(root, 0.01, 0.2, true, 1.8, "warehouse")
 	kit.moonlight(root, 0.32)
 
 	var navigation: MissionNavigation = MissionNavigation.new()

@@ -1,5 +1,7 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://scenes/field/missions/mission_lighting.gd" id="lighting_profile"]
+
 [ext_resource type="Script" path="res://core/ai/mission_navigation.gd" id="1_a2bkk"]
 [ext_resource type="Material" path="res://assets/materials/grass.tres" id="2_bv77j"]
 [ext_resource type="Material" path="res://assets/materials/asphalt.tres" id="3_2astp"]
@@ -1853,6 +1855,8 @@ size = Vector3(0.35, 0.1, 0.02)
 [node name="AspenDrive" type="Node3D" unique_id=1492033423]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=204700428]
+script = ExtResource("lighting_profile")
+profile = "aspen"
 environment = SubResource("Environment_vlsnf")
 
 [node name="Moonlight" type="DirectionalLight3D" parent="." unique_id=1435758215]

@@ -1,5 +1,7 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://scenes/field/missions/mission_lighting.gd" id="lighting_profile"]
+
 [ext_resource type="Script" uid="uid://blt64t0ifub50" path="res://core/ai/mission_navigation.gd" id="1_hjbgx"]
 [ext_resource type="Material" path="res://assets/3D/station/materials/asphalt.tres" id="2_wbktd"]
 [ext_resource type="Material" uid="uid://docw0a4akl008" path="res://assets/3D/station/materials/metal_dark.tres" id="3_kpk4h"]
@@ -2478,6 +2480,8 @@ size = Vector3(0.35, 0.1, 0.02)
 [node name="WarehouseRaid" type="Node3D" unique_id=1594502030]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=52585977]
+script = ExtResource("lighting_profile")
+profile = "warehouse"
 environment = SubResource("Environment_na0km")
 
 [node name="Moonlight" type="DirectionalLight3D" parent="." unique_id=1053578878]

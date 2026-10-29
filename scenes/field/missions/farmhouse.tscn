@@ -1,5 +1,7 @@
 [gd_scene format=4]
 
+[ext_resource type="Script" path="res://scenes/field/missions/mission_lighting.gd" id="lighting_profile"]
+
 [ext_resource type="Script" path="res://core/ai/mission_navigation.gd" id="1_muntg"]
 [ext_resource type="Material" path="res://assets/materials/grass.tres" id="2_m4w2r"]
 [ext_resource type="Material" path="res://assets/materials/asphalt.tres" id="3_tl8g7"]
@@ -1201,6 +1203,8 @@ size = Vector3(0.35, 0.1, 0.02)
 [node name="BirchLaneFarmhouse" type="Node3D" unique_id=1827967871]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1756163324]
+script = ExtResource("lighting_profile")
+profile = "farmhouse"
 environment = SubResource("Environment_3i2xn")
 
 [node name="Moonlight" type="DirectionalLight3D" parent="." unique_id=1550441381]

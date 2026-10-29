@@ -1,6 +1,6 @@
 {
  "member": "ali",
- "updated_at": "2026-10-29",
+ "updated_at": "2026-10-30",
  "tasks": {
   "P1-14": {
    "status": "done",
@@ -90,6 +90,11 @@
   "P4-11": {
    "status": "done",
    "note": "معالجة Bodycam بصرية للميدان فقط عبر Shader يقرأ الصورة مرة واحدة ويضيف انحراف RGB عند الحواف وscanlines وحبيبات وفينييت خفيف، وتتزايد الشدة بسلاسة عند انخفاض Sanity. ختم تاريخ ووقت بأعلى الوسط بعيداً عن الراديو، وإطار زوايا فوق المعالجة مع إبقاء نصوص HUD مقروءة. مؤثرات قابلة للضبط والتعطيل من Inspector لتخفيف الحمل. تحقق تصيير فعلي عند Sanity طبيعي ومنخفض بدقة 1280×720، ونجاح 36 اختباراً مرتبطاً وفحص Godot.",
+   "updated_at": "2026-10-30"
+  },
+  "P4-12": {
+   "status": "done",
+   "note": "ضبط خمس بصمات إضاءة للمهمات: ضباب حجمي بطول ولون وكثافة خاص بكل موقع، SDFGI مخفف للمستودع فقط وSSIL للمواقع الداخلية الأخرى، مع حصر الظلال في مصابيح المشهد الرئيسية وتلاشيها حسب المسافة. بقيت ظلال مصباح اللاعب مفعلة، وتتبع البصمات إعدادات جودة الرسوم الحالية. نجح 16 اختباراً مرتبطاً وفحص Godot.",
    "updated_at": "2026-10-30"
   }
  },
@@ -944,6 +949,12 @@
    "tasks": ["P4-11"],
    "summary": "إكمال معالجة صورة الـBodycam في الميدان: RGB aberration عند الحواف، scanlines وحبيبات، ختم تاريخ ووقت، واستجابة للشدة النفسية مع تعطيل اختياري للأداء. إطار الزوايا ونصوص HUD فوق المعالجة. تحقق بصري بموضعي Sanity ونجاح 36 اختباراً مرتبطاً.",
    "files": ["ui/shaders/bodycam_post.gdshader", "ui/hud/field_bodycam_hud.gd", "ui/hud/bodycam_frame.gd", "tests/test_field_bodycam_hud.gd", "docs/data/progress/ali.json"]
+  },
+  {
+   "date": "2026-10-30",
+   "tasks": ["P4-12"],
+   "summary": "إضاءة مخصصة للمستودع وAspen Drive وFarmhouse وLake House والطريق السريع، مع ضباب مختلف لكل خريطة وخفض عدد الظلال المحلية والمؤثرات المتراكبة. بقيت إعدادات الجودة العامة ومصباح اللاعب متوافقة؛ نجاح 16 اختباراً مرتبطاً وفحص Godot.",
+   "files": ["scenes/field/missions/mission_lighting.gd", "scenes/field/missions/warehouse_raid.tscn", "scenes/field/missions/aspen_drive.tscn", "scenes/field/missions/farmhouse.tscn", "scenes/field/missions/lake_house.tscn", "scenes/field/missions/abandoned_highway.tscn", "tools/level_kit/level_kit.gd", "tools/level_kit/build_warehouse_raid.gd", "tools/level_kit/build_aspen_drive.gd", "tools/level_kit/build_farmhouse.gd", "tools/level_kit/build_lake_house.gd", "tools/level_kit/build_highway.gd", "tests/test_mission_lighting.gd", "docs/data/progress/ali.json"]
   }
  ]
 }

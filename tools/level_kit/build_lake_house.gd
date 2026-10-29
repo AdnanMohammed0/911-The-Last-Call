@@ -12,7 +12,7 @@ static func build() -> Error:
 	var root: Node3D = Node3D.new()
 	root.name = "BlackwaterLakeHouse"
 	var kit: LevelKit = LevelKit.new(root)
-	kit.environment(root, 0.023, 0.10, false, 1.85)
+	kit.environment(root, 0.023, 0.10, false, 1.85, "lake")
 	kit.moonlight(root, 0.22)
 	var navigation: MissionNavigation = MissionNavigation.new()
 	kit.own(navigation, root, "Navigation")

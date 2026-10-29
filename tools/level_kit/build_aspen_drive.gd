@@ -15,7 +15,7 @@ static func build() -> Error:
 	var root: Node3D = Node3D.new()
 	root.name = "AspenDrive"
 	var kit: LevelKit = LevelKit.new(root)
-	kit.environment(root, 0.014, 0.12, true, 1.9)
+	kit.environment(root, 0.014, 0.12, false, 1.9, "aspen")
 	kit.moonlight(root, 0.34)
 
 	var navigation: MissionNavigation = MissionNavigation.new()

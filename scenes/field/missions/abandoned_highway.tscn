@@ -1,5 +1,7 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://scenes/field/missions/mission_lighting.gd" id="lighting_profile"]
+
 [ext_resource type="Script" path="res://core/ai/mission_navigation.gd" id="1_w56qa"]
 [ext_resource type="Material" path="res://assets/materials/grass.tres" id="2_5buxl"]
 [ext_resource type="Material" path="res://assets/materials/asphalt.tres" id="3_b2r3f"]
@@ -609,6 +611,8 @@ height = 3.4
 [node name="OldHighway9" type="Node3D" unique_id=2099658787]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=315221066]
+script = ExtResource("lighting_profile")
+profile = "highway"
 environment = SubResource("Environment_15vhc")
 
 [node name="Moonlight" type="DirectionalLight3D" parent="." unique_id=1010546799]

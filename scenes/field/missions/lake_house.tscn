@@ -1,5 +1,7 @@
 [gd_scene format=4]
 
+[ext_resource type="Script" path="res://scenes/field/missions/mission_lighting.gd" id="lighting_profile"]
+
 [ext_resource type="Script" path="res://core/ai/mission_navigation.gd" id="1_y7e1p"]
 [ext_resource type="Material" path="res://assets/materials/grass.tres" id="2_d8nor"]
 [ext_resource type="Material" path="res://assets/materials/asphalt.tres" id="3_48fa7"]
@@ -1045,6 +1047,8 @@ size = Vector3(0.35, 0.1, 0.02)
 [node name="BlackwaterLakeHouse" type="Node3D" unique_id=980081745]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1321559261]
+script = ExtResource("lighting_profile")
+profile = "lake"
 environment = SubResource("Environment_dd2eh")
 
 [node name="Moonlight" type="DirectionalLight3D" parent="." unique_id=693486933]

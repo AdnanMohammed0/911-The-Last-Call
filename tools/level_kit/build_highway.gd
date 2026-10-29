@@ -9,7 +9,7 @@ static func build() -> Error:
 	var root: Node3D = Node3D.new()
 	root.name = "OldHighway9"
 	var kit: LevelKit = LevelKit.new(root)
-	kit.environment(root, 0.018, 0.10, false, 1.9)
+	kit.environment(root, 0.018, 0.10, false, 1.9, "highway")
 	kit.moonlight(root, 0.24)
 	var nav: MissionNavigation = MissionNavigation.new()
 	kit.own(nav, root, "Navigation")

@@ -15,19 +15,22 @@ var rig: HumanoidRig
 var _player: Player
 var _class_color: Color = Color(0.3, 0.8, 0.4)
 var _height_ratio: float = 1.0
+var _applied_look: StringName = &""
 
 
 func _ready() -> void:
 	_player = get_parent() as Player
 	rig = HumanoidRig.new()
 	rig.name = "Rig"
+	_apply_class_look()
 	add_child(rig)
-	rig.dress(&"police", {"armband": _class_color})
 
 
 func _process(_delta: float) -> void:
 	if _player == null or rig == null:
 		return
+	if _applied_look != _look_for_class(_player.class_id):
+		_apply_class_look()
 	rig.aim_pitch = _player.get_camera().rotation.x
 	rig.crouch = clampf((1.0 - _height_ratio) / (1.0 - CROUCH_RATIO), 0.0, 1.0)
 	rig.lean = _player.lean_amount
@@ -41,7 +44,18 @@ func _process(_delta: float) -> void:
 func set_class_color(color: Color) -> void:
 	_class_color = color
 	if rig != null:
-		rig.dress(&"police", {"armband": color})
+		_apply_class_look()
+
+
+func _apply_class_look() -> void:
+	if rig == null or _player == null:
+		return
+	_applied_look = _look_for_class(_player.class_id)
+	rig.dress(_applied_look, {"armband": _class_color})
+
+
+static func _look_for_class(class_id: StringName) -> StringName:
+	return class_id if class_id in [&"tech", &"profiler", &"breacher", &"medic"] else &"police"
 
 
 ## Gun in the character's hands (null = empty hands). Called by WeaponHolder on every peer.

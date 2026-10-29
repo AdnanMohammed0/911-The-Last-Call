@@ -29,14 +29,27 @@ const LOOKS: Dictionary[StringName, Dictionary] = {
 	&"police": {"skin": Color(0.78, 0.6, 0.48), "top": Color(0.09, 0.12, 0.2), "pants": Color(0.07, 0.08, 0.12),
 		"boots": Color(0.03, 0.03, 0.03), "gloves": Color(0.04, 0.04, 0.045), "head": &"cap", "head_color": Color(0.06, 0.08, 0.14),
 		"vest": true, "vest_color": Color(0.12, 0.13, 0.14), "back_text": "POLICE"},
+	&"tech": {"skin": Color(0.76, 0.58, 0.46), "top": Color(0.07, 0.14, 0.24), "pants": Color(0.06, 0.08, 0.12),
+		"boots": Color(0.03, 0.04, 0.05), "gloves": Color(0.07, 0.08, 0.1), "head": &"cap", "head_color": Color(0.05, 0.13, 0.24),
+		"vest": true, "vest_color": Color(0.10, 0.16, 0.22), "back_text": "POLICE TECH"},
+	&"profiler": {"skin": Color(0.64, 0.45, 0.34), "top": Color(0.14, 0.17, 0.17), "pants": Color(0.11, 0.12, 0.14),
+		"boots": Color(0.06, 0.06, 0.07), "gloves": Color(0.64, 0.45, 0.34), "head": &"hair", "head_color": Color(0.08, 0.055, 0.045),
+		"vest": false},
+	&"breacher": {"skin": Color(0.67, 0.51, 0.4), "top": Color(0.06, 0.075, 0.09), "pants": Color(0.045, 0.055, 0.065),
+		"boots": Color(0.025, 0.025, 0.03), "gloves": Color(0.035, 0.04, 0.045), "head": &"helmet", "head_color": Color(0.055, 0.065, 0.075),
+		"vest": true, "vest_color": Color(0.07, 0.08, 0.09), "back_text": "POLICE"},
+	&"medic": {"skin": Color(0.82, 0.65, 0.52), "top": Color(0.12, 0.19, 0.21), "pants": Color(0.08, 0.13, 0.16),
+		"boots": Color(0.04, 0.055, 0.06), "gloves": Color(0.79, 0.84, 0.85), "head": &"cap", "head_color": Color(0.10, 0.18, 0.20),
+		"vest": true, "vest_color": Color(0.15, 0.21, 0.22), "back_text": "MEDIC"},
 	&"thug": {"skin": Color(0.62, 0.45, 0.34), "top": Color(0.2, 0.2, 0.22), "pants": Color(0.12, 0.16, 0.26),
 		"boots": Color(0.25, 0.22, 0.2), "gloves": Color(0.62, 0.45, 0.34), "head": &"beanie", "head_color": Color(0.08, 0.08, 0.09)},
 	&"hostage_taker": {"skin": Color(0.72, 0.55, 0.43), "top": Color(0.06, 0.06, 0.07), "pants": Color(0.1, 0.1, 0.11),
 		"boots": Color(0.04, 0.04, 0.04), "gloves": Color(0.03, 0.03, 0.03), "head": &"balaclava", "head_color": Color(0.05, 0.05, 0.05)},
 	&"cultist_gunman": {"skin": Color(0.7, 0.54, 0.44), "top": Color(0.28, 0.04, 0.06), "pants": Color(0.08, 0.06, 0.06),
-		"boots": Color(0.05, 0.04, 0.04), "gloves": Color(0.05, 0.04, 0.04), "head": &"hood", "head_color": Color(0.22, 0.03, 0.05)},
+		"boots": Color(0.05, 0.04, 0.04), "gloves": Color(0.05, 0.04, 0.04), "head": &"hood", "head_color": Color(0.22, 0.03, 0.05),
+		"vest": true, "vest_color": Color(0.16, 0.04, 0.055)},
 	&"ambush_leader": {"skin": Color(0.66, 0.5, 0.4), "top": Color(0.08, 0.08, 0.08), "pants": Color(0.1, 0.1, 0.09),
-		"boots": Color(0.03, 0.03, 0.03), "gloves": Color(0.03, 0.03, 0.03), "head": &"balaclava", "head_color": Color(0.04, 0.04, 0.04),
+		"boots": Color(0.03, 0.03, 0.03), "gloves": Color(0.03, 0.03, 0.03), "head": &"helmet", "head_color": Color(0.065, 0.065, 0.055),
 		"vest": true, "vest_color": Color(0.2, 0.21, 0.17)},
 	&"zealot": {"skin": Color(0.74, 0.57, 0.45), "top": Color(0.55, 0.5, 0.4), "pants": Color(0.25, 0.22, 0.17),
 		"boots": Color(0.15, 0.12, 0.1), "gloves": Color(0.74, 0.57, 0.45), "head": &"hair", "head_color": Color(0.1, 0.07, 0.05), "ied": true},
@@ -62,6 +75,7 @@ var weapon: WeaponModel
 var render_layers: int = 1
 
 var _look: Dictionary = {}
+var look_id: StringName = &""
 var _materials: Dictionary[StringName, StandardMaterial3D] = {}
 var _parts: Dictionary[StringName, MeshInstance3D] = {}
 var _chest: Node3D
@@ -86,6 +100,7 @@ func _ready() -> void:
 
 ## (Re)build the body in outfit `look_id` (LOOKS) with optional overrides (e.g. {"armband": class colour}).
 func dress(look_id: StringName, overrides: Dictionary = {}) -> void:
+	self.look_id = look_id
 	var base: Dictionary = LOOKS.get(look_id, LOOKS[&"police"])
 	_look = base.duplicate()
 	_look.merge(overrides, true)
@@ -424,6 +439,7 @@ func _build_body() -> void:
 	_weapon_socket = Node3D.new()
 	_weapon_socket.name = "WeaponSocket"
 	add_child(_weapon_socket)
+	_build_identity_details()
 
 
 func _build_head(skin: StandardMaterial3D) -> void:
@@ -552,6 +568,70 @@ func _build_ied() -> void:
 	var wire_mesh: BoxMesh = BoxMesh.new()
 	wire_mesh.size = Vector3(0.24, 0.01, 0.01)
 	_mesh_node(_chest, "Wire", wire_mesh, wire, Vector3(0, 0.34, -0.16))
+
+
+## Details share the same animated chest, head and limb pivots as the base IK rig.
+func _build_identity_details() -> void:
+	match look_id:
+		&"tech":
+			_headset()
+			_detail(_chest, "TechTablet", Vector3(0.23, 0.17, 0.045), Color(0.025, 0.035, 0.045), Vector3(0, 0.34, -0.20))
+			_detail(_chest, "TechScreen", Vector3(0.17, 0.11, 0.01), Color(0.1, 0.62, 0.86), Vector3(0, 0.34, -0.228), true)
+			_radio_pack()
+		&"profiler":
+			_detail(_chest, "BlazerLapelLeft", Vector3(0.07, 0.27, 0.04), Color(0.08, 0.1, 0.11), Vector3(-0.12, 0.37, -0.12))
+			_detail(_chest, "BlazerLapelRight", Vector3(0.07, 0.27, 0.04), Color(0.08, 0.1, 0.11), Vector3(0.12, 0.37, -0.12))
+			_detail(_chest, "ProfilerBadge", Vector3(0.08, 0.1, 0.016), Color(0.78, 0.68, 0.35), Vector3(-0.14, 0.41, -0.155))
+			_detail(_chest, "Notebook", Vector3(0.13, 0.17, 0.05), Color(0.16, 0.25, 0.18), Vector3(0.18, 0.05, -0.08))
+		&"breacher":
+			for side: int in [-1, 1]:
+				_detail(_chest, "ShoulderPlate%d" % side, Vector3(0.17, 0.12, 0.28), Color(0.08, 0.09, 0.1), Vector3(side * 0.23, 0.5, 0))
+				_detail(_parts[_key("shin", side)], "KneePad%d" % side, Vector3(0.17, 0.15, 0.06), Color(0.12, 0.12, 0.13), Vector3(0, 0.16, -0.065))
+			_detail(_head, "HelmetVisor", Vector3(0.22, 0.06, 0.035), Color(0.06, 0.11, 0.12), Vector3(0, 0.13, -0.13))
+			_detail(_chest, "BreacherPatch", Vector3(0.13, 0.06, 0.015), Color(0.7, 0.16, 0.12), Vector3(0, 0.36, -0.20))
+		&"medic":
+			_medical_cross()
+			for side: int in [-1, 1]:
+				_detail(_chest, "MedicalPouch%d" % side, Vector3(0.16, 0.19, 0.13), Color(0.78, 0.81, 0.78), Vector3(side * 0.23, 0.13, -0.06))
+			_detail(_chest, "MedicalPack", Vector3(0.34, 0.36, 0.16), Color(0.65, 0.70, 0.68), Vector3(0, 0.32, 0.22))
+		&"thug":
+			_detail(_chest, "JacketPocket", Vector3(0.28, 0.14, 0.04), Color(0.11, 0.11, 0.12), Vector3(0, 0.17, -0.12))
+			_detail(_chest, "JacketZip", Vector3(0.012, 0.38, 0.01), Color(0.52, 0.49, 0.44), Vector3(0, 0.34, -0.14))
+		&"cultist_gunman":
+			_detail(_chest, "CultSigilVertical", Vector3(0.04, 0.22, 0.018), Color(0.7, 0.08, 0.1), Vector3(0, 0.35, -0.20))
+			_detail(_chest, "CultSigilCross", Vector3(0.2, 0.035, 0.018), Color(0.7, 0.08, 0.1), Vector3(0, 0.39, -0.20))
+			for side: int in [-1, 1]:
+				_detail(_parts[_key("upper_arm", side)], "CultArmStripe%d" % side,
+					Vector3(0.13, 0.055, 0.13), Color(0.53, 0.055, 0.07), Vector3.ZERO)
+		&"ambush_leader":
+			_detail(_head, "LeaderHelmetStripe", Vector3(0.08, 0.025, 0.26), Color(0.55, 0.09, 0.08), Vector3(0, 0.225, 0))
+			_detail(_chest, "LeaderRank", Vector3(0.19, 0.06, 0.02), Color(0.63, 0.10, 0.09), Vector3(0, 0.39, -0.20))
+			_radio_pack()
+
+
+func _headset() -> void:
+	for side: int in [-1, 1]:
+		_detail(_head, "EarCup%d" % side, Vector3(0.045, 0.12, 0.085), Color(0.025, 0.035, 0.045), Vector3(side * 0.12, 0.13, 0))
+	_detail(_head, "HeadsetBand", Vector3(0.25, 0.025, 0.035), Color(0.04, 0.05, 0.06), Vector3(0, 0.245, 0))
+	_detail(_head, "MicBoom", Vector3(0.13, 0.015, 0.015), Color(0.04, 0.05, 0.06), Vector3(-0.15, 0.085, -0.07))
+	_detail(_head, "MicTip", Vector3(0.035, 0.025, 0.035), Color(0.07, 0.08, 0.08), Vector3(-0.08, 0.08, -0.095))
+
+
+func _radio_pack() -> void:
+	_detail(_chest, "RadioPack", Vector3(0.16, 0.22, 0.12), Color(0.04, 0.055, 0.06), Vector3(0.18, 0.33, 0.19))
+	_detail(_chest, "RadioAntenna", Vector3(0.018, 0.29, 0.018), Color(0.03, 0.035, 0.04), Vector3(0.23, 0.59, 0.19))
+
+
+func _medical_cross() -> void:
+	var red: Color = Color(0.8, 0.12, 0.13)
+	_detail(_chest, "MedicalCrossVertical", Vector3(0.045, 0.18, 0.012), red, Vector3(0, 0.36, -0.205))
+	_detail(_chest, "MedicalCrossHorizontal", Vector3(0.16, 0.045, 0.012), red, Vector3(0, 0.36, -0.205))
+
+
+func _detail(parent: Node, name: String, size: Vector3, colour: Color, at: Vector3, emissive: bool = false) -> MeshInstance3D:
+	var shape: BoxMesh = BoxMesh.new()
+	shape.size = size
+	return _mesh_node(parent, name, shape, _material(StringName(name), colour, 0.75, emissive), at)
 
 
 func _attach_weapon(model: WeaponModel) -> void:

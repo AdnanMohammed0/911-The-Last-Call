@@ -1,6 +1,6 @@
 {
   "member": "adnan",
-  "updated_at": "2026-09-28",
+  "updated_at": "2026-10-30",
   "tasks": {
     "P1-01": {
       "status": "done",
@@ -957,6 +957,78 @@
         "ui/dispatch/dispatch_terminal.gd",
         "ui/loadout/loadout_ui.gd",
         "ui/dispatch/tools/trace_minigame.gd"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "tasks": [
+        "P2-18"
+      ],
+      "commit": "59736c6",
+      "summary": "تأثيث باقي مركز Station 4: مخزن السلاح، الكراج وممر الخدمة، غرف المولدات والاتصالات، غرفة العمليات، مطبخ الاستراحة، صالة الانتظار، الممر والحمّام. 31 مودل CC0 من Poly Haven مع ملف CREDITS، و167 نسخة مودل، واختبارات خلو الأبواب موسّعة.",
+      "files": [
+        "tools/level_kit/furnish_station.gd",
+        "scenes/dispatch/station/station_interior.tscn",
+        "tests/test_station_interior.gd",
+        "assets/3D/polyhaven/",
+        "docs/design/STATION_INTERIOR.md",
+        ".gitattributes"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "tasks": [
+        "P2-18"
+      ],
+      "commit": "4f2089a",
+      "summary": "إعادة تصميم غرفة الاتصال: مونيتر CAD وكونسول dispatch جديدين بدل حاسبة PC-9801 اللي كانت شاشتها مغطاة، جدار شاشات حي (خريطة، حالة الوحدات، سجل الحوادث، لافتة ON AIR)، مكتب مشرف، رفوف أجهزة، ركن قهوة، وأثاث متحرك بكل المركز (مراوح، ساعات بعقارب، كاميرات تدور، شاشات وأضواء LED، إضاءة متقطعة).",
+      "files": [
+        "tools/level_kit/furnish_station.gd",
+        "scenes/dispatch/station/props/",
+        "scenes/dispatch/station/dispatch_console.tscn",
+        "scenes/dispatch/station/cad_monitor.tscn",
+        "scenes/dispatch/dispatch_setup.tscn",
+        "scenes/dispatch/dispatch_computer.gd",
+        "scenes/dispatch/station/station_furniture.gd",
+        "scenes/dispatch/operations_room.tscn",
+        "tests/test_station4_greybox.gd"
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "tasks": [
+        "P1-12"
+      ],
+      "commit": "a834e7c",
+      "summary": "حركة كرتونية فيزيائية لجسم اللاعب: طبقة BodyDynamics بنوابض مخمّدة (قصور الورك، ميلان نابضي، تأخر الدوران وتجاوزه، تمايل وارتداد الخطوات، ردود فعل متنوعة للتوقف وتغيير الاتجاه، دوخة بعد اللف، ارتداد الهبوط، حركات خمول) بدون تغيير فيزياء التحكم أو الكاميرا، مع قصور خفيف لليدين بمنظور الشخص الأول و6 اختبارات GUT.",
+      "files": [
+        "scenes/shared/characters/body_dynamics.gd",
+        "scenes/shared/characters/humanoid_rig.gd",
+        "scenes/shared/player/player_body.gd",
+        "scenes/shared/player/player_motion_view.gd",
+        "tests/test_expressive_movement.gd",
+        "docs/design/PLAYER_BODY_MOTION.md"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "tasks": [
+        "P4-14"
+      ],
+      "commit": "032d443",
+      "summary": "الإعدادات وإمكانية الوصول ودمجها مع الجولة الموازية: نظام ترجمة واحد مع وصف الأصوات، مرشّح عمى الألوان، حجم الواجهة، تقليل الوميض، شدة تأثيرات الكاميرا، مؤثرات الإخافة، إيقاف الأشباح، تبديل الركض والتصويب، صوت تجريبي ومستوى الميكروفون، ترجمة عربية، وإصلاح أزرار التبديل بالعربي.",
+      "files": [
+        "autoload/game_settings.gd",
+        "ui/settings/settings_menu.gd",
+        "ui/hud/subtitle_overlay.gd",
+        "ui/shaders/colorblind.gdshader",
+        "ui/theme/game_theme.gd",
+        "scenes/shared/player/player_input.gd",
+        "autoload/audio_server.gd",
+        "data/localization/ui_en.loc",
+        "data/localization/ui_ar.loc",
+        "tests/test_settings.gd",
+        "docs/design/SETTINGS_ACCESSIBILITY.md"
       ]
     }
   ]

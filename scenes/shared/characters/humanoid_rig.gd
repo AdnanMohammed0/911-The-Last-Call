@@ -85,6 +85,9 @@ var render_layers: int = 1
 @export_range(0.0, 0.1, 0.005) var squash_strength: float = 0.045
 @export_range(0.5, 2.0, 0.05) var run_exaggeration: float = 1.0
 
+## Player-only secondary motion (BodyDynamics); null keeps the grounded motion hostiles use.
+var dynamics: BodyDynamics
+
 var _look: Dictionary = {}
 var look_id: StringName = &""
 var _materials: Dictionary[StringName, StandardMaterial3D] = {}
@@ -159,6 +162,8 @@ func play_melee() -> void:
 ## Visual-only compression; the collision capsule and camera do not move.
 func land(impact_speed: float) -> void:
 	_landing_impulse = maxf(_landing_impulse, clampf((impact_speed - 1.5) / 6.0, 0.0, 1.0))
+	if dynamics != null:
+		dynamics.land(impact_speed)
 
 
 ## World position of the weapon muzzle (falls back to the chest).
@@ -176,24 +181,31 @@ func _process(delta: float) -> void:
 	if delta <= 0.0 or not is_inside_tree():
 		return
 	_time += delta
+	# Motion is measured in the parent's frame so the rig's own visual turn lag never feeds back into it.
+	var frame: Node3D = get_parent_node_3d() if get_parent_node_3d() != null else self
 	var moved: Vector3 = global_position - _last_position
 	_last_position = global_position
 	if not _started:
 		_started = true
 		moved = Vector3.ZERO
-	var local_move: Vector3 = global_basis.inverse() * (moved / delta)
+	var local_move: Vector3 = frame.global_basis.orthonormalized().inverse() * (moved / delta)
+	var vertical_speed: float = local_move.y
 	local_move.y = 0.0
 	if local_move.length() > 12.0:
 		local_move = Vector3.ZERO   # teleport / snap
+		vertical_speed = 0.0
 		_velocity = Vector3.ZERO
 		_pitch_spring = Vector2.ZERO
 		_roll_spring = Vector2.ZERO
 		_yaw_spring = Vector2.ZERO
+		if dynamics != null:
+			dynamics.reset()
 	var local_accel: Vector3 = (local_move - _velocity) / maxf(delta, 0.001)
 	local_accel.x = clampf(local_accel.x, -28.0, 28.0)
 	local_accel.z = clampf(local_accel.z, -28.0, 28.0)
-	var yaw_rate: float = angle_difference(_last_yaw, global_rotation.y) / maxf(delta, 0.001)
-	_last_yaw = global_rotation.y
+	var yaw_delta: float = angle_difference(_last_yaw, frame.global_rotation.y)
+	var yaw_rate: float = yaw_delta / maxf(delta, 0.001)
+	_last_yaw = frame.global_rotation.y
 	var speed_factor: float = clampf(local_move.length() / 4.75, 0.0, 1.2)
 	var free_motion: float = (0.3 if aiming else 1.0) * (0.65 if crouch > 0.1 else 1.0)
 	var target_pitch: float = clampf(local_accel.z * acceleration_lean, -0.12, 0.12) * free_motion
@@ -208,6 +220,15 @@ func _process(delta: float) -> void:
 	for key: StringName in [&"surrender", &"arrested", &"dead"]:
 		var current: float = _pose_blend.get(key, 0.0)
 		_pose_blend[key] = move_toward(current, 1.0 if pose == key else 0.0, delta * 3.5)
+	if dynamics != null:
+		var posed: float = 0.0
+		for key: StringName in [&"surrender", &"arrested", &"dead"]:
+			var blend: float = _pose_blend.get(key, 0.0)
+			posed = maxf(posed, blend)
+		var calm: float = (0.35 if aiming else 1.0) * (0.6 if crouch > 0.1 else 1.0) * (0.8 if reloading else 1.0) * (1.0 - posed)
+		dynamics.update(delta, Vector3(_velocity.x, vertical_speed, _velocity.z), local_accel, yaw_delta, _phase,
+			_gait, _run_blend * run_exaggeration, calm)
+		rotation.y = dynamics.yaw_offset
 	_solve(delta)
 
 
@@ -241,29 +262,41 @@ func _solve(delta: float) -> void:
 	var stride: float = clampf(speed * 0.16, 0.0, 0.68) * (1.0 + run * 0.28) * (1.0 - crouch_amount * 0.4)
 	var move_dir: Vector3 = _velocity.normalized() if speed > 0.05 else Vector3.FORWARD
 	var motion_scale: float = (0.3 if aiming else 1.0) * (0.65 if crouch_amount > 0.1 else 1.0)
-	var bob: float = minf(absf(sin(_phase)) * bounce_strength * _gait * motion_scale * (1.0 + run * 0.65), 0.16)
+	# Hips peak as the swing leg passes (|cos|); the cartoon body rounds that into a springy hop.
+	var step_wave: float = pow(absf(cos(_phase)), 0.8) if dynamics != null else absf(sin(_phase))
+	var bob: float = minf(step_wave * bounce_strength * _gait * motion_scale * (1.0 + run * 0.65), 0.16)
 	var idle_weight: float = 1.0 - clampf(speed / 0.6, 0.0, 1.0)
 	var breath: float = sin(_time * 2.0) * idle_breathing * idle_weight
 
 	# Hips.
 	var hip_y: float = HIP_HEIGHT - crouch_amount * CROUCH_DROP - kneel * 0.5 + bob + breath - 0.02 * _gait - _landing_impulse * 0.045
 	var hips: Vector3 = Vector3(0.0, hip_y, 0.0)
+	var lean_offset: Vector3 = Vector3(_pitch_spring.x, _yaw_spring.x, _roll_spring.x)
+	var head_offset: Vector3 = Vector3.ZERO
+	var extra_squash: float = 0.0
+	if dynamics != null:
+		hips += dynamics.hip_offset
+		lean_offset = dynamics.lean
+		head_offset = dynamics.head
+		extra_squash = dynamics.squash
 	var hip_yaw: float = sin(_phase) * wobble_strength * _gait * motion_scale * (1.0 + run * 0.5)
 	# Torso: leans into the run, forward in a crouch, twists with the stride, rolls with lean.
-	var torso_pitch: float = -0.09 * _gait - 0.3 * crouch_amount + _pitch_spring.x + (aim_pitch * 0.25 if stance != Stance.UNARMED else 0.0)
+	var torso_pitch: float = -0.09 * _gait - 0.3 * crouch_amount + lean_offset.x + (aim_pitch * 0.25 if stance != Stance.UNARMED else 0.0)
 	torso_pitch -= run * 0.14
 	var wobble: float = sin(_phase) * wobble_strength * _gait * motion_scale * (1.0 + run * 0.5)
 	var idle_sway: float = sin(_time * 0.85) * 0.012 * idle_weight
-	var chest_basis: Basis = Basis.from_euler(Vector3(torso_pitch, -hip_yaw * 0.7 + _yaw_spring.x,
-		-lean * 0.22 + _roll_spring.x + wobble + idle_sway))
+	var chest_basis: Basis = Basis.from_euler(Vector3(torso_pitch, -hip_yaw * 0.7 + lean_offset.y,
+		-lean * 0.22 + lean_offset.z + wobble + idle_sway))
 	if stance == Stance.RIFLE and pose != &"surrender":
 		chest_basis = chest_basis * Basis(Vector3.UP, -0.22)
 	var squash: float = clampf((absf(sin(_phase)) * _gait * (0.45 + run * 0.4) + _landing_impulse) * squash_strength * motion_scale, 0.0, 0.12)
+	squash = clampf(squash + extra_squash, -0.12, 0.2)
 	_chest.transform = Transform3D(chest_basis.scaled(Vector3(1.0 + squash * 0.45, 1.0 - squash + breath * 0.35,
 		1.0 + squash * 0.45)), hips)
 	var head_pitch: float = aim_pitch * 0.65 - torso_pitch * 0.5
 	var head_tilt: float = 0.12 if stance == Stance.RIFLE and aiming and pose == &"idle" else 0.0
-	_head.transform = Transform3D(Basis.from_euler(Vector3(head_pitch, 0.22 if head_tilt > 0.0 else 0.0, -head_tilt)), Vector3(0.0, NECK_HEIGHT, 0.0))
+	_head.transform = Transform3D(Basis.from_euler(Vector3(head_pitch, 0.22 if head_tilt > 0.0 else 0.0, -head_tilt) + head_offset),
+		Vector3(0.0, NECK_HEIGHT, 0.0))
 	_place(&"pelvis", hips + Vector3(0.0, 0.02, 0.0), Basis(Vector3.UP, hip_yaw))
 
 	# Legs.
@@ -315,9 +348,10 @@ func _solve(delta: float) -> void:
 ## Where each hand goes this frame: on the weapon, swinging, raised or cuffed behind the back.
 func _hand_targets(shoulders: Array[Vector3], hips: Vector3, surrender: float, arrested: float) -> Array[Vector3]:
 	var swing: float = sin(_phase) * (0.22 + _run_blend * run_exaggeration * 0.18) * minf(_gait, 1.2)
+	var flop: Vector3 = dynamics.hands if dynamics != null else Vector3.ZERO
 	var relaxed: Array[Vector3] = [
-		shoulders[0] + Vector3(-0.05, -0.53, -swing * 0.9),
-		shoulders[1] + Vector3(0.05, -0.53, swing * 0.9),
+		shoulders[0] + Vector3(-0.05, -0.53, -swing * 0.9) + Vector3(-flop.x * 0.8 - flop.y * 0.25, flop.y, flop.z * 1.15),
+		shoulders[1] + Vector3(0.05, -0.53, swing * 0.9) + Vector3(-flop.x * 1.15 + flop.y * 0.25, flop.y * 0.85, flop.z),
 	]
 	var result: Array[Vector3] = relaxed.duplicate()
 	if weapon != null and stance != Stance.UNARMED:

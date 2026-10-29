@@ -1,5 +1,5 @@
 ## Third-person body of a player: a HumanoidRig in police uniform and plate carrier with the class colour on
-## the armbands, holding the player's active weapon. Reads the replicated player state every frame (aim pitch,
+## the armbands, holding the player's active weapon, animated with a BodyDynamics cartoon-body layer. Reads the replicated player state every frame (aim pitch,
 ## crouch, lean, sprint, ADS, reload) so remote players look exactly like what their owner is doing.
 ## The owner's copy renders on RENDER_LAYER_FIRST_PERSON, which the owner's camera culls (it still casts
 ## shadows).
@@ -22,6 +22,21 @@ const CROUCH_RATIO: float = 1.1 / 1.8
 @export_range(0.0, 0.15, 0.005) var squash_strength: float = 0.07
 @export_range(0.5, 2.0, 0.05) var run_exaggeration: float = 1.5
 
+@export_group("Cartoon Body")
+## Master strength of the secondary-motion layer (BodyDynamics); 0 turns it off.
+@export_range(0.0, 1.5, 0.05) var cartoon_amount: float = 1.0
+## Metres the hips trail per m/s² of acceleration.
+@export_range(0.0, 0.03, 0.001) var hip_lag: float = 0.011
+## Radians of spring lean per m/s² of acceleration (forward when speeding up, back when braking).
+@export_range(0.0, 0.03, 0.001) var lean_gain: float = 0.011
+@export_range(0.0, 2.0, 0.05) var head_wobble: float = 0.85
+@export_range(0.0, 2.0, 0.05) var arm_flop: float = 1.0
+## How much of a sudden turn the body lags behind before swinging round (0..1).
+@export_range(0.0, 1.0, 0.05) var turn_lag: float = 0.55
+@export_range(0.0, 2.0, 0.05) var dizziness: float = 1.0
+@export_range(0.0, 2.0, 0.05) var idle_fidgets: float = 1.0
+@export_range(0.0, 2.0, 0.05) var step_springiness: float = 1.0
+
 var rig: HumanoidRig
 var _player: Player
 var _class_color: Color = Color(0.3, 0.8, 0.4)
@@ -42,6 +57,8 @@ func _ready() -> void:
 	rig.idle_breathing = idle_breathing
 	rig.squash_strength = squash_strength
 	rig.run_exaggeration = run_exaggeration
+	if cartoon_amount > 0.0:
+		rig.dynamics = _make_dynamics()
 	_apply_class_look()
 	add_child(rig)
 
@@ -59,6 +76,20 @@ func _process(_delta: float) -> void:
 	if weapons != null:
 		rig.aiming = weapons.aiming
 		rig.reloading = weapons.is_reloading()
+
+
+func _make_dynamics() -> BodyDynamics:
+	var dynamics: BodyDynamics = BodyDynamics.new()
+	dynamics.amount = cartoon_amount
+	dynamics.hip_lag = hip_lag
+	dynamics.lean_gain = lean_gain
+	dynamics.head_wobble = head_wobble
+	dynamics.arm_flop = arm_flop
+	dynamics.turn_lag = turn_lag
+	dynamics.dizziness = dizziness
+	dynamics.fidgets = idle_fidgets
+	dynamics.step_bounce = step_springiness
+	return dynamics
 
 
 func set_class_color(color: Color) -> void:

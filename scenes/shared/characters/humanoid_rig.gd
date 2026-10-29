@@ -74,6 +74,16 @@ var stance: Stance = Stance.UNARMED
 var weapon: WeaponModel
 var render_layers: int = 1
 
+@export_group("Motion Feel")
+@export_range(0.0, 0.15, 0.005) var wobble_strength: float = 0.055
+@export_range(0.0, 0.15, 0.005) var bounce_strength: float = 0.06
+@export_range(0.0, 0.015, 0.0005) var acceleration_lean: float = 0.004
+@export_range(0.0, 0.05, 0.001) var turn_lean: float = 0.022
+@export_range(1.0, 10.0, 0.25) var spring_frequency: float = 4.5
+@export_range(0.3, 1.5, 0.05) var spring_damping: float = 0.78
+@export_range(0.0, 0.03, 0.001) var idle_breathing: float = 0.008
+@export_range(0.0, 0.1, 0.005) var squash_strength: float = 0.045
+
 var _look: Dictionary = {}
 var look_id: StringName = &""
 var _materials: Dictionary[StringName, StandardMaterial3D] = {}
@@ -82,7 +92,12 @@ var _chest: Node3D
 var _head: Node3D
 var _weapon_socket: Node3D
 var _last_position: Vector3 = Vector3.ZERO
+var _last_yaw: float = 0.0
 var _velocity: Vector3 = Vector3.ZERO
+var _pitch_spring: Vector2 = Vector2.ZERO
+var _roll_spring: Vector2 = Vector2.ZERO
+var _yaw_spring: Vector2 = Vector2.ZERO
+var _landing_impulse: float = 0.0
 var _phase: float = 0.0
 var _gait: float = 0.0
 var _crouch_smooth: float = 0.0
@@ -96,6 +111,7 @@ func _ready() -> void:
 	if _look.is_empty():
 		dress(&"police")
 	_last_position = global_position
+	_last_yaw = global_rotation.y
 
 
 ## (Re)build the body in outfit `look_id` (LOOKS) with optional overrides (e.g. {"armband": class colour}).
@@ -138,6 +154,11 @@ func play_melee() -> void:
 	_melee_time = _time
 
 
+## Visual-only compression; the collision capsule and camera do not move.
+func land(impact_speed: float) -> void:
+	_landing_impulse = maxf(_landing_impulse, clampf((impact_speed - 1.5) / 6.0, 0.0, 1.0))
+
+
 ## World position of the weapon muzzle (falls back to the chest).
 func muzzle_position() -> Vector3:
 	if weapon != null and weapon.muzzle != null and weapon.is_inside_tree():
@@ -162,12 +183,42 @@ func _process(delta: float) -> void:
 	local_move.y = 0.0
 	if local_move.length() > 12.0:
 		local_move = Vector3.ZERO   # teleport / snap
-	_velocity = _velocity.lerp(local_move, clampf(10.0 * delta, 0.0, 1.0))
-	_crouch_smooth = lerpf(_crouch_smooth, crouch, clampf(10.0 * delta, 0.0, 1.0))
+		_velocity = Vector3.ZERO
+		_pitch_spring = Vector2.ZERO
+		_roll_spring = Vector2.ZERO
+		_yaw_spring = Vector2.ZERO
+	var local_accel: Vector3 = (local_move - _velocity) / maxf(delta, 0.001)
+	local_accel.x = clampf(local_accel.x, -28.0, 28.0)
+	local_accel.z = clampf(local_accel.z, -28.0, 28.0)
+	var yaw_rate: float = angle_difference(_last_yaw, global_rotation.y) / maxf(delta, 0.001)
+	_last_yaw = global_rotation.y
+	var speed_factor: float = clampf(local_move.length() / 4.75, 0.0, 1.2)
+	var free_motion: float = (0.3 if aiming else 1.0) * (0.65 if crouch > 0.1 else 1.0)
+	var target_pitch: float = clampf(local_accel.z * acceleration_lean, -0.12, 0.12) * free_motion
+	var target_roll: float = clampf(-local_accel.x * acceleration_lean - yaw_rate * turn_lean, -0.18, 0.18) * free_motion
+	var target_yaw: float = clampf(-yaw_rate * turn_lean * 0.65, -0.14, 0.14) * free_motion
+	_pitch_spring = _spring(_pitch_spring, target_pitch, delta)
+	_roll_spring = _spring(_roll_spring, target_roll, delta)
+	_yaw_spring = _spring(_yaw_spring, target_yaw, delta)
+	_velocity = _velocity.lerp(local_move, 1.0 - exp(-10.0 * delta))
+	_crouch_smooth = lerpf(_crouch_smooth, crouch, 1.0 - exp(-10.0 * delta))
+	_landing_impulse *= exp(-8.0 * delta)
 	for key: StringName in [&"surrender", &"arrested", &"dead"]:
 		var current: float = _pose_blend.get(key, 0.0)
 		_pose_blend[key] = move_toward(current, 1.0 if pose == key else 0.0, delta * 3.5)
 	_solve(delta)
+
+
+## Substeps keep the playful overshoot stable at low and high render frame rates.
+func _spring(state: Vector2, target: float, delta: float) -> Vector2:
+	var steps: int = clampi(ceili(delta * 120.0), 1, 12)
+	var step: float = minf(delta / float(steps), 1.0 / 60.0)
+	var omega: float = TAU * spring_frequency
+	for i: int in steps:
+		var acceleration: float = omega * omega * (target - state.x) - 2.0 * spring_damping * omega * state.y
+		state.y += acceleration * step
+		state.x += state.y * step
+	return state
 
 
 # --- Pose solver -------------------------------------------------------------------------------
@@ -179,26 +230,34 @@ func _solve(delta: float) -> void:
 	var surrender: float = _pose_blend.get(&"surrender", 0.0)
 	var kneel: float = maxf(arrested, surrender * 0.85)
 	var amount: float = clampf(speed / 3.5, 0.0, 1.5) * (1.0 - kneel)
-	_gait = lerpf(_gait, amount, clampf(8.0 * delta, 0.0, 1.0))
+	_gait = lerpf(_gait, amount, 1.0 - exp(-8.0 * delta))
 	if _gait > 0.03:
 		_phase += delta * TAU * (1.25 + speed * 0.32)
 	var crouch_amount: float = maxf(_crouch_smooth, 0.0)
 	var stride: float = clampf(speed * 0.19, 0.0, 0.6) * (1.0 - crouch_amount * 0.4)
 	var move_dir: Vector3 = _velocity.normalized() if speed > 0.05 else Vector3.FORWARD
-	var bob: float = absf(sin(_phase)) * 0.035 * _gait
+	var motion_scale: float = (0.3 if aiming else 1.0) * (0.65 if crouch_amount > 0.1 else 1.0)
+	var bob: float = absf(sin(_phase)) * bounce_strength * _gait * motion_scale
+	var idle_weight: float = 1.0 - clampf(speed / 0.6, 0.0, 1.0)
+	var breath: float = sin(_time * 2.0) * idle_breathing * idle_weight
 
 	# Hips.
-	var hip_y: float = HIP_HEIGHT - crouch_amount * CROUCH_DROP - kneel * 0.5 + bob - 0.02 * _gait
+	var hip_y: float = HIP_HEIGHT - crouch_amount * CROUCH_DROP - kneel * 0.5 + bob + breath - 0.02 * _gait - _landing_impulse * 0.045
 	var hips: Vector3 = Vector3(0.0, hip_y, 0.0)
-	var hip_yaw: float = sin(_phase) * 0.08 * _gait
+	var hip_yaw: float = sin(_phase) * wobble_strength * _gait * motion_scale
 	# Torso: leans into the run, forward in a crouch, twists with the stride, rolls with lean.
-	var torso_pitch: float = -0.12 * _gait - 0.3 * crouch_amount + (aim_pitch * 0.25 if stance != Stance.UNARMED else 0.0)
+	var torso_pitch: float = -0.09 * _gait - 0.3 * crouch_amount + _pitch_spring.x + (aim_pitch * 0.25 if stance != Stance.UNARMED else 0.0)
 	if sprinting:
 		torso_pitch -= 0.12
-	var chest_basis: Basis = Basis.from_euler(Vector3(torso_pitch, -hip_yaw * 0.7, -lean * 0.22))
+	var wobble: float = sin(_phase) * wobble_strength * _gait * motion_scale
+	var idle_sway: float = sin(_time * 0.85) * 0.012 * idle_weight
+	var chest_basis: Basis = Basis.from_euler(Vector3(torso_pitch, -hip_yaw * 0.7 + _yaw_spring.x,
+		-lean * 0.22 + _roll_spring.x + wobble + idle_sway))
 	if stance == Stance.RIFLE and pose != &"surrender":
 		chest_basis = chest_basis * Basis(Vector3.UP, -0.22)
-	_chest.transform = Transform3D(chest_basis, hips)
+	var squash: float = clampf((absf(sin(_phase)) * _gait * 0.45 + _landing_impulse) * squash_strength * motion_scale, 0.0, 0.08)
+	_chest.transform = Transform3D(chest_basis.scaled(Vector3(1.0 + squash * 0.45, 1.0 - squash + breath * 0.35,
+		1.0 + squash * 0.45)), hips)
 	var head_pitch: float = aim_pitch * 0.65 - torso_pitch * 0.5
 	var head_tilt: float = 0.12 if stance == Stance.RIFLE and aiming and pose == &"idle" else 0.0
 	_head.transform = Transform3D(Basis.from_euler(Vector3(head_pitch, 0.22 if head_tilt > 0.0 else 0.0, -head_tilt)), Vector3(0.0, NECK_HEIGHT, 0.0))

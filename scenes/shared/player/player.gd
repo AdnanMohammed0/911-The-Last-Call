@@ -33,8 +33,12 @@ signal shouted()
 @export var crouch_speed: float = 1.75
 ## Class multiplier (GAMEPLAY_MECHANICS §2) x trait modifiers such as Limping (0.7).
 @export var move_speed_multiplier: float = 1.0
-@export var ground_acceleration: float = 12.0
-@export var air_acceleration: float = 2.0
+## Metres per second squared: fast launch, stronger reversals, and firm but short stops.
+@export var ground_acceleration: float = 20.0
+@export var turn_acceleration: float = 26.0
+@export var reverse_acceleration: float = 30.0
+@export var ground_friction: float = 14.0
+@export var air_acceleration: float = 5.0
 ## Take-off speed (≈0.9 m jump height).
 @export var jump_velocity: float = 4.2
 ## Stamina seconds spent per jump.
@@ -672,19 +676,42 @@ func _update_movement(delta: float) -> void:
 	direction = direction.normalized() * minf(_input.move.length(), 1.0)
 
 	var target: Vector3 = direction * speed
-	var accel: float = ground_acceleration if is_on_floor() else air_acceleration
-	var weight: float = clampf(accel * delta, 0.0, 1.0)
-	velocity.x = lerpf(velocity.x, target.x, weight)
-	velocity.z = lerpf(velocity.z, target.z, weight)
+	var was_grounded: bool = is_on_floor()
+	var horizontal: Vector2 = steer_horizontal(Vector2(velocity.x, velocity.z), Vector2(target.x, target.z),
+		delta, was_grounded, ground_acceleration, turn_acceleration, reverse_acceleration,
+		ground_friction, air_acceleration)
+	velocity.x = horizontal.x
+	velocity.z = horizontal.y
 
-	if not is_on_floor():
+	if not was_grounded:
 		velocity.y -= _gravity * delta
 	elif _input.jump_just_pressed and can_jump():
 		velocity.y = jump_velocity
 		stamina = maxf(stamina - jump_stamina_cost, 0.0)
 		_regen_cooldown = stamina_regen_delay
 		stamina_changed.emit(stamina, sprint_duration)
+	var landing_speed: float = -velocity.y
 	move_and_slide()
+	if not was_grounded and is_on_floor() and landing_speed > 1.5:
+		_body.land(landing_speed)
+		get_weapons().on_landing(landing_speed)
+
+
+## Only the physical capsule follows this velocity. Cartoon overshoot belongs to the visual rig.
+static func steer_horizontal(current: Vector2, target: Vector2, delta: float, grounded: bool,
+		acceleration: float, turning: float, reversing: float, friction: float, air_control: float) -> Vector2:
+	if delta <= 0.0:
+		return current
+	if target.length_squared() < 0.0001:
+		var stop: Vector2 = current * exp(-maxf(friction if grounded else air_control * 0.45, 0.0) * delta)
+		return Vector2.ZERO if stop.length_squared() < 0.0009 else stop
+	var rate: float = air_control
+	if grounded:
+		rate = acceleration
+		if current.length_squared() > 0.04:
+			var alignment: float = current.normalized().dot(target.normalized())
+			rate = reversing if alignment < -0.1 else (turning if alignment < 0.75 else acceleration)
+	return current.move_toward(target, maxf(rate, 0.0) * delta)
 
 
 # --- Lean -------------------------------------------------------------------

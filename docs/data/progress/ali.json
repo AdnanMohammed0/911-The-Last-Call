@@ -819,6 +819,12 @@
    "tasks": ["P3-21"],
    "summary": "سبعة أشكال شخصيات متحركة على هيكل IK الموجود: أربعة أدوار شرطة وثلاثة خصوم بتجهيزات مميزة، مع مشهد عرض ومراجعة بصرية. نجاح 58 اختباراً مرتبطاً.",
    "files": ["scenes/shared/characters/humanoid_rig.gd", "scenes/shared/characters/character_showcase.gd", "scenes/shared/characters/character_showcase.tscn", "scenes/shared/player/player_body.gd", "tests/test_character_looks.gd", "docs/data/progress/ali.json"]
+  },
+  {
+   "date": "2026-10-29",
+   "tasks": ["P1-12"],
+   "summary": "تحسين إضافي لحركة اللاعب بطلب مباشر: تسارع وفرملة والتفاف منفصلون، حركة جسم إجرائية بنابض وتمايل وخطوات مرتدة وميلان وارتداد هبوط، وتحريك السلاح المرئي دون اهتزاز الكاميرا أو تغيير التصويب. نجحت 67 تجربة مرتبطة (5 حركة، 25 مهمة، 19 سلاح، 4 أشكال، 14 خصائص). التشغيل الشامل أظهر فشلين خارج نطاق الحركة في فحوص المكالمات والعدادات العامة.",
+   "files": ["scenes/shared/player/player.gd", "scenes/shared/player/player_body.gd", "scenes/shared/characters/humanoid_rig.gd", "scenes/shared/weapons/weapon_holder.gd", "tests/test_expressive_movement.gd", "docs/data/progress/ali.json"]
   }
  ]
 }

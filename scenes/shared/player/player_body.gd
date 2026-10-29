@@ -11,6 +11,16 @@ extends Node3D
 const RENDER_LAYER_FIRST_PERSON: int = 1 << 10
 const CROUCH_RATIO: float = 1.1 / 1.8
 
+@export_group("Movement Personality")
+@export_range(0.0, 0.15, 0.005) var wobble_strength: float = 0.055
+@export_range(0.0, 0.15, 0.005) var bounce_strength: float = 0.06
+@export_range(0.0, 0.015, 0.0005) var acceleration_lean: float = 0.004
+@export_range(0.0, 0.05, 0.001) var turn_lean: float = 0.022
+@export_range(1.0, 10.0, 0.25) var spring_frequency: float = 4.5
+@export_range(0.3, 1.5, 0.05) var spring_damping: float = 0.78
+@export_range(0.0, 0.03, 0.001) var idle_breathing: float = 0.008
+@export_range(0.0, 0.1, 0.005) var squash_strength: float = 0.045
+
 var rig: HumanoidRig
 var _player: Player
 var _class_color: Color = Color(0.3, 0.8, 0.4)
@@ -22,6 +32,14 @@ func _ready() -> void:
 	_player = get_parent() as Player
 	rig = HumanoidRig.new()
 	rig.name = "Rig"
+	rig.wobble_strength = wobble_strength
+	rig.bounce_strength = bounce_strength
+	rig.acceleration_lean = acceleration_lean
+	rig.turn_lean = turn_lean
+	rig.spring_frequency = spring_frequency
+	rig.spring_damping = spring_damping
+	rig.idle_breathing = idle_breathing
+	rig.squash_strength = squash_strength
 	_apply_class_look()
 	add_child(rig)
 
@@ -66,6 +84,11 @@ func set_weapon(model: WeaponModel, one_handed: bool) -> void:
 
 func muzzle_position() -> Vector3:
 	return rig.muzzle_position() if rig != null else global_position
+
+
+func land(impact_speed: float) -> void:
+	if rig != null:
+		rig.land(impact_speed)
 
 
 ## First person: the whole body (including head parts registered by the Player) is hidden from our camera.

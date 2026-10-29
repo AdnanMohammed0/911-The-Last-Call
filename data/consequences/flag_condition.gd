@@ -26,15 +26,33 @@ func evaluate(fs: Object = null) -> bool:
 	
 	match op:
 		Op.EQ:
-			return v == value
+			return values_equal(v, value)
 		Op.NEQ:
-			return v != value
+			return not values_equal(v, value)
 		Op.GT:
-			return v != null and value != null and v > value
+			return comparable(v, value) and v > value
 		Op.GTE:
-			return v != null and value != null and v >= value
+			return comparable(v, value) and v >= value
 		Op.LT:
-			return v != null and value != null and v < value
+			return comparable(v, value) and v < value
 		Op.LTE:
-			return v != null and value != null and v <= value
+			return comparable(v, value) and v <= value
 	return false
+
+
+## Equality that never errors on mismatched types (Godot 4 raises on e.g. int == bool): numbers compare
+## with numbers, String with StringName, anything else only with its own type.
+static func values_equal(a: Variant, b: Variant) -> bool:
+	if a == null or b == null:
+		return typeof(a) == typeof(b)
+	return comparable(a, b) and a == b
+
+
+static func comparable(a: Variant, b: Variant) -> bool:
+	var ta: int = typeof(a)
+	var tb: int = typeof(b)
+	if ta == TYPE_NIL or tb == TYPE_NIL:
+		return false
+	var numbers: Array[int] = [TYPE_INT, TYPE_FLOAT]
+	var strings: Array[int] = [TYPE_STRING, TYPE_STRING_NAME]
+	return ta == tb or (ta in numbers and tb in numbers) or (ta in strings and tb in strings)

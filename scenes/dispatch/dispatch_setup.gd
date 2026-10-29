@@ -74,13 +74,16 @@ func _pace_calls(delta: float) -> void:
 		_quiet_seconds = 0.0
 		return
 	_quiet_seconds += delta
-	if not CallDirector.call_queue.is_empty():
+	# Calls gated by story flags (CallData.requires_flags) wait in the queue without holding up the shift.
+	var gated: int = CallDirector.gated_call_count()
+	if CallDirector.call_queue.size() > gated:
 		_shift_done = false
 		if _quiet_seconds >= max_quiet_seconds:
 			_quiet_seconds = 0.0
-			var next_id: StringName = CallDirector.call_queue.pop_front()
-			CallDirector.ring_call(next_id)
-	elif not _shift_done and _quiet_seconds >= 6.0 and CallDirector.call_history.size() >= CallDirector.registered_calls.size():
+			var next_id: StringName = CallDirector.take_next_available_call()
+			if next_id != &"":
+				CallDirector.ring_call(next_id)
+	elif not _shift_done and _quiet_seconds >= 6.0 			and CallDirector.call_history.size() + gated >= CallDirector.registered_calls.size():
 		_shift_done = true
 		MissionDirector.complete_shift()
 		_quiet_seconds = -20.0

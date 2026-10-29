@@ -190,6 +190,31 @@ func enqueue_call(call_id: StringName, delay_in_game_minutes: int = 0) -> void:
 	_check_scheduled_calls()
 
 
+## True when the call exists and its CallData.requires_flags all hold in FlagSystem.
+func is_call_available(call_id: StringName) -> bool:
+	var data: CallData = registered_calls.get(call_id, null)
+	return data != null and FlagSystem.flags_match(data.requires_flags)
+
+
+## Queued calls whose required story flags are not met yet (they stay queued until they are).
+func gated_call_count() -> int:
+	var count: int = 0
+	for cid: StringName in call_queue:
+		if not is_call_available(cid):
+			count += 1
+	return count
+
+
+## Host: removes and returns the first queued call that may ring now (&"" if none).
+func take_next_available_call() -> StringName:
+	for i in range(call_queue.size()):
+		var cid: StringName = call_queue[i]
+		if is_call_available(cid):
+			call_queue.remove_at(i)
+			return cid
+	return &""
+
+
 func _check_scheduled_calls() -> void:
 	if current_state != CallState.IDLE:
 		return
@@ -197,7 +222,7 @@ func _check_scheduled_calls() -> void:
 	for i in range(call_queue.size()):
 		var cid: StringName = call_queue[i]
 		var cdata: CallData = registered_calls.get(cid, null)
-		if cdata != null and shift_clock_minutes >= cdata.earliest_minute:
+		if cdata != null and shift_clock_minutes >= cdata.earliest_minute and is_call_available(cid):
 			call_queue.remove_at(i)
 			ring_call(cid)
 			break

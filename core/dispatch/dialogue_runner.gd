@@ -83,6 +83,10 @@ func select_choice(choice_index: int, player_class: StringName = &"") -> Diction
 		if not req_ev in revealed_evidence:
 			return {"success": false, "reason": "Missing required evidence: %s" % req_ev}
 	
+	# Story flag conditions (FlagSystem, host)
+	if not FlagSystem.conditions_pass(choice.conditions):
+		return {"success": false, "reason": "Conditions not met"}
+	
 	# Apply patience modifier
 	if choice.patience_delta != 0.0:
 		modify_patience(choice.patience_delta)
@@ -153,6 +157,10 @@ func get_available_choices_data(for_class: StringName = &"") -> Array[Dictionary
 					is_unlocked = false
 					lock_reason = "Missing evidence"
 					break
+		
+		if is_unlocked and not FlagSystem.conditions_pass(c.conditions):
+			is_unlocked = false
+			lock_reason = "Not available"
 		
 		result.append({
 			"index": i,

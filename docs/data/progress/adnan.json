@@ -146,6 +146,11 @@
       "status": "testing",
       "note": "نظام تقدّم: XP ورُتب (Rookie→Captain) محفوظة بـ user://career.cfg، أسلحة المخزن مقفولة بالرُتبة، تقرير مهمة بالنقاط، شفتات متتابعة أصعب، وإشعارات XP/ترقية بالـHUD.",
       "updated_at": "2026-09-17"
+    },
+    "P4-01": {
+      "status": "done",
+      "note": "FlagSystem autoload حسب ARCHITECTURE §7: رايات وسجل أحداث وقواعد عواقب (فورية، مؤجلة بدقائق الساعة، الشفت الجاي، النهاية) مع منع التكرار وسلسلة أحداث محدودة، تأثيرات SET_FLAG/ADD_METER/APPLY_TRAIT/QUEUE_CALL/UNLOCK_MISSION/SPAWN_EVENT، مزامنة الرايات والأحداث لكل اللاعبين ولقطة كاملة للي يدخل متأخر، وsnapshot/restore آمن لـ JSON لنظام الحفظ. ربط تلقائي: أحداث الحوار والتصنيف والمكالمات الفائتة والاعتقال والقتل والسقوط ونجاح/فشل المهمة ونهاية الشفت، وشروط خيارات الحوار، وتقفيل المكالمات بـ requires_flags. 16 اختبار + اختبار ENet بين هوست وكلاينت.",
+      "updated_at": "2026-10-30"
     }
   },
   "log": [
@@ -1029,6 +1034,27 @@
         "data/localization/ui_ar.loc",
         "tests/test_settings.gd",
         "docs/design/SETTINGS_ACCESSIBILITY.md"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "tasks": [
+        "P4-01"
+      ],
+      "summary": "FlagSystem كامل: رايات، سجل أحداث، قواعد عواقب مؤجلة ولمرة وحدة، مزامنة ولقطة للمتأخرين، وحفظ/استرجاع JSON. ربطته بالحوار والمكالمات والمهمات، وصلّحت مقارنة الأنواع المختلفة بـ FlagCondition وتقرير الشفت. 17 اختبار ناجح.",
+      "files": [
+        "autoload/flag_system.gd",
+        "data/consequences/consequence_rule.gd",
+        "data/consequences/flag_effect.gd",
+        "data/consequences/flag_condition.gd",
+        "core/dispatch/dialogue_runner.gd",
+        "autoload/call_director.gd",
+        "autoload/mission_director.gd",
+        "scenes/dispatch/dispatch_setup.gd",
+        "project.godot",
+        "tests/test_flag_system.gd",
+        "tests/test_flag_system_network.gd",
+        "docs/design/FLAG_SYSTEM.md"
       ]
     }
   ]

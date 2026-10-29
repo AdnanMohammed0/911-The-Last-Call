@@ -198,6 +198,8 @@ func extract() -> bool:
 	var lines: PackedStringArray = report["lines"]
 	lines.append("%+d XP  ·  Public trust %+d" % [xp, trust])
 	_mission_outcomes[mission_call_id] = {"state": "resolved", "detail": "; ".join(lines)}
+	FlagSystem.record_event(&"mission_success", {"call": mission_call_id, "kind": mission_kind, "kills": _kills,
+		"arrests": _arrests, "unlawful": _unlawful, "downed": _downed})
 	_record_report_event("FIELD RESPONSE", "%s — %s" % [mission_name(), "; ".join(lines)], CallDirector.shift_clock_minutes)
 	_finish("MISSION REPORT", "\n".join(lines))
 	return true
@@ -211,6 +213,7 @@ func fail(reason: String) -> void:
 	_sync_state.rpc(State.FAILED, mission_scene, mission_call_id, mission_kind, difficulty, "Mission failed — returning to Station 4")
 	_announce.rpc("MISSION FAILED", "%s  ·  Public trust %d  ·  -80 XP" % [reason, TRUST_FAILURE])
 	_mission_outcomes[mission_call_id] = {"state": "failed", "detail": reason}
+	FlagSystem.record_event(&"mission_failed", {"call": mission_call_id, "kind": mission_kind, "reason": reason})
 	_record_report_event("FIELD RESPONSE FAILED", "%s — %s" % [mission_name(), reason], CallDirector.shift_clock_minutes)
 	_return_timer = RETURN_DELAY_SEC
 
@@ -328,6 +331,7 @@ func complete_shift() -> void:
 		return
 	last_shift_report = build_shift_report()
 	_sync_report.rpc(last_shift_report)
+	FlagSystem.record_event(&"shift_completed", {"shift": shift_number, "trust": public_trust})
 	CallDirector.pause_shift()
 	var bonus: int = XP_SHIFT_COMPLETE + public_trust * 2
 	Career.award_team(bonus, "Shift %d complete" % shift_number, "shifts")
@@ -427,7 +431,7 @@ func _on_report_evidence_unlocked(evidence_key: StringName) -> void:
 
 
 func _on_report_flag_changed(key: StringName, _old_value: Variant, new_value: Variant) -> void:
-	if multiplayer.is_server() and new_value == true and (String(key).contains("unlocked") or String(key).contains("intel")):
+	if multiplayer.is_server() and new_value is bool and new_value and (String(key).contains("unlocked") or String(key).contains("intel")):
 		_add_report_lead(String(key).replace("_", " ").capitalize())
 
 
@@ -440,6 +444,12 @@ func _add_report_lead(lead: String) -> void:
 @rpc("authority", "call_local", "reliable")
 func _sync_report(report: Dictionary) -> void:
 	last_shift_report = report.duplicate(true)
+
+
+## Host: public trust change from outside the mission flow (FlagSystem ADD_METER effects).
+func change_trust(amount: int) -> void:
+	if multiplayer.is_server():
+		_change_trust(amount)
 
 
 func _change_trust(amount: int) -> void:

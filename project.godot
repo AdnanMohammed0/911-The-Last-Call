@@ -46,6 +46,7 @@ AudioDirector="*res://autoload/audio_server.gd"
 TelemetryService="*res://autoload/telemetry_manager.gd"
 CrashService="*res://autoload/crash_reporter.gd"
 Economy="*res://autoload/economy.gd"
+FlagSystem="*res://autoload/flag_system.gd"
 
 [internationalization]
 

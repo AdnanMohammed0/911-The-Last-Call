@@ -16,6 +16,7 @@ var _mic_bar: ProgressBar
 var _tabs: TabContainer
 var _page_title: Label
 var _rail_pages: PackedStringArray = PackedStringArray()
+var _rail_buttons: Array[KitButton] = []
 var _language_option: OptionButton
 
 
@@ -103,35 +104,35 @@ func _ready() -> void:
 	_audio_tab(_page(tabs, "Audio"))
 	_voice_tab(_page(tabs, "Voice"))
 	_controls_tab(_page(tabs, "Controls"))
+	_accessibility_tab(_page(tabs, "Accessibility"))
 
 	var pages: Array[Array] = [
 		["General", &"globe"], ["Video", &"monitor"], ["Audio", &"volume"],
-		["Voice", &"mic"], ["Controls", &"keyboard"]]
-	var rail_buttons: Array[KitButton] = []
+		["Voice", &"mic"], ["Controls", &"keyboard"], ["Accessibility", &"eye"]]
 	for i: int in pages.size():
 		var page: Array = pages[i]
 		var page_name: String = page[0]
 		_rail_pages.append(page_name)
 		var icon_name: StringName = page[1]
-		var entry: KitButton = KitButton.make(page_name, icon_name, KitButton.Variant.GHOST)
+		var entry: KitButton = KitButton.make(tr(page_name), icon_name, KitButton.Variant.GHOST)
 		entry.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		entry.custom_minimum_size = Vector2(0, 48)
 		entry.icon_size = 20.0
 		entry.toggle_mode = true
 		entry.add_theme_font_size_override(&"font_size", 18)
 		rail_box.add_child(entry)
-		rail_buttons.append(entry)
+		_rail_buttons.append(entry)
 		entry.pressed.connect(func() -> void:
 			tabs.current_tab = i
 			page_title.text = tr(page_name)
-			for other: KitButton in rail_buttons:
+			for other: KitButton in _rail_buttons:
 				other.set_pressed_no_signal(other == entry)
 				other.variant = KitButton.Variant.SUBTLE if other == entry else KitButton.Variant.GHOST
 				other.icon_tint = GameTheme.ACCENT if other == entry else Color(0, 0, 0, 0)
 				other.apply_variant())
 	rail_box.add_child(UiKit.expand(Control.new(), false, true))
 	rail_box.add_child(UiKit.paragraph(tr("Changes apply instantly and are saved automatically."), 13, GameTheme.TEXT_FAINT))
-	rail_buttons[0].pressed.emit()
+	_rail_buttons[0].pressed.emit()
 	back.grab_focus.call_deferred()
 	Localization.language_changed.connect(_on_language_changed)
 
@@ -140,6 +141,8 @@ func _ready() -> void:
 func _on_language_changed(_locale: String) -> void:
 	if _page_title != null and _tabs != null and _rail_pages.size() > _tabs.current_tab:
 		_page_title.text = tr(_rail_pages[_tabs.current_tab])
+	for i: int in _rail_buttons.size():
+		_rail_buttons[i].text = tr(_rail_pages[i])
 	for i: int in Localization.SUPPORTED_LOCALES.size():
 		var code: String = Localization.SUPPORTED_LOCALES[i]
 		_language_option.set_item_text(i, Localization.locale_label(code))
@@ -292,6 +295,12 @@ func _video_tab(page: VBoxContainer) -> void:
 
 
 func _audio_tab(page: VBoxContainer) -> void:
+	_section(page, "Playback")
+	var devices: PackedStringArray = AudioServer.get_output_device_list()
+	if devices.is_empty():
+		devices = PackedStringArray(["Default"])
+	_row(page, "Output device", _option(devices, maxi(devices.find(GameSettings.output_device), 0),
+		func(index: int) -> void: GameSettings.set_value("output_device", devices[index])))
 	_section(page, "Volume")
 	for bus: StringName in GameSettings.AUDIO_BUSES:
 		var bus_name: StringName = bus
@@ -356,6 +365,22 @@ func _controls_tab(page: VBoxContainer) -> void:
 	reset_row.add_child(spacer)
 	reset_row.add_child(reset)
 	page.add_child(reset_row)
+
+
+func _accessibility_tab(page: VBoxContainer) -> void:
+	_section(page, "Captions")
+	_row(page, "Dialogue subtitles", _toggle(GameSettings.subtitles_enabled,
+		func(on: bool) -> void: GameSettings.set_value("subtitles_enabled", on)),
+		"Shows scripted call dialogue outside the computer")
+	_row(page, "Subtitle size", _option(GameSettings.SUBTITLE_SIZE_NAMES, GameSettings.subtitle_size,
+		func(index: int) -> void: GameSettings.set_value("subtitle_size", index)))
+	_section(page, "Visual comfort")
+	_row(page, "HUD colour palette", _option(GameSettings.COLOR_MODE_NAMES, GameSettings.color_mode,
+		func(index: int) -> void: GameSettings.set_value("color_mode", index)),
+		"Changes critical status and success colours")
+	_row(page, "Reduce horror effects", _toggle(GameSettings.reduced_horror_effects,
+		func(on: bool) -> void: GameSettings.set_value("reduced_horror_effects", on)),
+		"Softens bodycam distortion and damage flashes")
 
 
 # --- Rebinding --------------------------------------------------------------------------------------

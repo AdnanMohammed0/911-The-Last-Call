@@ -34,6 +34,7 @@ func test_known_string_translates_to_arabic() -> void:
 	Localization.set_language("ar", false)
 	assert_eq(Localization.t("Settings"), "الإعدادات")
 	assert_eq(Localization.t("Back"), "رجوع")
+	assert_eq(Localization.t("Accessibility"), "إمكانية الوصول")
 	assert_eq(Localization.t("Resume"), "استئناف")
 
 

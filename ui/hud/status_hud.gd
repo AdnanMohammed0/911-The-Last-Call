@@ -138,7 +138,7 @@ func _process(delta: float) -> void:
 	_xp_bar.max_value = bounds.y if bounds.y > 0 else bounds.x + 1
 	_xp_bar.value = Career.xp if bounds.y > 0 else _xp_bar.max_value
 	_shout_left = maxf(_shout_left - delta, 0.0)
-	_shout_label.modulate.a = clampf(_shout_left / 0.4, 0.0, 1.0)
+	_shout_label.modulate.a = clampf(_shout_left / 0.4, 0.0, 1.0) if GameSettings.subtitles_enabled else 0.0
 	if _shown_health < 0.0:
 		_shown_health = health.hp
 		_last_hp = health.hp
@@ -149,11 +149,11 @@ func _process(delta: float) -> void:
 	_shown_health = lerpf(_shown_health, health.hp, clampf(10.0 * delta, 0.0, 1.0))
 	var ratio: float = health.hp / maxf(health.max_hp, 1.0)
 	var low: bool = ratio <= 0.3
-	var colour: Color = HEALTH_LOW if low else HEALTH_COLOR
+	var colour: Color = GameSettings.indicator_color(&"danger") if low else HEALTH_COLOR
 	_health_value.text = str(ceili(health.hp))
 	_health_value.add_theme_color_override(&"font_color", colour)
 	_health_icon.color = colour
-	_health_icon.scale = Vector2.ONE * (1.0 + (0.12 * absf(sin(Time.get_ticks_msec() * 0.008)) if low else 0.0))
+	_health_icon.scale = Vector2.ONE * (1.0 + (0.12 * absf(sin(Time.get_ticks_msec() * 0.008)) if low and not GameSettings.reduced_horror_effects else 0.0))
 	_bars.health_ratio = _shown_health / maxf(health.max_hp, 1.0)
 	_bars.armor_ratio = health.armor / HealthComponent.MAX_ARMOR
 	_bars.stamina_ratio = player.stamina / maxf(player.get_max_stamina(), 0.01)
@@ -164,7 +164,7 @@ func _process(delta: float) -> void:
 	_hit_flash = maxf(_hit_flash - delta * 1.8, 0.0)
 	var pulse: float = clampf((0.35 - ratio) / 0.35, 0.0, 1.0) * (0.55 + 0.15 * sin(Time.get_ticks_msec() * 0.006))
 	var shader_material: ShaderMaterial = _vignette.material as ShaderMaterial
-	shader_material.set_shader_parameter(&"intensity", clampf(maxf(_hit_flash, pulse), 0.0, 0.9))
+	shader_material.set_shader_parameter(&"intensity", 0.0 if GameSettings.reduced_horror_effects else clampf(maxf(_hit_flash, pulse), 0.0, 0.9))
 
 
 ## Segmented health bar, armour plates underneath and a thin stamina line, drawn in one pass.

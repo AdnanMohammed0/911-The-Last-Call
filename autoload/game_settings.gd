@@ -11,6 +11,8 @@ enum Quality { LOW, MEDIUM, HIGH, ULTRA }
 const PATH: String = "user://settings.cfg"
 const QUALITY_NAMES: PackedStringArray = ["Low", "Medium", "High", "Ultra"]
 const WINDOW_MODE_NAMES: PackedStringArray = ["Windowed", "Borderless fullscreen", "Exclusive fullscreen"]
+const SUBTITLE_SIZE_NAMES: PackedStringArray = ["Small", "Normal", "Large"]
+const COLOR_MODE_NAMES: PackedStringArray = ["Standard", "Blue / orange", "High contrast"]
 const AUDIO_BUSES: Dictionary[StringName, String] = {
 	&"Master": "Master volume", &"Music": "Music", &"SFX": "Effects",
 	&"VoiceProximity": "Voice chat", &"VoiceRadio": "Radio", &"Phone": "Phone calls",
@@ -45,6 +47,11 @@ var ads_sensitivity: float = 0.7
 var invert_y: bool = false
 var crouch_toggle: bool = false
 var show_fps: bool = false
+var output_device: String = "Default"
+var subtitles_enabled: bool = true
+var subtitle_size: int = 1
+var color_mode: int = 0
+var reduced_horror_effects: bool = false
 ## UI language, applied by the Localization autoload (see data/localization/ui_*.loc).
 var language: String = "en"
 
@@ -85,6 +92,13 @@ func load_settings() -> void:
 	fov = config.get_value("video", "fov", fov)
 	brightness = config.get_value("video", "brightness", brightness)
 	show_fps = config.get_value("video", "show_fps", show_fps)
+	output_device = config.get_value("audio", "output_device", output_device)
+	subtitles_enabled = config.get_value("accessibility", "subtitles_enabled", subtitles_enabled)
+	var stored_subtitle_size: int = config.get_value("accessibility", "subtitle_size", subtitle_size)
+	var stored_color_mode: int = config.get_value("accessibility", "color_mode", color_mode)
+	subtitle_size = clampi(stored_subtitle_size, 0, 2)
+	color_mode = clampi(stored_color_mode, 0, 2)
+	reduced_horror_effects = config.get_value("accessibility", "reduced_horror_effects", reduced_horror_effects)
 	for bus: StringName in AUDIO_BUSES:
 		volumes[bus] = config.get_value("audio", String(bus), 1.0)
 	mouse_sensitivity = config.get_value("controls", "mouse_sensitivity", mouse_sensitivity)
@@ -141,6 +155,11 @@ func save_settings() -> void:
 	config.set_value("video", "fov", fov)
 	config.set_value("video", "brightness", brightness)
 	config.set_value("video", "show_fps", show_fps)
+	config.set_value("audio", "output_device", output_device)
+	config.set_value("accessibility", "subtitles_enabled", subtitles_enabled)
+	config.set_value("accessibility", "subtitle_size", subtitle_size)
+	config.set_value("accessibility", "color_mode", color_mode)
+	config.set_value("accessibility", "reduced_horror_effects", reduced_horror_effects)
 	for bus: StringName in volumes:
 		config.set_value("audio", String(bus), volumes[bus])
 	config.set_value("controls", "mouse_sensitivity", mouse_sensitivity)
@@ -254,6 +273,23 @@ func look_scale(aiming: bool) -> float:
 	return mouse_sensitivity * (ads_sensitivity if aiming else 1.0)
 
 
+## Semantic HUD colours keep meaning distinct when red/green discrimination is difficult.
+func indicator_color(kind: StringName) -> Color:
+	match color_mode:
+		1:
+			match kind:
+				&"danger": return Color(1.0, 0.61, 0.20)
+				&"success": return Color(0.35, 0.73, 1.0)
+		2:
+			match kind:
+				&"danger": return Color(1.0, 0.83, 0.16)
+				&"success": return Color(0.20, 0.90, 1.0)
+	match kind:
+		&"danger": return Color(0.96, 0.22, 0.20)
+		&"success": return Color(0.55, 0.90, 0.55)
+	return Color.WHITE
+
+
 # --- Applying ---------------------------------------------------------------------------------
 
 func apply_all() -> void:
@@ -286,6 +322,10 @@ func _apply_display() -> void:
 
 
 func _apply_audio() -> void:
+	var available: PackedStringArray = AudioServer.get_output_device_list()
+	var selected_device: String = output_device if output_device in available else "Default"
+	if AudioServer.output_device != selected_device:
+		AudioServer.output_device = selected_device
 	for bus: StringName in volumes:
 		var index: int = AudioServer.get_bus_index(bus)
 		if index >= 0:

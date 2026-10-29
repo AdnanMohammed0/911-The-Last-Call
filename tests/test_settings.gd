@@ -8,6 +8,10 @@ func after_each() -> void:
 	GameSettings.set_value("brightness", 1.0)
 	GameSettings.set_value("mouse_sensitivity", 1.0)
 	GameSettings.set_value("ads_sensitivity", 0.7)
+	GameSettings.set_value("subtitles_enabled", true)
+	GameSettings.set_value("subtitle_size", 1)
+	GameSettings.set_value("color_mode", 0)
+	GameSettings.set_value("reduced_horror_effects", false)
 
 
 func _key(code: Key) -> InputEventKey:
@@ -80,7 +84,7 @@ func test_settings_menu_builds_all_tabs_and_closes() -> void:
 	var menu: SettingsMenu = SettingsMenu.new()
 	add_child_autofree(menu)
 	var tabs: TabContainer = menu.find_children("*", "TabContainer", true, false)[0] as TabContainer
-	assert_eq(tabs.get_tab_count(), 5, "General, Video, Audio, Voice, Controls")
+	assert_eq(tabs.get_tab_count(), 6, "General, Video, Audio, Voice, Controls, Accessibility")
 	assert_gt(menu._bind_buttons.size(), 15, "a rebind button per action")
 	watch_signals(menu)
 	menu.close()
@@ -97,3 +101,42 @@ func test_rebind_through_menu_capture() -> void:
 	menu._capture_binding(press)
 	assert_eq(GameSettings.binding_text(&"door_kick"), "B")
 	assert_eq(button.text, "B")
+
+
+func test_accessibility_options_change_status_colours_and_are_saved() -> void:
+	var original: Color = GameSettings.indicator_color(&"danger")
+	GameSettings.set_value("color_mode", 1)
+	assert_ne(GameSettings.indicator_color(&"danger"), original)
+	assert_ne(GameSettings.indicator_color(&"success"), GameSettings.indicator_color(&"danger"))
+	GameSettings.set_value("subtitle_size", 2)
+	GameSettings.set_value("reduced_horror_effects", true)
+	var config := ConfigFile.new()
+	assert_eq(config.load(GameSettings.PATH), OK)
+	var saved_color: int = config.get_value("accessibility", "color_mode")
+	var saved_size: int = config.get_value("accessibility", "subtitle_size")
+	var saved_reduction: bool = config.get_value("accessibility", "reduced_horror_effects")
+	assert_eq(saved_color, 1)
+	assert_eq(saved_size, 2)
+	assert_true(saved_reduction)
+
+
+func test_dialogue_subtitles_follow_setting_and_deduplicate_updates() -> void:
+	var captions := DialogueSubtitles.new()
+	add_child_autofree(captions)
+	EventBus.dialogue_node_changed.emit(&"opening", &"caller", "Someone is outside the window.", [])
+	assert_true(captions.visible)
+	assert_eq(captions._line.text, "Someone is outside the window.")
+	var first_timer: float = captions._seconds_left
+	EventBus.dialogue_node_changed.emit(&"opening", &"caller", "Someone is outside the window.", [])
+	assert_almost_eq(captions._seconds_left, first_timer, 0.01)
+	GameSettings.set_value("subtitle_size", 2)
+	assert_eq(captions._line.get_theme_font_size(&"font_size"), 28)
+	GameSettings.set_value("subtitles_enabled", false)
+	assert_false(captions.visible)
+
+
+func test_missing_audio_output_uses_system_default() -> void:
+	var original: String = GameSettings.output_device
+	GameSettings.set_value("output_device", "not-a-connected-output")
+	assert_eq(AudioServer.output_device, "Default")
+	GameSettings.set_value("output_device", original)

@@ -11,7 +11,7 @@ static var _dust_material: StandardMaterial3D
 static func muzzle_flash(parent: Node, at: Vector3) -> void:
 	var light: OmniLight3D = OmniLight3D.new()
 	light.light_color = Color(1.0, 0.72, 0.38)
-	light.light_energy = 3.5
+	light.light_energy = 0.8 if GameSettings.reduced_horror_effects else 3.5
 	light.omni_range = 6.0
 	light.shadow_enabled = false
 	parent.add_child(light)
@@ -29,6 +29,7 @@ static func muzzle_flash(parent: Node, at: Vector3) -> void:
 		_flash_material.albedo_texture = _radial_texture(Color(1.0, 0.95, 0.8), Color(1.0, 0.55, 0.15, 0.0))
 	quad.material = _flash_material
 	sprite.mesh = quad
+	sprite.transparency = 0.7 if GameSettings.reduced_horror_effects else 0.0
 	sprite.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	sprite.rotation.z = randf() * TAU
 	parent.add_child(sprite)

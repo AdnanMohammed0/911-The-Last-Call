@@ -178,7 +178,7 @@ func _show_banner(title: String, subtitle: String) -> void:
 
 
 func _on_xp_gained(amount: int, reason: String) -> void:
-	var label: Label = _label(_feed, 17, XP_GAIN if amount >= 0 else XP_LOSS)
+	var label: Label = _label(_feed, 17, GameSettings.indicator_color(&"success" if amount >= 0 else &"danger"))
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	label.text = "%+d XP  ·  %s" % [amount, reason]
 	var tween: Tween = label.create_tween()

@@ -54,6 +54,15 @@ func _process(delta: float) -> void:
 	var target: Vector3 = Vector3(0.4, 0.9, 0.0)
 	_camera.position = target + Vector3(sin(angle) * radius, 1.35 + sin(_time * 0.11) * 0.15, cos(angle) * radius)
 	_camera.look_at(target, Vector3.UP)
+	if GameSettings.reduced_horror_effects:
+		for light: OmniLight3D in _red:
+			light.light_energy = 1.4
+		for light: OmniLight3D in _blue:
+			light.light_energy = 1.6
+		if _bar_red != null:
+			_bar_red.emission_energy_multiplier = 1.0
+			_bar_blue.emission_energy_multiplier = 1.0
+		return
 	# Light bar: fast alternating double-flash.
 	var cycle: float = fmod(_time * 1.6, 1.0)
 	var red_on: bool = (cycle < 0.12) or (cycle > 0.2 and cycle < 0.32)

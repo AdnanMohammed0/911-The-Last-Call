@@ -108,13 +108,13 @@ func _process(_delta: float) -> void:
 		_timestamp.text = Time.get_datetime_string_from_system(false, true).replace("T", "  ")
 	if player == null or not is_instance_valid(player):
 		return
-	var strength: float = sanity_intensity(player.sanity)
+	var strength: float = 0.0 if GameSettings.reduced_horror_effects else sanity_intensity(player.sanity)
 	_sanity_overlay.visible = strength > 0.005
 	if absf(strength - _last_intensity) > 0.005:
 		_last_intensity = strength
 		(_sanity_overlay.material as ShaderMaterial).set_shader_parameter(&"intensity", strength)
 		_post_material.set_shader_parameter(&"sanity_strength", strength)
-	_post_process.visible = post_process_enabled
+	_post_process.visible = post_process_enabled and not GameSettings.reduced_horror_effects
 
 
 func _update_visibility() -> void:

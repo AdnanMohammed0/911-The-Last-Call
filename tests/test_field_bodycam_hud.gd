@@ -5,10 +5,12 @@ const PLAYER_SCENE: PackedScene = preload("res://scenes/shared/player/player.tsc
 
 func before_each() -> void:
 	MissionDirector.reset()
+	GameSettings.set_value("reduced_horror_effects", false)
 
 
 func after_each() -> void:
 	MissionDirector.reset()
+	GameSettings.set_value("reduced_horror_effects", false)
 
 
 func test_bodycam_is_field_only_and_tracks_sanity() -> void:
@@ -73,3 +75,19 @@ func test_player_keeps_radio_and_existing_vitals() -> void:
 	assert_not_null(player.get_node_or_null("HUD/StatusHud"))
 	assert_not_null(player.get_node_or_null("HUD/HealthHud"))
 	assert_not_null(player.get_node_or_null("HUD/ObjectiveHud"))
+	assert_not_null(player.get_node_or_null("HUD/DialogueSubtitles"))
+
+
+func test_reduced_horror_effects_hide_distortion_but_keep_field_frame() -> void:
+	var player: Player = PLAYER_SCENE.instantiate() as Player
+	add_child_autofree(player)
+	var bodycam: FieldBodycamHud = player.get_node("HUD/FieldBodycamHud") as FieldBodycamHud
+	MissionDirector._sync_state(MissionDirector.State.DEPLOYED, MissionDirector.HIGHWAY,
+		&"call_meat_truck", &"ambush", 1.5, "Flank the gunmen")
+	player.sanity = 15.0
+	GameSettings.set_value("reduced_horror_effects", true)
+	bodycam._process(0.0)
+	assert_true(bodycam.visible)
+	assert_false(bodycam._post_process.visible)
+	assert_false(bodycam._sanity_overlay.visible)
+	assert_true(bodycam._frame.visible)

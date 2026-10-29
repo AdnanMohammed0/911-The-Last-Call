@@ -96,6 +96,11 @@
    "status": "done",
    "note": "ضبط خمس بصمات إضاءة للمهمات: ضباب حجمي بطول ولون وكثافة خاص بكل موقع، SDFGI مخفف للمستودع فقط وSSIL للمواقع الداخلية الأخرى، مع حصر الظلال في مصابيح المشهد الرئيسية وتلاشيها حسب المسافة. بقيت ظلال مصباح اللاعب مفعلة، وتتبع البصمات إعدادات جودة الرسوم الحالية. نجح 16 اختباراً مرتبطاً وفحص Godot.",
    "updated_at": "2026-10-30"
+  },
+  "P4-14": {
+   "status": "done",
+   "note": "إكمال شاشة الإعدادات بإخراج صوت قابل للاختيار، وترجمة نصية لحوار المكالمات خارج الكمبيوتر مع حجم قابل للضبط، وثلاثة أنماط ألوان لمؤشرات الخطر والنجاح، وخيار راحة بصرية يوقف تشويش Bodycam ووميض الضرر ويهدئ أضواء القائمة ووميض السلاح. حفظ الخيارات واسترجاعها، وترجمة عربية للواجهة. راجعنا الشكل بالعربية والإنجليزية بدقة 1280×720؛ نجحت 51 تجربة مرتبطة وفحص Godot.",
+   "updated_at": "2026-10-30"
   }
  },
  "log": [
@@ -955,6 +960,12 @@
    "tasks": ["P4-12"],
    "summary": "إضاءة مخصصة للمستودع وAspen Drive وFarmhouse وLake House والطريق السريع، مع ضباب مختلف لكل خريطة وخفض عدد الظلال المحلية والمؤثرات المتراكبة. بقيت إعدادات الجودة العامة ومصباح اللاعب متوافقة؛ نجاح 16 اختباراً مرتبطاً وفحص Godot.",
    "files": ["scenes/field/missions/mission_lighting.gd", "scenes/field/missions/warehouse_raid.tscn", "scenes/field/missions/aspen_drive.tscn", "scenes/field/missions/farmhouse.tscn", "scenes/field/missions/lake_house.tscn", "scenes/field/missions/abandoned_highway.tscn", "tools/level_kit/level_kit.gd", "tools/level_kit/build_warehouse_raid.gd", "tools/level_kit/build_aspen_drive.gd", "tools/level_kit/build_farmhouse.gd", "tools/level_kit/build_lake_house.gd", "tools/level_kit/build_highway.gd", "tests/test_mission_lighting.gd", "docs/data/progress/ali.json"]
+  },
+  {
+   "date": "2026-10-30",
+   "tasks": ["P4-14"],
+   "summary": "إكمال الإعدادات وإمكانية الوصول: اختيار مخرج الصوت، ترجمة حوار المكالمات وحجمها، ألوان مؤشرات بديلة، تخفيف التشويش والومضات، مع حفظ الخيارات وترجمة عربية. مراجعة بصرية بالعربية والإنجليزية ونجاح 51 اختباراً مرتبطاً وفحص Godot.",
+   "files": ["autoload/game_settings.gd", "ui/settings/settings_menu.gd", "ui/hud/dialogue_subtitles.gd", "ui/hud/field_bodycam_hud.gd", "ui/hud/status_hud.gd", "ui/hud/objective_hud.gd", "ui/menu/menu_backdrop.gd", "scenes/shared/player/player.tscn", "scenes/shared/weapons/weapon_fx.gd", "data/localization/ui_en.loc", "data/localization/ui_ar.loc", "tests/test_settings.gd", "tests/test_localization.gd", "tests/test_field_bodycam_hud.gd", "docs/data/progress/ali.json"]
   }
  ]
 }

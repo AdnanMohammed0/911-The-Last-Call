@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/dispatch/siege/station_siege.gd" id="1_siege"]
+[ext_resource type="Resource" path="res://data/siege/station_siege_plan.tres" id="2_plan"]
+[ext_resource type="Script" path="res://core/ai/mission_navigation.gd" id="3_nav"]
+[ext_resource type="Script" path="res://core/ai/ai_squad.gd" id="4_squad"]
+[ext_resource type="Script" path="res://core/ai/enemy_spawner.gd" id="5_spawner"]
+
+[node name="StationSiege" type="Node3D" node_paths=PackedStringArray("spawner", "navigation", "enemies_root", "entry_points", "defend_point", "squad", "emergency_lights")]
+script = ExtResource("1_siege")
+plan = ExtResource("2_plan")
+spawner = NodePath("EnemySpawner")
+navigation = NodePath("Navigation")
+enemies_root = NodePath("Enemies")
+entry_points = NodePath("EntryPoints")
+defend_point = NodePath("DefendPoint")
+squad = NodePath("Squad")
+emergency_lights = NodePath("EmergencyLights")
+nav_sources = Array[NodePath]([NodePath("../Geometry"), NodePath("../PerimeterFence"), NodePath("../StationInterior")])
+power_roots = Array[NodePath]([NodePath("../Geometry"), NodePath("../StationInterior")])
+doors_path = NodePath("../Doors")
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("3_nav")
+bake_on_ready = false
+source_group = &"station_siege_nav_source"
+
+[node name="Squad" type="Node" parent="."]
+script = ExtResource("4_squad")
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="EnemySpawner" type="MultiplayerSpawner" parent="."]
+spawn_path = NodePath("../Enemies")
+script = ExtResource("5_spawner")
+use_mission_difficulty = false
+
+[node name="EntryPoints" type="Node3D" parent="."]
+
+[node name="ParkingLot" type="Marker3D" parent="EntryPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.2, 1.2, -40)
+
+[node name="NorthYard" type="Marker3D" parent="EntryPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1.2, -50)
+
+[node name="EastLot" type="Marker3D" parent="EntryPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1.2, -40)
+
+[node name="SouthRoad" type="Marker3D" parent="EntryPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1.2, 0)
+
+[node name="DefendPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.2, -22.5)
+
+[node name="EmergencyLights" type="Node3D" parent="."]
+
+[node name="OperationsRoom" type="OmniLight3D" parent="EmergencyLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 3.4, -22.5)
+light_color = Color(1, 0.08, 0.05, 1)
+light_energy = 1.6
+omni_range = 9.0
+
+[node name="Lobby" type="OmniLight3D" parent="EmergencyLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 3.4, -24)
+light_color = Color(1, 0.08, 0.05, 1)
+light_energy = 1.4
+omni_range = 8.0
+
+[node name="Corridor" type="OmniLight3D" parent="EmergencyLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 3.4, -16)
+light_color = Color(1, 0.08, 0.05, 1)
+light_energy = 1.4
+omni_range = 8.0

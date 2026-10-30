@@ -156,6 +156,11 @@
       "status": "done",
       "note": "37 قاعدة عواقب (slice/followup/matrix) مولّدة بأداة ومُتحقق منها، مع trigger_payload وConsequenceValidator واختبارات للسلاسل كاملة",
       "updated_at": "2026-10-30"
+    },
+    "P4-09": {
+      "status": "testing",
+      "note": "الكود والاختبارات جاهزة (5 موجات، انقطاع كهرباء، HUD، قواعد النتيجة). باقي تجربة لعب حقيقية بلاعبين 2+ وموازنة الموجات؛ نسخ الأعداء للعميل مو مختبر تلقائياً",
+      "updated_at": "2026-10-30"
     }
   },
   "log": [
@@ -1078,6 +1083,26 @@
         "scenes/field/missions/highway_rpg_set_piece.gd",
         "tests/test_consequence_rules.gd",
         "docs/design/FLAG_SYSTEM.md"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "tasks": [
+        "P4-09"
+      ],
+      "summary": "وضع Station Siege: StationSiege يقطع الكهرباء والهواتف، يكسر أبواب المركز، يخبز الـ navmesh وقت الحصار، ويشغّل 5 موجات من 4 مداخل مع توجيه الأعداء لأقرب ضابط. نتيجة الصمود أو السقوط عبر 3 قواعد عواقب، وتوثيق بـ STATION_SIEGE.md، واختبارات محلية وENet.",
+      "files": [
+        "scenes/dispatch/siege/station_siege.gd",
+        "scenes/dispatch/siege/station_siege.tscn",
+        "data/siege/",
+        "data/consequences/rules/siege/",
+        "scenes/dispatch/operations_room.tscn",
+        "scenes/dispatch/dispatch_setup.gd",
+        "autoload/mission_director.gd",
+        "tools/consequences/build_slice_rules.gd",
+        "tests/test_station_siege.gd",
+        "tests/test_station_siege_network.gd",
+        "docs/design/STATION_SIEGE.md"
       ]
     }
   ]

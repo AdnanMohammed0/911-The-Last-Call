@@ -1,0 +1,58 @@
+[gd_resource type="Resource" script_class="SiegePlan" format=3]
+
+[ext_resource type="Script" path="res://data/siege/siege_plan.gd" id="1_plan"]
+[ext_resource type="Script" path="res://data/siege/siege_wave.gd" id="2_wave"]
+[ext_resource type="Script" path="res://data/ai/archetype_data.gd" id="7_archetype"]
+[ext_resource type="Resource" path="res://data/ai/archetypes/thug.tres" id="3_thug"]
+[ext_resource type="Resource" path="res://data/ai/archetypes/cultist_gunman.tres" id="4_gunman"]
+[ext_resource type="Resource" path="res://data/ai/archetypes/zealot.tres" id="5_zealot"]
+[ext_resource type="Resource" path="res://data/ai/archetypes/ambush_leader.tres" id="6_leader"]
+
+[sub_resource type="Resource" id="Wave_1"]
+script = ExtResource("2_wave")
+archetypes = Array[ExtResource("7_archetype")]([ExtResource("3_thug")])
+counts = Array[int]([4])
+intermission_sec = 45.0
+spawn_interval_sec = 2.0
+max_alive = 4
+announcement = "Cult thugs are coming over the fence. Hold the operations room."
+
+[sub_resource type="Resource" id="Wave_2"]
+script = ExtResource("2_wave")
+archetypes = Array[ExtResource("7_archetype")]([ExtResource("3_thug"), ExtResource("4_gunman")])
+counts = Array[int]([4, 2])
+spawn_interval_sec = 1.6
+max_alive = 6
+announcement = "Armed cultists in the parking lot."
+
+[sub_resource type="Resource" id="Wave_3"]
+script = ExtResource("2_wave")
+archetypes = Array[ExtResource("7_archetype")]([ExtResource("4_gunman"), ExtResource("5_zealot")])
+counts = Array[int]([4, 2])
+spawn_interval_sec = 1.4
+max_alive = 7
+difficulty = 1.1
+announcement = "Zealots are rushing the doors."
+
+[sub_resource type="Resource" id="Wave_4"]
+script = ExtResource("2_wave")
+archetypes = Array[ExtResource("7_archetype")]([ExtResource("4_gunman"), ExtResource("5_zealot"), ExtResource("3_thug")])
+counts = Array[int]([4, 3, 1])
+spawn_interval_sec = 1.2
+max_alive = 8
+difficulty = 1.15
+announcement = "They are coming from every side."
+
+[sub_resource type="Resource" id="Wave_5"]
+script = ExtResource("2_wave")
+archetypes = Array[ExtResource("7_archetype")]([ExtResource("6_leader"), ExtResource("4_gunman"), ExtResource("5_zealot")])
+counts = Array[int]([1, 4, 3])
+intermission_sec = 30.0
+spawn_interval_sec = 1.0
+max_alive = 8
+difficulty = 1.25
+announcement = "The cult lieutenant leads the final assault."
+
+[resource]
+script = ExtResource("1_plan")
+waves = Array[ExtResource("2_wave")]([SubResource("Wave_1"), SubResource("Wave_2"), SubResource("Wave_3"), SubResource("Wave_4"), SubResource("Wave_5")])

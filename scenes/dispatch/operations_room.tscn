@@ -50,6 +50,7 @@
 [ext_resource type="PackedScene" uid="uid://4i0wm4x4o5k3" path="res://assets/3D/growd_papers/ground_paper_2.glb" id="p30_tf3au"]
 [ext_resource type="PackedScene" uid="uid://xc6ap02thaf6" path="res://assets/3D/rug/paloma_large_wool_rug.glb" id="p31_6q21n"]
 [ext_resource type="Script" uid="uid://b5ub4o2stp2a8" path="res://scenes/dispatch/station_map.gd" id="station_map_script"]
+[ext_resource type="PackedScene" path="res://scenes/dispatch/siege/station_siege.tscn" id="station_siege_scene"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_36oms"]
 panorama = ExtResource("1_dih32")
@@ -917,3 +918,5 @@ transform = Transform3D(-0.0017860014, 0, 0.0077980896, 0, 0.008, 0, -0.00779808
 
 [node name="Sketchfab_Scene13" parent="." unique_id=248844518 instance=ExtResource("48_tcjey")]
 transform = Transform3D(0.00036487676, 0, 0.00093105587, 0, 0.001, 0, -0.00093105587, 0, 0.00036487676, 24.07704, 1.804402, -27.649752)
+
+[node name="StationSiege" parent="." unique_id=1730942211 instance=ExtResource("station_siege_scene")]

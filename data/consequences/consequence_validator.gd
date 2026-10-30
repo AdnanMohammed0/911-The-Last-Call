@@ -9,11 +9,12 @@ extends RefCounted
 const RULES_DIR: String = "res://data/consequences/rules"
 const TRAITS_DIR: String = "res://data/traits"
 const TARGETS: Array[StringName] = [&"", &"caller_peer", &"all_officers", &"random_officer"]
-## Events the game records by itself (FlagSystem's EventBus hooks, MissionDirector and field maps).
+## Events the game records by itself (FlagSystem's EventBus hooks, MissionDirector, field maps, StationSiege).
 const SYSTEM_EVENTS: Array[StringName] = [
 	&"call_classified", &"call_ignored", &"suspect_arrested", &"hostile_killed", &"officer_downed",
 	&"civilian_killed", &"mission_success", &"mission_failed", &"shift_completed", &"decoy_cruiser_destroyed",
-	&"decoy_cruiser_saved", &"remains_buried",
+	&"decoy_cruiser_saved", &"remains_buried", &"station_siege_started", &"siege_wave_cleared",
+	&"station_siege_survived", &"station_siege_fallen",
 ]
 
 

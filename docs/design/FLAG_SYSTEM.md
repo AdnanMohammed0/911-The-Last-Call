@@ -89,6 +89,7 @@ godot --headless --path . -s res://tools/consequences/build_slice_rules.gd
 | `slice/` | 19 | closet monster missed or dismissed → teen dead 45 min later (trust −15, guilt +20); rescue → `station_ambush_intel`; cut line dismissed → district blackout after 30 min; Ambush Leader arrested → `ambush_leader_arrested` next shift; decoy cruiser lost or saved; meat truck lead missed |
 | `followup/` | 7 | interrogation deal → `cult_hideout_location_known` now and `mission_unlocked_cult_hideout` next shift; refusal → `cult_aware_station`; hideout raided → `cult_network_dismantled` |
 | `matrix/` | 11 (repeatable) | genuine call ignored, dismissed or laughed off; prank met with force; civilian casualty; trap call counters; guilt ≥ 50 → `phantom_ringing` on every officer; 3 ambushes survived → `hardened` |
+| `siege/` | 3 | Station Siege outcomes (P4-09), see [STATION_SIEGE.md](STATION_SIEGE.md) |
 
 Meter deltas stack on top of MissionDirector's own (missed call −5 trust, wrong verdict −3, correct +2).
 Guilt (GDD §3.3) is the hidden team-wide numeric flag `guilt`; every rule that raises it spawns

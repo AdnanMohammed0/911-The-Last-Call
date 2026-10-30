@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_bouhf"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_xeh46"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_blwt2"]
+
+[sub_resource type="Resource" id="Resource_esofp"]
+script = ExtResource("2_xeh46")
+key = &"station_overrun"
+value = true
+
+[sub_resource type="Resource" id="Resource_ct5hi"]
+script = ExtResource("2_xeh46")
+kind = 1
+key = &"public_trust"
+value = -15
+
+[sub_resource type="Resource" id="Resource_bvc6o"]
+script = ExtResource("2_xeh46")
+kind = 1
+key = &"guilt"
+value = 15
+
+[sub_resource type="Resource" id="Resource_nuuxd"]
+script = ExtResource("2_xeh46")
+kind = 5
+key = &"guilt_raised"
+value = null
+
+[sub_resource type="Resource" id="Resource_vtpvv"]
+script = ExtResource("2_xeh46")
+kind = 2
+key = &"ptsd"
+value = null
+target = &"random_officer"
+
+[resource]
+script = ExtResource("3_blwt2")
+id = &"station_siege_overrun"
+description = "The cult overran Station 4: officers dragged out, the dispatch floor wrecked."
+trigger_event = &"station_siege_fallen"
+effects = Array[ExtResource("2_xeh46")]([SubResource("Resource_esofp"), SubResource("Resource_ct5hi"), SubResource("Resource_bvc6o"), SubResource("Resource_nuuxd"), SubResource("Resource_vtpvv")])

@@ -79,7 +79,8 @@ func _process(delta: float) -> void:
 ## Host: ring the next call early after a quiet spell, and roll over to the next shift when all are handled.
 func _pace_calls(delta: float) -> void:
 	var line_free: bool = CallDirector.current_state == CallDirector.CallState.IDLE
-	if not line_free or MissionDirector.state != MissionDirector.State.IDLE:
+	# Station Siege (P4-09): power and phones are cut while the cult storms the station.
+	if not line_free or MissionDirector.state != MissionDirector.State.IDLE or StationSiege.is_siege_running(get_tree()):
 		_quiet_seconds = 0.0
 		return
 	_quiet_seconds += delta

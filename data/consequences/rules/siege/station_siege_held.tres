@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="ConsequenceRule" format=3]
+
+[ext_resource type="Script" path="res://data/consequences/flag_condition.gd" id="1_aqann"]
+[ext_resource type="Script" path="res://data/consequences/flag_effect.gd" id="2_b6njx"]
+[ext_resource type="Script" path="res://data/consequences/consequence_rule.gd" id="3_0ji00"]
+
+[sub_resource type="Resource" id="Resource_31awh"]
+script = ExtResource("2_b6njx")
+key = &"station_defended"
+value = true
+
+[sub_resource type="Resource" id="Resource_46c2u"]
+script = ExtResource("2_b6njx")
+kind = 1
+key = &"public_trust"
+value = 10
+
+[sub_resource type="Resource" id="Resource_77hd8"]
+script = ExtResource("2_b6njx")
+kind = 1
+key = &"cult_awareness"
+value = -20
+
+[resource]
+script = ExtResource("3_0ji00")
+id = &"station_siege_held"
+description = "The team held Station 4 through every wave: the town hears the station stood firm."
+trigger_event = &"station_siege_survived"
+effects = Array[ExtResource("2_b6njx")]([SubResource("Resource_31awh"), SubResource("Resource_46c2u"), SubResource("Resource_77hd8")])

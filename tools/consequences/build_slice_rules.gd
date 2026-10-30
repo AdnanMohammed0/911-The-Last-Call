@@ -1,4 +1,4 @@
-## Builds the vertical-slice consequence rules (GAMEPLAY_MECHANICS §4, §5.7, §10; ARCHITECTURE §7.5) into
+## Builds the vertical-slice consequence rules (GAMEPLAY_MECHANICS §4, §5.7, §10, §11; ARCHITECTURE §7.5) into
 ## data/consequences/rules/<group>/<id>.tres, validating each with ConsequenceValidator first.
 ##   godot --headless --path . -s res://tools/consequences/build_slice_rules.gd
 ## Rule format: [id, description, trigger, trigger_payload, effects, options]
@@ -28,7 +28,8 @@ const TIMINGS: Dictionary = {
 
 
 func _initialize() -> void:
-	var groups: Dictionary = {"slice": _slice_rules(), "followup": _followup_rules(), "matrix": _matrix_rules()}
+	var groups: Dictionary = {"slice": _slice_rules(), "followup": _followup_rules(), "matrix": _matrix_rules(),
+		"siege": _siege_rules()}
 	var rules: Array[ConsequenceRule] = []
 	var group_of: Dictionary = {}
 	for group: String in groups:
@@ -167,6 +168,21 @@ func _matrix_rules() -> Array:
 			[["meter", &"ambushes_survived", 1], ["spawn", &"ambush_survived"]], repeat],
 		["hardened_officers", "Three ambushes survived: the team is Hardened.", &"ambush_survived", {},
 			[["trait", &"hardened", null, &"all_officers"]], {"conditions": [[&"ambushes_survived", "gte", 3]]}],
+	]
+
+
+# --- Station Siege (P4-09, §11): outcomes of the horde defence ---------------------------------------
+
+func _siege_rules() -> Array:
+	return [
+		["station_siege_held", "The team held Station 4 through every wave: the town hears the station stood firm.",
+			&"station_siege_survived", {}, [["set", &"station_defended", true], ["meter", &"public_trust", 10],
+				["meter", &"cult_awareness", -20]]],
+		["station_siege_overrun", "The cult overran Station 4: officers dragged out, the dispatch floor wrecked.",
+			&"station_siege_fallen", {}, [["set", &"station_overrun", true], ["meter", &"public_trust", -15],
+				["meter", &"guilt", 15], ["spawn", &"guilt_raised"], ["trait", &"ptsd", null, &"random_officer"]]],
+		["siege_wave_repelled", "Another siege wave was pushed back out of the station.", &"siege_wave_cleared", {},
+			[["meter", &"siege_waves_repelled", 1]], {"once": false}],
 	]
 
 

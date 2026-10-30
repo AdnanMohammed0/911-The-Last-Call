@@ -585,6 +585,12 @@ func _sync_shift(shift: int, handled: int, total: int, trust: int) -> void:
 	objective_changed.emit(objective_text)
 
 
+## Host: banner on every peer (Station Siege waves, set pieces).
+func announce(title: String, subtitle: String) -> void:
+	if multiplayer.is_server():
+		_announce.rpc(title, subtitle)
+
+
 @rpc("authority", "call_local", "reliable")
 func _announce(title: String, subtitle: String) -> void:
 	announcement.emit(title, subtitle)

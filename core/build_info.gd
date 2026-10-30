@@ -6,6 +6,7 @@ class_name BuildInfo
 extends RefCounted
 
 const FALLBACK_VERSION: String = "0.0.0-dev"
+const DEMO_VERSION: String = "0.9.0-demo.1"
 ## GitHub issue form used by the in-game reporter. Keeping the URL here means one place to change it.
 const GITHUB_ISSUES_URL: String = "https://github.com/AdnanMohammed0/911-The-Last-Call/issues/new?template=bug_report.yml"
 ## Community invite. It is intentionally empty until the server exists; the Discord button stays hidden
@@ -17,7 +18,13 @@ const DISCORD_INVITE_URL: String = ""
 static func version() -> String:
 	var raw: Variant = ProjectSettings.get_setting("application/config/version", FALLBACK_VERSION)
 	var value: String = str(raw).strip_edges()
-	return value if not value.is_empty() else FALLBACK_VERSION
+	return version_for_channel(channel(), value)
+
+
+static func version_for_channel(build_channel: String, project_version: String) -> String:
+	if build_channel == "demo":
+		return DEMO_VERSION
+	return project_version if not project_version.is_empty() else FALLBACK_VERSION
 
 
 ## Build channel: `demo`, `rc`, `release` or `dev` (editor / debug export).

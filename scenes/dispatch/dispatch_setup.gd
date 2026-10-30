@@ -114,6 +114,8 @@ func request_test_call() -> void:
 
 ## Host: ring the slice test call if the line is free. Returns true when it rang.
 func ring_test_call() -> bool:
+	if not test_call_enabled(OS.has_feature("demo")):
+		return false
 	if GameState.training_active:
 		return false
 	if not multiplayer.is_server():
@@ -126,6 +128,10 @@ func ring_test_call() -> bool:
 	CallDirector.current_state = 0
 	CallDirector.ring_call(call.id)
 	return CallDirector.current_state == 1
+
+
+static func test_call_enabled(is_demo: bool) -> bool:
+	return not is_demo
 
 
 @rpc("any_peer", "call_remote", "reliable")

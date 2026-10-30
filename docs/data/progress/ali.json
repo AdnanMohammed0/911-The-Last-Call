@@ -1,6 +1,6 @@
 {
  "member": "ali",
- "updated_at": "2026-10-30",
+ "updated_at": "2026-10-31",
  "tasks": {
   "P1-14": {
    "status": "done",
@@ -119,13 +119,13 @@
   },
   "P5-08": {
    "status": "testing",
-   "note": "إضافة تحكم يد كامل للحركة والكاميرا والتفاعل والقتال وواجهات الكمبيوتر وCAD، مع بقاء تعيينات اليد بعد تغيير أزرار الكيبورد. تدريب Training Night يعرض تعليمات اليد. إصلاح قص الإعدادات على 1280×800 وتقليل مؤثرات قائمة الجودة المنخفضة. نجح 35 اختباراً مرتبطاً وفحص بصري للقائمة والإعدادات؛ ينتظر اختبار الأداء والنصوص والتحكم على Steam Deck فعلي.",
-   "updated_at": "2026-10-30"
+   "note": "إضافة تحكم يد كامل للحركة والكاميرا والتفاعل والقتال وواجهات الكمبيوتر وCAD، مع بقاء تعيينات اليد بعد تغيير أزرار الكيبورد. تدريب Training Night يعرض تعليمات اليد. إصلاح قص الإعدادات على 1280×800 وتقليل مؤثرات قائمة الجودة المنخفضة. أضيف مرجع أزرار اليد بالعربية والإنجليزية داخل الإعدادات وفُحصت بصرياً شاشات Controls وStation OS وCAD وStationMart بدقة 1280×800. نجح 93 اختباراً مرتبطاً؛ ينتظر اختبار الأداء والتحكم على Steam Deck فعلي.",
+   "updated_at": "2026-10-31"
   },
   "P5-09": {
    "status": "testing",
-   "note": "مساهمة Ali في مهمة Mohamed: تفعيل وسم demo في DispatchSetup لاختيار 15 مكالمة demo فقط، مدخل Training Night من القائمة، ونهاية Shift 1 تعرض تقريراً وزر العودة للقائمة بدل نوبة ثانية. تحقق اختبارات المسار؛ ما زال تصدير Windows/Linux والتجربة على Steam وSteam Deck بانتظار مسؤول الإصدار.",
-   "updated_at": "2026-10-30"
+   "note": "مساهمة Ali في مهمة Mohamed: تفعيل وسم demo لاختيار 15 مكالمة demo فقط وTraining Night ثم تقرير Shift 1 والعودة للقائمة. أُغلق زر مكالمة الاختبار التي كانت تستدعي محتوى كاملاً، وفُصل رقم نسخة demo إلى 0.9.0-demo.1 في الواجهة والتقارير. بُنيت حزمة PCK من preset الحقيقي وفحصها المشغل: DEMO و15 مكالمة وتدريب، ونجح 93 اختباراً. الملف التنفيذي Windows/Linux ينتظر قوالب Godot 4.7.2، واختبار Steam وSteam Deck ينتظر مسؤول الإصدار.",
+   "updated_at": "2026-10-31"
   }
  },
  "log": [
@@ -1092,6 +1092,12 @@
    "tasks": ["P5-08", "P5-09"],
    "summary": "تهيئة التحكم والواجهات لدقة Steam Deck، وإصلاح ربط نسخة Next Fest بمكالمات demo ونهاية Shift 1. نجح 35 اختباراً مرتبطاً؛ اختبار العتاد والتصدير الفعلي ما زال مفتوحاً.",
    "files": ["ui/kit/gamepad_controls.gd", "autoload/game_settings.gd", "scenes/shared/player/player_input.gd", "scenes/shared/player/player.gd", "ui/station_os/station_os.gd", "ui/dispatch/dispatch_terminal.gd", "ui/hud/pause_menu.gd", "ui/hud/training_night.gd", "ui/settings/settings_menu.gd", "ui/menu/menu_backdrop.gd", "scenes/dispatch/dispatch_setup.gd", "scenes/boot/main_menu.gd", "scenes/aftermath/shift_report.gd", "tests/test_steam_deck_input.gd", "tests/test_demo_route.gd", "tests/test_settings.gd", "tools/marketing/capture_deck_ui.gd", "tools/marketing/capture_deck_ui.tscn", "docs/release/STEAM_DECK_DEMO_QA.md", "docs/data/progress/ali.json"]
+  },
+  {
+   "date": "2026-10-31",
+   "tasks": ["P5-08", "P5-09"],
+   "summary": "فحص واجهات Steam Deck بدقة 1280×800 مع مرجع أزرار اليد، وإغلاق مكالمة الاختبار من الـdemo وفصل رقم نسختها. حزمة PCK مبنية ومفحوصة بوسم DEMO و15 مكالمة؛ 93 اختباراً ناجحاً. ما زالت قوالب التصدير والعتاد مطلوبة للإنهاء.",
+   "files": ["ui/settings/settings_menu.gd", "data/localization/ui_en.loc", "data/localization/ui_ar.loc", "tools/marketing/capture_deck_ui.gd", "scenes/dispatch/dispatch_setup.gd", "ui/dispatch/dispatch_terminal.gd", "core/build_info.gd", "autoload/telemetry_manager.gd", "autoload/crash_reporter.gd", "tools/verify_demo_pack.gd", "tests/test_demo_route.gd", "tests/test_release_readiness.gd", "docs/release/STEAM_DECK_DEMO_QA.md", "docs/data/progress/ali.json"]
   }
  ]
 }

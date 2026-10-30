@@ -156,7 +156,7 @@ func record_event(event_type: StringName, payload: Dictionary = {}) -> void:
 		"shift": MissionDirector.shift_number,
 		"phase": String(GameState.phase_name(GameState.phase)),
 		"payload": payload,
-		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
+		"game_version": BuildInfo.version(),
 		"engine_version": Engine.get_version_info()["string"],
 		"platform": OS.get_name(),
 		"is_host": is_host,
@@ -179,7 +179,7 @@ func record_metric(metric_name: StringName, value: float, tags: Dictionary = {})
 		"timestamp": Time.get_unix_time_from_system(),
 		"session_id": session_data.session_id,
 		"shift": MissionDirector.shift_number,
-		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
+		"game_version": BuildInfo.version(),
 	}
 
 	_enqueue_event(event)
@@ -199,7 +199,7 @@ func record_error(error_type: String, message: String, context: Dictionary = {})
 		"context": context,
 		"timestamp": Time.get_unix_time_from_system(),
 		"session_id": session_data.session_id,
-		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
+		"game_version": BuildInfo.version(),
 	}
 
 	_enqueue_event(event, true)
@@ -219,7 +219,7 @@ func record_crash(crash_info: Dictionary) -> void:
 		"session_id": session_data.session_id,
 		"shift": MissionDirector.shift_number,
 		"phase": String(GameState.phase_name(GameState.phase)),
-		"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
+		"game_version": BuildInfo.version(),
 		"engine_version": Engine.get_version_info()["string"],
 		"platform": OS.get_name(),
 	}
@@ -355,7 +355,7 @@ func _send_batch(events: Array[Dictionary]) -> void:
 	var payload: Dictionary = {
 		"events": events,
 		"client_info": {
-			"game_version": ProjectSettings.get_setting("application/config/version", "unknown"),
+			"game_version": BuildInfo.version(),
 			"engine_version": Engine.get_version_info()["string"],
 			"platform": OS.get_name(),
 		}

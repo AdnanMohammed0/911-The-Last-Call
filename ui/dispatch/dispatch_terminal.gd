@@ -658,6 +658,7 @@ func _build() -> void:
 	_records.add_theme_font_size_override("normal_font_size", 15)
 	records_box.add_child(_records)
 	_test_button = _button("Start test call", func() -> void: test_call_requested.emit(), &"refresh", KitButton.Variant.GHOST)
+	_test_button.visible = not OS.has_feature("demo")
 	left.add_child(_test_button)
 
 	# Centre: transcript, replies, verdict.

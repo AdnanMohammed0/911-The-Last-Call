@@ -9,8 +9,9 @@ func _ready() -> void:
 func _capture() -> void:
 	var args: PackedStringArray = OS.get_cmdline_user_args()
 	var preset: String = args[0] if not args.is_empty() else "menu"
-	if preset not in ["menu", "settings"]:
-		push_error("Use -- menu or -- settings")
+	var settings_pages: PackedStringArray = PackedStringArray(["general", "video", "audio", "voice", "controls", "accessibility"])
+	if preset not in ["menu", "station_os", "station_shop", "station_bank", "station_inbox", "cad"] and not preset.begins_with("settings_"):
+		push_error("Use -- menu, settings_<page>, station_<app>, or cad")
 		get_tree().quit(1)
 		return
 	GameSettings.quality = GameSettings.Quality.LOW
@@ -24,8 +25,25 @@ func _capture() -> void:
 	get_tree().root.add_child(menu)
 	for frame: int in 25:
 		await get_tree().process_frame
-	if preset == "settings":
-		SettingsMenu.open_over(menu)
+	if preset.begins_with("settings_"):
+		var page: String = preset.trim_prefix("settings_")
+		if page not in settings_pages:
+			push_error("Unknown settings page: " + page)
+			get_tree().quit(1)
+			return
+		var settings: SettingsMenu = SettingsMenu.open_over(menu)
+		settings._rail_buttons[settings_pages.find(page)].pressed.emit()
+	elif preset.begins_with("station_"):
+		var station: StationOS = StationOS.new()
+		menu.add_child(station)
+		station.open()
+		if preset != "station_os":
+			station.open_app(StringName(preset.trim_prefix("station_")))
+	elif preset == "cad":
+		var terminal: DispatchTerminal = DispatchTerminal.new()
+		menu.add_child(terminal)
+		terminal.open()
+	if preset != "menu":
 		for frame: int in 12:
 			await get_tree().process_frame
 	await RenderingServer.frame_post_draw

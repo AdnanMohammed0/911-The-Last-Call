@@ -137,7 +137,10 @@ func _ready() -> void:
 	rail_box.add_child(UiKit.expand(Control.new(), false, true))
 	rail_box.add_child(UiKit.paragraph(tr("Changes apply instantly and are saved automatically."), 13, GameTheme.TEXT_FAINT))
 	_rail_buttons[0].pressed.emit()
-	back.grab_focus.call_deferred()
+	if not Input.get_connected_joypads().is_empty():
+		_rail_buttons[0].grab_focus.call_deferred()
+	else:
+		back.grab_focus.call_deferred()
 	Localization.language_changed.connect(_on_language_changed)
 
 
@@ -368,6 +371,21 @@ func _voice_tab(page: VBoxContainer) -> void:
 
 
 func _controls_tab(page: VBoxContainer) -> void:
+	_section(page, "Controller")
+	var pad_guide: Label = Label.new()
+	pad_guide.text = "\n".join([
+		tr("Left stick: move · Right stick: look · L3: sprint"),
+		tr("A: jump / confirm · B: crouch / back · X: interact · Y: reload"),
+		tr("LT: aim · RT: fire · LB: peek door · RB: kick door"),
+		tr("D-pad: flashlight / shout / swap / drop · Start: pause"),
+		tr("Back: voice chat · R3: radio")])
+	pad_guide.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	pad_guide.add_theme_font_size_override(&"font_size", 16)
+	pad_guide.add_theme_color_override(&"font_color", GameTheme.TEXT_DIM)
+	var guide_card: PanelContainer = PanelContainer.new()
+	guide_card.add_theme_stylebox_override(&"panel", UiKit.style(Color(1, 1, 1, 0.03), 8, 18, 12))
+	guide_card.add_child(pad_guide)
+	page.add_child(guide_card)
 	_section(page, "Mouse")
 	_row(page, "Sensitivity", _slider(0.1, 3.0, 0.05, GameSettings.mouse_sensitivity, "%.2f",
 		func(value: float) -> void: GameSettings.set_value("mouse_sensitivity", value)))
@@ -394,7 +412,8 @@ func _controls_tab(page: VBoxContainer) -> void:
 		_refresh_bindings())
 	var reset_row: HBoxContainer = HBoxContainer.new()
 	var spacer: Control = Control.new()
-	spacer.custom_minimum_size = Vector2(LABEL_WIDTH + 24, 0)
+	var spacer_width: float = 201.0 if get_viewport_rect().size.x < 1500.0 else LABEL_WIDTH + 24.0
+	spacer.custom_minimum_size = Vector2(spacer_width, 0)
 	reset_row.add_child(spacer)
 	reset_row.add_child(reset)
 	page.add_child(reset_row)

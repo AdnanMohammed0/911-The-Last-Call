@@ -3,6 +3,11 @@
 extends GutTest
 
 
+func test_demo_has_separate_version_from_release_candidate() -> void:
+	assert_eq(BuildInfo.version_for_channel("demo", "1.0.0-rc.1"), "0.9.0-demo.1")
+	assert_eq(BuildInfo.version_for_channel("rc", "1.0.0-rc.1"), "1.0.0-rc.1")
+
+
 # --- Build identity ------------------------------------------------------------------------------
 
 func test_version_is_set_and_semver_shaped() -> void:

@@ -23,6 +23,7 @@
 [ext_resource type="PackedScene" uid="uid://cteucciu27bso" path="res://assets/3D/stuff/trash_can(1).glb" id="18_he4v7"]
 [ext_resource type="PackedScene" uid="uid://bue2ejyyrhogm" path="res://assets/3D/paintings/vintage_framed_world_map.glb" id="19_tf3au"]
 [ext_resource type="PackedScene" path="res://scenes/dispatch/dispatch_setup.tscn" id="20_004x1"]
+[ext_resource type="Script" path="res://ui/hud/training_night.gd" id="training_night"]
 [ext_resource type="Script" uid="uid://bv3o6hji4fpgf" path="res://scenes/dispatch/station/station_furniture.gd" id="21_rgo0w"]
 [ext_resource type="PackedScene" uid="uid://dcswx18534jve" path="res://assets/3D/phone/office_phone.glb" id="23_ipksy"]
 [ext_resource type="PackedScene" uid="uid://bjjf1cpw3kr35" path="res://assets/3D/lockers/box_for_documents_or_other_papers..glb" id="25_kmh1s"]
@@ -802,6 +803,9 @@ script = ExtResource("17_cfby5")
 spawn_points = NodePath("../SpawnPoints")
 
 [node name="DispatchSetup" parent="." unique_id=233124478 instance=ExtResource("20_004x1")]
+
+[node name="TrainingNight" type="CanvasLayer" parent="."]
+script = ExtResource("training_night")
 
 [node name="StationFurniture" type="Node3D" parent="." unique_id=938459686]
 script = ExtResource("21_rgo0w")

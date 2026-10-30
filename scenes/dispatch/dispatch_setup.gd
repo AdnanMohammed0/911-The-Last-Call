@@ -7,6 +7,7 @@ class_name DispatchSetup
 extends Node3D
 
 const TEST_CALL: String = "res://data/calls/slice/call_closet_monster.tres"
+const TRAINING_CALL: String = "res://data/training/training_call.tres"
 
 ## Seconds after the room loads before the host rings the test call (0 = never automatically).
 @export var auto_test_call_delay: float = 0.0
@@ -24,10 +25,15 @@ var _shift_done: bool = false
 
 
 func _ready() -> void:
-	for path: String in CallValidator._find_resources(CallValidator.CALLS_DIR):
-		var call: CallData = load(path) as CallData
-		if CallValidator.is_playable(call):
-			CallDirector.register_call(call)
+	if GameState.training_active:
+		var training: CallData = load(TRAINING_CALL) as CallData
+		if CallValidator.is_playable(training):
+			CallDirector.register_call(training)
+	else:
+		for path: String in CallValidator._find_resources(CallValidator.CALLS_DIR):
+			var call: CallData = load(path) as CallData
+			if CallValidator.is_playable(call):
+				CallDirector.register_call(call)
 	var terminal: DispatchTerminal = DispatchTerminal.find(get_tree())
 	if terminal == null:
 		terminal = get_node_or_null(^"TerminalLayer/DispatchTerminal") as DispatchTerminal
@@ -35,7 +41,10 @@ func _ready() -> void:
 		terminal.test_call_requested.connect(request_test_call)
 	if multiplayer.is_server():
 		CallDirector.start_shift()
-		queue_shift_calls()
+		if GameState.training_active:
+			MissionDirector.set_calls_total(1)
+		else:
+			queue_shift_calls()
 
 
 ## Host: queue every registered call that has not rung yet, earliest first.
@@ -57,7 +66,7 @@ func _process(delta: float) -> void:
 	if clock_label != null:
 		var minutes: int = CallDirector.shift_clock_minutes
 		clock_label.text = "%02d:%02d" % [minutes / 60, minutes % 60]
-	if multiplayer.is_server():
+	if multiplayer.is_server() and not GameState.training_active:
 		_pace_calls(delta)
 	if not multiplayer.is_server() or _auto_done or auto_test_call_delay <= 0.0:
 		return
@@ -99,6 +108,8 @@ func request_test_call() -> void:
 
 ## Host: ring the slice test call if the line is free. Returns true when it rang.
 func ring_test_call() -> bool:
+	if GameState.training_active:
+		return false
 	if not multiplayer.is_server():
 		return false
 	var state: int = CallDirector.current_state

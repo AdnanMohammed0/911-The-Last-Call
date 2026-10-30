@@ -40,6 +40,8 @@ const CULT_THRESHOLD_COUNTER_AMBUSH: int = 60     # counter-ambush calls
 const CULT_THRESHOLD_SIEGE: int = 90              # Station Siege triggered
 
 var phase: Phase = Phase.LOBBY
+## Local offline onboarding mode; never persisted or replicated.
+var training_active: bool = false
 ## Scene every peer should be in for the current phase (used to bring reconnecting players back).
 var current_scene_path: String = ""
 var shift_clock_minutes: int = SHIFT_START_MINUTES
@@ -95,6 +97,7 @@ func change_phase(new_phase: Phase, scene_path: String = "") -> void:
 
 func reset() -> void:
 	phase = Phase.LOBBY
+	training_active = false
 	current_scene_path = ""
 	shift_clock_minutes = SHIFT_START_MINUTES
 	public_trust = PUBLIC_TRUST_START

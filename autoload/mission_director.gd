@@ -268,6 +268,8 @@ func _finish(title: String, subtitle: String) -> void:
 # --- Calls, verdicts and the shift ------------------------------------------------------
 
 func _on_call_classified(call_id: StringName, verdict: StringName) -> void:
+	if GameState.training_active:
+		return
 	if not multiplayer.is_server():
 		return
 	var record: Dictionary = CallDirector.call_history.get(call_id, {})
@@ -285,6 +287,8 @@ func _on_call_classified(call_id: StringName, verdict: StringName) -> void:
 
 
 func _on_call_missed(_call_id: StringName) -> void:
+	if GameState.training_active:
+		return
 	if not multiplayer.is_server():
 		return
 	Career.award_team(XP_MISSED_CALL, "Missed 911 call")

@@ -32,6 +32,7 @@ var _name_edit: LineEdit
 var _host_nav_button: BrushButton
 var _join_nav_button: BrushButton
 var _station4_button: BrushButton
+var _training_button: BrushButton
 var _rejoin_button: BrushButton
 var _settings_button: BrushButton
 var _report_button: BrushButton
@@ -75,6 +76,7 @@ func _ready() -> void:
 	_sandbox_button.pressed.connect(_on_sandbox_pressed)
 	_door_sandbox_button.pressed.connect(_on_door_sandbox_pressed)
 	_station4_button.pressed.connect(_on_station4_pressed)
+	_training_button.pressed.connect(_on_training_pressed)
 	_ready_button.toggled.connect(NetManager.set_ready)
 	_start_button.pressed.connect(_on_start_pressed)
 	_rejoin_button.pressed.connect(_on_rejoin_pressed)
@@ -150,7 +152,7 @@ func _build() -> void:
 	_sidebar.add_child(column)
 	_logo = _build_logo()
 	column.add_child(_logo)
-	column.add_child(UiKit.spacer(54))
+	column.add_child(UiKit.spacer(38))
 	var views: Control = VBoxContainer.new()
 	views.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	views.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -162,7 +164,7 @@ func _build() -> void:
 
 	_lobby_view = _unique(_build_lobby(), "LobbyView", self)
 	add_child(_build_profile_chip())
-	for node: Node in [_host_nav_button, _join_nav_button, _station4_button, _rejoin_button, _settings_button,
+	for node: Node in [_host_nav_button, _join_nav_button, _station4_button, _training_button, _rejoin_button, _settings_button,
 			_sandbox_button, _door_sandbox_button, _status_label, _host_button, _back_from_host_btn, _address_edit,
 			_join_button, _back_from_join_btn, _internet_row, _internet_label, _copy_address_button, _roster_list,
 			_ready_button, _start_button, _leave_button, _name_edit]:
@@ -243,10 +245,11 @@ func _build_home() -> Control:
 	_host_nav_button = _brush(box, "Host a shift", "HostNavButton")
 	_join_nav_button = _brush(box, "Join a shift", "JoinNavButton")
 	_station4_button = _brush(box, "Station 4 · Offline", "Station4Button")
+	_training_button = _brush(box, "Training Night · Tutorial", "TrainingButton")
 	_settings_button = _brush(box, "Settings", "SettingsButton")
 	_report_button = _brush(box, tr("Report a bug"), "ReportBugButton")
 	_quit_button = _brush(box, "Quit", "QuitButton")
-	box.add_child(UiKit.spacer(26))
+	box.add_child(UiKit.spacer(12))
 	var dev: HBoxContainer = HBoxContainer.new()
 	dev.add_theme_constant_override(&"separation", 8)
 	box.add_child(dev)
@@ -608,6 +611,17 @@ func _on_door_sandbox_pressed() -> void:
 
 
 func _on_station4_pressed() -> void:
+	GameState.training_active = false
+	get_tree().change_scene_to_file(STATION4_SCENE)
+
+
+func _on_training_pressed() -> void:
+	if NetManager.is_online():
+		return
+	CallDirector.reset()
+	CallDirector.registered_calls.clear()
+	MissionDirector.reset()
+	GameState.training_active = true
 	get_tree().change_scene_to_file(STATION4_SCENE)
 
 
@@ -639,6 +653,7 @@ func _on_state_changed(new_state: NetManager.State) -> void:
 	_sandbox_button.disabled = not offline
 	_door_sandbox_button.disabled = not offline
 	_station4_button.disabled = not offline
+	_training_button.disabled = not offline
 	_rejoin_button.visible = offline and NetManager.has_rejoin_info()
 	_internet_row.visible = (new_state == NetManager.State.HOSTING)
 	if new_state != NetManager.State.HOSTING:

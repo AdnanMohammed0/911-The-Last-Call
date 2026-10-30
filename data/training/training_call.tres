@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="CallData" format=3]
+
+[ext_resource type="Script" path="res://data/dialogue/dialogue_node.gd" id="1"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_choice.gd" id="2"]
+[ext_resource type="Script" path="res://data/dialogue/dialogue_graph.gd" id="3"]
+[ext_resource type="Script" path="res://data/calls/call_data.gd" id="4"]
+
+[sub_resource type="Resource" id="Choice_check"]
+script = ExtResource("2")
+text = "Station 4 dispatch. Can you confirm your location?"
+next = &"confirmed"
+
+[sub_resource type="Resource" id="Node_start"]
+script = ExtResource("1")
+id = &"start"
+line = "This is the training line. I'm calling to check that your console and headset work."
+choices = Array[ExtResource("2")]([SubResource("Choice_check")])
+
+[sub_resource type="Resource" id="Choice_close"]
+script = ExtResource("2")
+text = "Understood. Closing the practice call."
+next = &"end"
+
+[sub_resource type="Resource" id="Node_confirmed"]
+script = ExtResource("1")
+id = &"confirmed"
+line = "Station 4. No emergency here, dispatcher. This is a drill; please mark it as a prank after the line closes."
+choices = Array[ExtResource("2")]([SubResource("Choice_close")])
+
+[sub_resource type="Resource" id="Node_end"]
+script = ExtResource("1")
+id = &"end"
+line = "Line check complete. Good work. (click)"
+
+[sub_resource type="Resource" id="Graph"]
+script = ExtResource("3")
+nodes = Array[ExtResource("1")]([SubResource("Node_start"), SubResource("Node_confirmed"), SubResource("Node_end")])
+
+[resource]
+script = ExtResource("4")
+id = &"training_line_check"
+title = "Training Line Check"
+truth = 0
+dialogue = SubResource("Graph")
+phone_number = "911-555-0000"
+caller_name = "Training Desk"
+caller_location_name = "Station 4"
+patience_seconds = 300.0
+ring_timeout_seconds = 120.0

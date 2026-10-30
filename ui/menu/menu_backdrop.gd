@@ -23,9 +23,11 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_viewport = SubViewport.new()
 	_viewport.own_world_3d = true
-	_viewport.msaa_3d = Viewport.MSAA_2X
-	_viewport.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA
-	_viewport.positional_shadow_atlas_size = 4096
+	var low: bool = GameSettings.quality == GameSettings.Quality.LOW
+	_viewport.msaa_3d = Viewport.MSAA_DISABLED if low else Viewport.MSAA_2X
+	if not low:
+		_viewport.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA
+	_viewport.positional_shadow_atlas_size = 2048 if low else 4096
 	add_child(_viewport)
 	if DisplayServer.get_name() == "headless":
 		return
@@ -85,17 +87,18 @@ func _build_environment() -> void:
 	env.ambient_light_energy = 0.5
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
 	env.tonemap_exposure = 1.1
-	env.glow_enabled = true
+	var full_effects: bool = GameSettings.quality > GameSettings.Quality.LOW
+	env.glow_enabled = full_effects
 	env.glow_intensity = 0.9
 	env.glow_bloom = 0.12
 	env.glow_hdr_threshold = 0.9
-	env.ssr_enabled = true
+	env.ssr_enabled = full_effects
 	env.ssr_max_steps = 48
-	env.ssao_enabled = true
+	env.ssao_enabled = full_effects
 	env.fog_enabled = true
 	env.fog_light_color = Color(0.08, 0.1, 0.16)
 	env.fog_density = 0.035
-	env.volumetric_fog_enabled = true
+	env.volumetric_fog_enabled = full_effects
 	env.volumetric_fog_density = 0.025
 	env.volumetric_fog_albedo = Color(0.7, 0.75, 0.85)
 	env.volumetric_fog_emission = Color(0.01, 0.012, 0.02)
@@ -109,7 +112,7 @@ func _build_environment() -> void:
 	moon.light_color = Color(0.45, 0.55, 0.8)
 	moon.light_energy = 0.25
 	moon.rotation_degrees = Vector3(-35, 140, 0)
-	moon.shadow_enabled = true
+	moon.shadow_enabled = GameSettings.quality > GameSettings.Quality.LOW
 	_world.add_child(moon)
 
 
@@ -254,7 +257,7 @@ func _build_vehicles() -> void:
 
 func _build_rain() -> void:
 	var rain: GPUParticles3D = GPUParticles3D.new()
-	rain.amount = RAIN_COUNT
+	rain.amount = 900 if GameSettings.quality == GameSettings.Quality.LOW else RAIN_COUNT
 	rain.lifetime = 1.2
 	rain.preprocess = 1.2
 	rain.visibility_aabb = AABB(Vector3(-14, -2, -14), Vector3(28, 16, 28))

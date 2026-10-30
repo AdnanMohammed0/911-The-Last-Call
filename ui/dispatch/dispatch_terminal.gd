@@ -96,6 +96,22 @@ func open() -> void:
 		_closed_player_input = player
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_refresh()
+	if not Input.get_connected_joypads().is_empty():
+		_focus_for_controller.call_deferred()
+
+
+func _focus_for_controller() -> void:
+	if not visible:
+		return
+	for child: Node in _choices.get_children():
+		var button: Button = child as Button
+		if button != null and not button.disabled:
+			button.grab_focus()
+			return
+	if _answer_button.visible and not _answer_button.disabled:
+		_answer_button.grab_focus()
+	else:
+		_hangup_button.grab_focus()
 
 
 func close() -> void:

@@ -41,7 +41,11 @@ func test_rebind_replaces_binding() -> void:
 	GameSettings.rebind(&"reload", _key(KEY_G))
 	assert_eq(GameSettings.binding_text(&"reload"), "G")
 	var events: Array[InputEvent] = InputMap.action_get_events(&"reload")
-	assert_eq(events.size(), 1)
+	var keyboard_count: int = 0
+	for event: InputEvent in events:
+		if event is InputEventKey:
+			keyboard_count += 1
+	assert_eq(keyboard_count, 1)
 
 
 func test_rebind_steals_conflicting_input() -> void:

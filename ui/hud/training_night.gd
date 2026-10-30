@@ -112,11 +112,12 @@ func _set_step(next_step: Step) -> void:
 
 
 func _show_step() -> void:
+	var pad: bool = not Input.get_connected_joypads().is_empty()
 	var messages: Array[String] = [
-		"Move around Station 4 using WASD. Walk a few steps to get your bearings.",
-		"Find the dispatch computer beside the phone and use it with F.",
-		"Look at Station OS. Press Esc or Log off to stand up again.",
-		"The training line is ringing. Go to the desk phone and answer with F.",
+		"Move around Station 4 with the left stick." if pad else "Move around Station 4 using WASD. Walk a few steps to get your bearings.",
+		"Find the dispatch computer beside the phone and use it with X." if pad else "Find the dispatch computer beside the phone and use it with F.",
+		"Look at Station OS. Press Start or Log off to stand up again." if pad else "Look at Station OS. Press Esc or Log off to stand up again.",
+		"The training line is ringing. Go to the desk phone and answer with X." if pad else "The training line is ringing. Go to the desk phone and answer with F.",
 		"Read the caller's message on CAD and choose a reply.",
 		"After the line closes, classify this drill as Prank on CAD.",
 		"Training complete. You're ready for a regular shift."

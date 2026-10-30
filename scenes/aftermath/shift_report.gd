@@ -16,6 +16,8 @@ var _flowchart_button: Button
 
 func _ready() -> void:
 	_build(MissionDirector.last_shift_report)
+	if OS.has_feature("demo"):
+		_continue_button.text = "DEMO COMPLETE  ·  MAIN MENU  →"
 	if GameState.phase != GameState.Phase.AFTERMATH:
 		_continue_button.disabled = true
 	elif not multiplayer.is_server():
@@ -101,7 +103,7 @@ func _build(report: Dictionary) -> void:
 
 	var footer: HBoxContainer = HBoxContainer.new()
 	page.add_child(footer)
-	var next_text: Label = _label("The next shift begins when the team leader continues.", 14, MUTED)
+	var next_text: Label = _label("Training Night and Shift 1 complete. Thanks for playing the demo." if OS.has_feature("demo") else "The next shift begins when the team leader continues.", 14, MUTED)
 	next_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	footer.add_child(next_text)
 	_flowchart_button = Button.new()
@@ -115,8 +117,21 @@ func _build(report: Dictionary) -> void:
 	_continue_button.add_theme_color_override("font_color", BG)
 	_continue_button.add_theme_stylebox_override("normal", _style(AMBER, AMBER))
 	_continue_button.add_theme_stylebox_override("hover", _style(Color("ffd07b"), Color("ffd07b")))
-	_continue_button.pressed.connect(MissionDirector.continue_after_report)
+	_continue_button.pressed.connect(_finish_demo if OS.has_feature("demo") else MissionDirector.continue_after_report)
 	footer.add_child(_continue_button)
+
+
+func _finish_demo() -> void:
+	if not multiplayer.is_server() or GameState.phase != GameState.Phase.AFTERMATH:
+		return
+	if NetManager.is_online():
+		NetManager.leave_to_menu()
+		return
+	CallDirector.reset()
+	CallDirector.registered_calls.clear()
+	MissionDirector.reset()
+	GameState.reset()
+	get_tree().change_scene_to_file("res://scenes/boot/main_menu.tscn")
 
 
 func _open_flowchart() -> void:

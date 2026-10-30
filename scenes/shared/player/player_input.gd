@@ -103,7 +103,9 @@ func sample() -> void:
 
 
 ## Returns the mouse movement accumulated since the last call and resets it.
-func consume_look() -> Vector2:
-	var delta: Vector2 = _look_delta
+func consume_look(delta: float = 0.0) -> Vector2:
+	var look: Vector2 = _look_delta
 	_look_delta = Vector2.ZERO
-	return delta
+	if enabled and delta > 0.0:
+		look += Input.get_vector(&"look_left", &"look_right", &"look_up", &"look_down") * GamepadControls.LOOK_PIXELS_PER_SECOND * delta
+	return look

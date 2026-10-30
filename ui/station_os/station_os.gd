@@ -133,6 +133,10 @@ func open() -> void:
 		_closed_player_input = player
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_refresh_apps()
+	if not Input.get_connected_joypads().is_empty() and _desktop.get_child_count() > 0:
+		var first_icon: Control = _desktop.get_child(0) as Control
+		if first_icon != null:
+			first_icon.grab_focus.call_deferred()
 	READABILITY.enlarge_text(self)
 	if is_inside_tree() and DisplayServer.get_name() != "headless":
 		modulate.a = 0.0
@@ -382,7 +386,7 @@ func _caption_button(icon_name: StringName, callback: Callable, danger: bool) ->
 	var button: KitButton = KitButton.make("", icon_name, KitButton.Variant.GHOST, callback)
 	button.icon_size = 14.0
 	button.custom_minimum_size = Vector2(46, 32)
-	button.focus_mode = Control.FOCUS_NONE
+	button.focus_mode = Control.FOCUS_ALL
 	if danger:
 		button.mouse_entered.connect(func() -> void:
 			button.add_theme_stylebox_override(&"hover", UiKit.style(Color(0.9, 0.17, 0.14), 6, 0, 0)))
@@ -1258,7 +1262,7 @@ func _build_taskbar() -> void:
 	bell.icon_size = 15.0
 	bell.custom_minimum_size = Vector2(36, 36)
 	bell.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	bell.focus_mode = Control.FOCUS_NONE
+	bell.focus_mode = Control.FOCUS_ALL
 	tray.add_child(bell)
 	# Left: weather-style widget with the station status.
 	var widget: HBoxContainer = HBoxContainer.new()
@@ -1355,7 +1359,7 @@ func _build_start_menu() -> void:
 	footer_row.add_child(name_label)
 	var power: KitButton = KitButton.make("Log off", &"power", KitButton.Variant.GHOST, close)
 	power.icon_size = 16.0
-	power.focus_mode = Control.FOCUS_NONE
+	power.focus_mode = Control.FOCUS_ALL
 	footer_row.add_child(power)
 	_start_menu.resized.connect(_place_start_menu)
 	resized.connect(_place_start_menu)
@@ -1431,11 +1435,12 @@ class TaskbarButton:
 
 	func _ready() -> void:
 		flat = true
-		focus_mode = Control.FOCUS_NONE
+		focus_mode = Control.FOCUS_ALL
 		custom_minimum_size = Vector2(44, 44)
 		size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		for state: StringName in [&"normal", &"pressed", &"focus", &"disabled"]:
 			add_theme_stylebox_override(state, StyleBoxEmpty.new())
+		add_theme_stylebox_override(&"focus", UiKit.style(Color(0.22, 0.52, 0.72, 0.22), 6, 0, 0, Color(0.4, 0.8, 1.0), 2))
 		add_theme_stylebox_override(&"hover", UiKit.style(Color(1, 1, 1, 0.08), 6, 0, 0))
 		add_theme_stylebox_override(&"hover_pressed", UiKit.style(Color(1, 1, 1, 0.05), 6, 0, 0))
 
@@ -1469,11 +1474,12 @@ class DesktopIcon:
 
 	func _ready() -> void:
 		flat = true
-		focus_mode = Control.FOCUS_NONE
+		focus_mode = Control.FOCUS_ALL
 		custom_minimum_size = Vector2(96, 96)
 		size = custom_minimum_size
 		for state: StringName in [&"normal", &"pressed", &"focus", &"disabled"]:
 			add_theme_stylebox_override(state, StyleBoxEmpty.new())
+		add_theme_stylebox_override(&"focus", UiKit.style(Color(0.22, 0.52, 0.72, 0.22), 6, 0, 0, Color(0.4, 0.8, 1.0), 2))
 		add_theme_stylebox_override(&"hover", UiKit.style(Color(1, 1, 1, 0.1), 6, 0, 0, Color(1, 1, 1, 0.15), 1))
 		mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 

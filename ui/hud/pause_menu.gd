@@ -164,6 +164,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if player == null or not player.is_multiplayer_authority():
 		return
 	if event.is_action_pressed(&"ui_cancel"):
+		var joy: InputEventJoypadButton = event as InputEventJoypadButton
+		if joy != null and joy.button_index != JOY_BUTTON_START and not visible:
+			return
 		if not visible and not get_tree().get_nodes_in_group(DispatchTerminal.MODAL_GROUP).is_empty():
 			return
 		if visible:

@@ -35,6 +35,7 @@ static func open_over(parent: Node) -> SettingsMenu:
 
 
 func _ready() -> void:
+	var compact: bool = get_viewport_rect().size.x < 1500.0
 	add_to_group(DispatchTerminal.MODAL_GROUP)
 	theme = GameSettings.ui_theme
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -54,9 +55,9 @@ func _ready() -> void:
 	var margin: MarginContainer = MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for side: String in ["left", "right"]:
-		margin.add_theme_constant_override("margin_" + side, 150)
+		margin.add_theme_constant_override("margin_" + side, 24 if compact else 150)
 	for side: String in ["top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 70)
+		margin.add_theme_constant_override("margin_" + side, 24 if compact else 70)
 	add_child(margin)
 	var panel: PanelContainer = UiKit.glass(Color(0.03, 0.034, 0.044), 16, 0, 0, 0.82, 3.5)
 	margin.add_child(panel)
@@ -72,7 +73,7 @@ func _ready() -> void:
 	rail_style.border_color = Color(1, 1, 1, 0.06)
 	rail_style.border_width_right = 1
 	rail.add_theme_stylebox_override(&"panel", rail_style)
-	rail.custom_minimum_size = Vector2(270, 0)
+	rail.custom_minimum_size = Vector2(220 if compact else 270, 0)
 	split.add_child(rail)
 	var rail_box: VBoxContainer = VBoxContainer.new()
 	rail_box.add_theme_constant_override(&"separation", 6)
@@ -84,7 +85,7 @@ func _ready() -> void:
 	var content: VBoxContainer = VBoxContainer.new()
 	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	content.add_theme_constant_override(&"separation", 14)
-	split.add_child(UiKit.margin(content, 40, 30, 40, 30))
+	split.add_child(UiKit.margin(content, 20 if compact else 40, 24 if compact else 30, 20 if compact else 40, 24 if compact else 30))
 	(content.get_parent() as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var header: HBoxContainer = HBoxContainer.new()
 	content.add_child(header)
@@ -197,17 +198,22 @@ func _page(tabs: TabContainer, page_name: String) -> VBoxContainer:
 
 
 func _row(parent: Container, text: String, control: Control, hint: String = "") -> void:
+	var compact: bool = get_viewport_rect().size.x < 1500.0
 	var card: PanelContainer = PanelContainer.new()
 	card.add_theme_stylebox_override(&"panel", UiKit.style(Color(1, 1, 1, 0.03), 8, 18, 10))
 	parent.add_child(card)
+	var body: VBoxContainer = VBoxContainer.new()
+	card.add_child(body)
 	var row: HBoxContainer = HBoxContainer.new()
-	row.add_theme_constant_override(&"separation", 24)
-	card.add_child(row)
+	row.add_theme_constant_override(&"separation", 16 if compact else 24)
+	body.add_child(row)
 	var label: Label = UiKit.label(tr(text), 17, GameTheme.TEXT, &"medium")
-	label.custom_minimum_size = Vector2(LABEL_WIDTH, 0)
+	var label_width: float = 185.0 if compact else LABEL_WIDTH
+	label.custom_minimum_size = Vector2(label_width, 0)
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	row.add_child(label)
-	control.custom_minimum_size = Vector2(CONTROL_WIDTH, control.custom_minimum_size.y)
+	var control_width: float = 280.0 if compact else CONTROL_WIDTH
+	control.custom_minimum_size = Vector2(control_width, control.custom_minimum_size.y)
 	row.add_child(control)
 	if hint != "":
 		var hint_label: Label = Label.new()
@@ -215,7 +221,11 @@ func _row(parent: Container, text: String, control: Control, hint: String = "") 
 		hint_label.add_theme_color_override(&"font_color", GameTheme.TEXT_DIM)
 		hint_label.add_theme_font_size_override(&"font_size", 15)
 		hint_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		row.add_child(hint_label)
+		if compact:
+			hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			body.add_child(hint_label)
+		else:
+			row.add_child(hint_label)
 
 
 func _section(parent: Container, text: String) -> void:

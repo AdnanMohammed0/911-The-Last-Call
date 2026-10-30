@@ -65,6 +65,13 @@ var _cards: Array[ClassCard] = []
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_build()
+	if OS.has_feature("demo"):
+		_training_button.text = "BEGIN DEMO · TRAINING NIGHT"
+		_station4_button.hide()
+		_rejoin_button.hide()
+		_sandbox_button.hide()
+		_door_sandbox_button.hide()
+		(_sandbox_button.get_parent() as Control).hide()
 
 	_host_nav_button.pressed.connect(func() -> void: _show_view(_host_view))
 	_join_nav_button.pressed.connect(func() -> void: _show_view(_join_view))
@@ -543,7 +550,7 @@ func _show_view(view_to_show: Control) -> void:
 	if _esc_hint != null:
 		_esc_hint.visible = view_to_show == _host_view or view_to_show == _join_view
 	if view_to_show == _home_view and is_inside_tree():
-		var first: Button = _rejoin_button if _rejoin_button.visible else _host_nav_button
+		var first: Button = _training_button if OS.has_feature("demo") else (_rejoin_button if _rejoin_button.visible else _host_nav_button)
 		if first != null and DisplayServer.get_name() != "headless":
 			first.grab_focus.call_deferred()
 	elif view_to_show == _join_view and is_inside_tree():

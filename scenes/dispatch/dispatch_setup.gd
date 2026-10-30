@@ -8,6 +8,7 @@ extends Node3D
 
 const TEST_CALL: String = "res://data/calls/slice/call_closet_monster.tres"
 const TRAINING_CALL: String = "res://data/training/training_call.tres"
+const DEMO_CALLS_DIR: String = "res://data/calls/demo"
 
 ## Seconds after the room loads before the host rings the test call (0 = never automatically).
 @export var auto_test_call_delay: float = 0.0
@@ -30,7 +31,7 @@ func _ready() -> void:
 		if CallValidator.is_playable(training):
 			CallDirector.register_call(training)
 	else:
-		for path: String in CallValidator._find_resources(CallValidator.CALLS_DIR):
+		for path: String in CallValidator._find_resources(calls_dir_for_build(OS.has_feature("demo"))):
 			var call: CallData = load(path) as CallData
 			if CallValidator.is_playable(call):
 				CallDirector.register_call(call)
@@ -45,6 +46,10 @@ func _ready() -> void:
 			MissionDirector.set_calls_total(1)
 		else:
 			queue_shift_calls()
+
+
+static func calls_dir_for_build(is_demo: bool) -> String:
+	return DEMO_CALLS_DIR if is_demo else CallValidator.CALLS_DIR
 
 
 ## Host: queue every registered call that has not rung yet, earliest first.

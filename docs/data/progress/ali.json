@@ -116,6 +116,16 @@
    "status": "done",
    "note": "إنتاج key art أفقي وعمودي لمشهد الاتصال الليلي، مع سكربتات قابلة لإعادة بناء الكبسولات والتقاط صور Godot، وتريلر 18 ثانية يتضمن 15 ثانية تسجيل داخل المحرك ويختم بصورة اللعبة. الملف H.264/AAC، 1080p، 30fps وستيريو 48kHz؛ تمت مراجعة ست لقطات من الفيديو.",
    "updated_at": "2026-10-30"
+  },
+  "P5-08": {
+   "status": "testing",
+   "note": "إضافة تحكم يد كامل للحركة والكاميرا والتفاعل والقتال وواجهات الكمبيوتر وCAD، مع بقاء تعيينات اليد بعد تغيير أزرار الكيبورد. تدريب Training Night يعرض تعليمات اليد. إصلاح قص الإعدادات على 1280×800 وتقليل مؤثرات قائمة الجودة المنخفضة. نجح 35 اختباراً مرتبطاً وفحص بصري للقائمة والإعدادات؛ ينتظر اختبار الأداء والنصوص والتحكم على Steam Deck فعلي.",
+   "updated_at": "2026-10-30"
+  },
+  "P5-09": {
+   "status": "testing",
+   "note": "مساهمة Ali في مهمة Mohamed: تفعيل وسم demo في DispatchSetup لاختيار 15 مكالمة demo فقط، مدخل Training Night من القائمة، ونهاية Shift 1 تعرض تقريراً وزر العودة للقائمة بدل نوبة ثانية. تحقق اختبارات المسار؛ ما زال تصدير Windows/Linux والتجربة على Steam وSteam Deck بانتظار مسؤول الإصدار.",
+   "updated_at": "2026-10-30"
   }
  },
  "log": [
@@ -1076,6 +1086,12 @@
    "tasks": ["P5-04", "P5-05"],
    "summary": "أصول صفحة Steam وخمس لقطات لعب، نص إنجليزي وعربي، key art بنسختين، وتريلر H.264/AAC من تسجيل Godot مع توثيق إعادة البناء.",
    "files": ["marketing/steam/", "tools/marketing/build_capsules.py", "tools/marketing/build_trailer.py", "tools/marketing/capture_store.gd", "tools/marketing/capture_store.tscn", "docs/data/progress/ali.json"]
+  },
+  {
+   "date": "2026-10-30",
+   "tasks": ["P5-08", "P5-09"],
+   "summary": "تهيئة التحكم والواجهات لدقة Steam Deck، وإصلاح ربط نسخة Next Fest بمكالمات demo ونهاية Shift 1. نجح 35 اختباراً مرتبطاً؛ اختبار العتاد والتصدير الفعلي ما زال مفتوحاً.",
+   "files": ["ui/kit/gamepad_controls.gd", "autoload/game_settings.gd", "scenes/shared/player/player_input.gd", "scenes/shared/player/player.gd", "ui/station_os/station_os.gd", "ui/dispatch/dispatch_terminal.gd", "ui/hud/pause_menu.gd", "ui/hud/training_night.gd", "ui/settings/settings_menu.gd", "ui/menu/menu_backdrop.gd", "scenes/dispatch/dispatch_setup.gd", "scenes/boot/main_menu.gd", "scenes/aftermath/shift_report.gd", "tests/test_steam_deck_input.gd", "tests/test_demo_route.gd", "tests/test_settings.gd", "tools/marketing/capture_deck_ui.gd", "tools/marketing/capture_deck_ui.tscn", "docs/release/STEAM_DECK_DEMO_QA.md", "docs/data/progress/ali.json"]
   }
  ]
 }

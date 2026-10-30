@@ -105,6 +105,7 @@ func _ready() -> void:
 	for bus: StringName in AUDIO_BUSES:
 		volumes[bus] = 1.0
 	load_settings()
+	GamepadControls.install_defaults()
 	ui_theme = GameTheme.build()
 	if DisplayServer.get_name() != "headless":
 		get_tree().root.theme = ui_theme
@@ -276,7 +277,8 @@ func binding_text(action: StringName) -> String:
 		return "—"
 	var names: PackedStringArray = PackedStringArray()
 	for event: InputEvent in InputMap.action_get_events(action):
-		names.append(event_text(event))
+		if not (event is InputEventJoypadButton or event is InputEventJoypadMotion):
+			names.append(event_text(event))
 	return " / ".join(names) if not names.is_empty() else tr("Unbound")
 
 
@@ -314,7 +316,9 @@ func rebind(action: StringName, event: InputEvent) -> StringName:
 			if _same_input(existing, event):
 				InputMap.action_erase_event(other, existing)
 				stolen_from = other
-	InputMap.action_erase_events(action)
+	for existing: InputEvent in InputMap.action_get_events(action):
+		if (existing is InputEventJoypadButton or existing is InputEventJoypadMotion) == (event is InputEventJoypadButton or event is InputEventJoypadMotion):
+			InputMap.action_erase_event(action, existing)
 	InputMap.action_add_event(action, event)
 	save_settings()
 	changed.emit("keybinds")
@@ -326,6 +330,7 @@ func reset_keybinds() -> void:
 		InputMap.action_erase_events(action)
 		for event: InputEvent in _default_events[action]:
 			InputMap.action_add_event(action, event)
+	GamepadControls.install_defaults()
 	save_settings()
 	changed.emit("keybinds")
 
@@ -337,7 +342,15 @@ static func _same_input(a: InputEvent, b: InputEvent) -> bool:
 		return key_a.physical_keycode == key_b.physical_keycode and key_a.keycode == key_b.keycode
 	var mouse_a: InputEventMouseButton = a as InputEventMouseButton
 	var mouse_b: InputEventMouseButton = b as InputEventMouseButton
-	return mouse_a != null and mouse_b != null and mouse_a.button_index == mouse_b.button_index
+	if mouse_a != null and mouse_b != null:
+		return mouse_a.button_index == mouse_b.button_index
+	var joy_a: InputEventJoypadButton = a as InputEventJoypadButton
+	var joy_b: InputEventJoypadButton = b as InputEventJoypadButton
+	if joy_a != null and joy_b != null:
+		return joy_a.button_index == joy_b.button_index
+	var axis_a: InputEventJoypadMotion = a as InputEventJoypadMotion
+	var axis_b: InputEventJoypadMotion = b as InputEventJoypadMotion
+	return axis_a != null and axis_b != null and axis_a.axis == axis_b.axis and signf(axis_a.axis_value) == signf(axis_b.axis_value)
 
 
 # --- Look -------------------------------------------------------------------------------------

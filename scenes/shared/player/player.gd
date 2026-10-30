@@ -211,7 +211,7 @@ func _process(delta: float) -> void:
 		_update_body_pose(delta)
 		_emit_footstep_noise(delta)
 		return
-	var look: Vector2 = _input.consume_look()
+	var look: Vector2 = _input.consume_look(delta)
 	if look == Vector2.ZERO:
 		return
 	var sensitivity: float = mouse_sensitivity * GameSettings.look_scale(get_weapons().aiming)

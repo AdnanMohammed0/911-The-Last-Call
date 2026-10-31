@@ -102,6 +102,12 @@ func build_report() -> String:
 	lines.append("NET  %s  peer %d  players %d  phase %s  %d fps" % [
 		state_name, multiplayer.get_unique_id(), NetManager.roster.size(),
 		GameState.phase_name(GameState.phase), Engine.get_frames_per_second()])
+	if NetManager.transport == NetManager.Transport.STEAM:
+		lines.append("Steam lobby %d  relay network %s" % [NetManager.steam_lobby_id, NetManager.steam_relay_status()])
+		lines.append("Connections: %d  topology: via host" % multiplayer.get_peers().size())
+		lines.append("Direct/SDR route: inspect Steam networking logs")
+		lines.append("F3 to hide")
+		return "\n".join(lines)
 	if _connection() == null:
 		lines.append("(offline)   F3 to hide")
 		return "\n".join(lines)

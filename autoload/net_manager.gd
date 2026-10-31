@@ -214,6 +214,25 @@ func get_steam_api() -> Object:
 	return _steam
 
 
+## Steam's relay-network readiness, not the route chosen for an individual connection.
+func steam_relay_status() -> String:
+	if _steam == null or not _steam.has_method(&"getRelayNetworkStatus"):
+		return "unavailable"
+	return relay_availability_label(str(_steam.call(&"getRelayNetworkStatus")).to_int())
+
+
+static func relay_availability_label(code: int) -> String:
+	match code:
+		100: return "ready"
+		3: return "connecting"
+		2: return "waiting"
+		1: return "not started"
+		-10: return "retrying"
+		-100: return "connection lost"
+		-101: return "failed"
+		_: return "unknown"
+
+
 func host_steam_game(player_name: String) -> Error:
 	if state != State.OFFLINE:
 		return ERR_ALREADY_IN_USE
@@ -269,6 +288,9 @@ func _initialize_steam() -> void:
 	_steam.connect(&"lobby_created", _on_steam_lobby_created)
 	_steam.connect(&"lobby_joined", _on_steam_lobby_joined)
 	_steam.connect(&"join_requested", _on_steam_join_requested)
+	# Prewarm SteamNetworkingSockets' relay access before the first P2P connection.
+	if _steam.has_method(&"initRelayNetworkAccess"):
+		_steam.call(&"initRelayNetworkAccess")
 
 
 func _process(_delta: float) -> void:
@@ -344,6 +366,8 @@ func _check_steam_launch_invite() -> void:
 
 func _new_steam_peer() -> MultiplayerPeer:
 	var instance: Object = ClassDB.instantiate(&"SteamMultiplayerPeer")
+	if instance != null and "--netdebug" in OS.get_cmdline_user_args():
+		instance.set(&"debug_level", 2)
 	return instance as MultiplayerPeer
 
 

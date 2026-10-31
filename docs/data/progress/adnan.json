@@ -191,6 +191,11 @@
       "status": "testing",
       "note": "ربطت 4 إنجازات Steam وحضور Rich Presence وانضمام الأصدقاء عبر Steam ودعوة من قائمة الإيقاف؛ وثقت إعداد Steam Auto-Cloud لملفي career والاقتصاد وترجمة الحضور. 5 اختبارات محلية نجحت، لكن يحتاج App ID حقيقي وإضافة GodotSteam منشورة ولوحة Steamworks وحسابين لاختبار الإنجازات والحفظ السحابي والدعوات فعلياً.",
       "updated_at": "2026-11-01"
+    },
+    "P5-02": {
+      "status": "testing",
+      "note": "أضفت تهيئة مبكرة لشبكة Steam Relay، حالة جاهزيتها في F3 بدون خلطها مع مسار الاتصال الفعلي، وسجلات Steam التفصيلية بخيار --netdebug. وثقت مصفوفة اختبار NAT/CGNAT/Relay واستعادة الاتصال. 4 اختبارات محلية وفحص تحميل Godot نجحت؛ عبور NAT ومسار SDR ينتظران تجربة بحسابين وشبكتين مختلفتين وإضافة Steam الحقيقية.",
+      "updated_at": "2026-11-01"
     }
   },
   "log": [
@@ -1170,6 +1175,12 @@
       "tasks": ["P5-01"],
       "summary": "تكامل إنجازات Steam والحضور والانضمام للأصدقاء ودعوة من داخل اللعبة، مع إعداد Auto-Cloud موثق واختبارات وهمية ومحلية.",
       "files": ["autoload/steamworks_service.gd", "autoload/net_manager.gd", "ui/hud/pause_menu.gd", "project.godot", "marketing/steam/rich_presence.vdf", "docs/design/STEAM_RELEASE.md", "tests/test_steamworks_service.gd"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P5-02"],
+      "summary": "تهيئة Steam Relay وتشخيص الجاهزية داخل F3، مع مصفوفة اختبار مباشرة لشبكات NAT مختلفة وفصل واضح بين relay الخاص بالمضيف ومسار SDR.",
+      "files": ["autoload/net_manager.gd", "autoload/net_debug.gd", "tests/test_steam_transport.gd", "docs/design/STEAM_RELAY_VALIDATION.md"]
     }
   ]
 }

@@ -17,6 +17,7 @@
 [ext_resource type="Script" uid="uid://d2c1kss8feuyg" path="res://ui/hud/status_hud.gd" id="14_status"]
 [ext_resource type="Script" uid="uid://bbf5vd2umsrfs" path="res://ui/hud/field_bodycam_hud.gd" id="15_bodycam"]
 [ext_resource type="Script" path="res://scenes/shared/player/player_motion_view.gd" id="16_motion_view"]
+[ext_resource type="Script" path="res://scenes/shared/player/class_abilities.gd" id="17_abilities"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 resource_local_to_scene = true
@@ -190,6 +191,9 @@ script = ExtResource("12_weapons")
 
 [node name="PlayerInteractor" type="Node" parent="." unique_id=1835673496]
 script = ExtResource("3_interactor")
+
+[node name="ClassAbilities" type="Node" parent="."]
+script = ExtResource("17_abilities")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1596156894]
 

@@ -22,6 +22,8 @@ var _uses_remaining: int = 2
 
 func _ready() -> void:
 	_owner = get_parent() as Player
+	if _owner == null and get_parent() != null:
+		_owner = get_parent().get_parent() as Player
 
 
 func _physics_process(delta: float) -> void:

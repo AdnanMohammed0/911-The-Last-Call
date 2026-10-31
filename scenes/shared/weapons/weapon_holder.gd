@@ -185,6 +185,11 @@ func current_spread() -> float:
 	var class_data: ClassData = ClassCatalog.get_data(_player.class_id)
 	if class_data != null and class_data.aim_stability > 0.0:
 		spread /= class_data.aim_stability
+	var abilities: ClassAbilities = _player.get_node_or_null(^"ClassAbilities") as ClassAbilities
+	if abilities != null and Time.get_ticks_msec() < abilities.sedated_until_msec:
+		spread /= 0.9
+	if _player.class_id == &"medic" and SanitySystem.band_for(_player.sanity, _player.max_sanity) >= SanitySystem.Band.PANICKED:
+		spread *= 2.0
 	return spread
 
 

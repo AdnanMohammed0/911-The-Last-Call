@@ -227,6 +227,7 @@ func _physics_process(delta: float) -> void:
 	_update_body_pose(delta)
 	_emit_footstep_noise(delta)
 	_input.sample()
+	($ClassAbilities as ClassAbilities).sample_input()
 	_update_stance(delta)
 	_update_sprint_and_stamina(delta)
 	_update_movement(delta)
@@ -679,6 +680,8 @@ func _update_movement(delta: float) -> void:
 	elif is_sprinting:
 		speed = sprint_speed
 	speed *= move_speed_multiplier
+	if ($ClassAbilities as ClassAbilities).shield_raised:
+		speed *= 0.70
 	match _health.state:
 		HealthComponent.State.DOWNED:
 			speed = CRAWL_SPEED

@@ -94,8 +94,12 @@ static func zone_for_hit(player: Player, world_point: Vector3) -> HitZone:
 # --- Host API -----------------------------------------------------------------
 
 ## Host: deal damage. Returns the damage actually taken after zone multiplier and resistance.
-func apply_damage(amount: float, zone: HitZone = HitZone.TORSO, source_peer: int = 0) -> float:
+func apply_damage(amount: float, zone: HitZone = HitZone.TORSO, source_peer: int = 0, source_position: Vector3 = Vector3.INF) -> float:
 	if not multiplayer.is_server() or amount <= 0.0 or state == State.CRITICAL:
+		return 0.0
+	var abilities: ClassAbilities = _player.get_node_or_null(^"ClassAbilities") as ClassAbilities
+	if abilities != null and abilities.blocks_bullet(source_position):
+		abilities.absorb_bullet(amount * ZONE_MULTIPLIERS[zone])
 		return 0.0
 	var taken: float = amount * ZONE_MULTIPLIERS[zone] * (1.0 - damage_resistance)
 	if armor > 0.0 and zone != HitZone.HEAD and state == State.ALIVE:

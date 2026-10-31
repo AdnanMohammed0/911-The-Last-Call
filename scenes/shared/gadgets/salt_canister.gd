@@ -20,6 +20,8 @@ var _active_line: Node = null
 
 func _ready() -> void:
 	_owner = get_parent() as Player
+	if _owner == null and get_parent() != null:
+		_owner = get_parent().get_parent() as Player
 
 
 func _physics_process(delta: float) -> void:
@@ -46,7 +48,8 @@ func deploy() -> bool:
 		return false
 	
 	# Consume one salt canister
-	LoadoutManager.sell_gear(_owner.peer_id, &"salt_canister")
+	if not LoadoutManager.consume_gear(_owner.peer_id, &"salt_canister"):
+		return false
 	
 	var pos: Vector3 = global_position
 	var dir: Vector3 = -global_basis.z
@@ -79,7 +82,8 @@ func deploy() -> bool:
 func _create_salt_line(start: Vector3, end: Vector3) -> Node:
 	var line: Node3D = Node3D.new()
 	line.name = "SaltLine"
-	add_child(line)
+	var world_parent: Node = get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+	world_parent.add_child(line)
 	line.global_position = start
 	line.look_at(end, Vector3.UP)
 	

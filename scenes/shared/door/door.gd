@@ -15,6 +15,7 @@ enum DoorAction {
 	PEEK = 1,
 	KICK = 2,
 	UNLOCK = 3,
+	RAM = 4,
 }
 
 enum SoundType {
@@ -159,9 +160,14 @@ func request_interact(action: int, player_global_pos: Vector3) -> void:
 	# Host validation rule (ARCHITECTURE §4.3)
 	if multiplayer != null and not multiplayer.is_server():
 		return
+	if action == DoorAction.RAM or action == DoorAction.UNLOCK:
+		return # Host abilities validate ram charges and e-lock hacking.
 	var sender_id: int = multiplayer.get_remote_sender_id() if multiplayer != null and multiplayer.has_multiplayer_peer() else 1
 	var door_pos: Vector3 = global_position if is_inside_tree() else position
-	if door_pos.distance_to(player_global_pos) > max_interaction_distance:
+	var player: Node3D = _player_node(sender_id)
+	if player != null:
+		player_global_pos = player.global_position
+	if (player == null and is_inside_tree()) or door_pos.distance_to(player_global_pos) > max_interaction_distance:
 		return
 
 	_execute_interaction(action as DoorAction, player_global_pos, sender_id)
@@ -177,6 +183,8 @@ func _execute_interaction(action: DoorAction, player_global_pos: Vector3, peer_i
 			_handle_kick(player_global_pos, peer_id)
 		DoorAction.UNLOCK:
 			_handle_unlock(peer_id)
+		DoorAction.RAM:
+			_handle_ram(player_global_pos, peer_id)
 
 
 func _handle_toggle_open(player_global_pos: Vector3, peer_id: int) -> void:
@@ -226,9 +234,38 @@ func _handle_kick(player_global_pos: Vector3, peer_id: int) -> void:
 	if not can_be_kicked or is_reinforced:
 		_broadcast_sound(SoundType.LOCKED)
 		return
+	var player: Node3D = _player_node(peer_id)
+	if player != null:
+		var abilities: Node = player.get_node_or_null(^"ClassAbilities")
+		if abilities == null or not abilities.call(&"spend_kick"):
+			return
 
 	var was_locked := is_locked
 	is_locked = false # Kick breaks the latch
+	swing_direction = _calculate_swing_direction(player_global_pos)
+	_set_state(DoorState.KICKED)
+	_broadcast_sound(SoundType.KICK)
+	_emit_noise(DoorAction.KICK, peer_id)
+	_trigger_kick_stun(peer_id)
+	door_kicked.emit(peer_id, was_locked)
+
+
+func _player_node(peer_id: int) -> Node3D:
+	if not is_inside_tree():
+		return null
+	for node: Node in get_tree().get_nodes_in_group(&"players"):
+		var body: Node3D = node as Node3D
+		if body != null and str(body.get(&"peer_id")).to_int() == peer_id:
+			return body
+	return null
+
+
+func _handle_ram(player_global_pos: Vector3, peer_id: int) -> void:
+	if not is_reinforced or current_state == DoorState.KICKED:
+		return
+	var was_locked: bool = is_locked
+	is_locked = false
+	is_reinforced = false
 	swing_direction = _calculate_swing_direction(player_global_pos)
 	_set_state(DoorState.KICKED)
 	_broadcast_sound(SoundType.KICK)

@@ -103,6 +103,13 @@ func _build_panel() -> void:
 	_bars.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_bars.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	main.add_child(_bars)
+	if player != null:
+		var hints: PackedStringArray = PackedStringArray()
+		for slot: int in 3:
+			var label: String = ClassAbilities.ability_label(player.class_id, slot)
+			if not label.is_empty():
+				hints.append("%d %s" % [slot + 3, label])
+		root.add_child(UiKit.label("   ".join(hints), 12, GameTheme.TEXT_DIM))
 
 
 func _shadow(label: Label) -> void:

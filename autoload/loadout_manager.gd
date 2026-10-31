@@ -292,6 +292,21 @@ func get_player_loadout(peer_id: int) -> Dictionary:
 	return l_dict.duplicate()
 
 
+## Host: spend consumables in the field without refunding the purchase price.
+func consume_gear(peer_id: int, gear_id: StringName, quantity: int = 1) -> bool:
+	if not multiplayer.is_server() or quantity <= 0:
+		return false
+	var loadout: Dictionary = _player_loadouts.get(peer_id, {})
+	var owned: int = loadout.get(gear_id, 0)
+	if owned < quantity:
+		return false
+	loadout[gear_id] = owned - quantity
+	if loadout[gear_id] == 0:
+		loadout.erase(gear_id)
+	_player_loadouts[peer_id] = loadout
+	return true
+
+
 ## Clears a player's loadout (refunds all).
 func clear_player_loadout(peer_id: int) -> void:
 	if not multiplayer.is_server():

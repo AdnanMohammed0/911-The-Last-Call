@@ -102,6 +102,11 @@
       "note": "SanitySystem: حدود Steady/Uneasy/Panicked/Broken بنسبة سعة الكلاس، استنزاف حسب معامل الكلاس والصفات، مناطق ظلام/ضوء محددة، خسارة عند سقوط/موت زميل قريب، استرجاع عند تأمين المهمة، وPTSD عند الوصول للصفر. قناة Panic تعالج مؤثرات البيئة محلياً مع lowpass/reverb سلس، وهلوسات متباعدة، وbodycam صار يقيس بالنسبة المئوية. اختبارات GUT محلية ناجحة؛ اختبار الصوت والمزامنة بحسابين ينتظر.",
       "updated_at": "2026-11-01"
     },
+    "P3-04": {
+      "status": "testing",
+      "note": "قدرات الميدان على أزرار 3/4/5 مع تحقق الهوست: Tech drone طيران تلقائي 45ث ووسم أعداء وفتح e-lock؛ Profiler مكبر صوت وغاز؛ Breacher درع 600HP وram 3 استخدامات وركلة بتبريد؛ Medic sedative وsalt وtone مع revive الموجود. خصم المستهلكات بلا استرجاع مال، وعرض الأزرار بالـHUD. اختبارات محلية للنظام والصحة والعتاد والأبواب والـAI ناجحة؛ اختبار لاعبين بصري وشبكي ينتظر.",
+      "updated_at": "2026-11-01"
+    },
     "P3-07": {
       "status": "testing",
       "note": "Behavior tree runtime بـ core/bt: Selector (reactive، يقطع الفرع الأقل أولوية)، Sequence (يكمل من الابن الشغال)، Parallel، Decorator (Invert/Succeed/Repeat/Cooldown/TimeLimit)، BTCall (دوال الـ agent + تنظيف _exit عند المقاطعة)، BTCheck للـ blackboard، BTWait. الشجرة Resource مشتركة والحالة لكل agent بالـ BTBlackboard. BTRunner على الهوست 10Hz موزع. BT.sel/seq/... لبناء الشجرة بالكود. Debugger (F4، Tab يبدل) يعرض الشجرة بالألوان والـ blackboard. 12 اختبار GUT نجحت.",
@@ -1137,6 +1142,12 @@
       "tasks": ["P3-14"],
       "summary": "تقليد صوت راديو الزملاء للاعب منخفض العقل فقط، بتخزين قصير على الهوست وعكس الصوت وتبريد ضد التكرار؛ اختبارات محلية ناجحة.",
       "files": ["autoload/voice_manager.gd", "tests/test_dead_frequency.gd", "docs/design/DEAD_FREQUENCY.md"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P3-04"],
+      "summary": "وصلت قدرات الميدان لكل كلاس بالتحكم والتحقق على الهوست والمخزون والواجهات، وأضفت اختبارات محلية وراجعـت اختبارات الأنظمة المتأثرة.",
+      "files": ["scenes/shared/player/class_abilities.gd", "scenes/shared/player/player.tscn", "scenes/shared/player/player.gd", "scenes/shared/player/health_component.gd", "scenes/shared/weapons/weapon_holder.gd", "scenes/shared/door/door.gd", "scenes/shared/gadgets/salt_canister.gd", "scenes/shared/gadgets/spectral_tone_emitter.gd", "scenes/field/enemies/hostile_agent.gd", "autoload/loadout_manager.gd", "autoload/game_settings.gd", "ui/hud/status_hud.gd", "project.godot", "tests/test_class_abilities.gd", "docs/design/CLASS_ABILITIES.md"]
     }
   ]
 }

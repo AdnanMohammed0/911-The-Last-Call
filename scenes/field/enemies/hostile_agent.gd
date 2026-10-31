@@ -60,6 +60,7 @@ var sync_yaw: float = 0.0
 # --- Host state ---
 var squad: AISquad = null
 var morale: float = 50.0
+var gas_until_msec: int = 0
 var ammo: int = 0
 var hostage_alive: bool = true
 var negotiated: bool = false
@@ -608,7 +609,7 @@ func _try_fire(target: Player) -> void:
 		var zone: HealthComponent.HitZone = HIT_ZONES[_rng.randi() % HIT_ZONES.size()]
 		if settle_ratio() > 0.8 and _rng.randf() < 0.12 * archetype.accuracy / 0.55:
 			zone = HealthComponent.HitZone.HEAD
-		target.get_health().apply_damage(archetype.damage, zone, 0)
+		target.get_health().apply_damage(archetype.damage, zone, 0, global_position)
 	else:
 		end = aim_point + Vector3(_rng.randf_range(-1.0, 1.0), _rng.randf_range(-0.6, 0.8), _rng.randf_range(-1.0, 1.0))
 	EventBus.noise_event.emit(from, GUNSHOT_NOISE, 0)
@@ -628,7 +629,8 @@ func hit_chance_against(target: Player, distance: float) -> float:
 	var settle: float = lerpf(0.4, 1.25, settle_ratio())
 	var range_factor: float = clampf(sqrt(12.0 / maxf(distance, 1.0)), 0.25, 1.4)
 	var light: float = 1.0 if perception.is_lit(target) or target.flashlight_on else 0.75
-	return clampf(archetype.accuracy * settle * range_factor * moving * crouch * light, 0.03, 0.95)
+	var gas_factor: float = 0.4 if Time.get_ticks_msec() < gas_until_msec else 1.0
+	return clampf(archetype.accuracy * settle * range_factor * moving * crouch * light * gas_factor, 0.03, 0.95)
 
 
 ## Target to engage: whoever just shot us if we can see them, otherwise perception's pick.

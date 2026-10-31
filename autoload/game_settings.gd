@@ -35,6 +35,7 @@ const ACTIONS: Array[Array] = [
 	[&"interact", "Interact"], [&"shout", "Shout \"Police, hands up!\""], [&"door_peek", "Peek door"], [&"door_kick", "Kick door"], [&"flashlight", "Flashlight"],
 	[&"fire", "Fire"], [&"aim", "Aim down sights"], [&"reload", "Reload"],
 	[&"weapon_primary", "Primary weapon"], [&"weapon_sidearm", "Sidearm"], [&"weapon_swap", "Swap weapon"], [&"drop_weapon", "Drop weapon"],
+	[&"ability_1", "Class ability 1"], [&"ability_2", "Class ability 2"], [&"ability_3", "Class ability 3"],
 	[&"voice_ptt", "Push to talk"], [&"radio_ptt", "Radio"],
 ]
 

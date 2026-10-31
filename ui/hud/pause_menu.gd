@@ -14,6 +14,7 @@ var _leave_button: BrushButton
 var _quit_button: BrushButton
 var _settings_button: BrushButton
 var _report_button: BrushButton
+var _invite_button: BrushButton
 var _session_label: Label
 var _objective_label: Label
 var _voice_mode_button: KitButton
@@ -34,6 +35,7 @@ func _ready() -> void:
 	_resume_button.pressed.connect(close)
 	_settings_button.pressed.connect(_on_settings_pressed)
 	_report_button.pressed.connect(_on_report_pressed)
+	_invite_button.pressed.connect(func() -> void: NetManager.invite_steam_friends())
 	_leave_button.pressed.connect(_on_leave_pressed)
 	_quit_button.pressed.connect(_on_quit_pressed)
 	_voice_mode_button.pressed.connect(_on_voice_mode_pressed)
@@ -85,6 +87,7 @@ func _build() -> void:
 	_resume_button = _brush(column, "Resume")
 	_settings_button = _brush(column, "Settings")
 	_report_button = _brush(column, tr("Report a bug"))
+	_invite_button = _brush(column, tr("Invite Steam friends"))
 	_leave_button = _brush(column, "Leave to main menu")
 	_quit_button = _brush(column, "Quit to desktop")
 	column.add_child(UiKit.expand(Control.new(), false, true))
@@ -178,6 +181,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func open() -> void:
 	visible = true
+	_invite_button.visible = NetManager.steam_available() and NetManager.transport == NetManager.Transport.STEAM and NetManager.steam_lobby_id > 0
 	player.set_input_enabled(false)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	var leave_text: String = tr("Stop hosting") if NetManager.is_host() else tr("Leave to main menu")

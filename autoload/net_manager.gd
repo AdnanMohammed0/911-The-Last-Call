@@ -209,6 +209,11 @@ func steam_available() -> bool:
 	return _steam != null and ClassDB.class_exists(&"SteamMultiplayerPeer")
 
 
+## Shared initialized Steam API for optional release integrations.
+func get_steam_api() -> Object:
+	return _steam
+
+
 func host_steam_game(player_name: String) -> Error:
 	if state != State.OFFLINE:
 		return ERR_ALREADY_IN_USE

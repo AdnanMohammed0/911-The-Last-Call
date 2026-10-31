@@ -111,7 +111,7 @@ func _process(_delta: float) -> void:
 		_timestamp.text = Time.get_datetime_string_from_system(false, true).replace("T", "  ")
 	if player == null or not is_instance_valid(player):
 		return
-	var strength: float = 0.0 if GameSettings.reduced_horror_effects else sanity_intensity(player.sanity) * GameSettings.screen_effects
+	var strength: float = 0.0 if GameSettings.reduced_horror_effects else sanity_intensity(player.sanity / maxf(player.max_sanity, 1.0) * 100.0) * GameSettings.screen_effects
 	_sanity_overlay.visible = strength > 0.005
 	if absf(strength - _last_intensity) > 0.005:
 		_last_intensity = strength

@@ -113,8 +113,10 @@ var connection_lost: bool = false:
 		if _name_label != null:
 			_update_name_label()
 
-## 0..100. Host-owned, replicated by HostSync. Full sanity bands / drain rules arrive with P3-03.
+## Host-owned, replicated by HostSync. Class maximum may differ from 100.
 var sanity: float = 100.0
+var max_sanity: float = 100.0
+var sanity_drain_multiplier: float = 1.0
 ## True while an anomaly holds this player (input disabled on the owner).
 var grabbed_by_anomaly: bool = false
 
@@ -309,7 +311,9 @@ func apply_class(data: ClassData) -> void:
 	sprint_duration = data.sprint_duration
 	stamina = sprint_duration
 	(get_node(^"Health") as HealthComponent).setup(data.max_health, data.damage_resistance)
-	# TODO(P3-03): max_sanity, sanity drain.
+	max_sanity = maxf(data.max_sanity, 1.0)
+	sanity = max_sanity
+	sanity_drain_multiplier = maxf(data.sanity_drain_multiplier, 0.0)
 	
 	# Reapply trait modifiers after class application (if already spawned in tree)
 	if is_inside_tree() and multiplayer != null and multiplayer.is_server() and TraitSystem != null:
@@ -331,21 +335,31 @@ func _update_name_label() -> void:
 func apply_sanity_damage(amount: float, source: StringName) -> void:
 	if not multiplayer.is_server() or amount <= 0.0:
 		return
-	
-	# Apply sanity drain multiplier from traits (e.g., PTSD, Nyctophobia)
-	var drain_mult: float = 1.0
-	if TraitSystem != null and multiplayer.is_server():
-		if TraitSystem.has_trait(peer_id, &"ptsd"):
+	var drain_mult: float = sanity_drain_multiplier
+	if TraitSystem != null:
+		if TraitSystem.has_trait(peer_id, &"ptsd") and source == &"gunfire":
 			drain_mult *= 2.0
-		if TraitSystem.has_trait(peer_id, &"nyctophobia"):
-			# Darkness drain handled separately in SanitySystem
-			pass
-	
-	amount *= drain_mult
-	
-	sanity = clampf(sanity - amount, 0.0, 100.0)
-	EventBus.sanity_damaged.emit(peer_id, amount, source)
+		if TraitSystem.has_trait(peer_id, &"nyctophobia") and source == &"darkness":
+			drain_mult *= 2.0
+		if TraitSystem.has_trait(peer_id, &"hardened"):
+			drain_mult *= 0.85
+	var previous: float = sanity
+	sanity = clampf(sanity - amount * drain_mult, 0.0, max_sanity)
+	if is_equal_approx(previous, sanity):
+		return
+	EventBus.sanity_damaged.emit(peer_id, previous - sanity, source)
 	EventBus.sanity_changed.emit(peer_id, sanity)
+	if sanity <= 0.0 and previous > 0.0 and TraitSystem != null:
+		TraitSystem.apply(peer_id, &"ptsd", &"sanity_broken")
+
+
+func restore_sanity(amount: float) -> void:
+	if not multiplayer.is_server() or amount <= 0.0:
+		return
+	var previous: float = sanity
+	sanity = clampf(sanity + amount, 0.0, max_sanity)
+	if not is_equal_approx(previous, sanity):
+		EventBus.sanity_changed.emit(peer_id, sanity)
 
 
 ## Checks if player has a specific trait (host only).

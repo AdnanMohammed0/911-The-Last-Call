@@ -97,6 +97,11 @@
       "note": "HealthComponent على الهوست ومتزامن بـ HostSync: ضرر حسب المنطقة (رأس ×2، جذع ×1، أطراف ×0.75) مع مقاومة الكلاس (Breacher 140 HP / 25%)، رجوع الصحة لأقرب 25% بس، Downed عند 0 (نزيف 45 ث، زحف 0.6 م/ث، ما يتفاعل)، إنعاش بالإمساك: Medic 4 ث أو Trauma Kit 8 ث (النزيف يوقف أثناء الإنعاش، يرجع 40%)، انتهاء النزيف = Critical. ضربة ساق/يد ≥30 ترسل trait (limping / fractured_hand). واجهة صحة وشاشة Downed. 8 اختبارات GUT + اختبار 3 عمليات (Medic يمشي ويسوي إنعاش حقيقي) نجحت.",
       "updated_at": "2026-09-17"
     },
+    "P3-03": {
+      "status": "testing",
+      "note": "SanitySystem: حدود Steady/Uneasy/Panicked/Broken بنسبة سعة الكلاس، استنزاف حسب معامل الكلاس والصفات، مناطق ظلام/ضوء محددة، خسارة عند سقوط/موت زميل قريب، استرجاع عند تأمين المهمة، وPTSD عند الوصول للصفر. قناة Panic تعالج مؤثرات البيئة محلياً مع lowpass/reverb سلس، وهلوسات متباعدة، وbodycam صار يقيس بالنسبة المئوية. اختبارات GUT محلية ناجحة؛ اختبار الصوت والمزامنة بحسابين ينتظر.",
+      "updated_at": "2026-11-01"
+    },
     "P3-07": {
       "status": "testing",
       "note": "Behavior tree runtime بـ core/bt: Selector (reactive، يقطع الفرع الأقل أولوية)، Sequence (يكمل من الابن الشغال)، Parallel، Decorator (Invert/Succeed/Repeat/Cooldown/TimeLimit)، BTCall (دوال الـ agent + تنظيف _exit عند المقاطعة)، BTCheck للـ blackboard، BTWait. الشجرة Resource مشتركة والحالة لكل agent بالـ BTBlackboard. BTRunner على الهوست 10Hz موزع. BT.sel/seq/... لبناء الشجرة بالكود. Debugger (F4، Tab يبدل) يعرض الشجرة بالألوان والـ blackboard. 12 اختبار GUT نجحت.",
@@ -1115,6 +1120,12 @@
       "tasks": ["P1-09"],
       "summary": "تكامل Steam P2P الاختياري مع نظام NetManager واللوبي والدعوات وواجهة القائمة، مع توثيق الإعداد واختبار الحارس عند غياب الإضافة. الحالة testing حتى تجربة اتصال بحسابين Steam.",
       "files": ["autoload/net_manager.gd", "scenes/boot/main_menu.gd", "tests/test_steam_transport.gd", "docs/design/STEAM_P2P.md"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P3-03"],
+      "summary": "بناء SanitySystem وقواعد الاستنزاف والترميم حسب الكلاس، حدود الحالات، مناطق الضوء والظلام، مؤثرات Panic الصوتية المحلية وهلوسات خفيفة، مع اختبارات محلية.",
+      "files": ["autoload/sanity_system.gd", "autoload/event_bus.gd", "scenes/shared/player/player.gd", "ui/hud/field_bodycam_hud.gd", "default_bus_layout.tres", "project.godot", "tests/test_sanity_system.gd", "docs/design/SANITY_SYSTEM.md"]
     }
   ]
 }

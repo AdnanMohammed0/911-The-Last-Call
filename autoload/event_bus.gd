@@ -46,6 +46,7 @@ signal player_revived(peer_id: int, by_peer: int)
 ## Bled out while downed: out for the rest of the mission.
 signal player_critical(peer_id: int)
 signal sanity_changed(peer_id: int, value: float)
+signal sanity_band_changed(peer_id: int, band: int)
 
 # --- Interaction ---
 ## Emitted on every peer after the host confirmed `peer_id` used `interactable`.

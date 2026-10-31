@@ -1,6 +1,6 @@
 {
   "member": "adnan",
-  "updated_at": "2026-10-30",
+  "updated_at": "2026-11-01",
   "tasks": {
     "P1-01": {
       "status": "done",
@@ -41,6 +41,11 @@
       "status": "done",
       "note": "MovementValidator على الهوست: سرعة × 1.2 على نافذة 0.5 ث + slack، منع الطيران والـ teleport، rollback + تصحيح للاعب. RpcGuard (is_host, sender_id, is_from_host, is_registered, is_player_in_range) و RpcRateLimiter (token bucket) مستخدمة بـ NetManager و Interactable. اختبار: speed hack ×4 انمنع (<1 م بـ 2 ث)، teleport انرجع، اللاعب الطبيعي 0 مخالفات.",
       "updated_at": "2026-09-17"
+    },
+    "P1-09": {
+      "status": "testing",
+      "note": "أضفت Steam P2P اختياري عبر GodotSteam وSteamMultiplayerPeer: لوبي للأصدقاء، استضافة/انضمام ودعوات Steam، قبول الدعوة عند تشغيل اللعبة، تنظيف الجلسة، وإعادة الانضمام بمعرّف اللوبي. مسار ENet باقٍ. فحص GDScript وغياب الإضافة محلياً؛ اختبار حسابين Steam ينتظر إضافة مطابقة لـGodot وApp ID فعلي.",
+      "updated_at": "2026-11-01"
     },
     "P1-10": {
       "status": "done",
@@ -1104,6 +1109,12 @@
         "tests/test_station_siege_network.gd",
         "docs/design/STATION_SIEGE.md"
       ]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P1-09"],
+      "summary": "تكامل Steam P2P الاختياري مع نظام NetManager واللوبي والدعوات وواجهة القائمة، مع توثيق الإعداد واختبار الحارس عند غياب الإضافة. الحالة testing حتى تجربة اتصال بحسابين Steam.",
+      "files": ["autoload/net_manager.gd", "scenes/boot/main_menu.gd", "tests/test_steam_transport.gd", "docs/design/STEAM_P2P.md"]
     }
   ]
 }

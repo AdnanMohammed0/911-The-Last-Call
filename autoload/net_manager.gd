@@ -38,6 +38,7 @@ signal lobby_updated(roster: Dictionary)
 signal level_loaded(peer_id: int, scene_path: String)
 ## Host: result of the UPnP port mapping. `public_address` is empty when unknown.
 signal internet_hosting_changed(public_address: String, port_open: bool, message: String)
+signal steam_lobby_changed(lobby_id: int)
 
 var transport: Transport = Transport.ENET
 var state: State = State.OFFLINE
@@ -57,6 +58,10 @@ var _peer_tokens: Dictionary[int, String] = {}
 var _reserved_slots: Dictionary[String, Dictionary] = {}
 var _last_address: String = ""
 var _last_port: int = DEFAULT_PORT
+var steam_lobby_id: int = 0
+var _steam: Object = null
+var _steam_pending_host: bool = false
+var _steam_target_lobby_id: int = 0
 
 var _connect_timer: SceneTreeTimer = null
 ## peer_id -> scene path the peer reported as loaded (host-owned, mirrored to clients).
@@ -78,6 +83,8 @@ func _ready() -> void:
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	_initialize_steam()
+	_check_steam_launch_invite.call_deferred()
 
 
 # --- Queries ----------------------------------------------------------------
@@ -150,8 +157,7 @@ func is_level_loaded(peer_id: int, scene_path: String) -> bool:
 func host_game(player_name: String, port: int = DEFAULT_PORT, open_internet_port: bool = true) -> Error:
 	if state != State.OFFLINE:
 		return ERR_ALREADY_IN_USE
-	if transport != Transport.ENET:
-		return ERR_UNAVAILABLE  # TODO(P1-09): SteamMultiplayerPeer
+	transport = Transport.ENET
 	var peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 	var err: Error = peer.create_server(port, MAX_PEERS)  # one spare slot so a 5th client gets a "Lobby is full" reason
 	if err != OK:
@@ -173,6 +179,7 @@ func host_game(player_name: String, port: int = DEFAULT_PORT, open_internet_port
 func join_game(address: String, player_name: String, port: int = DEFAULT_PORT) -> Error:
 	if state != State.OFFLINE:
 		return ERR_ALREADY_IN_USE
+	transport = Transport.ENET
 	var parsed: Array = parse_address(address, port)
 	address = parsed[0]
 	port = parsed[1]
@@ -196,6 +203,153 @@ func join_game(address: String, player_name: String, port: int = DEFAULT_PORT) -
 	_connect_timer = get_tree().create_timer(CONNECT_TIMEOUT_SEC)
 	_connect_timer.timeout.connect(_on_connect_timeout.bind(_connect_timer))
 	return OK
+
+
+func steam_available() -> bool:
+	return _steam != null and ClassDB.class_exists(&"SteamMultiplayerPeer")
+
+
+func host_steam_game(player_name: String) -> Error:
+	if state != State.OFFLINE:
+		return ERR_ALREADY_IN_USE
+	if not steam_available():
+		connection_failed.emit("Steam is unavailable. Install GodotSteam and launch through Steam.")
+		return ERR_UNAVAILABLE
+	transport = Transport.STEAM
+	local_player_name = sanitize_name(player_name, 1)
+	_steam_pending_host = true
+	_steam_target_lobby_id = 0
+	_set_state(State.CONNECTING)
+	# Friends-only lobby. Steam handles NAT traversal and invitations.
+	_steam.call(&"createLobby", 1, MAX_PEERS)
+	_start_connect_timer()
+	return OK
+
+
+func join_steam_lobby(lobby_id: int, player_name: String) -> Error:
+	if state != State.OFFLINE:
+		return ERR_ALREADY_IN_USE
+	if not steam_available():
+		connection_failed.emit("Steam is unavailable. Install GodotSteam and launch through Steam.")
+		return ERR_UNAVAILABLE
+	if lobby_id <= 0:
+		connection_failed.emit("Enter a valid Steam lobby ID")
+		return ERR_INVALID_PARAMETER
+	transport = Transport.STEAM
+	local_player_name = sanitize_name(player_name, 1)
+	_steam_pending_host = false
+	_steam_target_lobby_id = lobby_id
+	_set_state(State.CONNECTING)
+	_steam.call(&"joinLobby", lobby_id)
+	_start_connect_timer()
+	return OK
+
+
+func invite_steam_friends() -> Error:
+	if not steam_available() or transport != Transport.STEAM or steam_lobby_id == 0:
+		return ERR_UNAVAILABLE
+	_steam.call(&"activateGameOverlayInviteDialog", steam_lobby_id)
+	return OK
+
+
+func _initialize_steam() -> void:
+	if not Engine.has_singleton(&"Steam") or not ClassDB.class_exists(&"SteamMultiplayerPeer"):
+		return
+	_steam = Engine.get_singleton(&"Steam")
+	var result: Dictionary = _steam.call(&"steamInitEx")
+	if str(result.get("status", 1)).to_int() != 0:
+		push_warning("Steam initialization failed: %s" % str(result.get("verbal", "unknown error")))
+		_steam = null
+		return
+	_steam.connect(&"lobby_created", _on_steam_lobby_created)
+	_steam.connect(&"lobby_joined", _on_steam_lobby_joined)
+	_steam.connect(&"join_requested", _on_steam_join_requested)
+
+
+func _process(_delta: float) -> void:
+	if _steam != null:
+		_steam.call(&"run_callbacks")
+
+
+func _on_steam_lobby_created(result: int, lobby_id: int) -> void:
+	if state != State.CONNECTING or transport != Transport.STEAM or not _steam_pending_host:
+		return
+	if result != 1:
+		_steam_failed("Could not create Steam lobby (%d)" % result)
+		return
+	var peer: MultiplayerPeer = _new_steam_peer()
+	if peer == null or str(peer.call(&"create_host", 0)).to_int() != OK:
+		_steam.call(&"leaveLobby", lobby_id)
+		_steam_failed("Could not start Steam P2P host")
+		return
+	peer.set(&"server_relay", true)
+	steam_lobby_id = lobby_id
+	multiplayer.multiplayer_peer = peer
+	roster.clear()
+	roster[1] = _new_entry(local_player_name)
+	_connect_timer = null
+	_steam_pending_host = false
+	_set_state(State.HOSTING)
+	steam_lobby_changed.emit(lobby_id)
+	session_started.emit()
+	lobby_updated.emit(roster)
+
+
+func _on_steam_lobby_joined(lobby_id: int, _permissions: int, _locked: bool, response: int) -> void:
+	if state != State.CONNECTING or transport != Transport.STEAM or _steam_pending_host:
+		return
+	if lobby_id != _steam_target_lobby_id:
+		return
+	if response != 1:
+		_steam_failed("Could not enter Steam lobby (%d)" % response)
+		return
+	var owner_id: int = str(_steam.call(&"getLobbyOwner", lobby_id)).to_int()
+	if owner_id <= 0 or owner_id == str(_steam.call(&"getSteamID")).to_int():
+		_steam.call(&"leaveLobby", lobby_id)
+		_steam_failed("Steam lobby has no available host")
+		return
+	var peer: MultiplayerPeer = _new_steam_peer()
+	if peer == null or str(peer.call(&"create_client", owner_id, 0)).to_int() != OK:
+		_steam.call(&"leaveLobby", lobby_id)
+		_steam_failed("Could not connect to Steam P2P host")
+		return
+	peer.set(&"server_relay", true)
+	steam_lobby_id = lobby_id
+	multiplayer.multiplayer_peer = peer
+	roster.clear()
+	steam_lobby_changed.emit(lobby_id)
+
+
+func _on_steam_join_requested(lobby_id: int, _friend_id: int) -> void:
+	if state == State.OFFLINE:
+		join_steam_lobby(lobby_id, local_player_name if not local_player_name.is_empty() else "Player")
+	else:
+		connection_failed.emit("Leave the current session before accepting a Steam invitation")
+
+
+func _check_steam_launch_invite() -> void:
+	if not steam_available() or state != State.OFFLINE:
+		return
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	args.append_array(OS.get_cmdline_args())
+	var index: int = args.find("+connect_lobby")
+	if index >= 0 and index + 1 < args.size() and args[index + 1].is_valid_int():
+		join_steam_lobby(int(args[index + 1]), "Player")
+
+
+func _new_steam_peer() -> MultiplayerPeer:
+	var instance: Object = ClassDB.instantiate(&"SteamMultiplayerPeer")
+	return instance as MultiplayerPeer
+
+
+func _steam_failed(reason: String) -> void:
+	_close_peer()
+	connection_failed.emit(reason)
+
+
+func _start_connect_timer() -> void:
+	_connect_timer = get_tree().create_timer(CONNECT_TIMEOUT_SEC)
+	_connect_timer.timeout.connect(_on_connect_timeout.bind(_connect_timer))
 
 
 ## Voluntarily leave (or stop hosting). Does not change scene.
@@ -225,6 +379,8 @@ func rejoin_last_session() -> Error:
 	var port: int = config.get_value("session", "port", DEFAULT_PORT)
 	var player_name: String = config.get_value("session", "name", "Player")
 	session_token = config.get_value("session", "token", "")
+	if str(config.get_value("session", "transport", Transport.ENET)).to_int() == Transport.STEAM:
+		return join_steam_lobby(str(config.get_value("session", "lobby_id", 0)).to_int(), player_name)
 	return join_game(address, player_name, port)
 
 
@@ -500,7 +656,7 @@ func _kick(peer_id: int, reason: String) -> void:
 	_rejected.rpc_id(peer_id, reason)
 	# Give the reliable packet a moment to leave before dropping the peer.
 	await get_tree().create_timer(0.2).timeout
-	var peer: ENetMultiplayerPeer = multiplayer.multiplayer_peer as ENetMultiplayerPeer
+	var peer: MultiplayerPeer = multiplayer.multiplayer_peer
 	if peer != null and peer_id in multiplayer.get_peers():
 		peer.disconnect_peer(peer_id)
 
@@ -509,6 +665,12 @@ func _close_peer() -> void:
 	if multiplayer.multiplayer_peer != null and not multiplayer.multiplayer_peer is OfflineMultiplayerPeer:
 		multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
+	if _steam != null and steam_lobby_id != 0:
+		_steam.call(&"leaveLobby", steam_lobby_id)
+	steam_lobby_id = 0
+	_steam_pending_host = false
+	_steam_target_lobby_id = 0
+	steam_lobby_changed.emit(0)
 	roster.clear()
 	_loaded_levels.clear()
 	_peer_tokens.clear()
@@ -571,6 +733,8 @@ func _apply_peer_timeout(peer_id: int) -> void:
 
 func _save_rejoin_info() -> void:
 	var config: ConfigFile = ConfigFile.new()
+	config.set_value("session", "transport", transport)
+	config.set_value("session", "lobby_id", steam_lobby_id)
 	config.set_value("session", "address", _last_address)
 	config.set_value("session", "port", _last_port)
 	config.set_value("session", "name", local_player_name)

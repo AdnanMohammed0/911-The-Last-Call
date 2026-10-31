@@ -44,9 +44,12 @@ var _status_dot: IconView
 
 # Host / join controls
 var _host_button: KitButton
+var _steam_host_button: KitButton
 var _back_from_host_btn: KitButton
 var _address_edit: LineEdit
 var _join_button: KitButton
+var _steam_lobby_edit: LineEdit
+var _steam_join_button: KitButton
 var _back_from_join_btn: KitButton
 
 # Lobby controls
@@ -55,6 +58,7 @@ var _lobby_count: Label
 var _internet_row: HBoxContainer
 var _internet_label: Label
 var _copy_address_button: KitButton
+var _steam_invite_button: KitButton
 var _roster_list: VBoxContainer
 var _ready_button: KitButton
 var _start_button: KitButton
@@ -78,7 +82,9 @@ func _ready() -> void:
 	_back_from_host_btn.pressed.connect(func() -> void: _show_view(_home_view))
 	_back_from_join_btn.pressed.connect(func() -> void: _show_view(_home_view))
 	_host_button.pressed.connect(_on_host_pressed)
+	_steam_host_button.pressed.connect(_on_steam_host_pressed)
 	_join_button.pressed.connect(_on_join_pressed)
+	_steam_join_button.pressed.connect(_on_steam_join_pressed)
 	_leave_button.pressed.connect(_on_leave_pressed)
 	_sandbox_button.pressed.connect(_on_sandbox_pressed)
 	_door_sandbox_button.pressed.connect(_on_door_sandbox_pressed)
@@ -91,6 +97,7 @@ func _ready() -> void:
 	_report_button.pressed.connect(func() -> void: BugReportDialog.open_over(self))
 	_quit_button.pressed.connect(func() -> void: get_tree().quit())
 	_copy_address_button.pressed.connect(_on_copy_address_pressed)
+	_steam_invite_button.pressed.connect(_on_steam_invite_pressed)
 	for card: ClassCard in _cards:
 		card.class_selected.connect(_on_class_selected)
 
@@ -100,6 +107,7 @@ func _ready() -> void:
 	NetManager.session_ended.connect(_on_session_ended)
 	NetManager.lobby_updated.connect(_on_lobby_updated)
 	NetManager.internet_hosting_changed.connect(_on_internet_hosting_changed)
+	NetManager.steam_lobby_changed.connect(_on_steam_lobby_changed)
 
 	_address_edit.text = "127.0.0.1"
 	_name_edit.text = tr("Player")
@@ -307,6 +315,12 @@ func _build_host() -> Control:
 	_host_button.name = "HostButton"
 	_host_button.custom_minimum_size = Vector2(190, 48)
 	row.add_child(_host_button)
+	_steam_host_button = KitButton.make("Host via Steam", &"users", KitButton.Variant.DEFAULT)
+	_steam_host_button.name = "SteamHostButton"
+	_steam_host_button.custom_minimum_size = Vector2(190, 48)
+	_steam_host_button.tooltip_text = "Requires GodotSteam and the Steam client"
+	box.add_child(_steam_host_button)
+	box.add_child(UiKit.paragraph("Steam hosting uses a friends-only lobby. Invite friends from the lobby screen."))
 	_back_from_host_btn = KitButton.make("Back", &"back", KitButton.Variant.GHOST)
 	_back_from_host_btn.name = "BackFromHostBtn"
 	_back_from_host_btn.custom_minimum_size = Vector2(0, 48)
@@ -339,6 +353,16 @@ func _build_join() -> Control:
 	_join_button.name = "JoinButton"
 	_join_button.custom_minimum_size = Vector2(190, 48)
 	row.add_child(_join_button)
+	box.add_child(UiKit.caps("Steam lobby ID", 11, GameTheme.TEXT_DIM))
+	_steam_lobby_edit = LineEdit.new()
+	_steam_lobby_edit.name = "SteamLobbyEdit"
+	_steam_lobby_edit.placeholder_text = "Paste a Steam lobby ID, or accept an invite"
+	_steam_lobby_edit.custom_minimum_size = Vector2(0, 48)
+	box.add_child(_steam_lobby_edit)
+	_steam_join_button = KitButton.make("Join Steam lobby", &"users", KitButton.Variant.DEFAULT)
+	_steam_join_button.name = "SteamJoinButton"
+	_steam_join_button.tooltip_text = "Requires GodotSteam and the Steam client"
+	box.add_child(_steam_join_button)
 	_back_from_join_btn = KitButton.make("Back", &"back", KitButton.Variant.GHOST)
 	_back_from_join_btn.name = "BackFromJoinBtn"
 	_back_from_join_btn.custom_minimum_size = Vector2(0, 48)
@@ -464,6 +488,9 @@ func _build_lobby() -> Control:
 	_copy_address_button = KitButton.make("Copy IP", &"copy", KitButton.Variant.SUBTLE)
 	_copy_address_button.name = "CopyAddressButton"
 	_internet_row.add_child(_copy_address_button)
+	_steam_invite_button = KitButton.make("Invite Steam friends", &"users", KitButton.Variant.SUBTLE)
+	_steam_invite_button.name = "SteamInviteButton"
+	header.add_child(_steam_invite_button)
 
 	# Body: roster on the left, role cards on the right.
 	var body: HBoxContainer = HBoxContainer.new()
@@ -594,8 +621,28 @@ func _on_host_pressed() -> void:
 	NetManager.host_game(_name_edit.text)
 
 
+func _on_steam_host_pressed() -> void:
+	NetManager.host_steam_game(_name_edit.text)
+
+
 func _on_join_pressed() -> void:
 	NetManager.join_game(_address_edit.text, _name_edit.text)
+
+
+func _on_steam_join_pressed() -> void:
+	var raw: String = _steam_lobby_edit.text.strip_edges()
+	if not raw.is_valid_int():
+		_set_status("Enter a valid Steam lobby ID", GameTheme.DANGER)
+		return
+	NetManager.join_steam_lobby(int(raw), _name_edit.text)
+
+
+func _on_steam_invite_pressed() -> void:
+	NetManager.invite_steam_friends()
+
+
+func _on_steam_lobby_changed(_lobby_id: int) -> void:
+	_on_state_changed(NetManager.state)
 
 
 func _on_leave_pressed() -> void:
@@ -651,7 +698,10 @@ func _on_session_started() -> void:
 func _on_state_changed(new_state: NetManager.State) -> void:
 	var offline: bool = (new_state == NetManager.State.OFFLINE)
 	_host_button.disabled = not offline
+	_steam_host_button.disabled = not offline or not NetManager.steam_available()
 	_join_button.disabled = not offline
+	_steam_join_button.disabled = not offline or not NetManager.steam_available()
+	_steam_lobby_edit.editable = offline and NetManager.steam_available()
 	_host_nav_button.disabled = not offline
 	_join_nav_button.disabled = not offline
 	_name_edit.editable = offline
@@ -662,7 +712,8 @@ func _on_state_changed(new_state: NetManager.State) -> void:
 	_station4_button.disabled = not offline
 	_training_button.disabled = not offline
 	_rejoin_button.visible = offline and NetManager.has_rejoin_info()
-	_internet_row.visible = (new_state == NetManager.State.HOSTING)
+	_internet_row.visible = (new_state == NetManager.State.HOSTING and NetManager.transport == NetManager.Transport.ENET)
+	_steam_invite_button.visible = (new_state == NetManager.State.HOSTING and NetManager.transport == NetManager.Transport.STEAM and NetManager.steam_lobby_id != 0)
 	if new_state != NetManager.State.HOSTING:
 		_internet_label.text = tr("Checking router (UPnP)…")
 		_copy_address_button.disabled = true
@@ -672,11 +723,11 @@ func _on_state_changed(new_state: NetManager.State) -> void:
 			_set_status("Offline")
 			_show_view(_home_view)
 		NetManager.State.HOSTING:
-			_set_status("Hosting on port %d" % NetManager.DEFAULT_PORT, GameTheme.SUCCESS)
+			_set_status("Steam lobby %d" % NetManager.steam_lobby_id if NetManager.transport == NetManager.Transport.STEAM else "Hosting on port %d" % NetManager.DEFAULT_PORT, GameTheme.SUCCESS)
 			_set_state_pill("Hosting", GameTheme.SUCCESS)
 			_show_view(_lobby_view)
 		NetManager.State.CONNECTING:
-			_set_status("Connecting to %s…" % _address_edit.text, GameTheme.WARNING)
+			_set_status("Connecting to Steam lobby…" if NetManager.transport == NetManager.Transport.STEAM else "Connecting to %s…" % _address_edit.text, GameTheme.WARNING)
 		NetManager.State.CONNECTED:
 			_set_status("Connected as peer %d" % NetManager.get_local_peer_id(), GameTheme.SUCCESS)
 			_set_state_pill("Connected", GameTheme.SIREN_BLUE)

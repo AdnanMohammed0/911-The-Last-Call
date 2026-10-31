@@ -1,0 +1,7 @@
+# Dead Frequency radio mimicry — P3-14
+
+The host retains at most 80 recent 20 ms ADPCM radio frames per speaking teammate (1.6 seconds). When a player's Sanity band reaches Broken, the host can replay a teammate's recent radio speech to that victim only. Frames are sent in reverse order at the original 20 ms cadence, and each decoded frame is reversed and softened on the receiver. The existing VoiceRadio bus gives the imitation the same radio filtering and squelch as normal transmissions.
+
+The injection uses a host-authority RPC on voice channel 2. It never enters proximity playback, the microphone transmit path, AI voice noise, or another player's radio. The host applies a 35-second cooldown per victim and discards history when the speaker leaves or the session ends. With no recent teammate radio speech, there is no imitation; the existing phantom ring/footstep effects still cover low sanity.
+
+Verification: `test_dead_frequency.gd` checks bounded history, packet validation, per-victim injection, and cooldown. A two-player live test should confirm that only the Broken player's radio plays the replay and the teammate does not hear it.

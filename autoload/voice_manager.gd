@@ -45,6 +45,8 @@ const OCCLUSION_INTERVAL_SEC: float = 0.1
 const OCCLUDED_CUTOFF_HZ: float = 900.0
 const OCCLUDED_VOLUME_DB: float = -8.0
 const OPEN_CUTOFF_HZ: float = 5000.0
+const DEAD_FREQUENCY_FRAMES: int = 80 # 1.6 seconds of 20 ms radio speech.
+const DEAD_FREQUENCY_COOLDOWN_SEC: float = 35.0
 
 ## peer_id, speaking, radio. Emitted for remote speakers and for the local player.
 signal speaking_changed(peer_id: int, speaking: bool, radio: bool)
@@ -90,6 +92,9 @@ var _streams: Dictionary[int, SpeakerStream] = {}
 var _occlusion_timer: float = 0.0
 var _squelch_in: AudioStreamWAV = SquelchSounds.make_squelch_in()
 var _squelch_out: AudioStreamWAV = SquelchSounds.make_squelch_out()
+var _recent_radio: Dictionary[int, Array] = {}
+var _dead_frequency_next_msec: Dictionary[int, int] = {}
+var _dead_frequency_outbox: Dictionary[int, Dictionary] = {}
 
 
 ## Per remote speaker playback state.
@@ -295,7 +300,10 @@ func _on_local_frame(raw: PackedFloat32Array) -> void:
 				_send(flags, 0, _codec.encode(early))
 		_pre_roll.clear()
 		var loudness: int = clampi(int(db_to_linear(local_level_db) * 4.0 * 255.0), 0, 255)
-		_send(flags, loudness, _codec.encode(samples))
+		var encoded: PackedByteArray = _codec.encode(samples)
+		_send(flags, loudness, encoded)
+		if radio and multiplayer.is_server():
+			_remember_radio(multiplayer.get_unique_id(), encoded)
 		if multiplayer.is_server():
 			_emit_noise(multiplayer.get_unique_id(), loudness)
 	else:
@@ -354,7 +362,61 @@ func _voice_frame(_seq: int, flags: int, loudness: int, packet: PackedByteArray)
 	if packet.size() > MAX_PACKET_BYTES or not _limiter.allow(sender):
 		return
 	NetDebug.record(&"voice", packet.size() + 12, false)
+	if multiplayer.is_server() and flags & FLAG_RADIO and packet.size() == ImaAdpcmCodec.PACKET_BYTES:
+		_remember_radio(sender, packet)
 	_receive(sender, flags, loudness, packet)
+
+
+func _remember_radio(peer_id: int, packet: PackedByteArray) -> void:
+	if packet.size() != ImaAdpcmCodec.PACKET_BYTES:
+		return
+	var frames: Array = _recent_radio.get(peer_id, [])
+	frames.append(packet.duplicate())
+	while frames.size() > DEAD_FREQUENCY_FRAMES:
+		frames.pop_front()
+	_recent_radio[peer_id] = frames
+
+
+## Host: inject only into the victim's radio. Never rebroadcast as a real teammate's voice.
+func inject_dead_frequency(victim_peer: int, speaker_peer: int) -> bool:
+	if not multiplayer.is_server() or victim_peer <= 0 or victim_peer == speaker_peer:
+		return false
+	var frames: Array = _recent_radio.get(speaker_peer, [])
+	if frames.size() < JITTER_FRAMES:
+		return false
+	var now: int = Time.get_ticks_msec()
+	if now < _dead_frequency_next_msec.get(victim_peer, 0):
+		return false
+	_dead_frequency_next_msec[victim_peer] = now + int(DEAD_FREQUENCY_COOLDOWN_SEC * 1000.0)
+	var start: int = maxi(frames.size() - DEAD_FREQUENCY_FRAMES, 0)
+	var reversed_packets: Array[PackedByteArray] = []
+	for i: int in range(frames.size() - 1, start - 1, -1):
+		var packet: PackedByteArray = frames[i]
+		reversed_packets.append(packet)
+	_dead_frequency_outbox[victim_peer] = {"speaker": speaker_peer, "frames": reversed_packets, "index": 0, "next_msec": now}
+	return true
+
+
+@rpc("authority", "call_remote", "unreliable_ordered", 2)
+func _dead_frequency_frame(speaker_peer: int, packet: PackedByteArray) -> void:
+	if multiplayer.get_remote_sender_id() != 1 or packet.size() != ImaAdpcmCodec.PACKET_BYTES:
+		return
+	_receive_dead_frequency(speaker_peer, packet)
+
+
+func _receive_dead_frequency(speaker_peer: int, packet: PackedByteArray) -> void:
+	var samples: PackedFloat32Array = _decoder.decode(packet)
+	if samples.is_empty():
+		return
+	var reversed: PackedFloat32Array = PackedFloat32Array()
+	reversed.resize(samples.size())
+	for i: int in samples.size():
+		reversed[i] = samples[samples.size() - 1 - i] * 0.72
+	var stream: SpeakerStream = _get_stream(-speaker_peer)
+	if not stream.radio_active:
+		_play_squelch(stream, true)
+	stream.last_radio_msec = Time.get_ticks_msec()
+	_enqueue(stream.radio_queue, reversed)
 
 
 # --- Receive & play ---------------------------------------------------------
@@ -410,6 +472,9 @@ func _process(delta: float) -> void:
 	for stream: SpeakerStream in _streams.values():
 		_pump(stream, now)
 	_occlusion_timer += delta
+	if multiplayer.is_server():
+		_check_dead_frequency()
+		_pump_dead_frequency(now)
 	if _occlusion_timer >= OCCLUSION_INTERVAL_SEC:
 		_occlusion_timer = 0.0
 		_update_occlusion()
@@ -417,8 +482,8 @@ func _process(delta: float) -> void:
 
 func _pump(stream: SpeakerStream, now: int) -> void:
 	var speaker: Player = Player.find_by_peer(get_tree(), stream.peer_id)
-	var proximity_player: Node = speaker.get_voice_emitter() if speaker != null else _get_fallback_player(stream)
-	var pushed: int = _drain(stream, false, proximity_player)
+	var proximity_player: Node = speaker.get_voice_emitter() if speaker != null else _get_fallback_player(stream) if stream.peer_id > 0 else null
+	var pushed: int = _drain(stream, false, proximity_player) if proximity_player != null else 0
 	stream.frames_played += maxi(pushed, 0)
 	var radio_pushed: int = _drain(stream, true, stream.radio_player)
 	stream.radio_frames_played += maxi(radio_pushed, 0)
@@ -509,7 +574,7 @@ func _play_squelch(stream: SpeakerStream, key_up: bool) -> void:
 		stream.radio_buffering = true
 
 
-## TODO(P3-13/P3-14): radio zones, anomaly jamming and Dead Frequency injection.
+## Radio zones and anomaly jamming can be layered here later.
 func _can_receive_radio(_speaker_peer_id: int) -> bool:
 	return true
 
@@ -593,6 +658,9 @@ func _remove_stream(peer_id: int) -> void:
 		if player != null:
 			player.queue_free()
 	_streams.erase(peer_id)
+	_recent_radio.erase(peer_id)
+	_dead_frequency_next_msec.erase(peer_id)
+	_dead_frequency_outbox.erase(peer_id)
 	_limiter.forget_peer(peer_id)
 
 
@@ -602,3 +670,40 @@ func _clear_streams() -> void:
 	local_transmitting = false
 	local_radio = false
 	_was_radio = false
+	_recent_radio.clear()
+	_dead_frequency_next_msec.clear()
+	_dead_frequency_outbox.clear()
+
+
+func _check_dead_frequency() -> void:
+	if _recent_radio.is_empty():
+		return
+	for node: Node in get_tree().get_nodes_in_group(Player.GROUP):
+		var victim: Player = node as Player
+		if victim == null or SanitySystem.get_band(victim.peer_id) != SanitySystem.Band.BROKEN:
+			continue
+		if Time.get_ticks_msec() < _dead_frequency_next_msec.get(victim.peer_id, 0):
+			continue
+		for speaker_id: int in _recent_radio:
+			if inject_dead_frequency(victim.peer_id, speaker_id):
+				break
+
+
+func _pump_dead_frequency(now: int) -> void:
+	for victim_peer: int in _dead_frequency_outbox.keys():
+		var item: Dictionary = _dead_frequency_outbox[victim_peer]
+		if now < item["next_msec"]:
+			continue
+		var frames: Array[PackedByteArray] = item["frames"]
+		var index: int = item["index"]
+		if index >= frames.size():
+			_dead_frequency_outbox.erase(victim_peer)
+			continue
+		var speaker_peer: int = item["speaker"]
+		var packet: PackedByteArray = frames[index]
+		if victim_peer == multiplayer.get_unique_id():
+			_receive_dead_frequency(speaker_peer, packet)
+		else:
+			_dead_frequency_frame.rpc_id(victim_peer, speaker_peer, packet)
+		item["index"] = index + 1
+		item["next_msec"] = now + 20

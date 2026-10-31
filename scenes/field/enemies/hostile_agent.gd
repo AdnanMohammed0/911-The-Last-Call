@@ -95,6 +95,9 @@ var _arrest_point: Interactable
 
 var _rig: HumanoidRig
 var _shot_player: AudioStreamPlayer3D
+var _distant_mesh: MeshInstance3D
+var _lod_elapsed: float = 0.0
+var _using_distant_lod: bool = false
 
 
 func _ready() -> void:
@@ -513,6 +516,7 @@ func act_patrol(_bb: BTBlackboard) -> BTNode.Status:
 # --- Movement / firing ------------------------------------------------------------
 
 func _physics_process(delta: float) -> void:
+	_update_visual_lod(delta)
 	if not multiplayer.is_server():
 		_update_remote(delta)
 		return
@@ -733,6 +737,20 @@ func _apply_color() -> void:
 	_rig.name = "Rig"
 	_body.add_child(_rig)
 	_rig.dress(archetype.look if archetype.look != &"" else archetype.id)
+	var silhouette: CapsuleMesh = CapsuleMesh.new()
+	silhouette.radius = 0.32
+	silhouette.height = 1.7
+	silhouette.radial_segments = 8
+	silhouette.rings = 2
+	_distant_mesh = MeshInstance3D.new()
+	_distant_mesh.name = "DistantSilhouette"
+	_distant_mesh.mesh = silhouette
+	_distant_mesh.position.y = 0.85
+	var distant_material: StandardMaterial3D = StandardMaterial3D.new()
+	distant_material.albedo_color = archetype.color
+	_distant_mesh.material_override = distant_material
+	_distant_mesh.visible = false
+	_body.add_child(_distant_mesh)
 	if archetype.armed and archetype.weapon_model != &"":
 		var one_handed: bool = archetype.weapon_model in [&"pistol", &"revolver"]
 		var model: WeaponModel = WeaponModel.build_model(archetype.weapon_model, one_handed)
@@ -743,6 +761,27 @@ func _apply_color() -> void:
 	_shot_player.max_distance = 140.0
 	_shot_player.max_polyphony = 4
 	add_child(_shot_player)
+
+
+## Visual-only LOD: preserve collision, AI and network state at every distance.
+func _update_visual_lod(delta: float) -> void:
+	if _rig == null or _distant_mesh == null:
+		return
+	_lod_elapsed += delta
+	if _lod_elapsed < 0.25:
+		return
+	_lod_elapsed = 0.0
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	if camera == null:
+		return
+	var distance_squared: float = camera.global_position.distance_squared_to(global_position)
+	var use_distant: bool = distance_squared > (65.0 * 65.0 if not _using_distant_lod else 55.0 * 55.0)
+	if use_distant == _using_distant_lod:
+		return
+	_using_distant_lod = use_distant
+	_rig.visible = not use_distant
+	_rig.set_process(not use_distant)
+	_distant_mesh.visible = use_distant
 
 
 ## Replicated anim_state -> rig pose (every peer).

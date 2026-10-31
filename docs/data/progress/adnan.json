@@ -181,6 +181,11 @@
       "status": "testing",
       "note": "الكود والاختبارات جاهزة (5 موجات، انقطاع كهرباء، HUD، قواعد النتيجة). باقي تجربة لعب حقيقية بلاعبين 2+ وموازنة الموجات؛ نسخ الأعداء للعميل مو مختبر تلقائياً",
       "updated_at": "2026-10-30"
+    },
+    "P4-16": {
+      "status": "testing",
+      "note": "أضفت ميزانية مشتركة لتحديثات AI على الهوست، LOD للأعداء البعيدين، وحجب للجدران الخارجية بالمحطة. فحص التحميل و21 اختبار AI نجح؛ قياس 12 عدو headless أبطأ قليلاً من الأساس (1.18–1.25ms مقابل 0.99ms). يلزم قياس GPU وFPS بلعبة حية، خصوصاً مهام فيها أعداء كثيرون.",
+      "updated_at": "2026-11-01"
     }
   },
   "log": [
@@ -1148,6 +1153,12 @@
       "tasks": ["P3-04"],
       "summary": "وصلت قدرات الميدان لكل كلاس بالتحكم والتحقق على الهوست والمخزون والواجهات، وأضفت اختبارات محلية وراجعـت اختبارات الأنظمة المتأثرة.",
       "files": ["scenes/shared/player/class_abilities.gd", "scenes/shared/player/player.tscn", "scenes/shared/player/player.gd", "scenes/shared/player/health_component.gd", "scenes/shared/weapons/weapon_holder.gd", "scenes/shared/door/door.gd", "scenes/shared/gadgets/salt_canister.gd", "scenes/shared/gadgets/spectral_tone_emitter.gd", "scenes/field/enemies/hostile_agent.gd", "autoload/loadout_manager.gd", "autoload/game_settings.gd", "ui/hud/status_hud.gd", "project.godot", "tests/test_class_abilities.gd", "docs/design/CLASS_ABILITIES.md"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P4-16"],
+      "summary": "ميزانية AI مشتركة، LOD بصري للأعداء البعيدين، حجب لجدران المحطة، وقياس أداء موثق مع حدود الاختبار.",
+      "files": ["autoload/ai_tick_budget.gd", "core/bt/bt_runner.gd", "core/ai/ai_perception.gd", "scenes/field/enemies/hostile_agent.gd", "scenes/dispatch/operations_room.tscn", "project.godot", "tools/perf/benchmark_ai.gd", "docs/design/PERFORMANCE_PASS.md"]
     }
   ]
 }

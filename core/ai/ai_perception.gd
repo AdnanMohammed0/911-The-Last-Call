@@ -63,6 +63,9 @@ func _physics_process(delta: float) -> void:
 	var interval: float = 1.0 / tick_rate
 	if _accumulator < interval:
 		return
+	if not AITickBudget.try_consume(self):
+		_accumulator = minf(_accumulator, 0.4)
+		return
 	var step: float = _accumulator
 	_accumulator = 0.0
 	sense(step)

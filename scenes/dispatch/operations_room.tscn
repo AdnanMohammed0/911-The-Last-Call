@@ -160,6 +160,12 @@ size = Vector3(1, 4, 71)
 [sub_resource type="BoxShape3D" id="BoxShape3D_east_fence"]
 size = Vector3(1, 4, 71)
 
+[sub_resource type="BoxOccluder3D" id="BoxOccluder3D_north_south"]
+size = Vector3(82, 3.4, 0.7)
+
+[sub_resource type="BoxOccluder3D" id="BoxOccluder3D_east_west"]
+size = Vector3(0.7, 3.4, 70)
+
 [node name="Station4_OperationsRoom" type="Node3D" unique_id=2082432568]
 
 [node name="StationInterior" parent="." instance=ExtResource("interior_dressing")]
@@ -556,6 +562,22 @@ shape = SubResource("BoxShape3D_west_fence")
 [node name="EastWall" type="CollisionShape3D" parent="PerimeterFence/Colliders" unique_id=412916526]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71.4, 2, -18.86)
 shape = SubResource("BoxShape3D_east_fence")
+
+[node name="NorthOccluder" type="OccluderInstance3D" parent="PerimeterFence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5, 2, -53.86)
+occluder = SubResource("BoxOccluder3D_north_south")
+
+[node name="SouthOccluder" type="OccluderInstance3D" parent="PerimeterFence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5, 2, 16.14)
+occluder = SubResource("BoxOccluder3D_north_south")
+
+[node name="WestOccluder" type="OccluderInstance3D" parent="PerimeterFence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4, 2, -18.86)
+occluder = SubResource("BoxOccluder3D_east_west")
+
+[node name="EastOccluder" type="OccluderInstance3D" parent="PerimeterFence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71.4, 2, -18.86)
+occluder = SubResource("BoxOccluder3D_east_west")
 
 [node name="Fence_West_00" parent="PerimeterFence" unique_id=910000000 instance=ExtResource("33_fence_concrete")]
 transform = Transform3D(-0.00179565, 0, -1.125, 0, 1.125, 0, 1.125, 0, -0.00179565, -10.4, 0.433, -51.86)

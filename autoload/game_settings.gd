@@ -133,6 +133,7 @@ func _ready() -> void:
 func load_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	if config.load(PATH) != OK:
+		_apply_first_run_graphics_defaults(RenderingServer.get_video_adapter_name())
 		return
 	window_mode = config.get_value("video", "window_mode", window_mode)
 	vsync = config.get_value("video", "vsync", vsync)
@@ -206,6 +207,14 @@ func load_settings() -> void:
 		ts.has_consented = telemetry_consent_given
 		ts.telemetry_enabled = telemetry_enabled
 		ts.crash_reporting_enabled = crash_reporting_enabled
+
+
+## Start integrated Intel GPUs on a lighter preset; saved user choices always win.
+func _apply_first_run_graphics_defaults(adapter_name: String) -> void:
+	var name_lower: String = adapter_name.to_lower()
+	if "intel" in name_lower and ("uhd" in name_lower or "iris" in name_lower or "hd graphics" in name_lower):
+		quality = Quality.LOW
+		render_scale = 0.5
 
 
 func save_settings() -> void:
@@ -463,8 +472,8 @@ func _apply_rendering() -> void:
 			RenderingServer.directional_shadow_atlas_set_size(4096, true)
 		Quality.HIGH:
 			viewport.msaa_3d = Viewport.MSAA_2X
-			viewport.positional_shadow_atlas_size = 8192
-			RenderingServer.directional_shadow_atlas_set_size(8192, true)
+			viewport.positional_shadow_atlas_size = 4096
+			RenderingServer.directional_shadow_atlas_set_size(4096, true)
 		Quality.ULTRA:
 			viewport.msaa_3d = Viewport.MSAA_4X
 			viewport.positional_shadow_atlas_size = 8192

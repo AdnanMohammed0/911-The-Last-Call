@@ -6,6 +6,7 @@ extends GutTest
 func after_each() -> void:
 	GameSettings.reset_keybinds()
 	GameSettings.set_value("quality", GameSettings.Quality.HIGH)
+	GameSettings.set_value("render_scale", 1.0)
 	GameSettings.set_value("brightness", 1.0)
 	GameSettings.set_value("mouse_sensitivity", 1.0)
 	GameSettings.set_value("ads_sensitivity", 0.7)
@@ -91,8 +92,26 @@ func test_quality_and_brightness_drive_environments() -> void:
 	GameSettings.set_value("quality", GameSettings.Quality.ULTRA)
 	assert_true(env.sdfgi_enabled, "authored SDFGI comes back")
 	assert_true(env.ssil_enabled)
+	assert_eq(get_tree().root.positional_shadow_atlas_size, 8192)
+	GameSettings.set_value("quality", GameSettings.Quality.HIGH)
+	assert_eq(get_tree().root.positional_shadow_atlas_size, 4096)
 	GameSettings.set_value("brightness", 1.5)
 	assert_almost_eq(env.tonemap_exposure, 3.0, 0.001, "brightness scales the authored exposure")
+
+
+func test_first_run_graphics_defaults_target_integrated_intel_only() -> void:
+	GameSettings.quality = GameSettings.Quality.HIGH
+	GameSettings.render_scale = 1.0
+	GameSettings._apply_first_run_graphics_defaults("Intel(R) UHD Graphics")
+	assert_eq(GameSettings.quality, GameSettings.Quality.LOW)
+	assert_eq(GameSettings.render_scale, 0.5)
+	GameSettings.quality = GameSettings.Quality.HIGH
+	GameSettings.render_scale = 1.0
+	GameSettings._apply_first_run_graphics_defaults("Intel Arc A770")
+	assert_eq(GameSettings.quality, GameSettings.Quality.HIGH)
+	assert_eq(GameSettings.render_scale, 1.0)
+	GameSettings._apply_first_run_graphics_defaults("NVIDIA GeForce RTX 4060")
+	assert_eq(GameSettings.quality, GameSettings.Quality.HIGH)
 
 
 func test_settings_menu_builds_all_tabs_and_closes() -> void:

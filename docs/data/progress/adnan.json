@@ -184,7 +184,7 @@
     },
     "P4-16": {
       "status": "testing",
-      "note": "ميزانية AI مشتركة وLOD للأعداء وحجب بالمحطة. أصلحت بدء نافذة 3ms عند أول تحديث AI مؤهل لا عند أول طلب مستبعد، ونجح اختبارها. قياس 12 عدواً headless قبل: 1.14/1.52ms، بعد: 1.23/1.37ms متوسط؛ التذبذب يمنع ادعاء تسريع. يلزم قياس GPU وFPS في لعبة مرسومة ومهام مزدحمة.",
+      "note": "ميزانية AI وLOD والحجب موجودة. أضفت قياس رسم فعلي بمشهد المركز و12 عدواً: Intel UHD على High تحسن من 90.95 إلى 68.47ms متوسط الإطار بعد تخفيف الظلال/SSAO/fog؛ RTX 4060 من 10.72/10.77 إلى 10.26ms. أول تشغيل على Intel UHD/Iris يبدأ Low و50% رسم؛ الخيارات المحفوظة تبقى. نجح 23 اختبار إعدادات وفحص مستودع، ومهمة Warehouse بـ15 عدواً 6.02ms على RTX. يبقى فحص لعب كامل وجودة الظلال و1% lows على أجهزة متعددة.",
       "updated_at": "2026-11-01"
     },
     "P5-01": {
@@ -1313,6 +1313,12 @@
       "tasks": ["P3-14"],
       "summary": "اختبار ENet بثلاثة أطراف يثبت وصول Dead Frequency للضحية وحدها؛ 5 اختبارات ناجحة.",
       "files": ["autoload/voice_manager.gd", "tests/test_dead_frequency.gd", "docs/design/DEAD_FREQUENCY.md"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P4-16"],
+      "summary": "قياس مرسوم على RTX وIntel، تخفيف High والظلال والمؤثرات، واختيار Low تلقائياً لأول تشغيل على Intel المدمج؛ 23 اختبار إعدادات ناجح.",
+      "files": ["autoload/game_settings.gd", "project.godot", "tools/perf/benchmark_render.gd", "tests/test_settings.gd", "docs/design/PERFORMANCE_PASS.md"]
     }
   ]
 }

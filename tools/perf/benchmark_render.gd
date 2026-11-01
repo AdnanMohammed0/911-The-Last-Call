@@ -1,6 +1,7 @@
 ## Rendered scene benchmark. Run without --headless, with --windowed.
 ## Pass scene path, extra hostile count, quality (0-3), render scale, and optional "sweep" or "walk" after --.
-## Optional trailing flags: no_batch, bilinear, fsr1, fsr2; sweep can take a capture prefix first.
+## Optional trailing flags: no_batch, bilinear, fsr1, fsr2, hide_interior, hide_map, hide_lights.
+## The hide flags are diagnostic only; sweep can take a capture prefix first.
 extends SceneTree
 
 const DEFAULT_SCENE: String = "res://scenes/dispatch/operations_room.tscn"
@@ -49,6 +50,18 @@ func _run() -> void:
 			batch_node.free()
 	root.add_child(level)
 	current_scene = level
+	if "hide_interior" in args:
+		var interior: Node3D = level.get_node_or_null(^"StationInterior") as Node3D
+		if interior != null:
+			interior.visible = false
+	if "hide_map" in args:
+		var map_node: Node3D = level.get_node_or_null(^"Geometry/00 | COMPLETE BUILDING - Exterior") as Node3D
+		if map_node != null:
+			map_node.visible = false
+	if "hide_lights" in args:
+		for node: Node in level.find_children("*", "Light3D", true, false):
+			var light: Light3D = node as Light3D
+			light.visible = false
 	var mesh_batch: Node = level.get_node_or_null(^"StationInterior/StationMeshBatch")
 	if mesh_batch != null:
 		print("STATION_BATCH batches=%d meshes=%d" % [mesh_batch.get("batch_count"), mesh_batch.get("mesh_count")])

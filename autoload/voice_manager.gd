@@ -47,6 +47,8 @@ const OCCLUDED_CUTOFF_HZ: float = 900.0
 const OCCLUDED_VOLUME_DB: float = -8.0
 const OPEN_CUTOFF_HZ: float = 5000.0
 const DEAD_FREQUENCY_FRAMES: int = 80 # 1.6 seconds of 20 ms radio speech.
+const DEAD_FREQUENCY_FRAME_MS: int = 20
+const DEAD_FREQUENCY_MAX_BURST: int = 4
 const DEAD_FREQUENCY_COOLDOWN_SEC: float = 35.0
 const DEAD_FREQUENCY_MAX_AGE_MS: int = 10000
 
@@ -701,18 +703,25 @@ func _check_dead_frequency() -> void:
 func _pump_dead_frequency(now: int) -> void:
 	for victim_peer: int in _dead_frequency_outbox.keys():
 		var item: Dictionary = _dead_frequency_outbox[victim_peer]
-		if now < item["next_msec"]:
-			continue
 		var frames: Array[PackedByteArray] = item["frames"]
 		var index: int = item["index"]
 		if index >= frames.size():
 			_dead_frequency_outbox.erase(victim_peer)
 			continue
 		var speaker_peer: int = item["speaker"]
-		var packet: PackedByteArray = frames[index]
-		if victim_peer == multiplayer.get_unique_id():
-			_receive_dead_frequency(speaker_peer, packet)
+		var next_msec: int = item["next_msec"]
+		var sent: int = 0
+		while index < frames.size() and now >= next_msec and sent < DEAD_FREQUENCY_MAX_BURST:
+			var packet: PackedByteArray = frames[index]
+			if victim_peer == multiplayer.get_unique_id():
+				_receive_dead_frequency(speaker_peer, packet)
+			else:
+				_dead_frequency_frame.rpc_id(victim_peer, speaker_peer, packet)
+			index += 1
+			sent += 1
+			next_msec += DEAD_FREQUENCY_FRAME_MS
+		if index >= frames.size():
+			_dead_frequency_outbox.erase(victim_peer)
 		else:
-			_dead_frequency_frame.rpc_id(victim_peer, speaker_peer, packet)
-		item["index"] = index + 1
-		item["next_msec"] = now + 20
+			item["index"] = index
+			item["next_msec"] = next_msec

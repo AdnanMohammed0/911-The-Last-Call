@@ -60,6 +60,24 @@ func test_speaker_departure_cancels_pending_imitation() -> void:
 	assert_false(VoiceManager._dead_frequency_outbox.has(1))
 
 
+func test_replay_keeps_20ms_cadence_when_host_frames_are_slow() -> void:
+	var samples: PackedFloat32Array = PackedFloat32Array()
+	samples.resize(VoiceCodec.FRAME_SAMPLES)
+	var packet: PackedByteArray = ImaAdpcmCodec.new().encode(samples)
+	for _i: int in 10:
+		VoiceManager._remember_radio(2, packet)
+	assert_true(VoiceManager.inject_dead_frequency(1, 2))
+	var start_msec: int = VoiceManager._dead_frequency_outbox[1]["next_msec"]
+	VoiceManager._pump_dead_frequency(start_msec + 79)
+	var index: int = VoiceManager._dead_frequency_outbox[1]["index"]
+	assert_eq(index, 4, "four frames are due within 80 ms")
+	VoiceManager._pump_dead_frequency(start_msec + 1000)
+	index = VoiceManager._dead_frequency_outbox[1]["index"]
+	assert_eq(index, 8, "a long stall is capped to four packets per update")
+	VoiceManager._pump_dead_frequency(start_msec + 1000)
+	assert_false(VoiceManager._dead_frequency_outbox.has(1), "the remaining frames finish without stretching the clip")
+
+
 func test_dead_frequency_rpc_reaches_only_the_victim() -> void:
 	var server_root: Node = Node.new()
 	server_root.name = "FrequencyServer"
@@ -122,6 +140,14 @@ func test_dead_frequency_rpc_reaches_only_the_victim() -> void:
 	assert_false(bystander_voice._streams.has(-1), "the other client does not hear it")
 	if victim_voice._streams.has(-1):
 		assert_eq(victim_voice._streams[-1].radio_queue.size(), 1)
+	var next_msec: int = host_voice._dead_frequency_outbox[victim_id]["next_msec"]
+	host_voice._pump_dead_frequency(next_msec + 59)
+	for _i: int in 120:
+		if victim_voice._streams[-1].radio_queue.size() >= 4:
+			break
+		await get_tree().process_frame
+	assert_eq(victim_voice._streams[-1].radio_queue.size(), 4, "late host updates still deliver every due frame to the victim")
+	assert_false(bystander_voice._streams.has(-1))
 	client_peer.close()
 	bystander_peer.close()
 	server_peer.close()

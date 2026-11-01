@@ -189,7 +189,7 @@
     },
     "P5-01": {
       "status": "testing",
-      "note": "ربطت 4 إنجازات Steam وحضور Rich Presence وانضمام الأصدقاء عبر Steam ودعوة من قائمة الإيقاف؛ وثقت إعداد Steam Auto-Cloud لملفي career والاقتصاد وترجمة الحضور. 5 اختبارات محلية نجحت، لكن يحتاج App ID حقيقي وإضافة GodotSteam منشورة ولوحة Steamworks وحسابين لاختبار الإنجازات والحفظ السحابي والدعوات فعلياً.",
+      "note": "4 إنجازات Steam وحضور Rich Presence وانضمام الأصدقاء ودعوات القائمة، مع توثيق Auto-Cloud. أصلحت ضياع طلب الإنجاز عند فشل Steam مؤقتاً بعد جاهزية الإحصاءات؛ الطلب يبقى ويعاد كل 10ث. نجحت 4 اختبارات خدمة Steam الوهمية. الاختبار الحقيقي للإنجازات والسحابة والدعوات يحتاج App ID وإضافة GodotSteam ولوحة منشورة وحسابين.",
       "updated_at": "2026-11-01"
     },
     "P5-02": {
@@ -1277,6 +1277,12 @@
       "tasks": ["P4-16"],
       "summary": "تصحيح بدء نافذة ميزانية AI وتوثيق قياسات قبل وبعد المتذبذبة؛ اختبار الميزانية ناجح ويبقى قياس لعبة مرسومة.",
       "files": ["autoload/ai_tick_budget.gd", "tests/test_ai_tick_budget.gd", "docs/design/PERFORMANCE_PASS.md"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P5-01"],
+      "summary": "إعادة محاولة فتح إنجاز Steam كل 10 ثوانٍ عند فشل مؤقت، مع اختبار الفشل والتعافي؛ الاختبار الحي ما زال معلقاً.",
+      "files": ["autoload/steamworks_service.gd", "tests/test_steamworks_service.gd", "docs/design/STEAM_RELEASE.md"]
     }
   ]
 }

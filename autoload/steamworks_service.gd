@@ -6,12 +6,14 @@ const ACH_FIRST_RESPONSE: String = "FIRST_RESPONSE"
 const ACH_TEN_RESPONSES: String = "TEN_RESPONSES"
 const ACH_FIRST_ARREST: String = "FIRST_ARREST"
 const ACH_CAPTAIN: String = "CAPTAIN"
+const UNLOCK_RETRY_SEC: float = 10.0
 
 var _steam: Object = null
 var _unlocked_this_session: Dictionary[String, bool] = {}
 var _stats_ready: bool = true
 var _pending_unlocks: Dictionary[String, bool] = {}
 var _pending_store: bool = false
+var _unlock_retry_elapsed: float = 0.0
 
 
 func _ready() -> void:
@@ -34,6 +36,16 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	_flush_stats()
+
+
+func _process(delta: float) -> void:
+	if _steam == null or not _stats_ready or _pending_unlocks.is_empty():
+		_unlock_retry_elapsed = 0.0
+		return
+	_unlock_retry_elapsed += delta
+	if _unlock_retry_elapsed >= UNLOCK_RETRY_SEC:
+		_unlock_retry_elapsed = 0.0
+		_retry_pending_unlocks()
 
 
 func _on_career_changed(_xp: int, rank: int) -> void:
@@ -70,12 +82,14 @@ func _unlock(achievement_id: String) -> bool:
 	if state.get("achieved", false):
 		_flush_stats()
 		_unlocked_this_session[achievement_id] = true
+		_pending_unlocks.erase(achievement_id)
 		return true
 	if _steam.call(&"setAchievement", achievement_id) != true:
 		return false
 	_pending_store = true
 	_flush_stats()
 	_unlocked_this_session[achievement_id] = true
+	_pending_unlocks.erase(achievement_id)
 	return true
 
 
@@ -83,9 +97,12 @@ func _on_stats_ready(_game: int, result: int, _user: int) -> void:
 	if result != 1:
 		return
 	_stats_ready = true
+	_retry_pending_unlocks()
+
+
+func _retry_pending_unlocks() -> void:
 	for achievement_id: String in _pending_unlocks.keys():
 		_unlock(achievement_id)
-	_pending_unlocks.clear()
 
 
 func _flush_stats() -> void:

@@ -9,6 +9,7 @@
 ## (`voice_ptt`); the radio key always transmits. Automatic gain lifts quiet microphones.
 ## Settings (input device, mode, auto gain) persist in user://voice.cfg.
 ## Authority: every peer (sends its own voice, validates and plays everyone else's)
+class_name VoiceService
 extends Node
 
 enum Mode { VOICE_ACTIVITY, PUSH_TO_TALK }

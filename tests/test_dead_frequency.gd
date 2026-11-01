@@ -1,6 +1,7 @@
 extends GutTest
 
 
+
 func after_each() -> void:
 	VoiceManager._clear_streams()
 
@@ -57,3 +58,70 @@ func test_speaker_departure_cancels_pending_imitation() -> void:
 	VoiceManager._remove_stream(2)
 	assert_false(VoiceManager._recent_radio.has(2))
 	assert_false(VoiceManager._dead_frequency_outbox.has(1))
+
+
+func test_dead_frequency_rpc_reaches_only_the_victim() -> void:
+	var server_root: Node = Node.new()
+	server_root.name = "FrequencyServer"
+	add_child_autofree(server_root)
+	var client_root: Node = Node.new()
+	client_root.name = "FrequencyClient"
+	add_child_autofree(client_root)
+	var bystander_root: Node = Node.new()
+	bystander_root.name = "FrequencyBystander"
+	add_child_autofree(bystander_root)
+	var server_api: SceneMultiplayer = SceneMultiplayer.new()
+	var client_api: SceneMultiplayer = SceneMultiplayer.new()
+	var bystander_api: SceneMultiplayer = SceneMultiplayer.new()
+	get_tree().set_multiplayer(server_api, server_root.get_path())
+	get_tree().set_multiplayer(client_api, client_root.get_path())
+	get_tree().set_multiplayer(bystander_api, bystander_root.get_path())
+	var server_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
+	assert_eq(server_peer.create_server(49395, 3), OK)
+	server_api.multiplayer_peer = server_peer
+	var client_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
+	assert_eq(client_peer.create_client("127.0.0.1", 49395), OK)
+	client_api.multiplayer_peer = client_peer
+	var bystander_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
+	assert_eq(bystander_peer.create_client("127.0.0.1", 49395), OK)
+	bystander_api.multiplayer_peer = bystander_peer
+	for _i: int in 120:
+		if server_api.get_peers().size() == 2 and client_api.get_unique_id() > 1 and bystander_api.get_unique_id() > 1:
+			break
+		await get_tree().process_frame
+	var victim_id: int = client_api.get_unique_id()
+	assert_gt(victim_id, 1)
+	assert_ne(victim_id, bystander_api.get_unique_id())
+	var host_voice: VoiceService = VoiceService.new()
+	host_voice.name = "Voice"
+	server_root.add_child(host_voice)
+	host_voice.set_process(false)
+	var victim_voice: VoiceService = VoiceService.new()
+	victim_voice.name = "Voice"
+	client_root.add_child(victim_voice)
+	victim_voice.set_process(false)
+	var bystander_voice: VoiceService = VoiceService.new()
+	bystander_voice.name = "Voice"
+	bystander_root.add_child(bystander_voice)
+	bystander_voice.set_process(false)
+	var samples: PackedFloat32Array = PackedFloat32Array()
+	samples.resize(VoiceCodec.FRAME_SAMPLES)
+	for i: int in samples.size():
+		samples[i] = sin(float(i) * 0.1) * 0.25
+	var packet: PackedByteArray = ImaAdpcmCodec.new().encode(samples)
+	for _i: int in VoiceManager.JITTER_FRAMES:
+		host_voice._remember_radio(1, packet)
+	assert_true(host_voice.inject_dead_frequency(victim_id, 1))
+	host_voice._pump_dead_frequency(Time.get_ticks_msec())
+	for _i: int in 120:
+		if victim_voice._streams.has(-1):
+			break
+		await get_tree().process_frame
+	assert_true(victim_voice._streams.has(-1), "the victim receives the fake radio frame")
+	assert_false(host_voice._streams.has(-1), "the host does not hear the victim's hallucination")
+	assert_false(bystander_voice._streams.has(-1), "the other client does not hear it")
+	if victim_voice._streams.has(-1):
+		assert_eq(victim_voice._streams[-1].radio_queue.size(), 1)
+	client_peer.close()
+	bystander_peer.close()
+	server_peer.close()

@@ -4,4 +4,4 @@ The host retains at most 80 recent 20 ms ADPCM radio frames per speaking teammat
 
 The injection uses a host-authority RPC on voice channel 2. It never enters proximity playback, the microphone transmit path, AI voice noise, or another player's radio. The host applies a 35-second cooldown per victim and discards history and pending imitations when the speaker leaves or the session ends. With no recent teammate radio speech, there is no imitation; the existing phantom ring/footstep effects still cover low sanity.
 
-Verification: `test_dead_frequency.gd` checks bounded and fresh history, packet validation, per-victim injection, cooldown, and disconnect cleanup. A two-player live test should confirm that only the Broken player's radio plays the replay and the teammate does not hear it.
+Verification: five `test_dead_frequency.gd` cases check bounded and fresh history, packet validation, cooldown, and disconnect cleanup. The ENet case runs a host, victim, and bystander and confirms only the victim receives the fake radio frame. A live listening test should confirm the effect sounds right and remains isolated.

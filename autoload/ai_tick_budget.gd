@@ -21,9 +21,11 @@ func try_consume(job: Node) -> bool:
 		_frame = frame
 		jobs_this_frame = 0
 		deferred_this_frame = 0
-		_frame_started_usec = Time.get_ticks_usec()
+		_frame_started_usec = 0
 	if int(job.get_instance_id() % COHORTS) != frame % COHORTS:
 		return false
+	if _frame_started_usec == 0:
+		_frame_started_usec = Time.get_ticks_usec()
 	if jobs_this_frame >= max_jobs_per_physics_frame or Time.get_ticks_usec() - _frame_started_usec >= max_ai_usec_per_physics_frame:
 		deferred_this_frame += 1
 		total_deferred += 1

@@ -233,6 +233,10 @@ func _spawn_step(delta: float) -> void:
 
 
 func _clear_wave() -> void:
+	# Dead bodies remain as replicated nodes; clear them before the next wave builds up.
+	if enemies_root != null:
+		for child: Node in enemies_root.get_children():
+			child.queue_free()
 	FlagSystem.record_event(&"siege_wave_cleared", {"wave": wave_index + 1, "waves": wave_count()})
 	wave_cleared.emit(wave_index + 1)
 	if wave_index + 1 >= wave_count():

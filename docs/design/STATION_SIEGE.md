@@ -31,7 +31,7 @@ call `StationSiege.find(get_tree()).start(reason)` directly.
 3. **Waves:** hostiles spawn from the four entry markers in turn (parking lot, north yard, east lot, south road;
    29–58 m of path from the operations room), capped by each wave's `max_alive`. Every 2.5 s, any hostile that
    cannot see an officer is told where the nearest standing one is. Ambush Leader reinforcements count toward the
-   wave.
+   wave. Cleared wave corpses despawn on host and clients before the next wave, so they do not pile up across the siege.
 4. **End:** after the last wave the station holds. If every officer stays down for 8 s it falls. Either way the
    remaining hostiles are removed, officers are restored, power returns and the shift clock resumes.
 
@@ -69,6 +69,6 @@ XP: +400 held, −150 fallen, +15 per hostile to the officer who neutralized it 
 
 - `tests/test_station_siege.gd`: wave data, station wiring, every entry reaches the operations room on the real
   navmesh, full flow, `max_alive`, team wipe, blackout, trigger conditions.
-- `tests/test_station_siege_network.gd`: host and client over ENet (state, blackout, HUD, enemy spawn, clients cannot start).
+- `tests/test_station_siege_network.gd`: host and client over ENet (state, blackout, HUD, enemy spawn/despawn, two wave transitions, final outcome, clients cannot start).
 
 The nested siege spawner now finds the station's player spawner to apply level-load visibility to its hostile synchronizers. Standalone set pieces reveal their synchronizers to connected peers directly. A playthrough with real players in the station and wave balance still need live validation.

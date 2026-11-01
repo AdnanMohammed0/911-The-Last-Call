@@ -32,8 +32,16 @@ func _run() -> void:
 		quit(1)
 		return
 	var level: Node = packed.instantiate()
+	if args.size() > 6 and args[6] == "no_batch":
+		var batch_node: Node = level.get_node_or_null(^"StationInterior/StationMeshBatch")
+		if batch_node != null:
+			batch_node.get_parent().remove_child(batch_node)
+			batch_node.free()
 	root.add_child(level)
 	current_scene = level
+	var mesh_batch: Node = level.get_node_or_null(^"StationInterior/StationMeshBatch")
+	if mesh_batch != null:
+		print("STATION_BATCH batches=%d meshes=%d" % [mesh_batch.get("batch_count"), mesh_batch.get("mesh_count")])
 	var positions: Array[Vector3] = _sweep_positions(scene_path) if sweep else []
 	var spawner: Node = level.find_child("EnemySpawner", true, false)
 	if spawner != null:
@@ -93,6 +101,14 @@ func _run() -> void:
 		for draw: float in sweep_draws[spot]:
 			draws_at_spot.append(draw)
 		print("RENDER_SPOT index=%d position=%s mean=%.3f p95=%.3f draws=%.1f" % [spot, positions[spot], _mean(samples), samples[int(samples.size() * 0.95)], _mean(draws_at_spot)])
+	if args.size() > 5 and camera != null and not positions.is_empty():
+		for spot: int in positions.size():
+			var capture_path: String = "user://%s_%d.png" % [args[5], spot]
+			_aim_camera(camera, positions[spot], positions[spot] + Vector3.FORWARD)
+			for _i: int in 10:
+				await process_frame
+			var save_error: Error = root.get_texture().get_image().save_png(capture_path)
+			print("RENDER_CAPTURE path=%s error=%d" % [ProjectSettings.globalize_path(capture_path), save_error])
 	quit()
 
 

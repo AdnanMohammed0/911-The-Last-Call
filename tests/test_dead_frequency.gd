@@ -32,3 +32,28 @@ func test_host_injects_only_to_selected_victim_with_cooldown() -> void:
 	assert_false(VoiceManager._dead_frequency_outbox.has(3))
 	VoiceManager._pump_dead_frequency(Time.get_ticks_msec())
 	assert_true(VoiceManager._streams.has(-2))
+
+
+func test_old_radio_is_not_replayed_or_mixed_with_new_speech() -> void:
+	var samples: PackedFloat32Array = PackedFloat32Array()
+	samples.resize(VoiceCodec.FRAME_SAMPLES)
+	var packet: PackedByteArray = ImaAdpcmCodec.new().encode(samples)
+	for i: int in VoiceManager.JITTER_FRAMES:
+		VoiceManager._remember_radio(2, packet)
+	VoiceManager._recent_radio_last_msec[2] = Time.get_ticks_msec() - VoiceManager.DEAD_FREQUENCY_MAX_AGE_MS - 1
+	assert_false(VoiceManager.inject_dead_frequency(1, 2))
+	VoiceManager._remember_radio(2, packet)
+	assert_eq(VoiceManager._recent_radio[2].size(), 1)
+	assert_false(VoiceManager.inject_dead_frequency(1, 2))
+
+
+func test_speaker_departure_cancels_pending_imitation() -> void:
+	var samples: PackedFloat32Array = PackedFloat32Array()
+	samples.resize(VoiceCodec.FRAME_SAMPLES)
+	var packet: PackedByteArray = ImaAdpcmCodec.new().encode(samples)
+	for i: int in VoiceManager.JITTER_FRAMES:
+		VoiceManager._remember_radio(2, packet)
+	assert_true(VoiceManager.inject_dead_frequency(1, 2))
+	VoiceManager._remove_stream(2)
+	assert_false(VoiceManager._recent_radio.has(2))
+	assert_false(VoiceManager._dead_frequency_outbox.has(1))

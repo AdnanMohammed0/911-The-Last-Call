@@ -47,6 +47,7 @@ const OCCLUDED_VOLUME_DB: float = -8.0
 const OPEN_CUTOFF_HZ: float = 5000.0
 const DEAD_FREQUENCY_FRAMES: int = 80 # 1.6 seconds of 20 ms radio speech.
 const DEAD_FREQUENCY_COOLDOWN_SEC: float = 35.0
+const DEAD_FREQUENCY_MAX_AGE_MS: int = 10000
 
 ## peer_id, speaking, radio. Emitted for remote speakers and for the local player.
 signal speaking_changed(peer_id: int, speaking: bool, radio: bool)
@@ -93,6 +94,7 @@ var _occlusion_timer: float = 0.0
 var _squelch_in: AudioStreamWAV = SquelchSounds.make_squelch_in()
 var _squelch_out: AudioStreamWAV = SquelchSounds.make_squelch_out()
 var _recent_radio: Dictionary[int, Array] = {}
+var _recent_radio_last_msec: Dictionary[int, int] = {}
 var _dead_frequency_next_msec: Dictionary[int, int] = {}
 var _dead_frequency_outbox: Dictionary[int, Dictionary] = {}
 
@@ -370,11 +372,13 @@ func _voice_frame(_seq: int, flags: int, loudness: int, packet: PackedByteArray)
 func _remember_radio(peer_id: int, packet: PackedByteArray) -> void:
 	if packet.size() != ImaAdpcmCodec.PACKET_BYTES:
 		return
-	var frames: Array = _recent_radio.get(peer_id, [])
+	var now: int = Time.get_ticks_msec()
+	var frames: Array = _recent_radio.get(peer_id, []) if now - _recent_radio_last_msec.get(peer_id, now) <= DEAD_FREQUENCY_MAX_AGE_MS else []
 	frames.append(packet.duplicate())
 	while frames.size() > DEAD_FREQUENCY_FRAMES:
 		frames.pop_front()
 	_recent_radio[peer_id] = frames
+	_recent_radio_last_msec[peer_id] = now
 
 
 ## Host: inject only into the victim's radio. Never rebroadcast as a real teammate's voice.
@@ -382,7 +386,7 @@ func inject_dead_frequency(victim_peer: int, speaker_peer: int) -> bool:
 	if not multiplayer.is_server() or victim_peer <= 0 or victim_peer == speaker_peer:
 		return false
 	var frames: Array = _recent_radio.get(speaker_peer, [])
-	if frames.size() < JITTER_FRAMES:
+	if frames.size() < JITTER_FRAMES or Time.get_ticks_msec() - _recent_radio_last_msec.get(speaker_peer, 0) > DEAD_FREQUENCY_MAX_AGE_MS:
 		return false
 	var now: int = Time.get_ticks_msec()
 	if now < _dead_frequency_next_msec.get(victim_peer, 0):
@@ -652,15 +656,18 @@ static func _make_generator() -> AudioStreamGenerator:
 
 func _remove_stream(peer_id: int) -> void:
 	var stream: SpeakerStream = _streams.get(peer_id, null)
-	if stream == null:
-		return
-	for player: AudioStreamPlayer in [stream.fallback_player, stream.radio_player, stream.squelch_player]:
-		if player != null:
-			player.queue_free()
+	if stream != null:
+		for player: AudioStreamPlayer in [stream.fallback_player, stream.radio_player, stream.squelch_player]:
+			if player != null:
+				player.queue_free()
 	_streams.erase(peer_id)
 	_recent_radio.erase(peer_id)
+	_recent_radio_last_msec.erase(peer_id)
 	_dead_frequency_next_msec.erase(peer_id)
 	_dead_frequency_outbox.erase(peer_id)
+	for victim_peer: int in _dead_frequency_outbox.keys():
+		if _dead_frequency_outbox[victim_peer].get("speaker", 0) == peer_id:
+			_dead_frequency_outbox.erase(victim_peer)
 	_limiter.forget_peer(peer_id)
 
 
@@ -671,6 +678,7 @@ func _clear_streams() -> void:
 	local_radio = false
 	_was_radio = false
 	_recent_radio.clear()
+	_recent_radio_last_msec.clear()
 	_dead_frequency_next_msec.clear()
 	_dead_frequency_outbox.clear()
 
@@ -680,7 +688,7 @@ func _check_dead_frequency() -> void:
 		return
 	for node: Node in get_tree().get_nodes_in_group(Player.GROUP):
 		var victim: Player = node as Player
-		if victim == null or SanitySystem.get_band(victim.peer_id) != SanitySystem.Band.BROKEN:
+		if victim == null or not victim.get_health().is_alive() or SanitySystem.get_band(victim.peer_id) != SanitySystem.Band.BROKEN:
 			continue
 		if Time.get_ticks_msec() < _dead_frequency_next_msec.get(victim.peer_id, 0):
 			continue

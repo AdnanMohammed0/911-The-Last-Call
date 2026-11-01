@@ -412,7 +412,7 @@ func act_move_to_cover(_bb: BTBlackboard) -> BTNode.Status:
 		var others: Array[Vector3] = []
 		for node: Node in get_tree().get_nodes_in_group(Player.GROUP):
 			var player: Player = node as Player
-			if player != perception.target and player.get_health().is_alive():
+			if player != null and player != perception.target and player.get_world_3d() == get_world_3d() and player.get_health().is_alive():
 				others.append(player.global_position)
 		cover = CoverQuery.find_best(self, threat, others, _exclude())
 		if cover == null:
@@ -581,7 +581,7 @@ func _face(point: Vector3) -> void:
 
 
 func _try_fire(target: Player) -> void:
-	if not archetype.armed or archetype.melee or ammo <= 0:
+	if target == null or not target.get_health().is_alive() or target.get_world_3d() != get_world_3d() or not archetype.armed or archetype.melee or ammo <= 0:
 		return
 	# Aim settles while the same target stays in view; switching targets or losing sight resets it.
 	var now: float = get_time()
@@ -641,10 +641,11 @@ func hit_chance_against(target: Player, distance: float) -> float:
 func _combat_target() -> Player:
 	if _last_attacker_peer != 0 and get_time() - _last_attacker_at < 4.0:
 		var attacker: Player = Player.find_by_peer(get_tree(), _last_attacker_peer)
-		if attacker != null and attacker.get_health().is_alive() \
+		if attacker != null and attacker.get_world_3d() == get_world_3d() and attacker.get_health().is_alive() \
 				and perception.has_line_of_sight(eye.global_position, attacker.get_eye_position(), attacker):
 			return attacker
-	return perception.target
+	var spotted: Player = perception.target
+	return spotted if spotted != null and spotted.get_world_3d() == get_world_3d() and spotted.get_health().is_alive() else null
 
 
 ## Pin the target down: short bursts at the last known position while it is out of sight.
@@ -680,7 +681,7 @@ func _nearest_player() -> Player:
 	var best_distance: float = INF
 	for node: Node in get_tree().get_nodes_in_group(Player.GROUP):
 		var player: Player = node as Player
-		if player == null or not player.get_health().is_alive():
+		if player == null or player.get_world_3d() != get_world_3d() or not player.get_health().is_alive():
 			continue
 		var distance: float = player.global_position.distance_to(global_position)
 		if distance < best_distance:

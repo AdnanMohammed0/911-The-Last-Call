@@ -136,3 +136,19 @@ func test_squad_wide_morale_event() -> void:
 	squad.register(a)
 	squad.apply_morale_event(AISquad.MEGAPHONE, &"megaphone")
 	assert_eq(a.morale, 40.0 + AISquad.MEGAPHONE)
+
+
+func test_hostile_does_not_target_or_fire_at_downed_player() -> void:
+	var hostile: HostileAgent = _hostile(&"cultist_gunman")
+	var player: Player = (load("res://scenes/shared/player/player.tscn") as PackedScene).instantiate() as Player
+	add_child_autofree(player)
+	player.set_physics_process(false)
+	player.set_process(false)
+	hostile.perception.target = player
+	assert_eq(hostile._combat_target(), player)
+	player.get_health().state = HealthComponent.State.DOWNED
+	assert_null(hostile._combat_target())
+	var ammo_before: int = hostile.ammo
+	hostile._try_fire(player)
+	assert_eq(hostile.ammo, ammo_before)
+	assert_null(hostile._nearest_player())

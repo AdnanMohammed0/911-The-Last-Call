@@ -123,9 +123,9 @@
       "updated_at": "2026-11-01"
     },
     "P3-10": {
-      "status": "testing",
-      "note": "5 archetypes (data/ai/archetypes) من جدول §8.1 + HostileAgent (hostile.tscn): navigation، AIPerception، BTRunner، إطلاق hitscan على الهوست يضر Health اللاعب (دقة تقل بالمسافة والحركة والانحناء، مناطق إصابة)، ضوضاء طلقة 60م، مزامنة الموقع/الحركة/الحالة/HP للـ clients. HostileBrains تبني شجرة لكل نوع: Thug (دورية، غطاء، استسلام سهل 35)، Cultist Gunman (غطاء + التفاف)، Zealot (هجوم مباشر + IED، ما يستسلم)، Ambush Leader (يطلب تعزيز +2)، Hostage Taker (يمسك الرهينة ويعدمها 50% عند اقتحام صاخب). EnemySpawner + EnemySpawnPoint + مشهد اختبار ai_test_range.tscn. اختبار سلوك (14 فحص) + اختبار شبكة + GUT نجحت.",
-      "updated_at": "2026-09-17"
+      "status": "done",
+      "note": "خمسة أنواع أعداء مع أشجار سلوك مختلفة، ملاحة وإطلاق نار ومزامنة عبر EnemySpawner؛ اختبار الشبكة السابق ناجح. أصلحت اختيار اللاعب الساقط أو الموجود بعالم آخر كهدف ومنعت إطلاق النار عليه، مع اختبار انحدار. نجحت 11 اختبارات GUT لسلوك الأعداء (43 تحققاً). رُفعت على main.",
+      "updated_at": "2026-11-01"
     },
     "P3-11": {
       "status": "testing",
@@ -1229,6 +1229,12 @@
       "tasks": ["P3-09"],
       "summary": "حصر استعلام الغطاء وعدّ نقاطه بعالم المهمة؛ اختبار بعالمين منفصلين و7 اختبارات ملاحة وغطاء ناجحة.",
       "files": ["core/ai/cover_query.gd", "core/ai/mission_navigation.gd", "tests/test_cover_navigation.gd"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P3-10"],
+      "summary": "منع العدو من استهداف اللاعب الساقط أو الموجود بعالم آخر؛ 11 اختبار سلوك أعداء ناجحاً.",
+      "files": ["scenes/field/enemies/hostile_agent.gd", "tests/test_hostile_ai.gd"]
     }
   ]
 }

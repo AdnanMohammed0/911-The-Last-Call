@@ -123,3 +123,20 @@ func test_low_sanity_players_are_picked_more_often() -> void:
 		if TensionDirector._pick_victim() == _alice:
 			alice_count += 1
 	assert_gt(alice_count, 120, "weighted towards the scared player (%d/200)" % alice_count)
+
+
+func test_tension_uses_sanity_fraction_for_high_capacity_class() -> void:
+	_alice.apply_class(ClassCatalog.get_data(&"medic"))
+	_alice.sanity = 65.0
+	_bob.sanity = 100.0
+	assert_eq(_alice.max_sanity, 130.0)
+	assert_almost_eq(TensionDirector.compute_target_tension(), 0.0875, 0.001)
+	_bob.sanity = 50.0
+	assert_almost_eq(TensionDirector.compute_target_tension(), 0.175, 0.001)
+
+
+func test_critical_player_no_longer_affects_team_sanity_tension() -> void:
+	_alice.sanity = 0.0
+	_alice.get_health().state = HealthComponent.State.CRITICAL
+	_bob.sanity = 100.0
+	assert_almost_eq(TensionDirector.compute_target_tension(), 0.0, 0.001)

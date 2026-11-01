@@ -49,6 +49,7 @@ func reset() -> void:
 	suppressed = false
 	_low_time = 0.0
 	_since_scare = INF
+	_last_kind = &""
 	_damage_log.clear()
 
 
@@ -91,10 +92,10 @@ func compute_target_tension() -> float:
 	var players: int = 0
 	for node: Node in get_tree().get_nodes_in_group(Player.GROUP):
 		var player: Player = node as Player
-		if player != null:
-			sanity_total += player.sanity
+		if player != null and player.get_health().is_alive():
+			sanity_total += SanitySystem.ratio(player)
 			players += 1
-	var sanity_term: float = 1.0 - (sanity_total / players) / 100.0 if players > 0 else 0.0
+	var sanity_term: float = 1.0 - sanity_total / players if players > 0 else 0.0
 
 	var combat_term: float = 0.0
 	for node: Node in get_tree().get_nodes_in_group(HostileAgent.GROUP):
@@ -142,13 +143,13 @@ func _pick_victim() -> Player:
 			candidates.append(player)
 	if candidates.is_empty():
 		return null
-	# Weighted towards low sanity: weight = 1 + (100 - sanity) / 20.
+	# Weighted towards low sanity as a share of each class's own capacity.
 	var total: float = 0.0
 	for player: Player in candidates:
-		total += 1.0 + (100.0 - player.sanity) / 20.0
+		total += 1.0 + (1.0 - SanitySystem.ratio(player)) * 5.0
 	var roll: float = _rng.randf() * total
 	for player: Player in candidates:
-		roll -= 1.0 + (100.0 - player.sanity) / 20.0
+		roll -= 1.0 + (1.0 - SanitySystem.ratio(player)) * 5.0
 		if roll <= 0.0:
 			return player
 	return candidates[candidates.size() - 1]

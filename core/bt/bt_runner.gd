@@ -58,3 +58,5 @@ func reset() -> void:
 	if tree != null:
 		tree.abort(agent, blackboard)
 	blackboard = BTBlackboard.new()
+	last_status = BTNode.Status.FAILURE
+	_accumulator = 0.0

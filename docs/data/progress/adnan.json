@@ -109,7 +109,7 @@
     },
     "P3-07": {
       "status": "testing",
-      "note": "Behavior tree runtime بـ core/bt: Selector (reactive، يقطع الفرع الأقل أولوية)، Sequence (يكمل من الابن الشغال)، Parallel، Decorator (Invert/Succeed/Repeat/Cooldown/TimeLimit)، BTCall (دوال الـ agent + تنظيف _exit عند المقاطعة)، BTCheck للـ blackboard، BTWait. الشجرة Resource مشتركة والحالة لكل agent بالـ BTBlackboard. BTRunner على الهوست 10Hz موزع. BT.sel/seq/... لبناء الشجرة بالكود. Debugger (F4، Tab يبدل) يعرض الشجرة بالألوان والـ blackboard. 12 اختبار GUT نجحت.",
+      "note": "Behavior tree runtime والـdebugger موجودان. خففت تقسيم ميزانية AI إلى مجموعتين حتى يبقى تحديث 10Hz ممكناً عند 20 physics FPS، وصار reset يمسح حالة العرض ودين الوقت. نجحت 13 اختبارات GUT. يلزم اختبار بصري للـdebugger وقياس اللعب الفعلي على الأجهزة الأبطأ.",
       "updated_at": "2026-09-17"
     },
     "P3-08": {
@@ -1211,6 +1211,12 @@
       "tasks": ["P3-04"],
       "summary": "حصر ركلة Breacher بالمضيف وتوسيع اختبارات تبريدها وتوفر أدوات Medic حسب الفئة؛ 6 اختبارات ناجحة.",
       "files": ["scenes/shared/player/class_abilities.gd", "tests/test_class_abilities.gd"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P3-07"],
+      "summary": "تحسين إتاحة تحديثات AI على معدلات الإطارات المنخفضة ومسح حالة شجرة السلوك عند reset؛ 13 اختباراً ناجحاً.",
+      "files": ["autoload/ai_tick_budget.gd", "core/bt/bt_runner.gd", "tests/test_behavior_tree.gd"]
     }
   ]
 }

@@ -153,3 +153,16 @@ func test_one_tree_shared_by_two_agents_keeps_separate_state() -> void:
 	assert_eq(_value(&"entered"), 1)
 	var other_entered: int = other_bb.get_value(&"entered", 0)
 	assert_eq(other_entered, 1)
+
+
+func test_runner_reset_clears_debug_status_and_tick_debt() -> void:
+	var runner: BTRunner = BTRunner.new()
+	runner.tree = BT.act(&"act_attack")
+	_agent.add_child(runner)
+	runner.set_physics_process(false)
+	assert_eq(runner.tick_now(), BTNode.Status.SUCCESS)
+	runner._accumulator = 0.3
+	runner.reset()
+	assert_eq(runner.last_status, BTNode.Status.FAILURE)
+	assert_eq(runner._accumulator, 0.0)
+	assert_eq(runner.blackboard.time, 0.0)

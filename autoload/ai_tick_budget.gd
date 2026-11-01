@@ -1,7 +1,7 @@
-## Shared host AI budget. Four rotating cohorts keep admission fair when the scene is crowded.
+## Shared host AI budget. Two rotating cohorts preserve 10 Hz AI ticks at 20 physics FPS.
 extends Node
 
-const COHORTS: int = 4
+const COHORTS: int = 2
 
 @export var max_jobs_per_physics_frame: int = 12
 @export var max_ai_usec_per_physics_frame: int = 3000

@@ -231,6 +231,25 @@ func test_team_wipe_overruns_the_station() -> void:
 	assert_true(player.get_health().is_alive(), "officers are back on their feet afterwards")
 
 
+func test_player_in_another_world_cannot_prevent_station_wipe() -> void:
+	var siege: StationSiege = _siege_on_floor()
+	var station_player: Player = (load("res://scenes/shared/player/player.tscn") as PackedScene).instantiate() as Player
+	_world.add_child(station_player)
+	station_player.set_physics_process(false)
+	var other_viewport: SubViewport = SubViewport.new()
+	other_viewport.own_world_3d = true
+	add_child_autofree(other_viewport)
+	var remote_player: Player = (load("res://scenes/shared/player/player.tscn") as PackedScene).instantiate() as Player
+	other_viewport.add_child(remote_player)
+	remote_player.set_physics_process(false)
+	await _start_and_bake(siege)
+	station_player.get_health().state = HealthComponent.State.DOWNED
+	assert_true(remote_player.get_health().is_alive())
+	siege.step(siege.plan.wipe_grace_sec + 0.1)
+	assert_eq(siege.state, StationSiege.State.FALLEN)
+	assert_true(station_player.get_health().is_alive())
+
+
 func test_blackout_cuts_station_lights_until_the_end() -> void:
 	var siege: StationSiege = _siege_on_floor()
 	var lamp: OmniLight3D = _world.get_node("Lamps").get_child(0) as OmniLight3D

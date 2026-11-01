@@ -269,7 +269,7 @@ func _end(outcome: StringName) -> void:
 			"The cult took Station 4 on wave %d of %d." % [wave_index + 1, wave_count()])
 	for node: Node in get_tree().get_nodes_in_group(Player.GROUP):
 		var player: Player = node as Player
-		if player != null:
+		if player != null and player.get_world_3d() == get_world_3d():
 			player.get_health().restore()
 	if _shift_was_running:
 		CallDirector.resume_shift()
@@ -322,8 +322,7 @@ func _hunt() -> void:
 
 
 func _check_wipe(delta: float) -> void:
-	var players: Array[Node] = get_tree().get_nodes_in_group(Player.GROUP)
-	if players.is_empty() or not _standing_players().is_empty():
+	if _players_in_station().is_empty() or not _standing_players().is_empty():
 		_wipe_timer = 0.0
 		return
 	_wipe_timer += delta
@@ -333,11 +332,19 @@ func _check_wipe(delta: float) -> void:
 
 func _standing_players() -> Array[Player]:
 	var standing: Array[Player] = []
-	for node: Node in get_tree().get_nodes_in_group(Player.GROUP):
-		var player: Player = node as Player
-		if player != null and not player.connection_lost and player.get_health().is_alive():
+	for player: Player in _players_in_station():
+		if not player.connection_lost and player.get_health().is_alive():
 			standing.append(player)
 	return standing
+
+
+func _players_in_station() -> Array[Player]:
+	var players: Array[Player] = []
+	for node: Node in get_tree().get_nodes_in_group(Player.GROUP):
+		var player: Player = node as Player
+		if player != null and player.get_world_3d() == get_world_3d():
+			players.append(player)
+	return players
 
 
 static func _nearest(players: Array[Player], from: Vector3) -> Player:

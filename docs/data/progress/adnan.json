@@ -108,9 +108,9 @@
       "updated_at": "2026-11-01"
     },
     "P3-07": {
-      "status": "testing",
-      "note": "Behavior tree runtime والـdebugger موجودان. خففت تقسيم ميزانية AI إلى مجموعتين حتى يبقى تحديث 10Hz ممكناً عند 20 physics FPS، وصار reset يمسح حالة العرض ودين الوقت. نجحت 13 اختبارات GUT. يلزم اختبار بصري للـdebugger وقياس اللعب الفعلي على الأجهزة الأبطأ.",
-      "updated_at": "2026-09-17"
+      "status": "done",
+      "note": "Behavior tree runtime والـdebugger يعملان على المضيف مع ميزانية AI ومجموعتين لجدولة 10Hz. تحققت من اللوحة بلقطة مرسومة فيها 6 أعداء، وعدلت ارتفاعها حسب الشاشة وفعّلت تمرير Blackboard الطويل. نجحت 14 اختبارات GUT بينها اختبار تمرير فعلي. قياس FPS للأجهزة الأبطأ متابع ضمن P4-16.",
+      "updated_at": "2026-11-01"
     },
     "P3-08": {
       "status": "done",
@@ -1319,6 +1319,12 @@
       "tasks": ["P4-16"],
       "summary": "قياس مرسوم على RTX وIntel، تخفيف High والظلال والمؤثرات، واختيار Low تلقائياً لأول تشغيل على Intel المدمج؛ 23 اختبار إعدادات ناجح.",
       "files": ["autoload/game_settings.gd", "project.godot", "tools/perf/benchmark_render.gd", "tests/test_settings.gd", "docs/design/PERFORMANCE_PASS.md"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P3-07"],
+      "summary": "فحص بصري مرسوم للـBT debugger، تحسين اللوحة وتمرير Blackboard الطويل؛ 14 اختباراً ناجحاً.",
+      "files": ["autoload/bt_debugger.gd", "tests/test_behavior_tree.gd", "tools/perf/capture_bt_debugger.gd"]
     }
   ]
 }

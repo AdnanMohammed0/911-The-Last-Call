@@ -166,3 +166,21 @@ func test_runner_reset_clears_debug_status_and_tick_debt() -> void:
 	assert_eq(runner.last_status, BTNode.Status.FAILURE)
 	assert_eq(runner._accumulator, 0.0)
 	assert_eq(runner.blackboard.time, 0.0)
+
+
+func test_debugger_can_scroll_a_long_blackboard() -> void:
+	var runner: BTRunner = BTRunner.new()
+	runner.tree = BT.act(&"act_attack")
+	_agent.add_child(runner)
+	runner.set_physics_process(false)
+	runner.tick_now()
+	for i: int in 100:
+		runner.blackboard.set_value(StringName("debug_%d" % i), i)
+	BTDebugger._selected = runner
+	BTDebugger.visible = true
+	BTDebugger._process(0.2)
+	await get_tree().process_frame
+	var scrollbar: VScrollBar = BTDebugger._label.get_v_scroll_bar()
+	assert_gt(scrollbar.max_value, scrollbar.page, "long blackboards remain scrollable")
+	BTDebugger.visible = false
+	BTDebugger._selected = null

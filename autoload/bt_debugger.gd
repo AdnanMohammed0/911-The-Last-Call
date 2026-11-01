@@ -1,5 +1,5 @@
 ## Behavior tree debugger overlay (F4, host only): live tree trace of the AI nearest to the local camera
-## (Tab cycles agents), plus its blackboard. Colour: green SUCCESS, red FAILURE, yellow RUNNING.
+## (Tab cycles agents), plus its scrollable blackboard. Colour: green SUCCESS, red FAILURE, yellow RUNNING.
 ## Authority: LOCAL (reads host-side AI state; clients have no trees to show)
 extends CanvasLayer
 
@@ -18,19 +18,21 @@ func _ready() -> void:
 	_panel = PanelContainer.new()
 	_panel.anchor_left = 1.0
 	_panel.anchor_right = 1.0
+	_panel.anchor_bottom = 1.0
 	_panel.offset_left = -440.0
 	_panel.offset_top = 12.0
 	_panel.offset_right = -12.0
-	_panel.offset_bottom = 620.0
-	_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_panel.offset_bottom = -12.0
+	_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = Color(0, 0, 0, 0.72)
 	style.set_content_margin_all(10)
 	_panel.add_theme_stylebox_override("panel", style)
 	_label = RichTextLabel.new()
 	_label.bbcode_enabled = true
-	_label.scroll_active = false
-	_label.fit_content = true
+	_label.scroll_active = true
+	_label.fit_content = false
+	_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_label.add_theme_font_size_override("normal_font_size", 14)
 	_panel.add_child(_label)
 	add_child(_panel)

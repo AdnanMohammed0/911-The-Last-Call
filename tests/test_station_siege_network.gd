@@ -4,6 +4,7 @@ extends GutTest
 
 const SIEGE: PackedScene = preload("res://scenes/dispatch/siege/station_siege.tscn")
 const THUG: ArchetypeData = preload("res://data/ai/archetypes/thug.tres")
+const FULL_PLAN: SiegePlan = preload("res://data/siege/station_siege_plan.tres")
 
 var _shift_running_before: bool = false
 
@@ -120,5 +121,62 @@ func test_client_follows_the_host_siege() -> void:
 	assert_true(client_lamp.visible, "power comes back on the client")
 	assert_false(client_hud.visible)
 	await wait_physics_frames(2)
+	client_peer.close()
+	server_peer.close()
+
+
+func test_full_five_wave_plan_replicates_every_enemy_and_outcome() -> void:
+	var server_root: Node = Node.new()
+	server_root.name = "FullSiegeServer"
+	add_child_autofree(server_root)
+	var client_root: Node = Node.new()
+	client_root.name = "FullSiegeClient"
+	add_child_autofree(client_root)
+	var server_api: SceneMultiplayer = SceneMultiplayer.new()
+	var client_api: SceneMultiplayer = SceneMultiplayer.new()
+	get_tree().set_multiplayer(server_api, server_root.get_path())
+	get_tree().set_multiplayer(client_api, client_root.get_path())
+	var server_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
+	assert_eq(server_peer.create_server(49392, 2), OK)
+	server_api.multiplayer_peer = server_peer
+	var client_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
+	assert_eq(client_peer.create_client("127.0.0.1", 49392), OK)
+	client_api.multiplayer_peer = client_peer
+	var host: StationSiege = _station(server_root)
+	var client: StationSiege = _station(client_root)
+	host.plan = FULL_PLAN.duplicate(true) as SiegePlan
+	client.plan = FULL_PLAN.duplicate(true) as SiegePlan
+	await _wait_until(func() -> bool: return server_api.get_peers().size() == 1 and client_api.get_unique_id() > 1)
+	assert_true(host.start(&"five_wave_test"))
+	await _wait_until(func() -> bool: return client.state == StationSiege.State.INTERMISSION)
+	host.set_process(false)
+	var expected_total: int = 0
+	for wave_number: int in host.plan.waves.size():
+		host._begin_wave()
+		await _wait_until(func() -> bool: return client.state == StationSiege.State.WAVE and client.wave_index == wave_number)
+		var wave: SiegeWave = host.plan.waves[wave_number]
+		expected_total += wave.total()
+		for enemy_number: int in wave.total():
+			host._spawn_step(100.0)
+			await _wait_until(func() -> bool: return client.enemies_root.get_child_count() > enemy_number)
+			assert_eq(client.enemies_root.get_child_count(), enemy_number + 1,
+				"wave %d enemy %d reaches the client" % [wave_number + 1, enemy_number + 1])
+			var enemy: HostileAgent = host.enemies_root.get_child(enemy_number) as HostileAgent
+			assert_not_null(enemy)
+			if enemy != null:
+				enemy.die(1)
+			host.step(0.1)
+		await _wait_until(func() -> bool: return client.state != StationSiege.State.WAVE)
+		assert_eq(client.wave_index, mini(wave_number + 1, host.plan.waves.size() - 1))
+		await _wait_until(func() -> bool: return client.enemies_root.get_child_count() == 0)
+		assert_eq(host.enemies_root.get_child_count(), 0, "wave corpses are cleared on host")
+		assert_eq(client.enemies_root.get_child_count(), 0, "wave corpses are cleared on client")
+		if wave_number + 1 < host.plan.waves.size():
+			assert_eq(client.state, StationSiege.State.INTERMISSION)
+		else:
+			assert_eq(client.state, StationSiege.State.SURVIVED)
+	assert_eq(host.neutralized, expected_total)
+	assert_eq(FlagSystem.count_events(&"siege_wave_cleared"), 5)
+	assert_eq(FlagSystem.count_events(&"station_siege_survived"), 1)
 	client_peer.close()
 	server_peer.close()

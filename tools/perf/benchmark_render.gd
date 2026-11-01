@@ -1,10 +1,11 @@
 ## Rendered scene benchmark. Run without --headless, with --windowed.
-## Pass scene path, extra hostile count, quality (0-3), render scale, and optional "sweep" after --.
+## Pass scene path, extra hostile count, quality (0-3), render scale, and optional "sweep" or "walk" after --.
 extends SceneTree
 
 const DEFAULT_SCENE: String = "res://scenes/dispatch/operations_room.tscn"
 const WARMUP_FRAMES: int = 90
 const SAMPLE_FRAMES: int = 180
+const WALK_FRAMES: int = 600
 
 
 func _init() -> void:
@@ -20,6 +21,8 @@ func _run() -> void:
 	var quality_value: int = clampi(int(args[2]), 0, 3) if args.size() > 2 else 2
 	var scale_value: float = clampf(float(args[3]), 0.5, 1.0) if args.size() > 3 else 1.0
 	var sweep: bool = args.size() > 4 and args[4] == "sweep"
+	var walk: bool = args.size() > 4 and args[4] == "walk"
+	var sample_count: int = WALK_FRAMES if walk else SAMPLE_FRAMES
 	var settings: Node = root.get_node_or_null(^"GameSettings")
 	if settings != null:
 		settings.set(&"quality", quality_value)
@@ -32,7 +35,7 @@ func _run() -> void:
 		quit(1)
 		return
 	var level: Node = packed.instantiate()
-	if args.size() > 6 and args[6] == "no_batch":
+	if "no_batch" in args:
 		var batch_node: Node = level.get_node_or_null(^"StationInterior/StationMeshBatch")
 		if batch_node != null:
 			batch_node.get_parent().remove_child(batch_node)
@@ -42,7 +45,7 @@ func _run() -> void:
 	var mesh_batch: Node = level.get_node_or_null(^"StationInterior/StationMeshBatch")
 	if mesh_batch != null:
 		print("STATION_BATCH batches=%d meshes=%d" % [mesh_batch.get("batch_count"), mesh_batch.get("mesh_count")])
-	var positions: Array[Vector3] = _sweep_positions(scene_path) if sweep else []
+	var positions: Array[Vector3] = _walk_positions(scene_path) if walk else (_sweep_positions(scene_path) if sweep else [])
 	var spawner: Node = level.find_child("EnemySpawner", true, false)
 	if spawner != null:
 		for i: int in extra_hostiles:
@@ -51,8 +54,8 @@ func _run() -> void:
 	for _i: int in WARMUP_FRAMES:
 		await process_frame
 	var camera: Camera3D = root.get_viewport().get_camera_3d()
-	if sweep and camera == null:
-		push_error("Sweep requires an active Camera3D after scene warmup")
+	if (sweep or walk) and camera == null:
+		push_error("Camera benchmark requires an active Camera3D after scene warmup")
 		quit(1)
 		return
 	if camera != null and not positions.is_empty():
@@ -66,14 +69,18 @@ func _run() -> void:
 	var draw_calls: Array[float] = []
 	var sweep_frames: Array[Array] = []
 	var sweep_draws: Array[Array] = []
-	for _point: Vector3 in positions:
-		sweep_frames.append([])
-		sweep_draws.append([])
+	if sweep:
+		for _point: Vector3 in positions:
+			sweep_frames.append([])
+			sweep_draws.append([])
 	var last_usec: int = Time.get_ticks_usec()
-	for i: int in SAMPLE_FRAMES:
-		var spot: int = mini(i * positions.size() / SAMPLE_FRAMES, positions.size() - 1) if not positions.is_empty() else -1
+	for i: int in sample_count:
+		var spot: int = mini(i * positions.size() / sample_count, positions.size() - 1) if sweep and not positions.is_empty() else -1
 		if spot >= 0 and camera != null:
 			_aim_camera(camera, positions[spot], positions[spot] + Vector3.FORWARD)
+		elif walk and camera != null:
+			var at: Vector3 = _walk_at(positions, i, sample_count)
+			_aim_camera(camera, at, at + Vector3.FORWARD)
 		await process_frame
 		var now: int = Time.get_ticks_usec()
 		var elapsed_ms: float = float(now - last_usec) / 1000.0
@@ -88,9 +95,15 @@ func _run() -> void:
 		if spot >= 0:
 			sweep_draws[spot].append(draws)
 	frame_ms.sort()
-	print("RENDER_BENCH scene=%s size=%s camera=%s hostiles=%d quality=%d scale=%.2f frame_ms_mean=%.3f frame_ms_p95=%.3f frame_ms_p99=%.3f process_ms_mean=%.3f physics_ms_mean=%.3f draw_calls_mean=%.1f" % [
-		scene_path, DisplayServer.window_get_size(), camera != null, get_nodes_in_group(&"hostiles").size(), quality_value, scale_value,
-		_mean(frame_ms), frame_ms[int(SAMPLE_FRAMES * 0.95)], frame_ms[int(SAMPLE_FRAMES * 0.99)],
+	var slow_count: int = maxi(ceili(float(sample_count) * 0.01), 1)
+	var slow_frames: Array[float] = frame_ms.slice(sample_count - slow_count, sample_count)
+	var spikes: int = 0
+	for frame: float in frame_ms:
+		if frame > 33.333:
+			spikes += 1
+	print("RENDER_BENCH scene=%s mode=%s size=%s camera=%s hostiles=%d quality=%d scale=%.2f frame_ms_mean=%.3f frame_ms_p95=%.3f frame_ms_p99=%.3f fps_1pct_low=%.2f spikes_gt_33ms=%d process_ms_mean=%.3f physics_ms_mean=%.3f draw_calls_mean=%.1f" % [
+		scene_path, "walk" if walk else ("sweep" if sweep else "static"), DisplayServer.window_get_size(), camera != null, get_nodes_in_group(&"hostiles").size(), quality_value, scale_value,
+		_mean(frame_ms), frame_ms[int(float(sample_count) * 0.95)], frame_ms[int(float(sample_count) * 0.99)], 1000.0 / _mean(slow_frames), spikes,
 		_mean(process_ms), _mean(physics_ms), _mean(draw_calls)])
 	for spot: int in sweep_frames.size():
 		var samples: Array[float] = []
@@ -101,7 +114,7 @@ func _run() -> void:
 		for draw: float in sweep_draws[spot]:
 			draws_at_spot.append(draw)
 		print("RENDER_SPOT index=%d position=%s mean=%.3f p95=%.3f draws=%.1f" % [spot, positions[spot], _mean(samples), samples[int(samples.size() * 0.95)], _mean(draws_at_spot)])
-	if args.size() > 5 and camera != null and not positions.is_empty():
+	if sweep and args.size() > 5 and args[5] != "no_batch" and camera != null and not positions.is_empty():
 		for spot: int in positions.size():
 			var capture_path: String = "user://%s_%d.png" % [args[5], spot]
 			_aim_camera(camera, positions[spot], positions[spot] + Vector3.FORWARD)
@@ -123,6 +136,19 @@ func _sweep_positions(scene_path: String) -> Array[Vector3]:
 	if scene_path.contains("operations_room"):
 		return [Vector3(8, 2, -22), Vector3(22, 2, -22), Vector3(20, 2, -5), Vector3(-9, 2, -40)]
 	return [Vector3(-3, 2, 19), Vector3(-12, 2, 9), Vector3(0, 2, -10), Vector3(15, 2, -20)]
+
+
+func _walk_positions(scene_path: String) -> Array[Vector3]:
+	if scene_path.contains("operations_room"):
+		return [Vector3(8, 2, -22), Vector3(22, 2, -22), Vector3(20, 2, -5), Vector3(22, 2, -22), Vector3(8, 2, -22)]
+	return [Vector3(-3, 2, 19), Vector3(-12, 2, 9), Vector3(0, 2, -10), Vector3(15, 2, -20), Vector3(-3, 2, 19)]
+
+
+func _walk_at(positions: Array[Vector3], frame: int, total_frames: int) -> Vector3:
+	var leg_count: int = positions.size() - 1
+	var progress: float = float(frame) * float(leg_count) / float(total_frames - 1)
+	var leg: int = mini(int(progress), leg_count - 1)
+	return positions[leg].lerp(positions[leg + 1], progress - float(leg))
 
 
 func _aim_camera(camera: Camera3D, at: Vector3, target: Vector3) -> void:

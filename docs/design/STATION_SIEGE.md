@@ -69,6 +69,6 @@ XP: +400 held, −150 fallen, +15 per hostile to the officer who neutralized it 
 
 - `tests/test_station_siege.gd`: wave data, station wiring, every entry reaches the operations room on the real
   navmesh, full flow, `max_alive`, team wipe, blackout, trigger conditions.
-- `tests/test_station_siege_network.gd`: host and client over ENet (state, blackout, HUD, enemy spawn/despawn, two wave transitions, final outcome, clients cannot start).
+- `tests/test_station_siege_network.gd`: host and client over ENet (state, blackout, HUD, enemy spawn/despawn, two wave transitions, final outcome, clients cannot start). A second run uses the production five-wave plan: all 32 planned attackers reach the client, each wave clears on both peers, and the survived outcome is recorded once. The test manually neutralizes enemies, so it verifies network flow and cleanup, not combat balance.
 
 The nested siege spawner now finds the station's player spawner to apply level-load visibility to its hostile synchronizers. Standalone set pieces reveal their synchronizers to connected peers directly. A playthrough with real players in the station and wave balance still need live validation.

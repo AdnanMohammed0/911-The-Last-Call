@@ -164,7 +164,7 @@ func is_lit(player: Player) -> bool:
 	var point: Vector3 = player.global_position + Vector3(0, 1.0, 0)
 	for node: Node in get_tree().get_nodes_in_group(LIGHT_ZONE_GROUP):
 		var zone: Area3D = node as Area3D
-		if zone != null and _area_contains(zone, point):
+		if zone != null and not zone.is_in_group(&"darkness_zones") and not zone.name.to_lower().begins_with("dark") and _area_contains(zone, point):
 			return true
 	return false
 

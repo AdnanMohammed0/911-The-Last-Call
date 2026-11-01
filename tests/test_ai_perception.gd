@@ -40,7 +40,7 @@ func _add_wall(center: Vector3, size: Vector3) -> void:
 	body.global_position = center
 
 
-func _add_light_zone(center: Vector3, size: Vector3) -> void:
+func _add_light_zone(center: Vector3, size: Vector3) -> Area3D:
 	var zone: Area3D = Area3D.new()
 	var shape: CollisionShape3D = CollisionShape3D.new()
 	var box: BoxShape3D = BoxShape3D.new()
@@ -50,6 +50,7 @@ func _add_light_zone(center: Vector3, size: Vector3) -> void:
 	zone.add_to_group(AIPerception.LIGHT_ZONE_GROUP)
 	_world.add_child(zone)
 	zone.global_position = center
+	return zone
 
 
 func _sense_for(seconds: float) -> void:
@@ -76,6 +77,16 @@ func test_dark_player_beyond_eight_metres_is_not_seen() -> void:
 	await wait_physics_frames(2)
 	_sense_for(3.0)
 	assert_gt(_perception.awareness, 0.3, "seen in the dark at 5 m")
+
+
+func test_darkness_zone_does_not_extend_enemy_sight_range() -> void:
+	var zone: Area3D = _add_light_zone(Vector3(0, 1, -12), Vector3(6, 4, 6))
+	zone.add_to_group(&"darkness_zones")
+	_place_player(Vector3(0, 0, -12))
+	await wait_physics_frames(2)
+	assert_false(_perception.is_lit(_player))
+	_sense_for(3.0)
+	assert_eq(_perception.level, AIPerception.Level.UNAWARE)
 
 
 func test_player_behind_is_outside_the_cone() -> void:

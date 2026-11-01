@@ -20,7 +20,7 @@ static func find_best(agent: Node3D, threat: Vector3, other_threats: Array[Vecto
 	var best_score: float = INF
 	for node: Node in agent.get_tree().get_nodes_in_group(CoverPoint.GROUP):
 		var point: CoverPoint = node as CoverPoint
-		if point == null or not point.is_free_for(agent):
+		if point == null or point.get_world_3d() != agent.get_world_3d() or not point.is_free_for(agent):
 			continue
 		var score: float = score_point(agent, point, threat, other_threats, exclude)
 		if score < best_score:
@@ -31,6 +31,8 @@ static func find_best(agent: Node3D, threat: Vector3, other_threats: Array[Vecto
 
 ## Lower is better; INF when the point is unusable.
 static func score_point(agent: Node3D, point: CoverPoint, threat: Vector3, other_threats: Array[Vector3], exclude: Array[RID]) -> float:
+	if point.get_world_3d() != agent.get_world_3d():
+		return INF
 	var position: Vector3 = point.global_position
 	var to_agent: float = agent.global_position.distance_to(position)
 	if to_agent > MAX_SEARCH_RADIUS:

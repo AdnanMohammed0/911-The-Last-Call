@@ -118,9 +118,9 @@
       "updated_at": "2026-11-01"
     },
     "P3-09": {
-      "status": "testing",
-      "note": "MissionNavigation (NavigationRegion3D): يسوي bake للـ navmesh من هندسة المهمة على الهوست عند التحميل (أولاد العقدة أو group)، ويولد CoverPoints تلقائياً على حافة الـ navmesh جنب الجدران (LOW للجدار الواطي، HIGH للعالي) إذا ماكو نقاط مصممة. CoverQuery: غطاء على بعد 8-20م من التهديد، محمي منه، يقدر يطل ويرمي، مو مكشوف لتهديد ثاني (flank)، مو محجوز لغيره، والتقييم بطول المسار على الـ navmesh. claim/release. 6 اختبارات GUT نجحت.",
-      "updated_at": "2026-09-17"
+      "status": "done",
+      "note": "MissionNavigation يخبز navmesh ويولد نقاط غطاء منخفضة وعالية. CoverQuery يقيّم الحماية وإمكانية الإطلال والمسار والتهديد الجانبي والحجز. حصرت نقاط الغطاء والإحصاء بعالم المهمة حتى لا ينتقي العدو نقطة من مشهد منفصل؛ نجحت 7 اختبارات GUT، ومنها اختبار عالمين منفصلين. رُفعت على main.",
+      "updated_at": "2026-11-01"
     },
     "P3-10": {
       "status": "testing",
@@ -1223,6 +1223,12 @@
       "tasks": ["P3-08"],
       "summary": "تصحيح مدى رؤية العدو داخل مناطق الظلام وإضافة اختبار انحدار؛ 12 اختبار إدراك ناجح.",
       "files": ["core/ai/ai_perception.gd", "tests/test_ai_perception.gd"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P3-09"],
+      "summary": "حصر استعلام الغطاء وعدّ نقاطه بعالم المهمة؛ اختبار بعالمين منفصلين و7 اختبارات ملاحة وغطاء ناجحة.",
+      "files": ["core/ai/cover_query.gd", "core/ai/mission_navigation.gd", "tests/test_cover_navigation.gd"]
     }
   ]
 }

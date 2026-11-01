@@ -47,9 +47,18 @@ func bake_now() -> void:
 	NavigationServer3D.region_set_navigation_mesh(get_rid(), navigation_mesh)
 	NavigationServer3D.map_force_update(get_navigation_map())
 	var generated: int = 0
-	if auto_generate_cover and get_tree().get_nodes_in_group(CoverPoint.GROUP).is_empty():
+	if auto_generate_cover and _cover_count_in_world() == 0:
 		generated = CoverGenerator.generate(self, cover_spacing)
 	is_ready_for_ai = true
-	navigation_ready.emit(get_tree().get_nodes_in_group(CoverPoint.GROUP).size())
+	navigation_ready.emit(_cover_count_in_world())
 	if generated > 0:
 		print_verbose("MissionNavigation: generated %d cover points" % generated)
+
+
+func _cover_count_in_world() -> int:
+	var count: int = 0
+	for node: Node in get_tree().get_nodes_in_group(CoverPoint.GROUP):
+		var point: CoverPoint = node as CoverPoint
+		if point != null and point.get_world_3d() == get_world_3d():
+			count += 1
+	return count

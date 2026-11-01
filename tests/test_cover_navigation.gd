@@ -103,3 +103,24 @@ func test_flanked_cover_is_rejected() -> void:
 
 func test_threat_outside_engagement_band_gives_no_cover() -> void:
 	assert_null(CoverQuery.find_best(_agent, Vector3(0, 0, -30)), "every cover point is more than 20 m away")
+
+
+func test_cover_from_another_world_is_never_selected() -> void:
+	var threat: Vector3 = Vector3(0, 0, -11)
+	var local_best: CoverPoint = CoverQuery.find_best(_agent, threat)
+	assert_not_null(local_best)
+	var other_viewport: SubViewport = SubViewport.new()
+	other_viewport.own_world_3d = true
+	add_child_autofree(other_viewport)
+	var foreign_point: CoverPoint = CoverPoint.new()
+	foreign_point.height = local_best.height
+	foreign_point.wall_normal = local_best.wall_normal
+	other_viewport.add_child(foreign_point)
+	foreign_point.global_position = local_best.global_position
+	var none: Array[RID] = []
+	assert_eq(CoverQuery.score_point(_agent, foreign_point, threat, [], none), INF)
+	var holder: Node = Node.new()
+	add_child_autofree(holder)
+	for point: CoverPoint in _points():
+		point.claimed_by = holder
+	assert_null(CoverQuery.find_best(_agent, threat))

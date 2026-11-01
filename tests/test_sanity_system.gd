@@ -55,3 +55,14 @@ func test_only_marked_darkness_drains() -> void:
 	add_child_autofree(zone)
 	assert_eq(SanitySystem._zone_at(Vector3.ZERO), -1)
 	assert_eq(SanitySystem._zone_at(Vector3(10, 0, 0)), 0)
+
+
+func test_recovery_resets_hallucination_delay() -> void:
+	var player: Player = _player(&"medic")
+	player.sanity = 20.0
+	SanitySystem._hallucination_clock = 0.1
+	SanitySystem._update_local_effects(0.05)
+	assert_lt(SanitySystem._hallucination_clock, 0.1)
+	player.sanity = player.max_sanity
+	SanitySystem._update_local_effects(0.05)
+	assert_eq(SanitySystem._hallucination_clock, 24.0)

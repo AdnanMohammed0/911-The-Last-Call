@@ -109,6 +109,7 @@ func _update_local_effects(delta: float) -> void:
 		_local_band = new_band
 		EventBus.sanity_band_changed.emit(NetManager.get_local_peer_id(), new_band)
 	if player == null or new_band < Band.PANICKED:
+		_hallucination_clock = 24.0
 		return
 	_hallucination_clock -= delta
 	if _hallucination_clock <= 0.0:

@@ -62,3 +62,23 @@ func test_tech_drone_requires_gear_and_respects_cooldown() -> void:
 	assert_true(abilities.host_use(0))
 	assert_not_null(abilities._drone)
 	assert_false(abilities.host_use(0))
+
+
+func test_breacher_kick_has_a_host_cooldown() -> void:
+	var breacher: Player = _player(&"breacher")
+	var abilities: ClassAbilities = breacher.get_node(^"ClassAbilities") as ClassAbilities
+	assert_true(abilities.spend_kick())
+	assert_false(abilities.spend_kick())
+	abilities._next_kick_msec = 0
+	assert_true(abilities.spend_kick())
+
+
+func test_medic_gadgets_exist_only_for_medic() -> void:
+	var medic: Player = _player(&"medic")
+	var medic_abilities: ClassAbilities = medic.get_node(^"ClassAbilities") as ClassAbilities
+	assert_not_null(medic_abilities._salt)
+	assert_not_null(medic_abilities._tone)
+	var tech: Player = _player(&"tech")
+	var tech_abilities: ClassAbilities = tech.get_node(^"ClassAbilities") as ClassAbilities
+	assert_null(tech_abilities._salt)
+	assert_null(tech_abilities._tone)

@@ -222,7 +222,7 @@ func absorb_bullet(amount: float) -> void:
 
 
 func spend_kick() -> bool:
-	if _player.class_id != &"breacher" or not _player.get_health().is_alive():
+	if not multiplayer.is_server() or _player == null or _player.class_id != &"breacher" or not _player.get_health().is_alive():
 		return false
 	var now: int = Time.get_ticks_msec()
 	if now < _next_kick_msec:

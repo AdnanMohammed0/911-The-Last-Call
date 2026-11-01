@@ -103,6 +103,23 @@ func test_lone_member_cannot_flank() -> void:
 	assert_false(squad.request_flank_token(solo))
 
 
+func test_flank_tokens_reject_unregistered_or_inactive_members() -> void:
+	var squad: AISquad = AISquad.new()
+	add_child_autofree(squad)
+	var a: HostileAgent = _hostile(&"cultist_gunman")
+	var b: HostileAgent = _hostile(&"cultist_gunman")
+	var outsider: HostileAgent = _hostile(&"cultist_gunman")
+	squad.register(a)
+	squad.register(b)
+	assert_false(squad.has_free_flank_token(outsider))
+	assert_false(squad.request_flank_token(outsider))
+	assert_true(squad.request_flank_token(a))
+	a.is_surrendered = true
+	assert_false(squad.has_free_flank_token(a))
+	assert_false(squad.request_flank_token(a))
+	assert_false(squad.has_free_flank_token(b), "only one active squad member remains")
+
+
 func test_callout_shares_target_with_squad() -> void:
 	var squad: AISquad = AISquad.new()
 	add_child_autofree(squad)

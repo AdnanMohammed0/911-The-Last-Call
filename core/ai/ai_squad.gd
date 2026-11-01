@@ -42,7 +42,9 @@ func alive_members() -> Array[HostileAgent]:
 
 ## Half the squad (rounded down, at least one) may flank at the same time.
 func request_flank_token(member: HostileAgent) -> bool:
-	_flank_holders = _flank_holders.filter(func(m: HostileAgent) -> bool: return is_instance_valid(m) and m.is_active())
+	_prune_flank_holders()
+	if not is_instance_valid(member) or member not in members or not member.is_active():
+		return false
 	if member in _flank_holders:
 		return true
 	var limit: int = maxi(1, alive_members().size() / 2)
@@ -57,9 +59,16 @@ func release_flank_token(member: HostileAgent) -> void:
 
 
 func has_free_flank_token(member: HostileAgent) -> bool:
+	_prune_flank_holders()
+	if not is_instance_valid(member) or member not in members or not member.is_active():
+		return false
 	if member in _flank_holders:
 		return true
 	return alive_members().size() >= 2 and _flank_holders.size() < maxi(1, alive_members().size() / 2)
+
+
+func _prune_flank_holders() -> void:
+	_flank_holders = _flank_holders.filter(func(m: HostileAgent) -> bool: return is_instance_valid(m) and m in members and m.is_active())
 
 
 ## Apply a morale change to every living member (megaphone, tear gas on the group, etc.).

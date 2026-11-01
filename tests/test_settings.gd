@@ -114,6 +114,16 @@ func test_first_run_graphics_defaults_target_integrated_intel_only() -> void:
 	assert_eq(GameSettings.quality, GameSettings.Quality.HIGH)
 
 
+func test_low_render_scale_uses_fsr1_and_higher_presets_keep_fsr2() -> void:
+	GameSettings.set_value("render_scale", 0.5)
+	GameSettings.set_value("quality", GameSettings.Quality.LOW)
+	assert_eq(get_tree().root.scaling_3d_mode, Viewport.SCALING_3D_MODE_FSR)
+	GameSettings.set_value("quality", GameSettings.Quality.MEDIUM)
+	assert_eq(get_tree().root.scaling_3d_mode, Viewport.SCALING_3D_MODE_FSR2)
+	GameSettings.set_value("render_scale", 1.0)
+	assert_eq(get_tree().root.scaling_3d_mode, Viewport.SCALING_3D_MODE_BILINEAR)
+
+
 func test_settings_menu_builds_all_tabs_and_closes() -> void:
 	var menu: SettingsMenu = SettingsMenu.new()
 	add_child_autofree(menu)

@@ -460,7 +460,12 @@ func _apply_audio() -> void:
 func _apply_rendering() -> void:
 	var viewport: Viewport = get_tree().root
 	viewport.scaling_3d_scale = clampf(render_scale, 0.5, 1.0)
-	viewport.scaling_3d_mode = Viewport.SCALING_3D_MODE_FSR2 if render_scale < 0.99 else Viewport.SCALING_3D_MODE_BILINEAR
+	if render_scale >= 0.99:
+		viewport.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
+	elif quality == Quality.LOW:
+		viewport.scaling_3d_mode = Viewport.SCALING_3D_MODE_FSR
+	else:
+		viewport.scaling_3d_mode = Viewport.SCALING_3D_MODE_FSR2
 	match quality:
 		Quality.LOW:
 			viewport.msaa_3d = Viewport.MSAA_DISABLED

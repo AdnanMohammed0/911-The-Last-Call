@@ -1,5 +1,6 @@
 ## Rendered scene benchmark. Run without --headless, with --windowed.
 ## Pass scene path, extra hostile count, quality (0-3), render scale, and optional "sweep" or "walk" after --.
+## Optional trailing flags: no_batch, bilinear, fsr1, fsr2; sweep can take a capture prefix first.
 extends SceneTree
 
 const DEFAULT_SCENE: String = "res://scenes/dispatch/operations_room.tscn"
@@ -28,6 +29,12 @@ func _run() -> void:
 		settings.set(&"quality", quality_value)
 		settings.set(&"render_scale", scale_value)
 		settings.call(&"apply_all")
+	if "bilinear" in args:
+		root.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
+	elif "fsr1" in args:
+		root.scaling_3d_mode = Viewport.SCALING_3D_MODE_FSR
+	elif "fsr2" in args:
+		root.scaling_3d_mode = Viewport.SCALING_3D_MODE_FSR2
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	var packed: PackedScene = load(scene_path) as PackedScene
 	if packed == null:
@@ -101,8 +108,8 @@ func _run() -> void:
 	for frame: float in frame_ms:
 		if frame > 33.333:
 			spikes += 1
-	print("RENDER_BENCH scene=%s mode=%s size=%s camera=%s hostiles=%d quality=%d scale=%.2f frame_ms_mean=%.3f frame_ms_p95=%.3f frame_ms_p99=%.3f fps_1pct_low=%.2f spikes_gt_33ms=%d process_ms_mean=%.3f physics_ms_mean=%.3f draw_calls_mean=%.1f" % [
-		scene_path, "walk" if walk else ("sweep" if sweep else "static"), DisplayServer.window_get_size(), camera != null, get_nodes_in_group(&"hostiles").size(), quality_value, scale_value,
+	print("RENDER_BENCH scene=%s mode=%s size=%s camera=%s hostiles=%d quality=%d scale=%.2f upscaler=%d frame_ms_mean=%.3f frame_ms_p95=%.3f frame_ms_p99=%.3f fps_1pct_low=%.2f spikes_gt_33ms=%d process_ms_mean=%.3f physics_ms_mean=%.3f draw_calls_mean=%.1f" % [
+		scene_path, "walk" if walk else ("sweep" if sweep else "static"), DisplayServer.window_get_size(), camera != null, get_nodes_in_group(&"hostiles").size(), quality_value, scale_value, root.scaling_3d_mode,
 		_mean(frame_ms), frame_ms[int(float(sample_count) * 0.95)], frame_ms[int(float(sample_count) * 0.99)], 1000.0 / _mean(slow_frames), spikes,
 		_mean(process_ms), _mean(physics_ms), _mean(draw_calls)])
 	for spot: int in sweep_frames.size():

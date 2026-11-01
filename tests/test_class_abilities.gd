@@ -82,3 +82,19 @@ func test_medic_gadgets_exist_only_for_medic() -> void:
 	var tech_abilities: ClassAbilities = tech.get_node(^"ClassAbilities") as ClassAbilities
 	assert_null(tech_abilities._salt)
 	assert_null(tech_abilities._tone)
+
+
+func test_medic_salt_barrier_expires_with_its_visual() -> void:
+	var medic: Player = _player(&"medic")
+	var abilities: ClassAbilities = medic.get_node(^"ClassAbilities") as ClassAbilities
+	var salt: SaltCanister = abilities._salt
+	salt.line_duration = 0.05
+	LoadoutManager._player_loadouts[1] = {&"salt_canister": 1}
+	assert_true(abilities.host_use(1), "the first deployment is available immediately")
+	var line: Node = salt._active_line
+	assert_not_null(line)
+	var barrier: Node = line.get_node_or_null(^"SaltBarrier")
+	assert_not_null(barrier)
+	await wait_physics_frames(8)
+	assert_false(is_instance_valid(line), "the salt visual expires")
+	assert_false(is_instance_valid(barrier), "the anomaly barrier expires with it")

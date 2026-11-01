@@ -14,7 +14,7 @@ signal salt_line_expired()
 @export var cooldown: float = 1.0
 
 var _owner: Player = null
-var _last_deploy_msec: int = 0
+var _last_deploy_msec: int = -1
 var _active_line: Node = null
 
 
@@ -39,7 +39,7 @@ func deploy() -> bool:
 		return false
 	
 	var now: int = Time.get_ticks_msec()
-	if now - _last_deploy_msec < cooldown * 1000:
+	if _last_deploy_msec >= 0 and now - _last_deploy_msec < cooldown * 1000:
 		return false
 	
 	# Check if player has salt canister in loadout
@@ -113,7 +113,7 @@ func _create_salt_line(start: Vector3, end: Vector3) -> Node:
 	var collision: CollisionShape3D = CollisionShape3D.new()
 	collision.shape = shape
 	area.add_child(collision)
-	add_child(area)
+	line.add_child(area)
 	area.global_position = (start + end) * 0.5
 	area.look_at(end, Vector3.UP)
 	

@@ -697,6 +697,7 @@ func _close_peer() -> void:
 	if _steam != null and steam_lobby_id != 0:
 		_steam.call(&"leaveLobby", steam_lobby_id)
 	steam_lobby_id = 0
+	transport = Transport.ENET
 	_steam_pending_host = false
 	_steam_target_lobby_id = 0
 	steam_lobby_changed.emit(0)

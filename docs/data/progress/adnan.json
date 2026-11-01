@@ -194,7 +194,7 @@
     },
     "P5-02": {
       "status": "testing",
-      "note": "أضفت تهيئة مبكرة لشبكة Steam Relay، حالة جاهزيتها في F3 بدون خلطها مع مسار الاتصال الفعلي، وسجلات Steam التفصيلية بخيار --netdebug. وثقت مصفوفة اختبار NAT/CGNAT/Relay واستعادة الاتصال. 4 اختبارات محلية وفحص تحميل Godot نجحت؛ عبور NAT ومسار SDR ينتظران تجربة بحسابين وشبكتين مختلفتين وإضافة Steam الحقيقية.",
+      "note": "تهيئة Steam Relay وحالة الجاهزية في F3 وسجلات --netdebug ومصفوفة NAT/CGNAT/Relay موثقة. أصلحت بقاء نوع النقل Steam بعد الخروج أو انتهاء المهلة، وصار F3 يعرض وضع عدم الاتصال الصحيح. نجحت 5 اختبارات محلية. عبور NAT ومسار SDR يحتاجان حسابين وشبكتين مختلفتين وإضافة Steam الحقيقية.",
       "updated_at": "2026-11-01"
     }
   },
@@ -1283,6 +1283,12 @@
       "tasks": ["P5-01"],
       "summary": "إعادة محاولة فتح إنجاز Steam كل 10 ثوانٍ عند فشل مؤقت، مع اختبار الفشل والتعافي؛ الاختبار الحي ما زال معلقاً.",
       "files": ["autoload/steamworks_service.gd", "tests/test_steamworks_service.gd", "docs/design/STEAM_RELEASE.md"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P5-02"],
+      "summary": "إعادة تشخيص F3 إلى عدم الاتصال بعد مغادرة Steam أو انتهاء الاتصال؛ 5 اختبارات محلية ناجحة، وعبور NAT ينتظر تجربة حية.",
+      "files": ["autoload/net_manager.gd", "autoload/net_debug.gd", "tests/test_steam_transport.gd", "docs/design/STEAM_RELAY_VALIDATION.md"]
     }
   ]
 }

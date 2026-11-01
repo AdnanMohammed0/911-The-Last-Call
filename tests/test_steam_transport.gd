@@ -41,9 +41,23 @@ func test_relay_readiness_labels_do_not_claim_a_connection_route() -> void:
 
 func test_debug_report_identifies_steam_without_enet_statistics() -> void:
 	var previous: NetManager.Transport = NetManager.transport
+	var previous_state: NetManager.State = NetManager.state
 	NetManager.transport = NetManager.Transport.STEAM
+	NetManager.state = NetManager.State.CONNECTING
 	var report: String = NetDebug.build_report()
 	assert_true(report.contains("relay network"))
 	assert_true(report.contains("Direct/SDR route"))
 	assert_false(report.contains("total (ENet)"))
 	NetManager.transport = previous
+	NetManager.state = previous_state
+
+
+func test_leaving_steam_returns_to_offline_debug_state() -> void:
+	NetManager.transport = NetManager.Transport.STEAM
+	NetManager.state = NetManager.State.CONNECTING
+	NetManager._close_peer()
+	assert_eq(NetManager.state, NetManager.State.OFFLINE)
+	assert_eq(NetManager.transport, NetManager.Transport.ENET)
+	var report: String = NetDebug.build_report()
+	assert_true(report.contains("(offline)"))
+	assert_false(report.contains("Steam lobby"))

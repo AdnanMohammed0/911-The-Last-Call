@@ -153,6 +153,34 @@ func test_mission_controller_extracts_team_at_van() -> void:
 	assert_true(controller._team_at_extraction())
 
 
+func test_mission_controller_ignores_entities_in_another_world() -> void:
+	var local_player: Player = _player(&"tech")
+	var van: Marker3D = Marker3D.new()
+	_world.add_child(van)
+	var controller: MissionController = MissionController.new()
+	controller.extraction_point = van
+	controller.start_response_if_idle = false
+	_world.add_child(controller)
+	controller.set_physics_process(false)
+	local_player.global_position = Vector3(1, 0, 0)
+	var other_viewport: SubViewport = SubViewport.new()
+	other_viewport.own_world_3d = true
+	add_child_autofree(other_viewport)
+	var foreign_player: Player = (load("res://scenes/shared/player/player.tscn") as PackedScene).instantiate() as Player
+	other_viewport.add_child(foreign_player)
+	foreign_player.set_physics_process(false)
+	foreign_player.global_position = Vector3(50, 0, 0)
+	assert_true(controller._team_at_extraction())
+	var foreign_hostile: HostileAgent = (load("res://scenes/field/enemies/hostile.tscn") as PackedScene).instantiate() as HostileAgent
+	other_viewport.add_child(foreign_hostile)
+	foreign_hostile.set_physics_process(false)
+	foreign_hostile.runner.enabled = false
+	MissionDirector.start_response(&"call_x", &"genuine")
+	MissionDirector.deploy()
+	controller._physics_process(0.6)
+	assert_eq(MissionDirector.hostiles_total, 0)
+
+
 func test_team_wipe_fails_the_mission() -> void:
 	var player: Player = _player(&"medic")
 	MissionDirector.start_response(&"call_x", &"genuine")
@@ -378,6 +406,7 @@ func test_spawn_points_filter_by_mission_kind() -> void:
 	point.mission_kinds = [&"arrest"] as Array[StringName]
 	assert_true(point.is_used_by(&"arrest"))
 	assert_false(point.is_used_by(&"raid"))
+	point.free()
 
 
 func test_shift_progress_and_completion() -> void:

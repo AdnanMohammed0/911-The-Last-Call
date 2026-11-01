@@ -41,7 +41,7 @@ func _physics_process(delta: float) -> void:
 	var left: int = 0
 	for node: Node in get_tree().get_nodes_in_group(HostileAgent.GROUP):
 		var hostile: HostileAgent = node as HostileAgent
-		if hostile == null:
+		if hostile == null or hostile.get_world_3d() != get_world_3d():
 			continue
 		total += 1
 		if hostile.is_active():
@@ -71,7 +71,7 @@ func _team_at_extraction() -> bool:
 	var standing: int = 0
 	for node: Node in get_tree().get_nodes_in_group(Player.GROUP):
 		var player: Player = node as Player
-		if player == null or player.connection_lost or not player.get_health().is_alive():
+		if player == null or player.get_world_3d() != get_world_3d() or player.connection_lost or not player.get_health().is_alive():
 			continue
 		standing += 1
 		var flat: Vector3 = player.global_position - extraction_point.global_position

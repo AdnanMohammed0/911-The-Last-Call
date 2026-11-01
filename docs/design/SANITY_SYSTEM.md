@@ -8,4 +8,4 @@ The host checks `light_zones` four times per second. Areas named `Dark…` or al
 
 The local player's replicated sanity drives the `Panic` audio bus with a smoothed low-pass from 20 kHz at full sanity to 800 Hz at zero and reverb wet from 0 to 0.22. `SFX` routes through Panic. Phone, voice, and music remain clear. Panicked/Broken bands occasionally emit local phantom footstep/ring events using the existing hallucination signal. The bodycam visual effect now uses sanity percentage, so Medic's 130 maximum behaves correctly.
 
-Verified headless with `test_sanity_system.gd`. A live two-player check should verify that only each owner's local audio changes and the host's sanity state reaches both peers.
+Verified headless with six `test_sanity_system.gd` cases, including an ENet host/client test that confirms host sanity reaches the client and client-side damage cannot change the value. A live two-account check should verify that only each owner's local audio changes and the panic effect sounds right in play.

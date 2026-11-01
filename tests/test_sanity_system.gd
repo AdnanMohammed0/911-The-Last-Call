@@ -66,3 +66,52 @@ func test_recovery_resets_hallucination_delay() -> void:
 	player.sanity = player.max_sanity
 	SanitySystem._update_local_effects(0.05)
 	assert_eq(SanitySystem._hallucination_clock, 24.0)
+
+
+func test_host_sanity_reaches_client_and_client_cannot_change_it() -> void:
+	var server_root: Node = Node.new()
+	server_root.name = "SanityServer"
+	add_child_autofree(server_root)
+	var client_root: Node = Node.new()
+	client_root.name = "SanityClient"
+	add_child_autofree(client_root)
+	var server_api: SceneMultiplayer = SceneMultiplayer.new()
+	var client_api: SceneMultiplayer = SceneMultiplayer.new()
+	get_tree().set_multiplayer(server_api, server_root.get_path())
+	get_tree().set_multiplayer(client_api, client_root.get_path())
+	var server_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
+	assert_eq(server_peer.create_server(49394, 2), OK)
+	server_api.multiplayer_peer = server_peer
+	var client_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
+	assert_eq(client_peer.create_client("127.0.0.1", 49394), OK)
+	client_api.multiplayer_peer = client_peer
+	for _i: int in 120:
+		if server_api.get_peers().size() == 1 and client_api.get_unique_id() > 1:
+			break
+		await get_tree().process_frame
+	assert_eq(server_api.get_peers().size(), 1)
+	var client_id: int = client_api.get_unique_id()
+	var host_player: Player = (load("res://scenes/shared/player/player.tscn") as PackedScene).instantiate() as Player
+	host_player.name = "Player"
+	host_player.peer_id = client_id
+	host_player.apply_class(ClassCatalog.get_data(&"medic"))
+	server_root.add_child(host_player)
+	host_player.set_physics_process(false)
+	var client_player: Player = (load("res://scenes/shared/player/player.tscn") as PackedScene).instantiate() as Player
+	client_player.name = "Player"
+	client_player.peer_id = client_id
+	client_player.apply_class(ClassCatalog.get_data(&"medic"))
+	client_root.add_child(client_player)
+	client_player.set_physics_process(false)
+	(host_player.get_node(^"HostSync") as MultiplayerSynchronizer).set_visibility_for(client_id, true)
+	client_player.apply_sanity_damage(20.0, &"anomaly")
+	assert_eq(client_player.sanity, 130.0)
+	host_player.apply_sanity_damage(20.0, &"anomaly")
+	assert_eq(host_player.sanity, 116.0)
+	for _i: int in 120:
+		if is_equal_approx(client_player.sanity, 116.0):
+			break
+		await get_tree().process_frame
+	assert_almost_eq(client_player.sanity, 116.0, 0.01)
+	client_peer.close()
+	server_peer.close()

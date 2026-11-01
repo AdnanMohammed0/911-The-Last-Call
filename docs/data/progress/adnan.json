@@ -88,9 +88,9 @@
       "updated_at": "2026-09-17"
     },
     "P2-14": {
-      "status": "testing",
-      "note": "VoteManager (autoload): الهوست يفتح تصويت بمهلة، كل peer يرسل صوته والهوست يتحقق (مؤهل، خيار صحيح، rate limit) ويوزع العدّ. يسكر بالمهلة، أو لما الكل يصوت، أو مبكراً لو بالإجماع. الفوز بالأغلبية، التعادل يحسمه كلاس (Profiler للحكم، Breacher للاقتراب)، بعده default، بعده ترتيب الخيارات. تصويت الحكم مربوط بـ CallDirector (60 ث). تصويت الاقتراب: Decoy يحتاج 3 لاعبين أو Tech. المنقطع يطلع من التصويت والراجع يستلمه. 10 اختبارات GUT + اختبار 3 عمليات نجحت.",
-      "updated_at": "2026-09-17"
+      "status": "done",
+      "note": "تصويت الحكم وطريقة الوصول مربوطان بمسار اللعب: استجابة متعددة اللاعبين تفتح اقتراع 45 ث بواجهة مشتركة، باب الانتشار ينتظر النتيجة، والاختيار يتزامن ويتسجل للمهام. المنفرد يختار silent مباشرة. تحديث أهلية المنقطع والعائد. نجح 11 اختبار تصويت و25 اختبار مسار مهمة واختبار ENet بين مضيف وعميل وفحص Godot.",
+      "updated_at": "2026-11-01"
     },
     "P3-02": {
       "status": "testing",
@@ -1181,6 +1181,12 @@
       "tasks": ["P5-02"],
       "summary": "تهيئة Steam Relay وتشخيص الجاهزية داخل F3، مع مصفوفة اختبار مباشرة لشبكات NAT مختلفة وفصل واضح بين relay الخاص بالمضيف ومسار SDR.",
       "files": ["autoload/net_manager.gd", "autoload/net_debug.gd", "tests/test_steam_transport.gd", "docs/design/STEAM_RELAY_VALIDATION.md"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P2-14"],
+      "summary": "وصلت اقتراع طريقة الوصول بمسار الاستجابة وواجهة الفريق وباب الانتشار، مع تزامن الأهلية وفحص ENet بين مضيف وعميل.",
+      "files": ["autoload/mission_director.gd", "autoload/vote_manager.gd", "scenes/shared/interactables/deploy_door.gd", "ui/hud/approach_vote.gd", "project.godot", "tests/test_vote_manager.gd", "tests/test_mission_loop.gd", "tests/test_approach_vote_network.gd", "docs/design/APPROACH_VOTE.md"]
     }
   ]
 }

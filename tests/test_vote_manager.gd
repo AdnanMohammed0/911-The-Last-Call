@@ -117,3 +117,13 @@ func test_decoy_requires_three_players_or_tech() -> void:
 	_set_class(2, &"breacher")
 	_set_class(3, &"profiler")
 	assert_true(VoteManager.decoy_allowed())
+
+
+func test_approach_ballot_is_visible_and_closes_after_vote() -> void:
+	var vote_id: int = VoteManager.open_approach_vote({"call_id": &"test_call"})
+	var panel: PanelContainer = ApproachVote.get_node(^"ApproachBallot") as PanelContainer
+	assert_true(panel.visible)
+	assert_eq(VoteManager.get_active_vote_id(VoteManager.APPROACH_TOPIC), vote_id)
+	VoteManager.cast_vote(vote_id, &"silent")
+	assert_false(panel.visible)
+	assert_eq(VoteManager.get_active_vote_id(VoteManager.APPROACH_TOPIC), 0)

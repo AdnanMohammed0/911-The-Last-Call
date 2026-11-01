@@ -30,6 +30,7 @@ func _ready() -> void:
 	NetManager.peer_left.connect(_on_peer_gone)
 	NetManager.peer_dropped.connect(_on_peer_gone)
 	NetManager.peer_reconnected.connect(_on_peer_reconnected)
+	NetManager.peer_joined.connect(func(peer_id: int, _name: String) -> void: _on_peer_reconnected(0, peer_id))
 	NetManager.session_ended.connect(func(_reason: String) -> void: votes.clear())
 
 
@@ -204,6 +205,15 @@ func _sync_ballots(vote_id: int, ballots: Dictionary) -> void:
 
 
 @rpc("authority", "call_remote", "reliable")
+func _sync_eligible(vote_id: int, eligible: Array) -> void:
+	var vote: Dictionary = votes.get(vote_id, {})
+	if vote.is_empty():
+		return
+	vote["eligible"] = eligible
+	vote_updated.emit(vote)
+
+
+@rpc("authority", "call_remote", "reliable")
 func _sync_vote_closed(vote_id: int, result: StringName, decided_by: StringName, ballots: Dictionary) -> void:
 	var vote: Dictionary = votes.get(vote_id, {})
 	if vote.is_empty():
@@ -329,6 +339,8 @@ func _on_peer_gone(peer_id: int) -> void:
 			continue
 		eligible.erase(peer_id)
 		ballots.erase(peer_id)
+		if NetManager.is_online():
+			_sync_eligible.rpc(vote_id, eligible)
 		if eligible.is_empty():
 			_close(vote_id, &"timeout")
 		else:
@@ -338,6 +350,8 @@ func _on_peer_gone(peer_id: int) -> void:
 
 ## A reconnecting player gets the open votes and may vote again.
 func _on_peer_reconnected(_old_peer_id: int, new_peer_id: int) -> void:
+	if not multiplayer.is_server():
+		return
 	for vote_id: int in votes:
 		var vote: Dictionary = votes[vote_id]
 		if vote["closed"]:
@@ -345,6 +359,8 @@ func _on_peer_reconnected(_old_peer_id: int, new_peer_id: int) -> void:
 		var eligible: Array = vote["eligible"]
 		if not new_peer_id in eligible:
 			eligible.append(new_peer_id)
+			if NetManager.is_online():
+				_sync_eligible.rpc(vote_id, eligible)
 		var packet: Dictionary = vote.duplicate(true)
 		packet["remaining_sec"] = get_time_left(vote_id)
 		_sync_vote_opened.rpc_id(new_peer_id, packet)

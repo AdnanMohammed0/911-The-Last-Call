@@ -53,6 +53,7 @@ func test_genuine_and_ambush_verdicts_open_a_response() -> void:
 func test_deploy_requires_response() -> void:
 	assert_false(MissionDirector.deploy())
 	MissionDirector.start_response(&"call_x", &"genuine")
+	assert_eq(MissionDirector.selected_approach, &"silent", "solo response uses an immediate approach fallback")
 	assert_true(MissionDirector.deploy())
 	assert_eq(MissionDirector.state, MissionDirector.State.DEPLOYED)
 	assert_eq(GameState.phase, GameState.Phase.FIELD)

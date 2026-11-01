@@ -44,6 +44,7 @@ signal objective_changed(text: String)
 ## Short banner for every peer (response alert, report, promotions…).
 signal announcement(title: String, subtitle: String)
 signal shift_changed()
+signal approach_changed(approach: StringName)
 
 var state: State = State.IDLE
 var mission_scene: String = ""
@@ -74,6 +75,7 @@ var _mission_outcomes: Dictionary[StringName, Dictionary] = {}
 
 ## Host: peer id -> {primary, sidearm, primary_mag, primary_reserve, sidearm_mag, sidearm_reserve, armor}
 var _loadouts: Dictionary[int, Dictionary] = {}
+var selected_approach: StringName = &""
 ## Host: mission tallies.
 var _kills: int = 0
 var _arrests: int = 0
@@ -84,6 +86,7 @@ var _return_timer: float = -1.0
 
 
 func _ready() -> void:
+	VoteManager.vote_closed.connect(_on_approach_vote_closed)
 	EventBus.call_classified.connect(_on_call_classified)
 	EventBus.call_event.connect(_on_call_event)
 	EventBus.call_missed.connect(_on_call_missed)
@@ -154,11 +157,15 @@ func start_response(call_id: StringName, verdict: StringName, scene_path: String
 	var mission: String = MISSION_NAMES.get(path, "the scene")
 	var headline: String = "arrest the caller" if kind == &"arrest" else "units requested"
 	_announce.rpc("RESPONSE AUTHORIZED", "%s — %s at %s. Gear up and deploy." % [title, headline, mission])
+	if NetManager.is_online() and NetManager.roster.size() > 1:
+		VoteManager.open_approach_vote({"call_id": call_id})
+	else:
+		_sync_approach.rpc(&"silent")
 
 
 ## Host: move the whole team into the mission map with their current gear.
 func deploy() -> bool:
-	if not multiplayer.is_server() or state != State.RESPONSE:
+	if not multiplayer.is_server() or state != State.RESPONSE or VoteManager.get_active_vote_id(VoteManager.APPROACH_TOPIC) != 0:
 		return false
 	save_loadouts()
 	_kills = 0
@@ -169,6 +176,22 @@ func deploy() -> bool:
 	_wipe_timer = 0.0
 	_go_to(GameState.Phase.FIELD, mission_scene)
 	return true
+
+
+func _on_approach_vote_closed(vote: Dictionary, result: StringName) -> void:
+	if not multiplayer.is_server() or vote.get("topic", &"") != VoteManager.APPROACH_TOPIC:
+		return
+	var context: Dictionary = vote.get("context", {})
+	if state != State.RESPONSE or context.get("call_id", &"") != mission_call_id:
+		return
+	_sync_approach.rpc(result)
+	FlagSystem.record_event(&"approach_selected", {"call": mission_call_id, "approach": result})
+
+
+@rpc("authority", "call_local", "reliable")
+func _sync_approach(approach: StringName) -> void:
+	selected_approach = approach
+	approach_changed.emit(approach)
 
 
 ## Host: the mission map reports how many hostiles are still active.
@@ -555,6 +578,8 @@ func _go_to(phase: GameState.Phase, scene_path: String) -> void:
 
 @rpc("authority", "call_local", "reliable")
 func _sync_state(new_state: State, scene_path: String, call_id: StringName, kind: StringName, new_difficulty: float, objective: String) -> void:
+	if new_state == State.RESPONSE:
+		selected_approach = &""
 	state = new_state
 	mission_scene = scene_path
 	mission_call_id = call_id
@@ -618,6 +643,7 @@ func is_station_siege_triggered() -> bool:
 	return _station_siege_triggered
 
 func reset() -> void:
+	selected_approach = &""
 	state = State.IDLE
 	mission_scene = ""
 	mission_call_id = &""

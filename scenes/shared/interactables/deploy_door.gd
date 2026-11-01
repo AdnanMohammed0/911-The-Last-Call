@@ -15,12 +15,14 @@ func _ready() -> void:
 
 func get_prompt_text() -> String:
 	if MissionDirector.state == MissionDirector.State.RESPONSE:
+		if VoteManager.get_active_vote_id(VoteManager.APPROACH_TOPIC) != 0:
+			return "Choose the approach before deploying"
 		return "Deploy to %s" % MissionDirector.mission_name()
 	return "Garage locked — no active response"
 
 
 func _can_interact(_peer_id: int) -> bool:
-	return MissionDirector.state == MissionDirector.State.RESPONSE
+	return MissionDirector.state == MissionDirector.State.RESPONSE and VoteManager.get_active_vote_id(VoteManager.APPROACH_TOPIC) == 0
 
 
 func _on_interact(_peer_id: int) -> void:

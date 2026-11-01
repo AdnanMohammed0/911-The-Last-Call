@@ -50,6 +50,7 @@ CrashService="*res://autoload/crash_reporter.gd"
 Economy="*res://autoload/economy.gd"
 FlagSystem="*res://autoload/flag_system.gd"
 SteamworksService="*res://autoload/steamworks_service.gd"
+ApproachVote="*res://ui/hud/approach_vote.gd"
 
 [internationalization]
 

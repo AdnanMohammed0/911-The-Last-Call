@@ -336,6 +336,42 @@ func test_dialogue_arrest_dispatch_opens_an_arrest_mission() -> void:
 	assert_string_contains(MissionDirector.objective_for_kind(&"arrest"), "arrest")
 
 
+func test_highway_crash_opens_noncombat_rescue_at_its_reported_location() -> void:
+	var call: CallData = load("res://data/calls/shift1/call_highway_crash.tres") as CallData
+	CallDirector.register_call(call)
+	MissionDirector.start_response(call.id, &"genuine")
+	assert_eq(MissionDirector.mission_scene, MissionDirector.HIGHWAY)
+	assert_eq(MissionDirector.mission_kind, &"assist")
+	assert_eq(MissionDirector.mission_name(), call.caller_location_name)
+	assert_true(MissionDirector.deploy())
+	assert_eq(MissionDirector.state, MissionDirector.State.DEPLOYED)
+	MissionDirector.report_hostiles(0, 0)
+	assert_eq(MissionDirector.state, MissionDirector.State.DEPLOYED, "zero enemies do not auto-complete a rescue")
+	MissionDirector.complete_assist()
+	assert_eq(MissionDirector.state, MissionDirector.State.SECURED)
+	assert_string_contains(MissionDirector.objective_text, "police van")
+	assert_true(MissionDirector.extract())
+	assert_eq(MissionDirector.state, MissionDirector.State.IDLE)
+
+
+func test_rescue_rewards_completion_and_penalizes_early_departure() -> void:
+	var done: Dictionary = MissionDirector.score_mission(&"assist", 0, 0, 0, 0, 0, true)
+	var abandoned: Dictionary = MissionDirector.score_mission(&"assist", 0, 0, 0, 0, 0)
+	var completed_xp: int = done["xp"]
+	var completed_trust: int = done["trust"]
+	var abandoned_xp: int = abandoned["xp"]
+	var abandoned_trust: int = abandoned["trust"]
+	assert_gt(completed_xp, 0)
+	assert_gt(completed_trust, 0)
+	assert_lt(abandoned_xp, 0)
+	assert_lt(abandoned_trust, 0)
+
+
+func test_reservoir_and_barn_calls_use_existing_maps() -> void:
+	assert_eq(MissionDirector.CALL_MISSIONS[&"call_drowned_voice"], MissionDirector.LAKE_HOUSE)
+	assert_eq(MissionDirector.CALL_MISSIONS[&"call_barn_fire"], MissionDirector.FARMHOUSE)
+
+
 func test_verdict_xp_rewards_the_truth() -> void:
 	CallDirector.call_history[&"call_test"] = {"truth": CallData.Truth.PRANK}
 	var before: int = Career.xp

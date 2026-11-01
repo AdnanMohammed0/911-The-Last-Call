@@ -27,6 +27,37 @@ func test_rpg_set_piece_has_control_and_unmanned_cruiser() -> void:
 	assert_not_null(event.projectile)
 	assert_not_null(event.blast)
 	assert_eq(HighwayRpgSetPiece.CRUISER_LOSS, 3000)
+	assert_not_null(level.get_node_or_null("RoadsideAssist"))
+
+
+func test_crash_rescue_does_not_arm_rpg_ambush() -> void:
+	var level: Node3D = _level_without_spawners()
+	var event: HighwayRpgSetPiece = level.get_node("RpgSetPiece") as HighwayRpgSetPiece
+	var previous_kind: StringName = MissionDirector.mission_kind
+	MissionDirector.mission_kind = &"assist"
+	event.arm()
+	assert_false(event.is_armed())
+	MissionDirector.mission_kind = previous_kind
+
+
+func test_crash_scene_requires_driver_assistance() -> void:
+	MissionDirector.reset()
+	MissionDirector.scene_changes_enabled = false
+	var call: CallData = load("res://data/calls/shift1/call_highway_crash.tres") as CallData
+	CallDirector.register_call(call)
+	MissionDirector.start_response(call.id, &"genuine")
+	var level: Node3D = _level_without_spawners()
+	var driver: RoadsideAssist = level.get_node("RoadsideAssist") as RoadsideAssist
+	assert_false(driver.enabled, "driver is only usable after deployment")
+	assert_true(MissionDirector.deploy())
+	assert_true(driver.visible)
+	assert_true(driver.is_available_to(1))
+	assert_false((level.get_node("RpgSetPiece/RemoteDriveUplink") as HighwayDecoyControl).is_available_to(1))
+	driver._on_interact(1)
+	assert_eq(MissionDirector.state, MissionDirector.State.SECURED)
+	assert_false(driver.enabled)
+	MissionDirector.reset()
+	MissionDirector.scene_changes_enabled = true
 
 
 func test_rpg_miss_after_tech_diverts_cruiser() -> void:

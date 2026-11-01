@@ -3,8 +3,8 @@
 ## A response opens when the team classifies a call GENUINE / AMBUSH, or when a dialogue line dispatches
 ## units ("Units are on the way" → &"dispatch_units", "Send a deputy to arrest her" → &"dispatch_arrest").
 ## What the team finds depends on the call's hidden truth, not on what they believed:
-##   GENUINE / DIVERSION → raid · AMBUSH → ambush (more, tougher enemies) · PRANK → arrest the caller ·
-##   PARANORMAL → nothing there (wasted units).
+##   GENUINE / DIVERSION → raid (specific calls may have rescue objectives) · AMBUSH → ambush ·
+##   PRANK → arrest the caller · PARANORMAL → an empty or paranormal scene.
 ## The team gears up in the armory, deploys through the garage, and may extract at the van at any time;
 ## the mission report scores what they achieved (kills, arrests, unlawful kills, abandoning the scene).
 ## Also carries loadouts into the mission, runs the shift (calls handled, shift complete) and awards XP.
@@ -25,11 +25,14 @@ const DEFAULT_MISSION: String = WAREHOUSE
 const MISSION_NAMES: Dictionary[String, String] = {WAREHOUSE: "Harbor Warehouse", SUBURB: "Aspen Drive", FARMHOUSE: "14 Birch Lane", LAKE_HOUSE: "14 Blackwater Drive", HIGHWAY: "Old Highway 9, Mile 47"}
 ## Which map each call sends the team to (unlisted calls use DEFAULT_MISSION).
 const CALL_MISSIONS: Dictionary[StringName, String] = {
+	&"call_highway_crash": HIGHWAY, &"call_drowned_voice": LAKE_HOUSE, &"call_barn_fire": FARMHOUSE,
 	&"call_willow_court": SUBURB, &"call_lost_child": SUBURB, &"call_domestic": SUBURB, &"call_overdose": SUBURB,
 	&"call_home_invasion": SUBURB, &"call_school_threat": SUBURB, &"call_closet_monster": FARMHOUSE,
 	&"call_cut_line": LAKE_HOUSE, &"call_meat_truck": HIGHWAY,
 }
-const KIND_DIFFICULTY: Dictionary[StringName, float] = {&"raid": 1.25, &"ambush": 1.5, &"arrest": 1.0, &"empty": 1.0}
+## Calls with an objective that differs from the usual response to their hidden truth.
+const CALL_KINDS: Dictionary[StringName, StringName] = {&"call_highway_crash": &"assist"}
+const KIND_DIFFICULTY: Dictionary[StringName, float] = {&"raid": 1.25, &"ambush": 1.5, &"arrest": 1.0, &"empty": 1.0, &"assist": 1.0}
 
 const TRUST_FAILURE: int = -12
 const WIPE_GRACE_SEC: float = 6.0
@@ -110,6 +113,9 @@ func _ready() -> void:
 
 
 func mission_name() -> String:
+	var call: CallData = CallDirector.registered_calls.get(mission_call_id, null)
+	if call != null and call.caller_location_name != "":
+		return call.caller_location_name
 	return MISSION_NAMES.get(mission_scene, "Field response")
 
 
@@ -130,6 +136,8 @@ static func kind_for_truth(truth: CallData.Truth) -> StringName:
 
 static func objective_for_kind(kind: StringName) -> String:
 	match kind:
+		&"assist":
+			return "Find the injured driver and hold [F] to stabilize them, then return to the police van"
 		&"arrest":
 			return "Find the caller. Shout [H] so they give up, then hold [F] to arrest"
 		&"empty":
@@ -149,13 +157,15 @@ func start_response(call_id: StringName, verdict: StringName, scene_path: String
 	var call: CallData = CallDirector.registered_calls.get(call_id, null)
 	if call != null:
 		kind = kind_for_truth(call.truth)
+		if call.truth == CallData.Truth.GENUINE:
+			kind = CALL_KINDS.get(call_id, kind)
 	var path: String = scene_path if scene_path != "" else CALL_MISSIONS.get(call_id, DEFAULT_MISSION)
 	var tough: float = KIND_DIFFICULTY.get(kind, 1.25) * (1.0 + 0.1 * (shift_number - 1))
 	var title: String = call.title if call != null else "Emergency"
 	_sync_state.rpc(State.RESPONSE, path, call_id, kind, tough,
 		"Gear up in the armory, then hold [F] at the garage door to deploy")
-	var mission: String = MISSION_NAMES.get(path, "the scene")
-	var headline: String = "arrest the caller" if kind == &"arrest" else "units requested"
+	var mission: String = mission_name()
+	var headline: String = "rescue needed" if kind == &"assist" else ("arrest the caller" if kind == &"arrest" else "units requested")
 	_announce.rpc("RESPONSE AUTHORIZED", "%s — %s at %s. Gear up and deploy." % [title, headline, mission])
 	if NetManager.is_online() and NetManager.roster.size() > 1:
 		VoteManager.open_approach_vote({"call_id": call_id})
@@ -207,11 +217,20 @@ func report_hostiles(left: int, total: int) -> void:
 			_announce.rpc("AREA SECURED", "All suspects neutralized. Get to the police van.")
 
 
+## Host: the roadside rescue objective was completed.
+func complete_assist() -> void:
+	if not multiplayer.is_server() or state != State.DEPLOYED or mission_kind != &"assist":
+		return
+	_sync_state.rpc(State.SECURED, mission_scene, mission_call_id, mission_kind, difficulty,
+		"Driver stabilized — return to the police van")
+	_announce.rpc("DRIVER STABILIZED", "Ambulance requested. Return to the police van.")
+
+
 ## Host: the team reached the van. Ends the mission at any point and scores it.
 func extract() -> bool:
 	if not multiplayer.is_server() or not is_in_mission():
 		return false
-	var report: Dictionary = score_mission(mission_kind, hostiles_total, _kills, _arrests, _unlawful, _downed)
+	var report: Dictionary = score_mission(mission_kind, hostiles_total, _kills, _arrests, _unlawful, _downed, state == State.SECURED)
 	var xp: int = report["xp"]
 	var trust: int = report["trust"]
 	_change_trust(trust)
@@ -243,11 +262,15 @@ func fail(reason: String) -> void:
 
 ## Scores a finished mission (`killed` counts lawful kills only; `unlawful` never counts as progress).
 ## Returns {"xp": int, "trust": int, "lines": PackedStringArray}.
-static func score_mission(kind: StringName, total: int, killed: int, arrested: int, unlawful: int, downed: int) -> Dictionary:
+static func score_mission(kind: StringName, total: int, killed: int, arrested: int, unlawful: int, downed: int, objective_done: bool = false) -> Dictionary:
 	var lines: PackedStringArray = PackedStringArray()
 	var xp: int = 0
 	var trust: int = 0
-	if kind == &"empty" or total <= 0:
+	if kind == &"assist":
+		xp = 300 if objective_done else -120
+		trust = 5 if objective_done else -8
+		lines.append("Driver stabilized; ambulance requested" if objective_done else "Left before assisting the injured driver")
+	elif kind == &"empty" or total <= 0:
 		xp = 20
 		trust = -4
 		lines.append("Nothing found — units were pulled from other calls")

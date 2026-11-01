@@ -12,6 +12,10 @@ func _ready() -> void:
 	max_distance = 3.0
 
 
+func is_available_to(peer_id: int) -> bool:
+	return super(peer_id) and MissionDirector.mission_kind != &"assist" and set_piece != null and set_piece.is_armed()
+
+
 func _can_interact(peer_id: int) -> bool:
 	return set_piece != null and set_piece.is_armed() and not set_piece.is_resolved() \
 		and (not NetManager.is_online() or NetManager.get_class_id(peer_id) == &"tech")

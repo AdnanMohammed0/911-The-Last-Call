@@ -43,7 +43,7 @@ func _on_body_entered(body: Node3D) -> void:
 
 
 func arm() -> void:
-	if not multiplayer.is_server() or _armed:
+	if not multiplayer.is_server() or _armed or MissionDirector.mission_kind == &"assist":
 		return
 	_sync_armed.rpc()
 	get_tree().create_timer(STRIKE_DELAY).timeout.connect(_strike, CONNECT_ONE_SHOT)

@@ -216,7 +216,7 @@ func _enter_attack() -> void:
 
 
 func _update_attack(_delta: float) -> StringName:
-	if target == null:
+	if target == null or not target.get_health().is_alive() or not is_in_zone(target.global_position):
 		return RETREAT
 	# Teammates break the grab by shining a flashlight on her (or salt, see on_salt_thrown).
 	for player: Player in players_in_zone():

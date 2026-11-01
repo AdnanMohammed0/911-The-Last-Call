@@ -70,7 +70,7 @@ func players_in_zone() -> Array[Player]:
 	var result: Array[Player] = []
 	for node: Node in get_tree().get_nodes_in_group(Player.GROUP):
 		var player: Player = node as Player
-		if player != null and player.get_health().state != HealthComponent.State.CRITICAL and is_in_zone(player.global_position):
+		if player != null and player.get_world_3d() == get_world_3d() and player.get_health().state != HealthComponent.State.CRITICAL and is_in_zone(player.global_position):
 			result.append(player)
 	return result
 
@@ -100,7 +100,7 @@ func lowest_sanity_player(candidates: Array[Player]) -> Player:
 func can_any_player_see(point: Vector3) -> bool:
 	for node: Node in get_tree().get_nodes_in_group(Player.GROUP):
 		var player: Player = node as Player
-		if player == null:
+		if player == null or player.get_world_3d() != get_world_3d() or not player.get_health().is_alive():
 			continue
 		var eye: Vector3 = player.get_eye_position()
 		var to_point: Vector3 = point + Vector3(0, 1.4, 0) - eye
@@ -133,7 +133,7 @@ func lights_near(point: Vector3, radius: float) -> Array[Light3D]:
 	var result: Array[Light3D] = []
 	for node: Node in get_tree().get_nodes_in_group(LIGHTS_GROUP):
 		var light: Light3D = node as Light3D
-		if light != null and light.visible and light.global_position.distance_to(point) <= radius:
+		if light != null and light.get_world_3d() == get_world_3d() and light.visible and light.global_position.distance_to(point) <= radius:
 			result.append(light)
 	return result
 
@@ -142,7 +142,7 @@ func dark_nodes() -> Array[Node3D]:
 	var result: Array[Node3D] = []
 	for node: Node in get_tree().get_nodes_in_group(DARK_NODES_GROUP):
 		var marker: Node3D = node as Node3D
-		if marker != null and is_in_zone(marker.global_position):
+		if marker != null and marker.get_world_3d() == get_world_3d() and is_in_zone(marker.global_position):
 			result.append(marker)
 	return result
 

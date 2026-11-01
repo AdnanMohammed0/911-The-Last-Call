@@ -164,6 +164,22 @@ func test_teammate_flashlight_breaks_grab() -> void:
 	assert_eq(_alice.get_health().hp, hp, "no damage when rescued")
 
 
+func test_grab_releases_player_who_becomes_downed() -> void:
+	_woman.trigger()
+	_step(6.5)
+	_alice.sanity = 10.0
+	_step(0.2)
+	_woman.global_position = _alice.global_position + Vector3(0, 0, -1.0)
+	_step(0.1)
+	assert_eq(_woman.fsm.current, DrownedWoman.ATTACK)
+	_alice.get_health().state = HealthComponent.State.DOWNED
+	var hp: float = _alice.get_health().hp
+	_step(0.1)
+	assert_eq(_woman.fsm.current, DrownedWoman.RETREAT)
+	assert_false(_alice.grabbed_by_anomaly)
+	assert_eq(_alice.get_health().hp, hp)
+
+
 func test_reverse_tone_forces_retreat_and_cooldown_returns_to_stalk() -> void:
 	_woman.trigger()
 	_step(6.5)
@@ -193,3 +209,16 @@ func test_everyone_leaving_the_zone_makes_her_dormant() -> void:
 	_bob.global_position = Vector3(100, 0, 103)
 	_step(0.2)
 	assert_eq(_woman.fsm.current, DrownedWoman.DORMANT)
+
+
+func test_players_in_another_world_are_outside_haunted_zone() -> void:
+	var other_viewport: SubViewport = SubViewport.new()
+	other_viewport.own_world_3d = true
+	add_child_autofree(other_viewport)
+	var outsider: Player = (load("res://scenes/shared/player/player.tscn") as PackedScene).instantiate() as Player
+	other_viewport.add_child(outsider)
+	outsider.set_physics_process(false)
+	outsider.set_process(false)
+	outsider.global_position = _alice.global_position
+	assert_false(outsider in _woman.players_in_zone())
+	assert_eq(_woman.players_in_zone().size(), 2)

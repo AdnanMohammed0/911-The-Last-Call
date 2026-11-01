@@ -3,6 +3,7 @@ extends GutTest
 
 func after_each() -> void:
 	TraitSystem.reset_player(1)
+	SanitySystem._on_session_ended("")
 
 
 func _player(class_id: StringName) -> Player:
@@ -66,6 +67,30 @@ func test_recovery_resets_hallucination_delay() -> void:
 	player.sanity = player.max_sanity
 	SanitySystem._update_local_effects(0.05)
 	assert_eq(SanitySystem._hallucination_clock, 24.0)
+
+
+func test_panic_audio_uses_only_local_sanity_and_resets_on_exit() -> void:
+	var local: Player = _player(&"medic")
+	var remote: Player = (load("res://scenes/shared/player/player.tscn") as PackedScene).instantiate() as Player
+	remote.peer_id = 2
+	remote.apply_class(ClassCatalog.get_data(&"tech"))
+	add_child_autofree(remote)
+	remote.set_physics_process(false)
+	remote.set_process(false)
+	var panic: int = AudioServer.get_bus_index(&"Panic")
+	var lowpass: AudioEffectLowPassFilter = AudioServer.get_bus_effect(panic, 0) as AudioEffectLowPassFilter
+	var reverb: AudioEffectReverb = AudioServer.get_bus_effect(panic, 1) as AudioEffectReverb
+	remote.sanity = 0.0
+	SanitySystem._update_local_effects(2.0)
+	assert_almost_eq(lowpass.cutoff_hz, 20000.0, 1.0, "another player's panic cannot muffle local SFX")
+	assert_almost_eq(reverb.wet, 0.0, 0.001)
+	local.sanity = 0.0
+	SanitySystem._update_local_effects(2.0)
+	assert_almost_eq(lowpass.cutoff_hz, 800.0, 1.0)
+	assert_almost_eq(reverb.wet, 0.22, 0.001)
+	SanitySystem._on_session_ended("test")
+	assert_almost_eq(lowpass.cutoff_hz, 20000.0, 1.0, "menu audio recovers immediately")
+	assert_almost_eq(reverb.wet, 0.0, 0.001)
 
 
 func test_host_sanity_reaches_client_and_client_cannot_change_it() -> void:

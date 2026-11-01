@@ -96,14 +96,7 @@ func _update_local_effects(delta: float) -> void:
 	var player: Player = Player.find_by_peer(get_tree(), NetManager.get_local_peer_id())
 	var target: float = ratio(player) if player != null else 1.0
 	_audio_ratio = move_toward(_audio_ratio, target, delta * 0.7)
-	var bus: int = AudioServer.get_bus_index(PANIC_BUS)
-	if bus >= 0 and AudioServer.get_bus_effect_count(bus) >= 2:
-		var lowpass: AudioEffectLowPassFilter = AudioServer.get_bus_effect(bus, 0) as AudioEffectLowPassFilter
-		var reverb: AudioEffectReverb = AudioServer.get_bus_effect(bus, 1) as AudioEffectReverb
-		if lowpass != null:
-			lowpass.cutoff_hz = lerpf(800.0, 20000.0, _audio_ratio)
-		if reverb != null:
-			reverb.wet = lerpf(0.22, 0.0, _audio_ratio)
+	_apply_audio_ratio()
 	var new_band: Band = band_for(player.sanity, player.max_sanity) if player != null else Band.STEADY
 	if new_band != _local_band:
 		_local_band = new_band
@@ -115,6 +108,17 @@ func _update_local_effects(delta: float) -> void:
 	if _hallucination_clock <= 0.0:
 		_hallucination_clock = randf_range(20.0, 35.0)
 		EventBus.hallucination.emit(&"phantom_steps" if new_band == Band.PANICKED else &"phantom_ring", player.global_position)
+
+
+func _apply_audio_ratio() -> void:
+	var bus: int = AudioServer.get_bus_index(PANIC_BUS)
+	if bus >= 0 and AudioServer.get_bus_effect_count(bus) >= 2:
+		var lowpass: AudioEffectLowPassFilter = AudioServer.get_bus_effect(bus, 0) as AudioEffectLowPassFilter
+		var reverb: AudioEffectReverb = AudioServer.get_bus_effect(bus, 1) as AudioEffectReverb
+		if lowpass != null:
+			lowpass.cutoff_hz = lerpf(800.0, 20000.0, _audio_ratio)
+		if reverb != null:
+			reverb.wet = lerpf(0.22, 0.0, _audio_ratio)
 
 
 func _on_player_downed(peer_id: int) -> void:
@@ -149,3 +153,6 @@ func _on_mission_state_changed(new_state: MissionDirector.State) -> void:
 func _on_session_ended(_reason: String) -> void:
 	_ambient_clock = 0.0
 	_hallucination_clock = 24.0
+	_local_band = Band.STEADY
+	_audio_ratio = 1.0
+	_apply_audio_ratio()

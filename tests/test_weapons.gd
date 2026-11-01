@@ -144,6 +144,21 @@ func test_rejects_other_sender_bad_origin_and_pellets() -> void:
 	assert_eq(_weapons.sidearm_mag, WeaponCatalog.get_data(&"pistol").magazine_size, "rejected shots cost nothing")
 
 
+func test_forged_slots_and_nonfinite_rays_cannot_fire_or_reload() -> void:
+	var hostile: HostileAgent = _hostile(Vector3(0, 0, -8))
+	var direction: PackedVector3Array = PackedVector3Array([_aim_at(hostile.global_position, 1.2)])
+	var ammo_before: int = _weapons.sidearm_mag
+	for forged_slot: int in [-1, 2, 999]:
+		assert_false(_fire(forged_slot, direction), "forged slot must not alias sidearm")
+		assert_false(_weapons.host_reload(1, forged_slot))
+		assert_false(_weapons.host_drop(1, forged_slot))
+		assert_false(_weapons.has_weapon(forged_slot))
+	assert_false(_weapons.host_fire(1, WeaponData.Slot.SIDEARM, Vector3(INF, 1.0, 0.0), direction, 0))
+	assert_false(_fire(WeaponData.Slot.SIDEARM, PackedVector3Array([Vector3(INF, 0.0, 0.0)])))
+	assert_eq(_weapons.sidearm_mag, ammo_before)
+	assert_eq(hostile.hp, 100.0)
+
+
 func test_rejects_faster_than_fire_rate() -> void:
 	var direction: PackedVector3Array = PackedVector3Array([Vector3.FORWARD])
 	assert_true(_fire(WeaponData.Slot.SIDEARM, direction))

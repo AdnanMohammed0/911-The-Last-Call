@@ -136,7 +136,13 @@ func refresh_authority() -> void:
 # --- Queries -------------------------------------------------------------------------
 
 func weapon_id(slot: int) -> StringName:
+	if not valid_slot(slot):
+		return &""
 	return primary_id if slot == WeaponData.Slot.PRIMARY else sidearm_id
+
+
+static func valid_slot(slot: int) -> bool:
+	return slot == WeaponData.Slot.PRIMARY or slot == WeaponData.Slot.SIDEARM
 
 
 func weapon_data(slot: int) -> WeaponData:
@@ -152,10 +158,14 @@ func get_active_weapon() -> WeaponData:
 
 
 func magazine(slot: int) -> int:
+	if not valid_slot(slot):
+		return 0
 	return primary_mag if slot == WeaponData.Slot.PRIMARY else sidearm_mag
 
 
 func reserve(slot: int) -> int:
+	if not valid_slot(slot):
+		return 0
 	return primary_reserve if slot == WeaponData.Slot.PRIMARY else sidearm_reserve
 
 
@@ -207,7 +217,7 @@ func give_loadout(loadout: Dictionary[WeaponData.Slot, StringName]) -> void:
 
 ## Host: put `id` (or nothing) in `slot` with a full magazine and reserve.
 func set_weapon(slot: int, id: StringName) -> void:
-	if not multiplayer.is_server():
+	if not multiplayer.is_server() or not valid_slot(slot):
 		return
 	var data: WeaponData = WeaponCatalog.get_data(id)
 	var mag: int = data.magazine_size if data != null else 0
@@ -256,6 +266,9 @@ func refill_ammo() -> void:
 func host_fire(sender: int, slot: int, origin: Vector3, directions: PackedVector3Array, rewind_msec: int) -> bool:
 	if not multiplayer.is_server():
 		return false
+	if not valid_slot(slot):
+		RpcGuard.reject("fire", sender, "invalid weapon slot")
+		return false
 	if sender != _player.peer_id:
 		RpcGuard.reject("fire", sender, "not the owner")
 		return false
@@ -270,13 +283,13 @@ func host_fire(sender: int, slot: int, origin: Vector3, directions: PackedVector
 	if directions.size() != weapon.pellets:
 		RpcGuard.reject("fire", sender, "pellet count")
 		return false
-	if origin.distance_to(_player.get_eye_position()) > ORIGIN_TOLERANCE:
+	if not origin.is_finite() or origin.distance_to(_player.get_eye_position()) > ORIGIN_TOLERANCE:
 		RpcGuard.reject("fire", sender, "origin too far from eyes")
 		return false
 	var view: Vector3 = Vector3.FORWARD.rotated(Vector3.RIGHT, _player.sync_pitch).rotated(Vector3.UP, _player.sync_yaw)
 	var min_dot: float = cos(deg_to_rad(AIM_TOLERANCE_DEGREES))
 	for direction: Vector3 in directions:
-		if not direction.is_normalized() or direction.dot(view) < min_dot:
+		if not direction.is_finite() or not direction.is_normalized() or direction.dot(view) < min_dot:
 			RpcGuard.reject("fire", sender, "direction")
 			return false
 	if not _accept_fire_rate(slot, weapon):
@@ -318,7 +331,7 @@ func host_fire(sender: int, slot: int, origin: Vector3, directions: PackedVector
 
 ## Host: start reloading `slot`. Returns true when a reload began.
 func host_reload(sender: int, slot: int) -> bool:
-	if not multiplayer.is_server() or sender != _player.peer_id:
+	if not multiplayer.is_server() or sender != _player.peer_id or not valid_slot(slot):
 		return false
 	var weapon: WeaponData = weapon_data(slot)
 	if weapon == null or is_reloading() or not _player.get_health().is_alive():
@@ -402,14 +415,14 @@ func _accept_fire_rate(slot: int, weapon: WeaponData) -> bool:
 
 ## Host: set a slot's magazine and reserve (pickups keep the ammo they were dropped with).
 func set_ammo(slot: int, mag: int, spare: int) -> void:
-	if multiplayer.is_server() and has_weapon(slot):
+	if multiplayer.is_server() and valid_slot(slot) and has_weapon(slot):
 		var data: WeaponData = weapon_data(slot)
 		_set_ammo(slot, clampi(mag, 0, data.magazine_size), clampi(spare, 0, data.max_reserve))
 
 
 ## Host: drop the weapon in `slot` on the floor (at `at`, or in front of the player). Returns true on success.
 func host_drop(sender: int, slot: int, at: Vector3 = Vector3.INF) -> bool:
-	if not multiplayer.is_server() or sender != _player.peer_id or not has_weapon(slot):
+	if not multiplayer.is_server() or sender != _player.peer_id or not valid_slot(slot) or not has_weapon(slot):
 		return false
 	var position: Vector3 = at if at != Vector3.INF else _drop_position()
 	WorldItems.spawn_weapon(weapon_id(slot), magazine(slot), reserve(slot), position, _player.rotation.y + randf_range(-0.4, 0.4))

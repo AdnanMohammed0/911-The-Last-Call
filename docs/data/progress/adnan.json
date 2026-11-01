@@ -148,9 +148,9 @@
       "updated_at": "2026-11-01"
     },
     "P3-01": {
-      "status": "testing",
-      "note": "إطار الأسلحة جاهز: hitscan + spread + recoil patterns + reload + ADS، الهوست يتحقق من كل طلقة (المالك، الذخيرة، معدل الإطلاق، موقع الفوهة، اتجاه التصويب) مع lag compensation. اختبار شبكة بلاعبين: 13/14 إصابة على هدف متحرك مقابل 4/14 بدون تعويض.",
-      "updated_at": "2026-09-17"
+      "status": "done",
+      "note": "إطار الأسلحة مكتمل مع hitscan وspread وrecoil وreload وADS وتعويض التأخير. سددت ثغرة خانة السلاح غير الصالحة التي كانت تلتف على حد معدل الإطلاق، ورفضت إحداثيات الطلقات غير المنتهية. نجح 20 اختبار سلاح واختبار ENet حقيقي بمضيف وعميل (طلب مزور مرفوض وطلقة صحيحة مقبولة). قياس الهدف المتحرك السابق 13/14 إصابة مع التعويض مقابل 4/14 بدونه.",
+      "updated_at": "2026-11-01"
     },
     "P3-19": {
       "status": "testing",
@@ -1187,6 +1187,12 @@
       "tasks": ["P2-14"],
       "summary": "وصلت اقتراع طريقة الوصول بمسار الاستجابة وواجهة الفريق وباب الانتشار، مع تزامن الأهلية وفحص ENet بين مضيف وعميل.",
       "files": ["autoload/mission_director.gd", "autoload/vote_manager.gd", "scenes/shared/interactables/deploy_door.gd", "ui/hud/approach_vote.gd", "project.godot", "tests/test_vote_manager.gd", "tests/test_mission_loop.gd", "tests/test_approach_vote_network.gd", "docs/design/APPROACH_VOTE.md"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P3-01"],
+      "summary": "تقوية تحقق المضيف من خانة السلاح وإحداثيات الطلقة، مع اختبار ENet يثبت رفض الطلب المزوّر وقبول الطلقة الصحيحة.",
+      "files": ["scenes/shared/weapons/weapon_holder.gd", "tests/test_weapons.gd", "tests/test_weapon_network.gd", "docs/design/WEAPON_VALIDATION.md"]
     }
   ]
 }

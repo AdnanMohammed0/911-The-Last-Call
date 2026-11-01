@@ -134,7 +134,17 @@ func _level_path_to(from: Node, path: NodePath) -> NodePath:
 
 ## New host-owned synchronizers must only replicate to peers that loaded the level (see PlayerSpawner).
 func _refresh_level_visibility() -> void:
-	for node: Node in _level_root().find_children("*", "PlayerSpawner", true, false):
-		var player_spawner: PlayerSpawner = node as PlayerSpawner
-		player_spawner.refresh_visibility()
-		return
+	var ancestor: Node = _level_root()
+	while ancestor != null:
+		for node: Node in ancestor.get_children():
+			var player_spawner: PlayerSpawner = node as PlayerSpawner
+			if player_spawner != null:
+				player_spawner.refresh_visibility()
+				return
+		ancestor = ancestor.get_parent()
+	# Standalone set pieces have no player spawner or level-load gate.
+	for node: Node in _level_root().find_children("*", "MultiplayerSynchronizer", true, false):
+		var sync: MultiplayerSynchronizer = node as MultiplayerSynchronizer
+		if sync.is_multiplayer_authority():
+			for peer_id: int in multiplayer.get_peers():
+				sync.set_visibility_for(peer_id, true)

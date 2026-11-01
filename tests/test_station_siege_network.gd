@@ -70,6 +70,7 @@ func test_client_follows_the_host_siege() -> void:
 	var client: StationSiege = _station(client_root)
 	await _wait_until(func() -> bool: return server_api.get_peers().size() == 1 and client_api.get_unique_id() > 1)
 	assert_eq(server_api.get_peers().size(), 1)
+	await wait_physics_frames(5)
 
 	assert_false(client.start(&"forged"), "clients cannot start a siege")
 	assert_eq(host.state, StationSiege.State.IDLE)
@@ -84,6 +85,18 @@ func test_client_follows_the_host_siege() -> void:
 	assert_false(client_lamp.visible, "the blackout reaches the client")
 	assert_true(client.emergency_lights.visible)
 	assert_true(client_hud.visible)
+
+	host._begin_wave()
+	host._spawn_step(0.1)
+	await _wait_until(func() -> bool: return client.enemies_root.get_child_count() == 1)
+	assert_eq(host.enemies_root.get_child_count(), 1)
+	assert_eq(client.enemies_root.get_child_count(), 1, "the host's wave enemy spawns on the client")
+	if client.enemies_root.get_child_count() > 0:
+		var host_enemy: HostileAgent = host.enemies_root.get_child(0) as HostileAgent
+		var client_enemy: HostileAgent = client.enemies_root.get_child(0) as HostileAgent
+		assert_not_null(client_enemy)
+		assert_eq(client_enemy.name, host_enemy.name)
+		assert_eq(client_enemy.archetype.id, host_enemy.archetype.id)
 
 	host._end(StationSiege.SURVIVED)
 	await _wait_until(func() -> bool: return client.state == StationSiege.State.SURVIVED)

@@ -28,3 +28,9 @@ Before release, profile a rendered build at the station and each mission with 12
 | RTX 4060 Laptop, final High/100% | 10.26 ms | 11.69 ms | 11.94 ms |
 
 The Intel High comparison improved the sampled mean by about 25% on this machine; Low/50% reached about 27 FPS, still below a 30 FPS target. The warehouse raid with 15 hostiles at final High/100% on the RTX 4060 measured 6.02 ms mean / 7.98 ms P95. These are fixed-camera synthetic samples, not a full match or GPU profiler trace. A rendered playthrough is still needed to inspect shadow/fog quality, movement through each level, frame pacing, and 1% lows.
+
+## Camera sweep follow-up (2026-11-01)
+
+Append `sweep` to the benchmark command to sample four fixed positions in sequence and report frame time and draw calls per position. The camera uses the active player view after the player has spawned. At High/100%, 1920×1080, 12 hostiles on the RTX 4060 Laptop, the station averaged 11.32 ms across the four views. The corridor at `(20, 2, -5)` was the hotspot: 14.38 ms mean and about 7,822 draw calls. The other three views measured 8.37–11.35 ms and 136–2,012 draw calls. The warehouse raid sweep averaged 6.47 ms across its four positions. Each position gets about 45 rendered frames, so these numbers locate a hotspot but do not establish 1% low FPS.
+
+The station interior contains roughly 1,985 mesh nodes. A trial that hid small meshes beyond 16 m reduced the corridor to about 7,012 draw calls and 13.81 ms, but also removed a visible wayfinding sign. A narrower trial still removed that sign and produced no reliable speedup. Neither culling trial was shipped. The remaining P4-16 work is to inspect station geometry/material batching and occlusion in the Godot GPU profiler, then verify any art change from multiple player views before applying it.

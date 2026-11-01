@@ -104,7 +104,7 @@
     },
     "P3-04": {
       "status": "testing",
-      "note": "قدرات Tech وProfiler وBreacher وMedic موصولة بالمخزون والـHUD. قيدت ركلة Breacher بالمضيف، واختبرت تبريدها وتوفر أدوات Medic حسب الفئة. نجحت 6 اختبارات محلية (30 تحققاً). يبقى اختبار قدرات الفئات بصرياً وبلاعبين عبر الشبكة.",
+      "note": "قدرات الفئات موصولة بالمخزون والـHUD. كشف اختبار ENet أن نتائج قدرة Tech كانت مرفوضة عند العميل لأن عقدة القدرات ورثت سلطة اللاعب؛ جعلتها بسلطة المضيف، والدرون صار يتزامن. نجح اختبار ENet للمضيف والعميل و6 اختبارات محلية. يبقى فحص بصري وتحكم لكل الفئات مع لاعبين.",
       "updated_at": "2026-11-01"
     },
     "P3-07": {
@@ -1289,6 +1289,12 @@
       "tasks": ["P5-02"],
       "summary": "إعادة تشخيص F3 إلى عدم الاتصال بعد مغادرة Steam أو انتهاء الاتصال؛ 5 اختبارات محلية ناجحة، وعبور NAT ينتظر تجربة حية.",
       "files": ["autoload/net_manager.gd", "autoload/net_debug.gd", "tests/test_steam_transport.gd", "docs/design/STEAM_RELAY_VALIDATION.md"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P3-04"],
+      "summary": "تصحيح سلطة عقدة القدرات لتقبل نتائج المضيف عند العميل؛ اختبار ENet يثبت رفض خانة مزورة وتزامن الدرون، مع 6 اختبارات محلية.",
+      "files": ["scenes/shared/player/class_abilities.gd", "tests/test_class_abilities_network.gd", "docs/design/CLASS_ABILITIES.md"]
     }
   ]
 }

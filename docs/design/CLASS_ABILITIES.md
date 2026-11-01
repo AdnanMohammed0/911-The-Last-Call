@@ -1,6 +1,6 @@
 # Field class abilities — P3-04
 
-The local player uses **3**, **4**, and **5** for the class ability slots. These actions appear in Controls for rebinding. The owning peer sends only a slot number; the host checks the player's class, life state, cooldown, inventory, and world position. The existing **V** door kick and **F** hold-to-revive remain in place.
+The local player uses **3**, **4**, and **5** for the class ability slots. These actions appear in Controls for rebinding. The owning peer sends only a slot number; the host checks the player's class, life state, cooldown, inventory, and world position. The ability node keeps host authority even when the player node belongs to a client, so the host's drone, shield, and other result RPCs are accepted by that client. The existing **V** door kick and **F** hold-to-revive remain in place.
 
 | Class | 3 | 4 | 5 |
 | --- | --- | --- | --- |
@@ -11,4 +11,4 @@ The local player uses **3**, **4**, and **5** for the class ability slots. These
 
 The Breacher's **V** kick now has a 4-second cooldown and cannot be used by another class in a live player session. The Medic's existing **F** revive is still 4 s; other classes need a trauma kit and 8 s. Consumables are deducted through `LoadoutManager.consume_gear`, which does not refund their purchase price. Buy field equipment in the station armory before deployment. The drone, shield, gas, and enemy marks use simple generated visuals, so no new asset dependency is required.
 
-Tests: `test_class_abilities.gd` covers class slot labels, inventory consumption, shield direction/breakage, and drone cooldown. Existing health, loadout, hostile AI, anomaly tool, and door tests were also run. Multiplayer field QA remains required to confirm visuals, owner controls, and host authority with two players.
+Tests: `test_class_abilities.gd` covers class slot labels, inventory consumption, shield direction/breakage, and drone cooldown. `test_class_abilities_network.gd` uses a real local ENet host and client: an invalid slot is rejected and a valid Tech request spawns the drone on both peers. Multiplayer field QA remains required to confirm rendered visuals and controls for every class with two players.

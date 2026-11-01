@@ -32,6 +32,8 @@ var _tone: SpectralToneEmitter = null
 
 
 func _ready() -> void:
+	# The player owns input, but ability results and their authority RPCs belong to the host.
+	set_multiplayer_authority(1)
 	_player = get_parent() as Player
 	if _player == null:
 		return

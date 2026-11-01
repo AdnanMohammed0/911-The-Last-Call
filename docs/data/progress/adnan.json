@@ -19,8 +19,8 @@
     },
     "P1-04": {
       "status": "done",
-      "note": "NetManager host/join عبر ENet مكتمل: 24911، 4 لاعبين، تحقق الهوست (نسخة البروتوكول، لوبي ممتلئ، تنظيف الاسم، مهلة تسجيل)، leave وخروج الهوست، وقائمة رئيسية مؤقتة. اختُبر بـ 7 عمليات.",
-      "updated_at": "2026-09-17"
+      "note": "NetManager host/join عبر ENet مكتمل: 24911، 4 لاعبين، تحقق الهوست واللوبي. في اختبار playit الفعلي كان النفق UDP يوجّه إلى 7777 بدل 24911؛ صُححت وجهته إلى 127.0.0.1:24911 ونجح اتصال ENet محلياً وعبر العنوان العام للنفق.",
+      "updated_at": "2026-11-01"
     },
     "P1-05": {
       "status": "done",
@@ -1385,6 +1385,12 @@
       "tasks": ["P3-19"],
       "summary": "توسيع وجهات بلاغات البداية إلى الطريق والبحيرة والمزرعة؛ تحويل حادث Route 9 إلى إنقاذ تفاعلي بلا أعداء، مع نتيجة ومكافأة مناسبة. نجح 36 اختبار GUT.",
       "files": ["autoload/mission_director.gd", "scenes/field/missions/abandoned_highway.tscn", "scenes/field/missions/roadside_assist.gd", "scenes/field/missions/highway_rpg_set_piece.gd", "scenes/field/missions/highway_decoy_control.gd", "tests/test_mission_loop.gd", "tests/test_abandoned_highway.gd"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P1-04"],
+      "summary": "تشخيص فشل Playit: المنفذ المحلي للنفق كان 7777 بدل منفذ هوست ENet 24911. صُحح إعداد النفق ونجح الاتصال المحلي وعبر العنوان العام.",
+      "files": ["docs/data/progress/adnan.json"]
     }
   ]
 }

@@ -17,6 +17,17 @@ func _ready() -> void:
 	max_distance = 2.2
 	cooldown = 0.5
 	holder_changed.connect(_on_holder_changed)
+	NetManager.peer_left.connect(_on_reviver_gone)
+	NetManager.peer_dropped.connect(_on_reviver_gone)
+
+
+func _process(_delta: float) -> void:
+	if not multiplayer.is_server() or holder_peer == 0:
+		return
+	var reviver: Player = Player.find_by_peer(get_tree(), holder_peer)
+	if _is_hold_stale() or reviver == null or not reviver.get_health().is_alive() \
+			or reviver.global_position.distance_to(global_position) > max_distance + 0.5:
+		_set_holder.rpc(0)
 
 
 func get_prompt_text() -> String:
@@ -48,3 +59,8 @@ func _on_interact(peer_id: int) -> void:
 func _on_holder_changed(peer_id: int) -> void:
 	if multiplayer.is_server():
 		_health.reviver_peer = peer_id
+
+
+func _on_reviver_gone(peer_id: int) -> void:
+	if multiplayer.is_server() and holder_peer == peer_id:
+		_set_holder.rpc(0)

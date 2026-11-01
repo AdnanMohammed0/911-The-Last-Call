@@ -93,9 +93,9 @@
       "updated_at": "2026-11-01"
     },
     "P3-02": {
-      "status": "testing",
-      "note": "HealthComponent على الهوست ومتزامن بـ HostSync: ضرر حسب المنطقة (رأس ×2، جذع ×1، أطراف ×0.75) مع مقاومة الكلاس (Breacher 140 HP / 25%)، رجوع الصحة لأقرب 25% بس، Downed عند 0 (نزيف 45 ث، زحف 0.6 م/ث، ما يتفاعل)، إنعاش بالإمساك: Medic 4 ث أو Trauma Kit 8 ث (النزيف يوقف أثناء الإنعاش، يرجع 40%)، انتهاء النزيف = Critical. ضربة ساق/يد ≥30 ترسل trait (limping / fractured_hand). واجهة صحة وشاشة Downed. 8 اختبارات GUT + اختبار 3 عمليات (Medic يمشي ويسوي إنعاش حقيقي) نجحت.",
-      "updated_at": "2026-09-17"
+      "status": "done",
+      "note": "الصحة والضرر المناطقي والإنعاش والـ Downed متزامنة ومجربة سابقاً بثلاث عمليات. أصلحت تعليق النزيف إذا انقطع المسعف أو انتهى طلب الإمساك قبل الإنعاش، مع تحرير الحالة على الهوست. نجحت 10 اختبارات صحة منها عودة النزيف بعد الانقطاع.",
+      "updated_at": "2026-11-01"
     },
     "P3-03": {
       "status": "testing",
@@ -1193,6 +1193,12 @@
       "tasks": ["P3-01"],
       "summary": "تقوية تحقق المضيف من خانة السلاح وإحداثيات الطلقة، مع اختبار ENet يثبت رفض الطلب المزوّر وقبول الطلقة الصحيحة.",
       "files": ["scenes/shared/weapons/weapon_holder.gd", "tests/test_weapons.gd", "tests/test_weapon_network.gd", "docs/design/WEAPON_VALIDATION.md"]
+    },
+    {
+      "date": "2026-11-01",
+      "tasks": ["P3-02"],
+      "summary": "تحرير الإنعاش المعلّق عند انقطاع المسعف أو انتهاء الإمساك، والتأكد من عودة نزيف المصاب بالاختبارات.",
+      "files": ["scenes/shared/player/revive_interactable.gd", "tests/test_health_component.gd"]
     }
   ]
 }

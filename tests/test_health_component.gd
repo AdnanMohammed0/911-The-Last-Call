@@ -63,6 +63,28 @@ func test_bleed_out_pauses_while_being_revived() -> void:
 	assert_almost_eq(_health.bleed_out_remaining, HealthComponent.BLEED_OUT_SEC, 0.01)
 
 
+func test_interrupted_revive_resumes_bleeding() -> void:
+	_health.apply_damage(500.0)
+	var revive_area: ReviveInteractable = _player.get_node(^"ReviveArea") as ReviveInteractable
+	revive_area._set_holder(2)
+	assert_eq(_health.reviver_peer, 2)
+	revive_area._on_reviver_gone(2)
+	assert_eq(revive_area.holder_peer, 0)
+	assert_eq(_health.reviver_peer, 0)
+	_health._process(2.0)
+	assert_almost_eq(_health.bleed_out_remaining, HealthComponent.BLEED_OUT_SEC - 2.0, 0.01)
+
+
+func test_stale_revive_hold_releases_the_patient() -> void:
+	_health.apply_damage(500.0)
+	var revive_area: ReviveInteractable = _player.get_node(^"ReviveArea") as ReviveInteractable
+	revive_area._set_holder(2)
+	revive_area._hold_started_msec = Time.get_ticks_msec() - 12_000
+	revive_area._process(0.0)
+	assert_eq(revive_area.holder_peer, 0)
+	assert_eq(_health.reviver_peer, 0)
+
+
 func test_revive_restores_forty_percent() -> void:
 	_health.apply_damage(500.0)
 	_health.revive(7)
